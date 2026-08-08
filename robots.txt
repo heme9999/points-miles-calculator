@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
