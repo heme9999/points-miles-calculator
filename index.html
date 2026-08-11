@@ -136,6 +136,12 @@
   th{ color: var(--muted); font-weight:500; font-size:12px; }
   td{ font-family:'IBM Plex Mono', monospace; }
   .disclaimer{ margin-top: 18px; font-size:12px; color: var(--muted); line-height:1.7; }
+  .reads{ margin-top: 40px; border-top: 1px solid var(--line); padding-top: 24px; }
+  .reads h2{ font-family:'IBM Plex Mono', monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.12em; color: var(--muted); margin-bottom:14px; }
+  .reads .item{ display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid rgba(244,240,230,0.06); text-decoration:none; color:var(--paper); }
+  .reads .item:hover{ color:var(--gold); }
+  .reads .item .arrow{ font-family:'IBM Plex Mono',monospace; opacity:0.5; transition:transform .2s; }
+  .reads .item:hover .arrow{ transform:translateX(4px); opacity:1; color:var(--gold); }
 
   @media (max-width: 560px){
     .ticket{ flex-direction: column; }
@@ -222,6 +228,22 @@
       <tr><td>稀缺头等/顶级舱位</td><td>1.5 – 3.0+ 元/英里(经验区间)</td><td>综合估算</td></tr>
     </table>
     <p class="disclaimer">带来源标注的数据截至标注日期,仅供参考;银行活动制转点(如招商银行)条款随活动变化,请务必以银行/航司当前公告为准。未标来源的区间为经验估算,不代表任何具体银行或航司条款。本工具不构成金融建议。</p>
+  </div>
+
+  <div class="reads">
+    <h2>相关阅读</h2>
+    <a class="item" href="/blog/zhaohang-jifen-huan-licheng.html">
+      <span>招商银行积分换里程划算吗?先搞懂"活动制转点"这个坑</span>
+      <span class="arrow">→</span>
+    </a>
+    <a class="item" href="/blog/xinyongka-jifen-zhuan-yazhouwanlitong.html">
+      <span>美国信用卡积分转国泰亚洲万里通,该用哪张卡?Chase持卡人要先看这篇</span>
+      <span class="arrow">→</span>
+    </a>
+    <a class="item" href="/blog/yazhouwanlitong-licheng-jiazhi.html">
+      <span>国泰亚洲万里通里程价值到底多少钱一英里?没有单一答案</span>
+      <span class="arrow">→</span>
+    </a>
   </div>
 </div>
 

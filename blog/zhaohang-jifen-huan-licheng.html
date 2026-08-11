@@ -23,6 +23,12 @@
   .cta a{ display:inline-block; margin-top:14px; background:var(--gold); color:var(--ink); padding:12px 28px; border-radius:4px; text-decoration:none; font-weight:600; font-family:'IBM Plex Mono',monospace; font-size:14px; }
   .cta a:hover{ opacity:0.9; }
   .disclaimer{ margin-top:32px; font-size:12px; color:var(--muted); line-height:1.7; border-top:1px solid var(--line); padding-top:20px; }
+  .reads{ margin-top: 40px; border-top: 1px solid var(--line); padding-top: 24px; }
+  .reads h2{ font-family:'IBM Plex Mono', monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.12em; color: var(--muted); margin-bottom:14px; }
+  .reads .item{ display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid rgba(244,240,230,0.06); text-decoration:none; color:var(--paper); }
+  .reads .item:hover{ color:var(--gold); }
+  .reads .item .arrow{ font-family:'IBM Plex Mono',monospace; opacity:0.5; transition:transform .2s; }
+  .reads .item:hover .arrow{ transform:translateX(4px); opacity:1; color:var(--gold); }
 </style>
 </head>
 <body>
@@ -54,6 +60,18 @@
     <div style="color:var(--muted);font-size:14px;">用计算器现算一遍</div>
     <p style="margin-top:8px;color:var(--paper);">输入当前活动给出的兑换比例,几秒钟看出转里程是不是比直接抵现划算</p>
     <a href="/">打开积分换里程计算器 →</a>
+  </div>
+
+  <div class="reads">
+    <h2>延伸阅读</h2>
+    <a class="item" href="/blog/xinyongka-jifen-zhuan-yazhouwanlitong.html">
+      <span>美国信用卡积分转国泰亚洲万里通,该用哪张卡?Chase持卡人要先看这篇</span>
+      <span class="arrow">→</span>
+    </a>
+    <a class="item" href="/blog/yazhouwanlitong-licheng-jiazhi.html">
+      <span>国泰亚洲万里通里程价值到底多少钱一英里?没有单一答案</span>
+      <span class="arrow">→</span>
+    </a>
   </div>
 
   <p class="disclaimer">本文内容截至发布日期,招商银行积分兑换活动条款会不定期调整,具体以招行信用卡中心官网当前公告为准。本文不构成金融建议,不代表招商银行官方立场。</p>
