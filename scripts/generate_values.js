@@ -2,101 +2,149 @@ const fs = require('fs');
 const path = require('path');
 
 const date = '2026-08-11';
+const exchangeRate = '约 7.00';
 
 const data = {
   'aeroplan-points': {
     title: 'Air Canada Aeroplan 里程估值与使用攻略',
     desc: '深度解析加拿大航空 Aeroplan (加航) 里程的市场估值、星空联盟最佳兑换方式以及避坑指南。',
     name: 'Air Canada Aeroplan (加航里程)',
+    shortName: 'Air Canada Aeroplan',
     intro: 'Aeroplan 是加拿大航空 (Air Canada) 的常旅客计划。作为星空联盟 (Star Alliance) 的重要成员，Aeroplan 里程以其极具竞争力的兑换图表、允许停留 (Stopover) 以及丰富的合作伙伴而闻名，是常旅客界最受欢迎的航司里程之一。',
     base: '0.10 - 0.12',
     examples: '兑换长荣航空 (EVA Air)、全日空 (ANA) 的跨洋商务舱，或在北美境内兑换美联航 (United) 的短途机票。',
     risk: 'Aeroplan 采用了混合动态定价（对自家航班动态，对伙伴航空固定）。同时，它经常面临“幽灵票”以及系统维护导致的无法出票问题。',
-    link: 'https://www.aircanada.com/ca/en/aco/home/aeroplan.html'
+    link: 'https://www.aircanada.com/ca/en/aco/home/aeroplan.html',
+    sources: [
+      { name: 'TPG Aeroplan Valuation (1.5 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' },
+      { name: 'OMAAT Aeroplan Valuation (1.5 cents/pt)', url: 'https://onemileatatime.com/guides/value-frequent-flyer-miles/' }
+    ]
   },
   'amex-membership-rewards': {
     title: 'Amex Membership Rewards (MR) 积分估值与使用攻略',
     desc: '深度解析美国运通 Amex Membership Rewards (MR) 积分的市场估值、最佳转点兑换方式以及避坑指南。',
     name: 'Amex Membership Rewards (MR)',
+    shortName: 'Amex MR',
     intro: 'Amex MR 是美国运通 (American Express) 的灵活性信用卡积分系统。它是全球最主流、获取途径最广的信用卡积分之一。MR 的核心价值在于其极度丰富的转点伙伴网络。',
     base: '0.12 - 0.14',
     examples: '转点至全日空 (ANA) 兑换中美往返商务舱，或在转点加赠期间转入英国航空 (BA Avios) 兑换短途机票。',
     risk: 'MR 积分的最大风险在于转点比例调整以及高昂的持卡年费。此外，Amex 对部分美国国内航司转点会收取 Excise Tax 附加费。',
-    link: 'https://www.americanexpress.com/en-us/rewards/membership-rewards/'
+    link: 'https://www.americanexpress.com/en-us/rewards/membership-rewards/',
+    sources: [
+      { name: 'TPG Amex MR Valuation (2.0 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' },
+      { name: 'OMAAT Amex MR Valuation (1.7 cents/pt)', url: 'https://onemileatatime.com/guides/value-frequent-flyer-miles/' }
+    ]
   },
   'avios': {
     title: 'Avios (英国航空/卡塔尔航空) 里程估值与使用攻略',
     desc: '深度解析 Avios (英航/卡航等共用里程) 的市场估值、寰宇一家最佳兑换方式以及高额税费避坑指南。',
     name: 'Avios (英航 / 卡航 / 伊比利亚)',
+    shortName: 'Avios',
     intro: 'Avios 是一种由英国航空 (BA)、卡塔尔航空 (QR)、伊比利亚航空 (IB) 和芬兰航空 (AY) 共同使用的里程货币。它们可以在这几家航司的账户间以 1:1 的比例无损互转，常被称为“短途神器”。',
     base: '0.08 - 0.10',
     examples: '兑换美国航空 (AA) 或阿拉斯加航空 (AS) 的北美短途直飞，或兑换国泰航空 (Cathay Pacific) 的亚洲区域内短途。',
     risk: 'Avios 的致命伤是极其高昂的燃油附加费 (YQ)。如果你用它兑换英航自家的长途长程商务舱，往往需要支付数千元的税费。',
-    link: 'https://www.britishairways.com/en-us/executive-club'
+    link: 'https://www.britishairways.com/en-us/executive-club',
+    sources: [
+      { name: 'TPG Avios Valuation (1.5 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' },
+      { name: 'OMAAT Avios Valuation (1.3 cents/pt)', url: 'https://onemileatatime.com/guides/value-frequent-flyer-miles/' }
+    ]
   },
   'capital-one-miles': {
     title: 'Capital One Miles (C1) 积分估值与使用攻略',
     desc: '深度解析 Capital One Miles 积分的市场估值、转点兑换技巧以及旅行报销避坑指南。',
     name: 'Capital One Miles (C1)',
+    shortName: 'Capital One Miles',
     intro: 'Capital One Miles 是第一资本银行 (Capital One) 发行的灵活信用卡积分。近年来通过不断增加 1:1 的高价值转点伙伴（如 Aeroplan, Avianca LifeMiles），它已经跃升为顶级的旅行积分货币。',
     base: '0.11 - 0.13',
     examples: '按 1:1 比例转入哥伦比亚航空 (LifeMiles) 兑换星空联盟航班，或通过 Capital One Travel Portal 以 1 point = 1 cent 的保底比例直接报销旅行花费。',
     risk: 'C1 的审批极为严格。积分体系本身相对稳定，但某些小众合作伙伴的转点比例并非 1:1，转点前必须仔细核对。',
-    link: 'https://www.capitalone.com/credit-cards/travel-and-miles/'
+    link: 'https://www.capitalone.com/credit-cards/travel-and-miles/',
+    sources: [
+      { name: 'Capital One Transfer Partners', url: 'https://www.capitalone.com/learn-grow/money-management/venture-miles-transfer-partnerships/' },
+      { name: 'TPG C1 Valuation (1.85 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' }
+    ]
   },
   'chase-ultimate-rewards': {
     title: 'Chase Ultimate Rewards (UR) 积分估值与使用攻略',
     desc: '深度解析大通银行 Chase Ultimate Rewards (UR) 积分的市场估值、最佳转点兑换方式以及避坑指南。',
     name: 'Chase Ultimate Rewards (UR)',
+    shortName: 'Chase UR',
     intro: 'Chase UR 是大通银行 (JPMorgan Chase) 的灵活信用卡积分。由于其极高的稳定性和凯悦酒店 (Hyatt) 这个独家 1:1 强势转点伙伴，UR 被许多常旅客玩家视为最有价值的银行积分。',
     base: '0.13 - 0.15',
     examples: '1:1 转入 World of Hyatt 兑换高端奢华酒店，或转入美联航 (United Airlines) 兑换星空联盟网络。',
     risk: 'Chase 有严格的 5/24 批卡规则。虽然 UR 极少贬值，但其合作伙伴（如 Hyatt 的旺季定价、United 的动态定价）的持续贬值会间接影响 UR 的购买力。',
-    link: 'https://ultimaterewardspoints.chase.com/'
+    link: 'https://ultimaterewardspoints.chase.com/',
+    sources: [
+      { name: 'TPG Chase UR Valuation (2.05 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' },
+      { name: 'OMAAT Chase UR Valuation (1.7 cents/pt)', url: 'https://onemileatatime.com/guides/value-frequent-flyer-miles/' }
+    ]
   },
   'citi-thankyou-points': {
     title: 'Citi ThankYou Points (TYP) 积分估值与使用攻略',
     desc: '深度解析花旗银行 Citi ThankYou Points (TYP) 积分的市场估值、最佳转点兑换方式以及长荣航空兑换指南。',
     name: 'Citi ThankYou Points (TYP)',
+    shortName: 'Citi TYP',
     intro: 'Citi TYP 是花旗银行 (Citibank) 的灵活信用卡积分。虽然其国内航班合作伙伴不如 Chase 和 Amex 强势，但 TYP 在兑换长荣航空 (EVA Air) 和土耳其航空 (Turkish Airlines) 时具有独特优势。',
     base: '0.11 - 0.13',
     examples: '1:1 转入长荣航空 (Infinity MileageLands) 兑换中美跨洋商务舱，或转入哥伦比亚航空 (LifeMiles)。',
     risk: '花旗的 IT 系统经常被用户诟病，且 TYP 取消了原有的机票直接按 1.25 cents 抵扣的保底福利，现在必须依赖转点才能用出高价值。',
-    link: 'https://www.thankyou.com/'
+    link: 'https://www.thankyou.com/',
+    sources: [
+      { name: 'TPG Citi TYP Valuation (1.8 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' },
+      { name: 'OMAAT Citi TYP Valuation (1.7 cents/pt)', url: 'https://onemileatatime.com/guides/value-frequent-flyer-miles/' }
+    ]
   },
   'hilton-points': {
     title: 'Hilton Honors (希尔顿荣誉客会) 积分估值与使用攻略',
     desc: '深度解析希尔顿酒店 Hilton Honors 积分的市场估值、第五晚免费权益以及兑换避坑指南。',
     name: 'Hilton Honors (希尔顿荣誉客会)',
+    shortName: 'Hilton Honors',
     intro: 'Hilton Honors 是希尔顿酒店集团的常客计划。希尔顿积分以获取极度容易（动辄十几万分的开卡奖励、极高的入住回血比例）而闻名，但也因此单点价值极低，常被戏称为“冥币”。',
     base: '0.03 - 0.04',
     examples: '兑换极高端奢华度假村（如马尔代夫康莱德），或在节假日极端高价期间兑换基础房型。利用“积分兑换连住 5 晚免收第 5 晚积分” (Fifth Night Free) 权益。',
     risk: '希尔顿早已全面实行动态定价，彻底取消了等级图表 (Award Chart)。普通日期的积分房价值通常被死死锁在极低的水平，极难用出超额价值。',
-    link: 'https://www.hilton.com/en/hilton-honors/'
+    link: 'https://www.hilton.com/en/hilton-honors/',
+    sources: [
+      { name: 'TPG Hilton Valuation (0.6 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' },
+      { name: 'OMAAT Hilton Valuation (0.4 cents/pt)', url: 'https://onemileatatime.com/guides/value-frequent-flyer-miles/' }
+    ]
   },
   'hyatt-points': {
     title: 'World of Hyatt (凯悦天地) 积分估值与使用攻略',
     desc: '深度解析凯悦酒店 World of Hyatt 积分的市场估值、淡旺季图表以及最佳兑换方式。',
     name: 'World of Hyatt (凯悦天地)',
+    shortName: 'World of Hyatt',
     intro: 'World of Hyatt 是凯悦酒店集团的常客计划。在各大酒店集团纷纷走向彻底动态定价的今天，凯悦是唯一一家仍然保留固定兑换图表（含淡旺季）的主流集团。这使得其积分价值傲视群雄。',
     base: '0.12 - 0.15',
     examples: '兑换 Category 1 的大车店极具性价比，或者用于兑换柏悦 (Park Hyatt)、阿丽拉 (Alila) 等顶级奢华酒店的旺季基础房。',
     risk: '凯悦每年会进行等级调整 (Category Adjustment)，将热门酒店升级（变相贬值）。此外，很多热门度假村经常在积分房上玩猫腻，人为锁房导致“有现金房但无法用积分兑换”。',
-    link: 'https://world.hyatt.com/'
+    link: 'https://world.hyatt.com/',
+    sources: [
+      { name: 'TPG Hyatt Valuation (1.7 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' },
+      { name: 'OMAAT Hyatt Valuation (1.5 cents/pt)', url: 'https://onemileatatime.com/guides/value-frequent-flyer-miles/' }
+    ]
   },
   'marriott-points': {
     title: 'Marriott Bonvoy (万豪旅享家) 积分估值与使用攻略',
     desc: '深度解析万豪酒店 Marriott Bonvoy 积分的市场估值、动态定价后的影响以及住五免一权益。',
     name: 'Marriott Bonvoy (万豪旅享家)',
+    shortName: 'Marriott Bonvoy',
     intro: 'Marriott Bonvoy 是全球最大酒店集团万豪国际的常客计划。万豪拥有最广泛的全球分布，但其积分体系近年来经历了剧烈的贬值和全面动态化。',
     base: '0.05 - 0.06',
     examples: '在特别昂贵的跨年、节日期间兑换热门景区的酒店，或兑换马尔代夫、波拉波拉等海岛的顶级奢华酒店。同样支持“住五免一” (Stay for 5, Pay for 4)。',
     risk: '万豪已经彻底放弃了固定的兑换图表，实行全面动态定价。绝大多数时候，积分兑换价值被严格锚定在现金价的固定折扣范围内，很难再找到过去那种极具爆发力的兑换亮点。',
-    link: 'https://www.marriott.com/loyalty.mi'
+    link: 'https://www.marriott.com/loyalty.mi',
+    sources: [
+      { name: 'TPG Marriott Valuation (0.84 cents/pt)', url: 'https://thepointsguy.com/guide/monthly-valuations/' },
+      { name: 'OMAAT Marriott Valuation (0.7 cents/pt)', url: 'https://onemileatatime.com/guides/value-frequent-flyer-miles/' }
+    ]
   }
 };
 
-const template = (id, meta) => `---
+const template = (id, meta) => {
+  const sourcesHtml = meta.sources.map(s => `<li><a href="${s.url}" target="_blank" rel="noopener">${s.name}</a></li>`).join('\\n  ');
+  return `---
 layout: base.njk
 title: ${meta.title}
 description: ${meta.desc}
@@ -105,7 +153,7 @@ eyebrow: 里程账 · 估值分析
 breadcrumbs:
   - name: 积分估值
     url: /values/
-  - name: ${meta.name.split(' ')[0]}
+  - name: ${meta.shortName}
 ---
 <h1>${meta.title}</h1>
 <p class="lead">${meta.intro}</p>
@@ -115,7 +163,7 @@ breadcrumbs:
 
 <h2>当前市场参考估值 (CPP)</h2>
 <div class="callout">
-  <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了主流英文媒体（如 TPG, OMAAT）的行业共识以及大量真实玩家的兑换经验，仅供你在做出决策时作为基准参考。
+  <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了英文媒体与常旅客圈的行业共识（美元原值按汇率 ${exchangeRate} 概算为人民币），仅供参考。
 </div>
 <p>在业界普遍共识中，${meta.name} 的基准估值约为 <strong>${meta.base} 元/点</strong>。</p>
 <p>你在实际使用中，价值（CPP, Cents Per Point）会呈现明显的两极分化：</p>
@@ -149,12 +197,15 @@ breadcrumbs:
   <li><strong>转点单向性与延迟</strong>：如果这是信用卡积分，一旦转入航司或酒店，就<strong>永远无法退回银行</strong>。必须在确认真的有票且能定上的情况下再执行转点。转点前可以使用我们的 <a href="/calculators/transfer-bonus/">转点加赠计算器</a> 避免转错零头。</li>
 </ul>
 
-<h2>官方资源与最后更新</h2>
+<h2>官方规则与参考来源</h2>
 <ul>
-  <li><strong>官方网站</strong>：<a href="${meta.link}" target="_blank" rel="nofollow noopener">${meta.name} 官方页面</a></li>
+  <li><strong>官方网站</strong>：<a href="${meta.link}" target="_blank" rel="noopener">${meta.name} 官方页面</a></li>
+  ${sourcesHtml}
+  <li><strong>数据汇率折算</strong>：按美元基准参考价估算，当前参考汇率 ${exchangeRate}</li>
   <li><strong>最后审核日期</strong>：${date}</li>
 </ul>
 `;
+};
 
 Object.entries(data).forEach(([id, meta]) => {
   const filepath = path.join(__dirname, '../src/values/', id + '.md');

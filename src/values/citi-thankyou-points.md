@@ -7,7 +7,7 @@ eyebrow: 里程账 · 估值分析
 breadcrumbs:
   - name: 积分估值
     url: /values/
-  - name: Citi
+  - name: Citi TYP
 ---
 <h1>Citi ThankYou Points (TYP) 积分估值与使用攻略</h1>
 <p class="lead">Citi TYP 是花旗银行 (Citibank) 的灵活信用卡积分。虽然其国内航班合作伙伴不如 Chase 和 Amex 强势，但 TYP 在兑换长荣航空 (EVA Air) 和土耳其航空 (Turkish Airlines) 时具有独特优势。</p>
@@ -17,7 +17,7 @@ breadcrumbs:
 
 <h2>当前市场参考估值 (CPP)</h2>
 <div class="callout">
-  <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了主流英文媒体（如 TPG, OMAAT）的行业共识以及大量真实玩家的兑换经验，仅供你在做出决策时作为基准参考。
+  <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了英文媒体与常旅客圈的行业共识（美元原值按汇率 约 7.00 概算为人民币），仅供参考。
 </div>
 <p>在业界普遍共识中，Citi ThankYou Points (TYP) 的基准估值约为 <strong>0.11 - 0.13 元/点</strong>。</p>
 <p>你在实际使用中，价值（CPP, Cents Per Point）会呈现明显的两极分化：</p>
@@ -51,8 +51,10 @@ breadcrumbs:
   <li><strong>转点单向性与延迟</strong>：如果这是信用卡积分，一旦转入航司或酒店，就<strong>永远无法退回银行</strong>。必须在确认真的有票且能定上的情况下再执行转点。转点前可以使用我们的 <a href="/calculators/transfer-bonus/">转点加赠计算器</a> 避免转错零头。</li>
 </ul>
 
-<h2>官方资源与最后更新</h2>
+<h2>官方规则与参考来源</h2>
 <ul>
-  <li><strong>官方网站</strong>：<a href="https://www.thankyou.com/" target="_blank" rel="nofollow noopener">Citi ThankYou Points (TYP) 官方页面</a></li>
+  <li><strong>官方网站</strong>：<a href="https://www.thankyou.com/" target="_blank" rel="noopener">Citi ThankYou Points (TYP) 官方页面</a></li>
+  <li><a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">TPG Citi TYP Valuation (1.8 cents/pt)</a></li>\n  <li><a href="https://onemileatatime.com/guides/value-frequent-flyer-miles/" target="_blank" rel="noopener">OMAAT Citi TYP Valuation (1.7 cents/pt)</a></li>
+  <li><strong>数据汇率折算</strong>：按美元基准参考价估算，当前参考汇率 约 7.00</li>
   <li><strong>最后审核日期</strong>：2026-08-11</li>
 </ul>

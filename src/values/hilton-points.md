@@ -7,7 +7,7 @@ eyebrow: 里程账 · 估值分析
 breadcrumbs:
   - name: 积分估值
     url: /values/
-  - name: Hilton
+  - name: Hilton Honors
 ---
 <h1>Hilton Honors (希尔顿荣誉客会) 积分估值与使用攻略</h1>
 <p class="lead">Hilton Honors 是希尔顿酒店集团的常客计划。希尔顿积分以获取极度容易（动辄十几万分的开卡奖励、极高的入住回血比例）而闻名，但也因此单点价值极低，常被戏称为“冥币”。</p>
@@ -17,7 +17,7 @@ breadcrumbs:
 
 <h2>当前市场参考估值 (CPP)</h2>
 <div class="callout">
-  <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了主流英文媒体（如 TPG, OMAAT）的行业共识以及大量真实玩家的兑换经验，仅供你在做出决策时作为基准参考。
+  <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了英文媒体与常旅客圈的行业共识（美元原值按汇率 约 7.00 概算为人民币），仅供参考。
 </div>
 <p>在业界普遍共识中，Hilton Honors (希尔顿荣誉客会) 的基准估值约为 <strong>0.03 - 0.04 元/点</strong>。</p>
 <p>你在实际使用中，价值（CPP, Cents Per Point）会呈现明显的两极分化：</p>
@@ -51,8 +51,10 @@ breadcrumbs:
   <li><strong>转点单向性与延迟</strong>：如果这是信用卡积分，一旦转入航司或酒店，就<strong>永远无法退回银行</strong>。必须在确认真的有票且能定上的情况下再执行转点。转点前可以使用我们的 <a href="/calculators/transfer-bonus/">转点加赠计算器</a> 避免转错零头。</li>
 </ul>
 
-<h2>官方资源与最后更新</h2>
+<h2>官方规则与参考来源</h2>
 <ul>
-  <li><strong>官方网站</strong>：<a href="https://www.hilton.com/en/hilton-honors/" target="_blank" rel="nofollow noopener">Hilton Honors (希尔顿荣誉客会) 官方页面</a></li>
+  <li><strong>官方网站</strong>：<a href="https://www.hilton.com/en/hilton-honors/" target="_blank" rel="noopener">Hilton Honors (希尔顿荣誉客会) 官方页面</a></li>
+  <li><a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">TPG Hilton Valuation (0.6 cents/pt)</a></li>\n  <li><a href="https://onemileatatime.com/guides/value-frequent-flyer-miles/" target="_blank" rel="noopener">OMAAT Hilton Valuation (0.4 cents/pt)</a></li>
+  <li><strong>数据汇率折算</strong>：按美元基准参考价估算，当前参考汇率 约 7.00</li>
   <li><strong>最后审核日期</strong>：2026-08-11</li>
 </ul>
