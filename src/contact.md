@@ -17,7 +17,7 @@ eyebrow: 里程账 · 联系
     <li>请<strong>不要</strong>在邮件中附带你的信用卡号、常客账户密码等任何敏感个人信息！</li>
   </ul>
   
-  <p style="margin-top:20px;">由于目前防垃圾邮件策略限制，我们暂未公开明文邮箱地址。如果你发现计算器存在严重 Bug，可以直接在我们的 <a href="https://github.com/heme9999/points-miles-calculator" target="_blank" rel="nofollow noopener">GitHub 仓库</a> 提交 Issue。</p>
+  <p style="margin-top:20px;">由于目前防垃圾邮件策略限制，我们暂未公开明文邮箱地址。请通过我们的社交媒体账号私信反馈。</p>
 </div>
 
 </div>
