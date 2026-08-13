@@ -73,7 +73,7 @@ breadcrumbs:
   </div>
 </div>
 
-{% set customJs %}
+<script>
   const $ = id => document.getElementById(id);
 
   function calcAdv(){
@@ -140,4 +140,4 @@ breadcrumbs:
     if($(id)) $(id).addEventListener('input', calcAdv);
   });
   if($('cashPrice')) calcAdv();
-{% endset %}
+</script>

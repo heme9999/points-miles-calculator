@@ -47,7 +47,7 @@ breadcrumbs:
   <strong>提示：</strong> 积分不像现金能够稳定保值。各大航司和酒店几乎每年都会进行不同程度的“贬值”（调高兑换门槛）。因此我们强烈建议“Earn and Burn”——赚了就赶紧花，不要囤积积分。
 </div>
 
-{% set customJs %}
+<script>
   const $ = id => document.getElementById(id);
   function calcDollars(){
     const P = parseFloat($('totalPoints').value) || 0;
@@ -69,4 +69,4 @@ breadcrumbs:
     if($(id)) $(id).addEventListener('input', calcDollars);
   });
   if($('totalPoints')) calcDollars();
-{% endset %}
+</script>

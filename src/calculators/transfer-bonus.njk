@@ -50,7 +50,7 @@ breadcrumbs:
   </div>
 </div>
 
-{% set customJs %}
+<script>
   const $ = id => document.getElementById(id);
   function calcBonus(){
     const target = parseFloat($('targetMiles').value) || 0;
@@ -88,4 +88,4 @@ breadcrumbs:
     if($(id)) $(id).addEventListener('input', calcBonus);
   });
   if($('targetMiles')) calcBonus();
-{% endset %}
+</script>

@@ -82,7 +82,7 @@ eyebrow: 里程账 · 工具 01
   </a>
 </div>
 
-{% set customJs %}
+<script>
   const $ = id => document.getElementById(id);
   const fmt = n => '¥' + n.toLocaleString('zh-CN', {maximumFractionDigits: 0});
 
@@ -135,4 +135,4 @@ eyebrow: 里程账 · 工具 01
     if($(id)) $(id).addEventListener('input', calc);
   });
   if($('points')) calc();
-{% endset %}
+</script>

@@ -45,7 +45,7 @@ breadcrumbs:
   </div>
 </div>
 
-{% set customJs %}
+<script>
   const $ = id => document.getElementById(id);
   function calcCpp(){
     const C = parseFloat($('cashPrice').value) || 0;
@@ -75,4 +75,4 @@ breadcrumbs:
     if($(id)) $(id).addEventListener('input', calcCpp);
   });
   if($('cashPrice')) calcCpp();
-{% endset %}
+</script>
