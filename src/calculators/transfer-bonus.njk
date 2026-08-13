@@ -1,73 +1,101 @@
 ---
 layout: base.njk
-title: 积分转点加赠计算器
-description: 银行常有转点加赠活动 (Transfer Bonus)，帮你快速算出需要从信用卡扣除多少积分才能刚好凑够兑换所需的里程。
+title: 积分转点加赠计算器 (Transfer Bonus) | 避免转错零头
+description: 信用卡积分转航空里程遇到加赠活动（如赠送 30%）时，帮你快速计算出准确的转点数量，避免产生用不掉的里程零头。
+schemaType: WebApplication
 eyebrow: 里程账 · 工具 04
 breadcrumbs:
   - name: 计算器
     url: /calculators/
   - name: 转点加赠计算器
 ---
-<h1>积分转点加赠计算器</h1>
-<p class="sub">遇到例如“Amex 转 BA 额外赠送 30%”的活动时，手动算往往会产生零头。这个工具能帮你算出需要转多少基础分才能完美凑齐你需要的总里程，避免点数浪费。</p>
+<h1>积分转点加赠计算器 (Transfer Bonus)</h1>
+<p class="sub">遇到例如“Amex 转 BA 额外赠送 30%”的活动时，手动算往往会产生零头。本工具能自动计算出为了凑齐目标里程，你实际应该从信用卡转出多少整数积分。</p>
 
 <div class="panel">
   <div class="field">
-    <label>兑换机票所需的总里程数<span class="hint">英里/点</span></label>
-    <input type="number" id="targetMiles" value="50000" min="1">
+    <label for="targetMiles">兑换机票所需的总里程数<span class="hint" id="hintTarget">英里/点</span></label>
+    <input type="number" id="targetMiles" value="50000" min="1" step="1" inputmode="numeric" aria-describedby="hintTarget">
   </div>
   
   <div class="row">
     <div class="field">
-      <label>常驻基础兑换比例<span class="hint">信用卡积分 : 航司里程</span></label>
-      <input type="number" id="baseRatio" value="1" min="0.1" step="0.1">
+      <label for="baseRatio">常驻基础兑换比例<span class="hint" id="hintBase">信用卡积分 : 航司里程</span></label>
+      <input type="number" id="baseRatio" value="1" min="0.1" step="0.1" inputmode="decimal" aria-describedby="hintBase unitBase">
+      <div class="unit" id="unitBase">例：1:1 填 1，5:4 (如 Amex转国泰) 填 0.8</div>
     </div>
     <div class="field">
-      <label>限时加赠比例<span class="hint">%</span></label>
-      <input type="number" id="bonusPercent" value="30" min="1">
+      <label for="bonusPercent">限时加赠比例<span class="hint" id="hintBonus">%</span></label>
+      <input type="number" id="bonusPercent" value="30" min="0" step="1" inputmode="numeric" aria-describedby="hintBonus">
     </div>
   </div>
   
   <div class="field" style="margin-top:24px;">
-    <label>积分转点递增限制<span class="hint">点 (例: 每次只能按 1000 的倍数转)</span></label>
-    <input type="number" id="increment" value="1000" min="1">
+    <label for="increment">积分转点递增限制<span class="hint" id="hintIncrement">点</span></label>
+    <input type="number" id="increment" value="1000" min="1" step="1" inputmode="numeric" aria-describedby="hintIncrement unitIncrement">
+    <div class="unit" id="unitIncrement">绝大多数银行要求每次必须以 1,000 为单位转点</div>
   </div>
 </div>
 
-<div class="ticket">
+<div class="ticket" aria-live="polite">
   <div class="main">
     <div class="compare">
       <div class="item">
         <div class="k">理论需要转出基础分</div>
-        <div class="v" id="rawPoints">0</div>
+        <div class="v" id="rawPoints" style="word-break: break-word; overflow-wrap: anywhere;">0</div>
       </div>
       <div class="item">
-        <div class="k">考虑到倍数限制，实际需要转出</div>
-        <div class="v win" id="actualPoints">0</div>
+        <div class="k">结合倍数限制，实际需要转出</div>
+        <div class="v" id="actualPoints" style="word-break: break-word; overflow-wrap: anywhere;">0</div>
       </div>
     </div>
     <div class="note" id="explain"></div>
   </div>
 </div>
 
+<div class="article-content" style="margin-top: 40px;">
+  <h2>转点加赠 (Transfer Bonus) 是什么？</h2>
+  <p>为了刺激用户使用积分，主流银行（如 <a href="/values/amex-membership-rewards/">Amex MR</a>、<a href="/values/chase-ultimate-rewards/">Chase UR</a>、<a href="/values/citi-thankyou-points/">Citi TYP</a>）经常会联合特定的航空公司或酒店集团，推出“转点加赠”活动。常见的加赠幅度在 15% 到 40% 之间。</p>
+  <p>例如，平时 1,000 信用卡积分只能转 1,000 航空里程。如果在 30% Bonus 期间转点，同样的 1,000 积分就能得到 1,300 里程，相当于所有奖励机票打了七六折。</p>
+
+  <h3>计算器解决的核心痛点</h3>
+  <p>虽然加赠看起来很美好，但银行转点系统通常有两个硬性限制：</p>
+  <ul>
+    <li><strong>必须是 1000 的倍数</strong>：你不能转 1,234 分，只能转 1,000 或 2,000 分。</li>
+    <li><strong>无法精确匹配</strong>：假设你需要 50,000 里程出票，遇到 30% 加赠。50,000 ÷ 1.3 ≈ 38,461。因为必须是 1,000 的倍数，你必须向上取整转 39,000 积分。</li>
+  </ul>
+  <p>本计算器会自动帮你计算基础比例、加赠比例以及倍数限制下的“向上取整”数字，并告诉你最终到账后，比你的目标要求多了多少“零头里程”。</p>
+
+  <h2>转点加赠的常见误区</h2>
+  <ol>
+    <li><strong>不要为了加赠而盲目囤积 (Speculative Transfers)</strong><br>
+    很多新手看到 30% 加赠就忍不住把银行积分全转到航司。但航空里程会贬值，且使用受航线和舱位限制。一旦转入航司，积分就<strong>再也退不回银行了</strong>。正确的做法是：只有在你确认有票且近期准备出行时，才利用加赠转点。</li>
+    <li><strong>注意基础兑换比例是否为 1:1</strong><br>
+    大部分美卡转点是 1:1。但有些情况例外，例如 Capital One Miles 转部分小众常客计划可能是 2:1 或 4:3。在使用本计算器时，请确认常驻比例并填入正确的数字（如 5:4 请填写 0.8）。</li>
+    <li><strong>警惕幽灵票和转点延迟</strong><br>
+    部分航司（如 ANA、Singapore Airlines）的转点可能需要 24-48 小时才能到账。在转点期间，你看好的里程票可能被别人抢走。你可以使用我们的 <a href="/calculators/cents-per-point/">CPP 计算器</a> 快速判断备选航班是否依然值得。</li>
+  </ol>
+</div>
+
 <script>
   const $ = id => document.getElementById(id);
   function calcBonus(){
-    const target = parseFloat($('targetMiles').value) || 0;
-    const baseRatio = parseFloat($('baseRatio').value) || 1;
-    const bonus = parseFloat($('bonusPercent').value) || 0;
-    const increment = parseFloat($('increment').value) || 1;
+    let target = parseFloat($('targetMiles').value) || 0;
+    let baseRatio = parseFloat($('baseRatio').value) || 0;
+    let bonus = parseFloat($('bonusPercent').value) || 0;
+    let increment = parseFloat($('increment').value) || 0;
     
-    if(target === 0) return;
-    
-    // Total multiplier = baseRatio * (1 + bonus/100)
-    // Actually, if it's 1:1, ratio is 1. If 5:4 (1.25), means 1 point = 0.8 miles. 
-    // Let's assume ratio means: 1 CC point = X miles. 
-    // (Wait, the user usually inputs 1:1 as 1, Amex to Cathay as 5 points = 4 miles, meaning 0.8. Let's assume the field is "Miles per Point").
-    // Let's update the label implicitly: baseRatio is how many miles you get per 1 point without bonus.
-    
-    // Wait, the label says "信用卡积分 : 航司里程" which usually implies X : Y.
-    // Let's treat baseRatio as Y / X. e.g. 1 means 1:1. 0.8 means 5:4.
+    const resetState = (msg = '请输入有效的数值。') => {
+      $('rawPoints').textContent = '-';
+      $('actualPoints').textContent = '-';
+      $('explain').textContent = msg;
+      $('actualPoints').classList.remove('win');
+    };
+
+    if(target <= 0 || baseRatio <= 0 || bonus < 0 || increment <= 0) {
+      resetState(target <= 0 ? '请输入兑换机票所需的总里程数。' : '参数输入非法，请检查是否有负数或零。');
+      return;
+    }
     
     const multiplier = baseRatio * (1 + bonus/100);
     const rawPoints = target / multiplier;
@@ -77,15 +105,15 @@ breadcrumbs:
     
     $('rawPoints').textContent = rawPoints.toLocaleString('zh-CN', {maximumFractionDigits:1});
     $('actualPoints').textContent = actualPoints.toLocaleString('zh-CN', {maximumFractionDigits:0});
+    $('actualPoints').classList.add('win');
     
     const finalMiles = actualPoints * multiplier;
     const leftover = finalMiles - target;
     
-    $('explain').textContent = `你需要从银行转出 ${actualPoints.toLocaleString()} 积分，加上 ${bonus}% 加赠后，将得到 ${finalMiles.toLocaleString()} 里程，比你目标所需的刚好超出了 ${leftover.toLocaleString()} 里程。`;
+    $('explain').textContent = `你需要从银行转出 ${actualPoints.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分，加上 ${bonus}% 加赠后，将得到 ${finalMiles.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里程，比你目标所需的刚好超出了 ${leftover.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里程。`;
   }
 
   ['targetMiles','baseRatio','bonusPercent','increment'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcBonus);
   });
-  if($('targetMiles')) calcBonus();
 </script>

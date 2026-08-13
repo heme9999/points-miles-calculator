@@ -1,7 +1,8 @@
 ---
 layout: base.njk
-title: CPP 计算器 (Cents Per Point)
-description: Cents per Point 是衡量里程价值的核心指标，这里帮你快速计算出一张票的 CPP，看看你是否做到了“超值兑换”。
+title: CPP 计算器 (Cents Per Point) | 里程票真实价值测算
+description: Cents per Point 是衡量里程价值的核心指标，免费提供在线 CPP 计算器，自动扣除税费，帮你快速算出航班兑换的每点价值，看看是否做到“超值兑换”。
+schemaType: WebApplication
 eyebrow: 里程账 · 工具 03
 breadcrumbs:
   - name: 计算器
@@ -13,59 +14,102 @@ breadcrumbs:
 
 <div class="panel">
   <div class="field">
-    <label>该航班的现金原价<span class="hint">元</span></label>
-    <input type="number" id="cashPrice" value="3000" min="0">
+    <label for="cashPrice">该航班的现金原价<span class="hint" id="hintCash">元</span></label>
+    <input type="number" id="cashPrice" value="3000" min="0" step="1" inputmode="decimal" aria-describedby="hintCash">
   </div>
   
   <div class="row">
     <div class="field">
-      <label>该航班的奖励票税费<span class="hint">元</span></label>
-      <input type="number" id="awardTaxes" value="400" min="0">
+      <label for="awardTaxes">该航班的奖励票税费<span class="hint" id="hintTaxes">元</span></label>
+      <input type="number" id="awardTaxes" value="400" min="0" step="1" inputmode="decimal" aria-describedby="hintTaxes">
     </div>
     <div class="field">
-      <label>兑换所需总积分/里程<span class="hint">点</span></label>
-      <input type="number" id="pointsNeeded" value="15000" min="1">
+      <label for="pointsNeeded">兑换所需总积分/里程<span class="hint" id="hintPoints">点</span></label>
+      <input type="number" id="pointsNeeded" value="15000" min="1" step="1" inputmode="numeric" aria-describedby="hintPoints">
     </div>
   </div>
 </div>
 
-<div class="ticket">
+<div class="ticket" aria-live="polite">
   <div class="main">
     <div class="compare">
       <div class="item">
         <div class="k">实际省下的现金</div>
-        <div class="v" id="savedCash">¥0</div>
+        <div class="v" id="savedCash" style="word-break: break-word; overflow-wrap: anywhere;">¥0</div>
       </div>
       <div class="item">
         <div class="k">每点价值 (CPP)</div>
-        <div class="v win" id="cppResult">¥0.000</div>
+        <div class="v" id="cppResult" style="word-break: break-word; overflow-wrap: anywhere;">¥0.0000 / 点</div>
       </div>
     </div>
     <div class="note" id="explain"></div>
   </div>
 </div>
 
+<div class="article-content" style="margin-top: 40px;">
+  <h2>什么是 CPP (Cents Per Point)？</h2>
+  <p><strong>CPP (Cents Per Point)</strong>，即“每点积分或里程的货币价值”，是常旅客界用来衡量积分兑换是否划算的最核心指标。当我们在讨论某个常客计划（如 <a href="/values/chase-ultimate-rewards/">Chase UR</a> 或 <a href="/values/avios/">英国航空 Avios</a>）好不好用时，通常就是看它能用出多高的 CPP。</p>
+
+  <h3>CPP 计算公式</h3>
+  <p>基础的 CPP 计算公式为：</p>
+  <blockquote>
+    <p><strong>CPP = (机票现金价格 - 奖励票所需税费) ÷ 兑换所需的里程数量</strong></p>
+  </blockquote>
+  <p>在这个计算器中，我们已经自动为你扣除了税费，得出了你“真实省下的现金”，然后再除以积分数量。</p>
+
+  <h2>如何解读你的计算结果？</h2>
+  <ul>
+    <li><strong>负数或极低 (< 0.05 元/点)</strong>：这绝对是一个糟糕的兑换。说明你交的燃油税甚至比直接买机票还贵，或者你把宝贵的积分用来兑换了低价值的商品（如换微波炉、抵扣年费）。</li>
+    <li><strong>及格线水平 (~0.1 元/点)</strong>：这通常是银行积分直接按 1:1 抵现的底线价值。如果你算出来是这个数字，说明“不亏”，但也谈不上“赚”。</li>
+    <li><strong>优秀兑换 (> 0.15 元/点)</strong>：这通常发生在用航司里程兑换跨国航班或旺季票时。</li>
+    <li><strong>神级兑换 (> 0.25 元/点)</strong>：通常只有通过转点换取国际航班的<strong>头等舱或公务舱</strong>才能达到这个数字。因为两舱的现金票价极高，而里程需求并没有成比例增加。</li>
+  </ul>
+
+  <h2>使用 CPP 时常见的计算误区</h2>
+  <p>很多新手为了追求高 CPP，容易陷入“自欺欺人”的陷阱：</p>
+  <ol>
+    <li><strong>用虚高的全价票计算</strong>：如果你查到一张头等舱标价 10万 人民币，用 10万 里程换了，算出来 CPP 高达 1 元/点。但如果你现实中绝对不会花 10万 去买这张票，这个 CPP 就没有任何参考意义。正确的做法是，用你“真实愿意掏出的现金价格”来计算。</li>
+    <li><strong>忽略隐性成本</strong>：如果你想进行更严谨的测算，比如要把“买现金票本来能累积的回血积分”也算作成本扣除，建议使用我们的 <a href="/calculators/points-vs-cash/">高级积分 vs 现金计算器</a>。</li>
+  </ol>
+</div>
+
 <script>
   const $ = id => document.getElementById(id);
   function calcCpp(){
-    const C = parseFloat($('cashPrice').value) || 0;
-    const T = parseFloat($('awardTaxes').value) || 0;
-    const P = parseFloat($('pointsNeeded').value) || 0;
+    let C = parseFloat($('cashPrice').value) || 0;
+    let T = parseFloat($('awardTaxes').value) || 0;
+    let P = parseFloat($('pointsNeeded').value) || 0;
     
-    if(P === 0) return;
+    const resetState = (msg = '请输入有效的数值。') => {
+      $('savedCash').textContent = '-';
+      $('cppResult').textContent = '-';
+      $('explain').textContent = msg;
+      $('cppResult').classList.remove('win', 'bad');
+    };
+
+    if (P <= 0 || C < 0 || T < 0) {
+      resetState(P <= 0 ? '请输入里程票所需积分数量。' : '输入不能为负数。');
+      return;
+    }
+    
     const saved = C - T;
     const cpp = saved / P;
     
-    $('savedCash').textContent = '¥' + saved.toFixed(0);
+    $('savedCash').textContent = '¥' + saved.toLocaleString('zh-CN', {maximumFractionDigits:0});
     $('cppResult').textContent = '¥' + cpp.toFixed(4) + ' /点';
     
     const explain = $('explain');
-    if(cpp < 0){
+    $('cppResult').classList.remove('win', 'bad');
+
+    if(saved < 0){
       explain.textContent = '警告：倒贴钱！不仅没省钱，你交的税费比直接买机票还贵。';
+      $('cppResult').classList.add('bad');
     } else if(cpp < 0.05) {
       explain.textContent = 'CPP 极低。这通常说明你用在了非航司兑换上（例如换微波炉或者极差的经济舱短途），建议直接花现金。';
+      $('cppResult').classList.add('bad');
     } else if(cpp > 0.2) {
       explain.textContent = '顶级兑换！这个 CPP 已经处于极高水平，通常只有在兑换热门日期的稀缺两舱（头等舱/商务舱）时才能达到。';
+      $('cppResult').classList.add('win');
     } else {
       explain.textContent = '表现不错，处于正常合理区间内，只要航线适合你，就可以果断兑换。';
     }
@@ -74,5 +118,4 @@ breadcrumbs:
   ['cashPrice','awardTaxes','pointsNeeded'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcCpp);
   });
-  if($('cashPrice')) calcCpp();
 </script>
