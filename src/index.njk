@@ -1,0 +1,138 @@
+---
+layout: base.njk
+title: 积分与里程兑换决策工具站
+description: 里程账提供专业的信用卡积分换里程计算器，帮助你对比积分抵现和兑换机票的实际价值，避免被低效兑换反撸。
+schemaType: WebApplication
+eyebrow: 里程账 · 工具 01
+---
+<h1>信用卡积分换里程,值不值?</h1>
+<p class="sub">输入你的积分数量和银行给出的兑换条款,和直接抵扣现金比较一下,看看转成航司里程是不是划算。</p>
+
+<div class="panel">
+  <div class="field">
+    <label>你有多少积分<span class="hint">POINTS</span></label>
+    <input type="number" id="points" value="100000" min="0" step="1000">
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>现金/抵扣比例<span class="hint">积分 : 元</span></label>
+      <input type="number" id="cashRatio" value="100" min="1">
+      <div class="unit">例:输入100,代表100积分抵1元</div>
+    </div>
+    <div class="field">
+      <label>转里程比例<span class="hint">积分 : 英里</span></label>
+      <input type="number" id="milesRatio" value="3" min="0.1" step="0.1">
+      <div class="unit">例:输入3,代表3积分换1英里</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>你打算兑换的航司/联盟里程价值<span class="hint">元 / 英里</span></label>
+    <select id="programPreset">
+      <option value="custom">自定义(手动输入)</option>
+      <option value="0.15">Chase Ultimate Rewards · TPG估值约0.15元/点(2026-05)</option>
+      <option value="0.35">经济舱短途参考 · 约0.35元/英里</option>
+      <option value="0.6">经济舱长途参考 · 约0.6元/英里</option>
+      <option value="1.2">公务舱长途参考 · 约1.2元/英里</option>
+      <option value="2.0">头等舱/稀缺舱位参考 · 约2.0元/英里</option>
+    </select>
+    <input type="number" id="mileValue" value="0.6" min="0.01" step="0.01" style="margin-top:10px;">
+    <div class="unit">这是区间参考值,具体以你实际查到的航班报价换算为准</div>
+  </div>
+</div>
+
+<div class="ticket">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">直接抵扣现金</div>
+        <div class="v" id="cashOut">¥0</div>
+      </div>
+      <div class="item">
+        <div class="k">转里程后估值</div>
+        <div class="v" id="milesOut">¥0</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">结论</div>
+      <div class="verdict" id="verdictText">—</div>
+    </div>
+    <div class="code" id="verdictCode">RATIO —</div>
+  </div>
+</div>
+
+<div class="reads">
+  <h2>热门计算器与估值</h2>
+  <a class="item" href="/calculators/points-vs-cash/">
+    <span>进阶版：积分还是现金买票计算器 (Advanced Points vs Cash)</span>
+    <span class="arrow">→</span>
+  </a>
+  <a class="item" href="/values/chase-ultimate-rewards/">
+    <span>大通银行 Chase Ultimate Rewards 估值解析</span>
+    <span class="arrow">→</span>
+  </a>
+  <a class="item" href="/values/amex-membership-rewards/">
+    <span>美国运通 Amex Membership Rewards 估值解析</span>
+    <span class="arrow">→</span>
+  </a>
+</div>
+
+{% set customJs %}
+  const $ = id => document.getElementById(id);
+  const fmt = n => '¥' + n.toLocaleString('zh-CN', {maximumFractionDigits: 0});
+
+  function calc(){
+    const points = parseFloat($('points').value) || 0;
+    const cashRatio = parseFloat($('cashRatio').value) || 1;
+    const milesRatio = parseFloat($('milesRatio').value) || 1;
+    const mileValue = parseFloat($('mileValue').value) || 0;
+
+    const cashValue = points / cashRatio;
+    const miles = points / milesRatio;
+    const milesValue = miles * mileValue;
+
+    $('cashOut').textContent = fmt(cashValue);
+    $('milesOut').textContent = fmt(milesValue);
+
+    $('cashOut').parentElement.querySelector('.v').classList.remove('win');
+    $('milesOut').parentElement.querySelector('.v').classList.remove('win');
+
+    const ratio = cashValue > 0 ? (milesValue / cashValue) : 0;
+    const verdict = $('verdictText');
+    const code = $('verdictCode');
+    const explain = $('explain');
+
+    if(milesValue > cashValue * 1.05){
+      verdict.textContent = '转里程更划算';
+      verdict.className = 'verdict good';
+      $('milesOut').classList.add('win');
+      explain.textContent = `转成${miles.toLocaleString('zh-CN',{maximumFractionDigits:0})}英里后估值约为直接抵现的 ${ratio.toFixed(2)} 倍,前提是你能订到接近参考价值区间的舱位。`;
+    } else if(cashValue > milesValue * 1.05){
+      verdict.textContent = '不如直接抵现';
+      verdict.className = 'verdict bad';
+      $('cashOut').classList.add('win');
+      explain.textContent = `按你输入的兑换条款,转里程的估值只有直接抵现的 ${(ratio*100).toFixed(0)}%,除非能订到更高舱位或稀缺航线,否则直接抵现更稳妥。`;
+    } else {
+      verdict.textContent = '大致持平';
+      verdict.className = 'verdict';
+      explain.textContent = '两种方式价值接近,可以根据你是否真的会用这些里程出行来决定。';
+    }
+    code.textContent = `RATIO ${ratio.toFixed(2)}×`;
+  }
+
+  $('programPreset').addEventListener('change', e => {
+    if(e.target.value !== 'custom'){
+      $('mileValue').value = e.target.value;
+      calc();
+    }
+  });
+  ['points','cashRatio','milesRatio','mileValue'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calc);
+  });
+  if($('points')) calc();
+{% endset %}

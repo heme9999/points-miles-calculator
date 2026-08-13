@@ -1,0 +1,78 @@
+---
+layout: base.njk
+title: CPP 计算器 (Cents Per Point)
+description: Cents per Point 是衡量里程价值的核心指标，这里帮你快速计算出一张票的 CPP，看看你是否做到了“超值兑换”。
+eyebrow: 里程账 · 工具 03
+breadcrumbs:
+  - name: 计算器
+    url: /calculators/
+  - name: CPP 计算器
+---
+<h1>CPP 计算器 (Cents Per Point)</h1>
+<p class="sub">CPP (每点价值) 是玩家衡量兑换划算与否的通用标准。输入你的数字，看看这波兑换能跑赢多少人。</p>
+
+<div class="panel">
+  <div class="field">
+    <label>该航班的现金原价<span class="hint">元</span></label>
+    <input type="number" id="cashPrice" value="3000" min="0">
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label>该航班的奖励票税费<span class="hint">元</span></label>
+      <input type="number" id="awardTaxes" value="400" min="0">
+    </div>
+    <div class="field">
+      <label>兑换所需总积分/里程<span class="hint">点</span></label>
+      <input type="number" id="pointsNeeded" value="15000" min="1">
+    </div>
+  </div>
+</div>
+
+<div class="ticket">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">实际省下的现金</div>
+        <div class="v" id="savedCash">¥0</div>
+      </div>
+      <div class="item">
+        <div class="k">每点价值 (CPP)</div>
+        <div class="v win" id="cppResult">¥0.000</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+</div>
+
+{% set customJs %}
+  const $ = id => document.getElementById(id);
+  function calcCpp(){
+    const C = parseFloat($('cashPrice').value) || 0;
+    const T = parseFloat($('awardTaxes').value) || 0;
+    const P = parseFloat($('pointsNeeded').value) || 0;
+    
+    if(P === 0) return;
+    const saved = C - T;
+    const cpp = saved / P;
+    
+    $('savedCash').textContent = '¥' + saved.toFixed(0);
+    $('cppResult').textContent = '¥' + cpp.toFixed(4) + ' /点';
+    
+    const explain = $('explain');
+    if(cpp < 0){
+      explain.textContent = '警告：倒贴钱！不仅没省钱，你交的税费比直接买机票还贵。';
+    } else if(cpp < 0.05) {
+      explain.textContent = 'CPP 极低。这通常说明你用在了非航司兑换上（例如换微波炉或者极差的经济舱短途），建议直接花现金。';
+    } else if(cpp > 0.2) {
+      explain.textContent = '顶级兑换！这个 CPP 已经处于极高水平，通常只有在兑换热门日期的稀缺两舱（头等舱/商务舱）时才能达到。';
+    } else {
+      explain.textContent = '表现不错，处于正常合理区间内，只要航线适合你，就可以果断兑换。';
+    }
+  }
+
+  ['cashPrice','awardTaxes','pointsNeeded'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcCpp);
+  });
+  if($('cashPrice')) calcCpp();
+{% endset %}

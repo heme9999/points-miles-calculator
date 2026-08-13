@@ -1,0 +1,72 @@
+---
+layout: base.njk
+title: 积分折现计算器 (Points to Dollars)
+description: 你手上的百万信用卡积分或航司里程，到底值多少钱？输入数量和估值基准，一秒看清你的“积分净资产”。
+eyebrow: 里程账 · 工具 05
+breadcrumbs:
+  - name: 计算器
+    url: /calculators/
+  - name: 积分折现计算器
+---
+<h1>积分折现计算器 (Points to Dollars)</h1>
+<p class="sub">别把积分当欢乐豆，它们是真金白银。输入你账户里的点数和当前市场估值，算算你一共持有多少“无形资产”。</p>
+
+<div class="panel">
+  <div class="field">
+    <label>你账户里的总积分/里程<span class="hint">点</span></label>
+    <input type="number" id="totalPoints" value="150000" min="0">
+  </div>
+  
+  <div class="field">
+    <label>当前市场单点估值 (CPP)<span class="hint">元 / 点</span></label>
+    <select id="presetValuation">
+      <option value="custom">自定义(手动输入)</option>
+      <option value="0.12">0.12 (多数国内航司里程基础估值)</option>
+      <option value="0.15">0.15 (Chase Ultimate Rewards 参考)</option>
+      <option value="0.14">0.14 (Amex Membership Rewards 参考)</option>
+      <option value="0.11">0.11 (万豪酒店积分 参考)</option>
+    </select>
+    <input type="number" id="cppValue" value="0.15" min="0" step="0.01" style="margin-top:10px;">
+    <div class="unit">可以参考“积分估值”板块的市场公允价值，或填入你的个人心理价位。</div>
+  </div>
+</div>
+
+<div class="ticket">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">折合人民币资产估值约</div>
+        <div class="v win" id="dollarValue">¥0</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+</div>
+
+<div class="callout">
+  <strong>提示：</strong> 积分不像现金能够稳定保值。各大航司和酒店几乎每年都会进行不同程度的“贬值”（调高兑换门槛）。因此我们强烈建议“Earn and Burn”——赚了就赶紧花，不要囤积积分。
+</div>
+
+{% set customJs %}
+  const $ = id => document.getElementById(id);
+  function calcDollars(){
+    const P = parseFloat($('totalPoints').value) || 0;
+    const V = parseFloat($('cppValue').value) || 0;
+    
+    const total = P * V;
+    
+    $('dollarValue').textContent = '¥' + total.toLocaleString('zh-CN', {maximumFractionDigits:0});
+    $('explain').textContent = `按 ${V} 元/点的估值计算，你账户里的 ${P.toLocaleString()} 积分相当于 ${total.toLocaleString('zh-CN', {maximumFractionDigits:0})} 元的购买力。如果一直闲置不用，这笔钱将面临缩水风险。`;
+  }
+
+  $('presetValuation').addEventListener('change', e => {
+    if(e.target.value !== 'custom'){
+      $('cppValue').value = e.target.value;
+      calcDollars();
+    }
+  });
+  ['totalPoints','cppValue'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcDollars);
+  });
+  if($('totalPoints')) calcDollars();
+{% endset %}

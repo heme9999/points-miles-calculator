@@ -1,0 +1,91 @@
+---
+layout: base.njk
+title: 积分转点加赠计算器
+description: 银行常有转点加赠活动 (Transfer Bonus)，帮你快速算出需要从信用卡扣除多少积分才能刚好凑够兑换所需的里程。
+eyebrow: 里程账 · 工具 04
+breadcrumbs:
+  - name: 计算器
+    url: /calculators/
+  - name: 转点加赠计算器
+---
+<h1>积分转点加赠计算器</h1>
+<p class="sub">遇到例如“Amex 转 BA 额外赠送 30%”的活动时，手动算往往会产生零头。这个工具能帮你算出需要转多少基础分才能完美凑齐你需要的总里程，避免点数浪费。</p>
+
+<div class="panel">
+  <div class="field">
+    <label>兑换机票所需的总里程数<span class="hint">英里/点</span></label>
+    <input type="number" id="targetMiles" value="50000" min="1">
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label>常驻基础兑换比例<span class="hint">信用卡积分 : 航司里程</span></label>
+      <input type="number" id="baseRatio" value="1" min="0.1" step="0.1">
+    </div>
+    <div class="field">
+      <label>限时加赠比例<span class="hint">%</span></label>
+      <input type="number" id="bonusPercent" value="30" min="1">
+    </div>
+  </div>
+  
+  <div class="field" style="margin-top:24px;">
+    <label>积分转点递增限制<span class="hint">点 (例: 每次只能按 1000 的倍数转)</span></label>
+    <input type="number" id="increment" value="1000" min="1">
+  </div>
+</div>
+
+<div class="ticket">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">理论需要转出基础分</div>
+        <div class="v" id="rawPoints">0</div>
+      </div>
+      <div class="item">
+        <div class="k">考虑到倍数限制，实际需要转出</div>
+        <div class="v win" id="actualPoints">0</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+</div>
+
+{% set customJs %}
+  const $ = id => document.getElementById(id);
+  function calcBonus(){
+    const target = parseFloat($('targetMiles').value) || 0;
+    const baseRatio = parseFloat($('baseRatio').value) || 1;
+    const bonus = parseFloat($('bonusPercent').value) || 0;
+    const increment = parseFloat($('increment').value) || 1;
+    
+    if(target === 0) return;
+    
+    // Total multiplier = baseRatio * (1 + bonus/100)
+    // Actually, if it's 1:1, ratio is 1. If 5:4 (1.25), means 1 point = 0.8 miles. 
+    // Let's assume ratio means: 1 CC point = X miles. 
+    // (Wait, the user usually inputs 1:1 as 1, Amex to Cathay as 5 points = 4 miles, meaning 0.8. Let's assume the field is "Miles per Point").
+    // Let's update the label implicitly: baseRatio is how many miles you get per 1 point without bonus.
+    
+    // Wait, the label says "信用卡积分 : 航司里程" which usually implies X : Y.
+    // Let's treat baseRatio as Y / X. e.g. 1 means 1:1. 0.8 means 5:4.
+    
+    const multiplier = baseRatio * (1 + bonus/100);
+    const rawPoints = target / multiplier;
+    
+    // Round up to nearest increment
+    let actualPoints = Math.ceil(rawPoints / increment) * increment;
+    
+    $('rawPoints').textContent = rawPoints.toLocaleString('zh-CN', {maximumFractionDigits:1});
+    $('actualPoints').textContent = actualPoints.toLocaleString('zh-CN', {maximumFractionDigits:0});
+    
+    const finalMiles = actualPoints * multiplier;
+    const leftover = finalMiles - target;
+    
+    $('explain').textContent = `你需要从银行转出 ${actualPoints.toLocaleString()} 积分，加上 ${bonus}% 加赠后，将得到 ${finalMiles.toLocaleString()} 里程，比你目标所需的刚好超出了 ${leftover.toLocaleString()} 里程。`;
+  }
+
+  ['targetMiles','baseRatio','bonusPercent','increment'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcBonus);
+  });
+  if($('targetMiles')) calcBonus();
+{% endset %}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }} | {{ site.name }}</title>
+<meta name="description" content="{{ description or site.description }}">
+<meta name="google-site-verification" content="wMz2VDeMwD8R6yiCgJIqFD_wM2wSzrSEauzvCtzKHyw" />
+{% if canonical %}
+<link rel="canonical" href="{{ site.url }}{{ canonical }}">
+{% else %}
+<link rel="canonical" href="{{ site.url }}{{ page.url }}">
+{% endif %}
+<meta property="og:title" content="{{ title }} | {{ site.name }}">
+<meta property="og:description" content="{{ description or site.description }}">
+<meta property="og:url" content="{{ site.url }}{{ page.url }}">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+
+{% if schemaType %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{{ schemaType }}",
+  "name": "{{ title }}",
+  "url": "{{ site.url }}{{ page.url }}",
+  "description": "{{ description or site.description }}"
+}
+</script>
+{% endif %}
+</head>
+<body>
+<div class="wrap">
+  <header class="site-nav">
+    <a href="/" class="brand">{{ site.name }}</a>
+    <nav>
+      <a href="/calculators/">计算器</a>
+      <a href="/values/">积分估值</a>
+      <a href="/guides/how-to-calculate-point-value/">方法论</a>
+    </nav>
+  </header>
+
+  {% if breadcrumbs %}
+  <nav class="breadcrumb">
+    <a href="/">首页</a>
+    {% for crumb in breadcrumbs %}
+      <span class="sep">/</span>
+      {% if loop.last %}
+        <span>{{ crumb.name }}</span>
+      {% else %}
+        <a href="{{ crumb.url }}">{{ crumb.name }}</a>
+      {% endif %}
+    {% endfor %}
+  </nav>
+  {% endif %}
+
+  {% if eyebrow %}
+  <div class="eyebrow">{{ eyebrow }}</div>
+  {% endif %}
+  
+  {{ content | safe }}
+
+</div>
+
+{% if customJs %}
+<script>
+  {{ customJs | safe }}
+</script>
+{% endif %}
+</body>
+</html>

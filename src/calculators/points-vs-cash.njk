@@ -1,0 +1,143 @@
+---
+layout: base.njk
+title: 积分 vs 现金买票高级计算器
+description: 综合考量税费、放弃的现金票积分回血、转点奖励等隐藏成本，精确计算出这次兑换究竟值不值。
+schemaType: WebApplication
+eyebrow: 里程账 · 工具 02
+breadcrumbs:
+  - name: 计算器
+    url: /calculators/
+  - name: 积分 vs 现金计算器
+---
+<h1>积分 vs 现金买票高级计算器</h1>
+<p class="sub">不止比对基础数字，本计算器将“隐藏成本”（如税费、买现金票本可以赚取的积分）一并纳入，给出更精准的决策建议。</p>
+
+<div class="panel">
+  <div class="field">
+    <label>现金购票总价<span class="hint">元</span></label>
+    <input type="number" id="cashPrice" value="5000" min="0">
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label>里程/积分票所需数量<span class="hint">点/英里</span></label>
+      <input type="number" id="pointsNeeded" value="40000" min="0">
+    </div>
+    <div class="field">
+      <label>里程票税费及附加费<span class="hint">元</span></label>
+      <input type="number" id="awardTaxes" value="800" min="0">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>放弃的现金票回血价值<span class="hint">元 (选填)</span></label>
+      <input type="number" id="forgoneValue" value="200" min="0">
+      <div class="unit">如果花钱买这张票能攒积分，那些积分值多少钱</div>
+    </div>
+    <div class="field">
+      <label>当前转点奖励比例<span class="hint">% (选填)</span></label>
+      <input type="number" id="transferBonus" value="0" min="0">
+      <div class="unit">如遇到 20% 加赠，填 20</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>你对该积分的个人估值<span class="hint">元 / 点 (选填)</span></label>
+    <input type="number" id="personalValuation" value="0.1" min="0" step="0.01">
+    <div class="unit">用于对比实际兑换价值是否达到你的心理底线</div>
+  </div>
+</div>
+
+<div class="ticket">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">实际兑换价值 (CPP)</div>
+        <div class="v" id="cppResult">¥0.00 / 点</div>
+      </div>
+      <div class="item">
+        <div class="k">等价成本对比</div>
+        <div class="v" id="costCompare" style="font-size:18px; margin-top:10px;">积分成本: -<br>现金成本: -</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">建议决策</div>
+      <div class="verdict" id="verdictText">—</div>
+    </div>
+    <div class="code" id="verdictCode">DIFF —</div>
+  </div>
+</div>
+
+{% set customJs %}
+  const $ = id => document.getElementById(id);
+
+  function calcAdv(){
+    const C = parseFloat($('cashPrice').value) || 0;
+    const P = parseFloat($('pointsNeeded').value) || 0;
+    const T = parseFloat($('awardTaxes').value) || 0;
+    const F = parseFloat($('forgoneValue').value) || 0;
+    const V = parseFloat($('personalValuation').value) || 0;
+    const B = parseFloat($('transferBonus').value) || 0;
+
+    if (P === 0) {
+      $('cppResult').textContent = '-';
+      $('verdictText').textContent = '—';
+      $('explain').textContent = '请输入里程票所需积分数量。';
+      return;
+    }
+
+    const actualPointsUsed = P / (1 + (B / 100));
+    const netCashSaved = C - T - F;
+    const actualCpp = netCashSaved / actualPointsUsed;
+    
+    $('cppResult').textContent = '¥' + actualCpp.toFixed(4) + ' / 点';
+
+    // Costs
+    const costIfPoints = (actualPointsUsed * V) + T;
+    const costIfCash = C - F;
+
+    $('costCompare').innerHTML = `积分等价: ¥${costIfPoints.toFixed(0)}<br>现金净成本: ¥${costIfCash.toFixed(0)}`;
+
+    const verdict = $('verdictText');
+    const code = $('verdictCode');
+    const explain = $('explain');
+
+    $('cppResult').classList.remove('win');
+    $('cppResult').parentElement.classList.remove('win');
+
+    if (actualCpp <= 0) {
+      verdict.textContent = '绝对亏本';
+      verdict.className = 'verdict bad';
+      explain.textContent = '税费和损失的回血已经超过了直接买票的现金价格！千万别用积分换！';
+      code.textContent = 'DIFF < 0';
+    } else if (actualCpp > V && V > 0) {
+      verdict.textContent = '推荐用积分';
+      verdict.className = 'verdict good';
+      $('cppResult').classList.add('win');
+      const diff = ((actualCpp - V) / V * 100).toFixed(0);
+      explain.textContent = `这次兑换的实际价值高出你的个人估值 ${diff}%。综合来看，使用积分比花现金更划算。`;
+      code.textContent = `DIFF +${diff}%`;
+    } else if (actualCpp < V && V > 0) {
+      verdict.textContent = '不如付现金';
+      verdict.className = 'verdict bad';
+      const diff = ((V - actualCpp) / V * 100).toFixed(0);
+      explain.textContent = `实际价值低于你的个人估值，相当于这波积分用亏了 ${diff}%。建议保留积分，直接现金买票。`;
+      code.textContent = `DIFF -${diff}%`;
+    } else {
+      verdict.textContent = '看情况';
+      verdict.className = 'verdict';
+      explain.textContent = V === 0 ? '你没有输入个人估值，无法直接给出建议。请根据这个 CPP 自行判断。' : '兑换价值与你的心理预期差不多，选哪种都可以。';
+      code.textContent = 'DIFF ~0%';
+    }
+  }
+
+  ['cashPrice','pointsNeeded','awardTaxes','forgoneValue','personalValuation','transferBonus'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcAdv);
+  });
+  if($('cashPrice')) calcAdv();
+{% endset %}
