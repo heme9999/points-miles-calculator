@@ -102,64 +102,7 @@ breadcrumbs:
     </details>
   </div>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "Can I reverse a points transfer?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. Once you transfer flexible bank points to an airline or hotel loyalty program, the transaction is strictly one-way and irreversible. Never transfer points unless you are ready to book immediately."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Why can't I transfer just 1,200 points?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Most major banks (like Chase, Amex, and Citi) strictly enforce transfer increments of 1,000 points. Even if you only need 1,200 miles to top off your account, you will be forced to transfer 2,000 points."
-      }
-    }, {
-      "@type": "Question",
-      "name": "How often do transfer bonuses happen?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "It varies widely by bank and airline partner. Programs like British Airways (Avios) or Flying Blue typically see 1-2 transfer bonuses per year from major US banks. However, high-value partners might only see a bonus once every few years."
-      }
-    }]
-  }
-  
-  if($('btnShare')) {
-    $('btnShare').addEventListener('click', () => {
-      const newParams = new URLSearchParams();
-      const safeSet = (key, id) => {
-        const el = $(id);
-        if(el) {
-          const v = parseFloat(el.value);
-          if (!isNaN(v) && v > 0) newParams.set(key, v);
-        }
-      };
-      safeSet('targetMiles', 'targetMiles');
-      safeSet('baseRatio', 'baseRatio');
-      safeSet('bonusPercent', 'bonusPercent');
-      safeSet('increment', 'increment');
-      safeSet('rawPoints', 'rawPoints');
-      safeSet('actualPoints', 'actualPoints');
-      if (typeof currentCurrency !== 'undefined') newParams.set('currency', currentCurrency);
-      
-      const newUrl = window.location.pathname + '?' + newParams.toString();
-      history.replaceState(null, '', newUrl);
-      
-      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
-        const toast = $('toast');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
-      });
-    });
-  }
-</script>
-</div>
+  </div>
 
 <script>
   const $ = id => document.getElementById(id);

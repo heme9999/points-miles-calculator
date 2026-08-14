@@ -96,62 +96,7 @@ breadcrumbs:
     </details>
   </div>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "What should I do if my points are about to expire?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "For programs that extend expiration with any activity, you can reset the clock by making a small purchase on a co-branded credit card, buying a few points, or using a shopping portal to earn a tiny amount of miles."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Can I sell my points for cash?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. Almost all loyalty programs strictly forbid selling or bartering points. If you are caught, your account will be shut down, all points will be forfeited, and any booked tickets will be canceled. You can legally book tickets for friends or family, but you cannot sell the points."
-      }
-    }, {
-      "@type": "Question",
-      "name": "Does this calculator cash out my points?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. This calculator is strictly an educational tool to help you estimate the equivalent purchasing power of your points. We do not buy, sell, or manage points."
-      }
-    }]
-  }
-  
-  if($('btnShare')) {
-    $('btnShare').addEventListener('click', () => {
-      const newParams = new URLSearchParams();
-      const safeSet = (key, id) => {
-        const el = $(id);
-        if(el) {
-          const v = parseFloat(el.value);
-          if (!isNaN(v) && v > 0) newParams.set(key, v);
-        }
-      };
-      safeSet('totalPoints', 'totalPoints');
-      safeSet('presetValuation', 'presetValuation');
-      safeSet('cppValue', 'cppValue');
-      safeSet('dollarValue', 'dollarValue');
-      if (typeof currentCurrency !== 'undefined') newParams.set('currency', currentCurrency);
-      
-      const newUrl = window.location.pathname + '?' + newParams.toString();
-      history.replaceState(null, '', newUrl);
-      
-      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
-        const toast = $('toast');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
-      });
-    });
-  }
-</script>
-</div>
+  </div>
 
 <script>
   const $ = id => document.getElementById(id);

@@ -104,67 +104,12 @@ breadcrumbs:
     <details>
       <summary>我的 CPP 是负数，说明什么？</summary>
       <div>
-        <p>这说明你兑换该机票时需要支付的税费和燃油附加费，已经超过了直接购买这张机票的全部费用！强烈建议放弃兑换，直接花钱买票。</p>
+        <p>这说明你兑换该机票时需要支付的税费和燃油附加费，已经超过了直接购买这张机票的全部费用！通常建议放弃兑换，直接花钱买票。</p>
       </div>
     </details>
   </div>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "CPP 是越高越好吗？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "理论上是的，但不要盲目追求高 CPP。比如一张两舱机票标价 10 万元，你用了 10 万积分兑换，CPP 达到了 1 元/点。但如果你本来绝不会花 10 万元买这张票，这个 CPP 就只是账面的“虚高”价值。你应该用自己真实愿意支付的金额来重新计算 CPP。"
-      }
-    }, {
-      "@type": "Question",
-      "name": "酒店积分的 CPP 怎么算？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "和机票类似：(包含所有税费的现金总房价 - 积分房额外杂费) ÷ 所需总积分。需要注意的是，希尔顿和凯悦用全积分兑换时会免除度假村费，计算时这部分被免除的费用算作“省下的现金”。"
-      }
-    }, {
-      "@type": "Question",
-      "name": "我的 CPP 是负数，说明什么？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "这说明你兑换该机票时需要支付的税费和燃油附加费，已经超过了直接购买这张机票的全部费用！强烈建议放弃兑换，直接花钱买票。"
-      }
-    }]
-  }
-  
-  if($('btnShare')) {
-    $('btnShare').addEventListener('click', () => {
-      const newParams = new URLSearchParams();
-      const safeSet = (key, id) => {
-        const el = $(id);
-        if(el) {
-          const v = parseFloat(el.value);
-          if (!isNaN(v) && v > 0) newParams.set(key, v);
-        }
-      };
-      safeSet('cashPrice', 'cashPrice');
-      safeSet('awardTaxes', 'awardTaxes');
-      safeSet('pointsNeeded', 'pointsNeeded');
-      safeSet('savedCash', 'savedCash');
-      if (typeof currentCurrency !== 'undefined') newParams.set('currency', currentCurrency);
-      
-      const newUrl = window.location.pathname + '?' + newParams.toString();
-      history.replaceState(null, '', newUrl);
-      
-      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
-        const toast = $('toast');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
-      });
-    });
-  }
-</script>
-</div>
+  </div>
 
 <script>
   const $ = id => document.getElementById(id);

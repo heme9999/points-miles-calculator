@@ -13,7 +13,7 @@ We’re always looking for ways to improve the Points & Miles Calculator. Whethe
 
 ## How to Reach Us
 
-Please send us an email at **hello@points-miles-calculator.com** to provide feedback or report bugs.
+Please send us an email at **hello@points-miles-calculator.pages.dev** to provide feedback or report bugs.
 
 **Note:** As a free tool, we cannot provide personalized travel consulting, credit card recommendations, or step-by-step award booking assistance. 
 

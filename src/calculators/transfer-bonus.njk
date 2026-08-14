@@ -103,64 +103,7 @@ breadcrumbs:
     </details>
   </div>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "我可以撤销转点操作吗？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "不可以。一旦你将银行积分转入航空或酒店常客计划，这个操作是不可逆的。积分永远无法退回银行账户，因此请在确认有票后再转点。"
-      }
-    }, {
-      "@type": "Question",
-      "name": "为什么我不能只转 1,200 积分？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "大多数主流银行（如 Chase、Amex、Citi）强制要求每次转点必须以 1,000 为单位递增。即使你只需要 1,200 里程，你也必须转出 2,000 积分。"
-      }
-    }, {
-      "@type": "Question",
-      "name": "转点加赠通常多久出现一次？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "这取决于银行和航司的合作关系。例如，Amex 转英国航空（British Airways）或法荷航（Flying Blue）每年通常会有 1-2 次加赠活动。但对于部分高价值航司，加赠可能几年才出现一次。"
-      }
-    }]
-  }
-  
-  if($('btnShare')) {
-    $('btnShare').addEventListener('click', () => {
-      const newParams = new URLSearchParams();
-      const safeSet = (key, id) => {
-        const el = $(id);
-        if(el) {
-          const v = parseFloat(el.value);
-          if (!isNaN(v) && v > 0) newParams.set(key, v);
-        }
-      };
-      safeSet('targetMiles', 'targetMiles');
-      safeSet('baseRatio', 'baseRatio');
-      safeSet('bonusPercent', 'bonusPercent');
-      safeSet('increment', 'increment');
-      safeSet('rawPoints', 'rawPoints');
-      safeSet('actualPoints', 'actualPoints');
-      if (typeof currentCurrency !== 'undefined') newParams.set('currency', currentCurrency);
-      
-      const newUrl = window.location.pathname + '?' + newParams.toString();
-      history.replaceState(null, '', newUrl);
-      
-      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
-        const toast = $('toast');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
-      });
-    });
-  }
-</script>
-</div>
+  </div>
 
 <script>
   const $ = id => document.getElementById(id);

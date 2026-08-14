@@ -126,35 +126,6 @@ breadcrumbs:
     </details>
   </div>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "如果税费超过了现金票价怎么办？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "通常不建议使用积分兑换。此时奖励票的现金支出已经达到或超过现金票价格，继续消耗积分一般没有经济意义。"
-      }
-    }, {
-      "@type": "Question",
-      "name": "“放弃的回血价值”应该怎么算？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "假设现金买这张票能攒 10,000 里程，而你对这些里程的估值是 0.1 元/点，那么回血价值就是 1,000 元。这部分钱应该被视为里程兑换的“沉没成本”。"
-      }
-    }, {
-      "@type": "Question",
-      "name": "建议决策中的 \"DIFF\" 是什么意思？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "DIFF 代表你的“实际兑换价值 (Actual CPP)”与你输入的“个人估值”之间的百分比差异。如果为正数（如 +20%），说明这次兑换超出了你的预期，非常划算；如果为负数，则说明这笔买卖亏了。"
-      }
-    }]
-  }
-  </script>
-
   <h2>相关案例分析</h2>
   <ul>
     <li><a href="/examples/points-vs-cash-economy-flight/">经济舱机票案例：积分还是现金？</a></li>
@@ -338,7 +309,7 @@ breadcrumbs:
       verdict.textContent = '不如付现金';
       verdict.className = 'verdict bad';
       const diff = ((V - actualCpp) / V * 100).toFixed(0);
-      explain.textContent = `实际价值低于你的个人估值，相当于这波积分用亏了 ${diff}%。建议保留积分，直接现金买票。`;
+      explain.textContent = `实际兑换价值低于你的个人估值（相差 ${diff}%）。建议保留积分，直接现金买票。`;
       code.textContent = `DIFF -${diff}%`;
     } else {
       verdict.textContent = '看情况';

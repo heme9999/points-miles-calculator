@@ -99,62 +99,7 @@ breadcrumbs:
     </details>
   </div>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "Is a higher CPP always better?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Theoretically yes, but avoid chasing \"phantom\" high CPP. If a first-class ticket costs $15,000 and you redeem 100,000 points, your CPP is 15¢. However, if you would never actually pay $15,000 for that flight, the 15¢ valuation is inflated. Always use a cash price you are genuinely willing to pay."
-      }
-    }, {
-      "@type": "Question",
-      "name": "How do I calculate CPP for hotel points?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "It's similar to flights: (Total cash cost including all taxes - any fees on the award stay) ÷ total points required. Note that hotel chains like Hilton and Hyatt often waive resort fees on award stays, which increases the \"saved cash\" portion of your calculation."
-      }
-    }, {
-      "@type": "Question",
-      "name": "What does a negative CPP mean?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "A negative CPP means the taxes and fuel surcharges on the award ticket are more expensive than buying the cash ticket outright. You should absolutely not use points for this redemption."
-      }
-    }]
-  }
-  
-  if($('btnShare')) {
-    $('btnShare').addEventListener('click', () => {
-      const newParams = new URLSearchParams();
-      const safeSet = (key, id) => {
-        const el = $(id);
-        if(el) {
-          const v = parseFloat(el.value);
-          if (!isNaN(v) && v > 0) newParams.set(key, v);
-        }
-      };
-      safeSet('cashPrice', 'cashPrice');
-      safeSet('awardTaxes', 'awardTaxes');
-      safeSet('pointsNeeded', 'pointsNeeded');
-      safeSet('savedCash', 'savedCash');
-      if (typeof currentCurrency !== 'undefined') newParams.set('currency', currentCurrency);
-      
-      const newUrl = window.location.pathname + '?' + newParams.toString();
-      history.replaceState(null, '', newUrl);
-      
-      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
-        const toast = $('toast');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
-      });
-    });
-  }
-</script>
-</div>
+  </div>
 
 <script>
   const $ = id => document.getElementById(id);

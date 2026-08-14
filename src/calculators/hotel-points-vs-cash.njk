@@ -361,7 +361,7 @@ breadcrumbs:
     let netCashSaved = totalCashCost - forgoneValue - awardCashCost;
     
     if (netCashSaved < 0) {
-      resetState('现金房回血和积分房税费过高，导致使用积分反而亏损现金。强烈建议直接买票/订房。');
+      resetState('现金房回血和积分房税费过高，导致使用积分反而亏损现金。建议直接买票/订房。');
       $('verdictText').textContent = '不建议兑换';
       $('verdictText').className = 'verdict bad';
       $('verdictCode').textContent = 'DIFF < 0';
@@ -431,7 +431,7 @@ breadcrumbs:
       verdict.textContent = '不如付现金';
       verdict.className = 'verdict bad';
       const diff = ((V - compActualCpp) / V * 100).toFixed(0);
-      explain.textContent = `实际价值低于你的个人估值，相当于这波积分用亏了 ${diff}%。建议保留积分，直接现金预订。`;
+      explain.textContent = `实际兑换价值低于你的个人估值（相差 ${diff}%）。建议保留积分，直接现金预订。`;
       code.textContent = `DIFF -${diff}%`;
     } else {
       verdict.textContent = '看情况';

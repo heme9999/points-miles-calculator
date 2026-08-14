@@ -57,7 +57,7 @@ breadcrumbs:
 </div>
 
 <div class="callout" style="margin-top: 24px;">
-  <strong>核心警告：</strong> 积分不像现金能够稳定保值。各大航司和酒店几乎每年都会进行不同程度的“贬值”（调高兑换门槛或改恶兑换图表）。因此我们强烈建议“Earn and Burn”——赚了就赶紧花，绝对不要把积分当成理财产品囤积。
+  <strong>核心警告：</strong> 积分不像现金能够稳定保值。各大航司和酒店几乎每年都会进行不同程度的“贬值”（调高兑换门槛或改恶兑换图表）。因此我们建议“Earn and Burn”——赚了就用，通常不建议把积分当成理财产品长期囤积。
 </div>
 
 <div class="article-content prose" style="margin-top: 40px;">
@@ -107,62 +107,7 @@ breadcrumbs:
     </details>
   </div>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{
-      "@type": "Question",
-      "name": "如果我的积分即将过期怎么办？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "很多计划（如万豪、英国航空）只要账户有任何余额变动（如赚取或消费积分）即可顺延所有积分的有效期。最简单的办法是通过相关信用卡消费一笔，或者通过购物返利网站（Shopping Portal）赚取少量积分来激活账户。"
-      }
-    }, {
-      "@type": "Question",
-      "name": "我可以把积分卖给别人换成现金吗？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "绝对不行。几乎所有航空公司和酒店的条款都明确禁止买卖积分。如果被发现，你的账户将被封禁，所有积分清零，且已经出票的机票也会被取消。你可以合法地为亲友出票，但不能涉及金钱交易。"
-      }
-    }, {
-      "@type": "Question",
-      "name": "这个计算器可以直接提现吗？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "本计算器仅提供资产估算功能，不能进行任何实际的金融交易。我们只是帮你弄清楚“你的积分大概值多少钱”。"
-      }
-    }]
-  }
-  
-  if($('btnShare')) {
-    $('btnShare').addEventListener('click', () => {
-      const newParams = new URLSearchParams();
-      const safeSet = (key, id) => {
-        const el = $(id);
-        if(el) {
-          const v = parseFloat(el.value);
-          if (!isNaN(v) && v > 0) newParams.set(key, v);
-        }
-      };
-      safeSet('totalPoints', 'totalPoints');
-      safeSet('presetValuation', 'presetValuation');
-      safeSet('cppValue', 'cppValue');
-      safeSet('dollarValue', 'dollarValue');
-      if (typeof currentCurrency !== 'undefined') newParams.set('currency', currentCurrency);
-      
-      const newUrl = window.location.pathname + '?' + newParams.toString();
-      history.replaceState(null, '', newUrl);
-      
-      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
-        const toast = $('toast');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
-      });
-    });
-  }
-</script>
-</div>
+  </div>
 
 <script>
   const $ = id => document.getElementById(id);
