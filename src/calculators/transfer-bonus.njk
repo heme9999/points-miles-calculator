@@ -116,12 +116,24 @@ breadcrumbs:
       if (el) el.value = val;
     }
   };
-  parseParam('targetMiles', 'targetMiles');
-  parseParam('baseRatio', 'baseRatio');
-  parseParam('bonusPercent', 'bonusPercent');
-  parseParam('increment', 'increment');
-  parseParam('rawPoints', 'rawPoints');
-  parseParam('actualPoints', 'actualPoints');
+  
+  const parseParamWithFallback = (newKey, oldKey, elId, maxVal = 1000000000) => {
+    const params = new URLSearchParams(window.location.search);
+    let rawStr = params.get(newKey);
+    if (rawStr === null) {
+        rawStr = params.get(oldKey);
+    }
+    let val = parseFloat(rawStr);
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+
+  parseParamWithFallback('targetMiles', 'req', 'targetMiles');
+  parseParamWithFallback('baseRatio', 'ratio', 'baseRatio');
+  parseParamWithFallback('bonusPercent', 'bonus', 'bonusPercent');
+  parseParamWithFallback('increment', 'inc', 'increment');
 
   function calcBonus(){
     let target = parseFloat($('targetMiles').value) || 0;
@@ -160,4 +172,30 @@ breadcrumbs:
   ['targetMiles','baseRatio','bonusPercent','increment'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcBonus);
   });
+  
+  if ($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const url = new URL('{{ site.url }}/calculators/transfer-bonus/');
+      const target = parseFloat($('targetMiles').value) || 0;
+      const baseRatio = parseFloat($('baseRatio').value) || 0;
+      const bonus = parseFloat($('bonusPercent').value) || 0;
+      const increment = parseFloat($('increment').value) || 0;
+
+      if(target > 0) url.searchParams.set('targetMiles', target);
+      if(baseRatio > 0) url.searchParams.set('baseRatio', baseRatio);
+      if(bonus >= 0) url.searchParams.set('bonusPercent', bonus);
+      if(increment > 0) url.searchParams.set('increment', increment);
+
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const toast = $('toast');
+        if(toast) {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+      });
+    });
+  }
+
+  // Trigger initial calculation if parameters were loaded
+  calcBonus();
 </script>
