@@ -1,0 +1,160 @@
+---
+layout: base.njk
+title: Points to Dollars Calculator | Net Worth of Your Points
+description: Find out how much your credit card points or airline miles are really worth in cash. Enter your balance and valuation to calculate your "points net worth."
+schemaType: WebApplication
+eyebrow: Tools · 05
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: Points to Dollars Calculator
+---
+<h1>Points to Dollars Calculator</h1>
+<p class="sub">Stop treating points like monopoly money—they represent real purchasing power. Enter your points balance and current market valuations to see your total "invisible asset" value.</p>
+
+<div class="panel">
+  <div class="field">
+    <label for="totalPoints">Total points / miles in your account<span class="hint" id="hintTotal">Points</span></label>
+    <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal">
+  </div>
+  
+  <div class="field">
+    <label for="presetValuation">Current market valuation (CPP)<span class="hint" id="hintValuation">¢ / Point</span></label>
+    <select id="presetValuation" aria-describedby="hintValuation unitValuation">
+      <option value="custom">Custom (Enter manually)</option>
+      <option value="2.0">2.0¢ (Chase Ultimate Rewards estimate)</option>
+      <option value="2.0">2.0¢ (Amex Membership Rewards estimate)</option>
+      <option value="1.85">1.85¢ (Capital One Miles estimate)</option>
+      <option value="0.6">0.6¢ (Hilton Honors estimate)</option>
+    </select>
+    <input type="number" id="cppValue" value="2.0" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
+    <div class="unit" id="unitValuation">Note: Preset values are for demonstration purposes and may not reflect real-time valuations.</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Equivalent Cash Value</div>
+        <div class="v" id="dollarValue" style="word-break: break-word; overflow-wrap: anywhere;">$0</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+</div>
+
+<div class="callout" style="margin-top: 24px;">
+  <strong>Core Warning:</strong> Points are not immune to inflation. Airlines and hotels devalue their loyalty programs almost every year. We strongly recommend "Earn and Burn"—use your points as you earn them. Never treat points as a long-term investment.
+</div>
+
+<div class="article-content prose" style="margin-top: 40px;">
+  <h2>Why Calculate "Points to Dollars"?</h2>
+  <p>Many frequent flyers love seeing a massive points balance grow in their accounts. However, these numbers aren't bank deposits. Calculating the cash equivalent of your points has two practical benefits:</p>
+  <ul>
+    <li><strong>Asset Tracking</strong>: Understand the size of your "invisible assets." For many travelers, airline miles and hotel points combined can represent thousands of dollars in purchasing power.</li>
+    <li><strong>Evaluating Card Costs</strong>: Many premium credit cards (like the Amex Platinum or Chase Sapphire Reserve) charge hundreds of dollars in annual fees. If the cash value of your points isn't covering your annual fee—or if you simply can't find a way to spend them—the bank is winning, not you.</li>
+  </ul>
+
+  <h3>How is the valuation determined?</h3>
+  <p>This calculator relies on the **CPP (Cents Per Point)** parameter you enter. You can visit our <a href="/en/values/">Points Valuations Directory</a> to check the latest market reference averages for major banks and loyalty programs.</p>
+  <p>If you've already found an award flight and want to know the specific value of that redemption, use our more targeted <a href="/en/calculators/cents-per-point/">CPP Calculator</a>.</p>
+
+  <h2>Three Rules of Points Management</h2>
+  <ol>
+    <li><strong>Earn and Burn</strong><br>
+    As mentioned in the warning above, points only truly belong to you once you spend them. Banks and airlines have the final say over their systems and can devalue them at any time without warning. Leaving points in your account guarantees their purchasing power will shrink over time.</li>
+    <li><strong>Flexibility is King</strong><br>
+    Transferable points like <a href="/en/values/chase-ultimate-rewards/">Chase UR</a> or <a href="/en/values/amex-membership-rewards/">Amex MR</a> are vastly more valuable than miles locked into a single airline (like Delta SkyMiles). Always keep your points on the bank side until you have a confirmed travel plan. Never transfer speculatively.</li>
+    <li><strong>Understand Expiration Policies</strong><br>
+    Expiration rules vary by program. ANA and standard KrisFlyer miles expire exactly 36 months after they are earned, regardless of activity. Other programs (like Marriott or British Airways) extend the life of your points as long as you have qualifying earning or redeeming activity every 18-24 months. Always check the official rules to avoid losing your hard-earned points.</li>
+  </ol>
+
+  <h3>Frequently Asked Questions</h3>
+  <div>
+    <details>
+      <summary>What should I do if my points are about to expire?</summary>
+      <div>
+        <p>For programs that extend expiration with any activity, you can reset the clock by making a small purchase on a co-branded credit card, buying a few points, or using a shopping portal to earn a tiny amount of miles.</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>Can I sell my points for cash?</summary>
+      <div>
+        <p>No. Almost all loyalty programs strictly forbid selling or bartering points. If you are caught, your account will be shut down, all points will be forfeited, and any booked tickets will be canceled. You can legally book tickets for friends or family, but you cannot sell the points.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Does this calculator cash out my points?</summary>
+      <div>
+        <p>No. This calculator is strictly an educational tool to help you estimate the equivalent purchasing power of your points. We do not buy, sell, or manage points.</p>
+      </div>
+    </details>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "What should I do if my points are about to expire?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For programs that extend expiration with any activity, you can reset the clock by making a small purchase on a co-branded credit card, buying a few points, or using a shopping portal to earn a tiny amount of miles."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Can I sell my points for cash?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Almost all loyalty programs strictly forbid selling or bartering points. If you are caught, your account will be shut down, all points will be forfeited, and any booked tickets will be canceled. You can legally book tickets for friends or family, but you cannot sell the points."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Does this calculator cash out my points?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. This calculator is strictly an educational tool to help you estimate the equivalent purchasing power of your points. We do not buy, sell, or manage points."
+      }
+    }]
+  }
+  </script>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  function calcDollars(){
+    let P = parseFloat($('totalPoints').value) || 0;
+    let V = parseFloat($('cppValue').value) || 0;
+    
+    const resetState = (msg = 'Please enter valid numbers.') => {
+      $('dollarValue').textContent = '-';
+      $('explain').textContent = msg;
+      $('dollarValue').classList.remove('win');
+    };
+
+    if (P <= 0 || V <= 0) {
+      resetState(P < 0 || V < 0 ? 'Inputs cannot be negative.' : 'Please enter your points balance and valuation.');
+      return;
+    }
+    
+    const total = P * (V / 100);
+    
+    $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
+    $('dollarValue').classList.add('win');
+    $('explain').textContent = `At a valuation of ${V}¢ / point, your ${P.toLocaleString('en-US', {maximumFractionDigits:0})} points hold roughly $${total.toLocaleString('en-US', {maximumFractionDigits:0})} in purchasing power. If left unused, this asset is at high risk of devaluation.`;
+  }
+
+  $('presetValuation').addEventListener('change', e => {
+    if(e.target.value !== 'custom'){
+      $('cppValue').value = e.target.value;
+      calcDollars();
+    }
+  });
+  ['totalPoints','cppValue'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcDollars);
+  });
+</script>

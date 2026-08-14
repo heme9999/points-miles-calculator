@@ -1,0 +1,171 @@
+---
+layout: base.njk
+title: Transfer Bonus Calculator | Points & Miles
+description: Maximize your credit card transfer bonuses. Calculate exactly how many points you need to transfer to hit your target miles without stranding leftover points.
+schemaType: WebApplication
+eyebrow: Tools · 04
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: Transfer Bonus Calculator
+---
+<h1>Transfer Bonus Calculator</h1>
+<p class="sub">When banks offer a 30% transfer bonus, calculating the exact amount to transfer can be tricky. This tool helps you calculate the precise number of points to transfer to hit your target miles, avoiding stranded leftovers.</p>
+
+<div class="panel">
+  <div class="field">
+    <label for="targetMiles">Target miles required for your flight<span class="hint" id="hintTarget">Miles</span></label>
+    <input type="number" id="targetMiles" value="50000" min="1" step="1" inputmode="numeric" aria-describedby="hintTarget">
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label for="baseRatio">Base transfer ratio<span class="hint" id="hintBase">Bank Points : Airline Miles</span></label>
+      <input type="number" id="baseRatio" value="1" min="0.1" step="0.1" inputmode="decimal" aria-describedby="hintBase unitBase">
+      <div class="unit" id="unitBase">E.g. 1:1 enter 1. 5:4 enter 0.8</div>
+    </div>
+    <div class="field">
+      <label for="bonusPercent">Transfer bonus<span class="hint" id="hintBonus">%</span></label>
+      <input type="number" id="bonusPercent" value="30" min="0" step="1" inputmode="numeric" aria-describedby="hintBonus">
+    </div>
+  </div>
+  
+  <div class="field" style="margin-top:24px;">
+    <label for="increment">Transfer increment<span class="hint" id="hintIncrement">Points</span></label>
+    <input type="number" id="increment" value="1000" min="1" step="1" inputmode="numeric" aria-describedby="hintIncrement unitIncrement">
+    <div class="unit" id="unitIncrement">Most banks require transfers in increments of 1,000</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Exact points required</div>
+        <div class="v" id="rawPoints" style="word-break: break-word; overflow-wrap: anywhere;">0</div>
+      </div>
+      <div class="item">
+        <div class="k">Actual points to transfer</div>
+        <div class="v" id="actualPoints" style="word-break: break-word; overflow-wrap: anywhere;">0</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+</div>
+
+<div class="article-content prose" style="margin-top: 40px;">
+  <h2>What is a Transfer Bonus?</h2>
+  <p>To incentivize users, major credit card programs (like <a href="/en/values/amex-membership-rewards/">Amex MR</a>, <a href="/en/values/chase-ultimate-rewards/">Chase UR</a>, <a href="/en/values/citi-thankyou-points/">Citi TYP</a>) frequently partner with airlines or hotels to offer limited-time "Transfer Bonuses." These typically range from 15% to 40%.</p>
+  <p>For example, normally 1,000 credit card points convert to 1,000 miles. During a 30% bonus, those same 1,000 points yield 1,300 miles—effectively discounting all award tickets by over 20%.</p>
+
+  <h3>Why use this calculator?</h3>
+  <p>While bonuses are great, bank transfer systems usually have two strict limitations:</p>
+  <ul>
+    <li><strong>Increment Rules</strong>: You usually can't transfer exactly 1,234 points. Transfers must be in increments of 1,000.</li>
+    <li><strong>Rounding Issues</strong>: Suppose you need 50,000 miles and have a 30% bonus. 50,000 ÷ 1.3 ≈ 38,461. Because of the increment rule, you must round up and transfer 39,000 points.</li>
+  </ul>
+  <p>This calculator automatically factors in the base ratio, the bonus percentage, and the increment constraints, telling you exactly how many points to transfer and how many "leftover" miles you will have after booking.</p>
+
+  <h2>Common Transfer Bonus Mistakes</h2>
+  <ol>
+    <li><strong>Speculative Transfers</strong><br>
+    Many beginners see a 30% bonus and transfer all their points immediately. This is a mistake. Airline miles constantly devalue and are subject to availability. Once points are transferred to an airline, <strong>they can never be moved back to the bank</strong>. Only transfer when you have confirmed availability and are ready to book.</li>
+    <li><strong>Ignoring the Base Ratio</strong><br>
+    Most US credit card transfers are 1:1, but there are exceptions (like Marriott transfers or Amex to JetBlue). Always double-check the base ratio on the bank's portal and enter it correctly here.</li>
+    <li><strong>Beware of Phantom Availability and Delays</strong><br>
+    Transfers to some programs (like ANA or Singapore Airlines) can take 24-48 hours. During this time, the award seat you wanted might disappear. You can use our <a href="/en/calculators/cents-per-point/">CPP Calculator</a> to quickly check if a backup flight is still worth booking.</li>
+  </ol>
+
+  <h3>Frequently Asked Questions</h3>
+  <div>
+    <details>
+      <summary>Can I reverse a points transfer?</summary>
+      <div>
+        <p>No. Once you transfer flexible bank points to an airline or hotel loyalty program, the transaction is strictly one-way and irreversible. Never transfer points unless you are ready to book immediately.</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>Why can't I transfer just 1,200 points?</summary>
+      <div>
+        <p>Most major banks (like Chase, Amex, and Citi) strictly enforce transfer increments of 1,000 points. Even if you only need 1,200 miles to top off your account, you will be forced to transfer 2,000 points.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>How often do transfer bonuses happen?</summary>
+      <div>
+        <p>It varies widely by bank and airline partner. Programs like British Airways (Avios) or Flying Blue typically see 1-2 transfer bonuses per year from major US banks. However, high-value partners might only see a bonus once every few years.</p>
+      </div>
+    </details>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "Can I reverse a points transfer?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Once you transfer flexible bank points to an airline or hotel loyalty program, the transaction is strictly one-way and irreversible. Never transfer points unless you are ready to book immediately."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Why can't I transfer just 1,200 points?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most major banks (like Chase, Amex, and Citi) strictly enforce transfer increments of 1,000 points. Even if you only need 1,200 miles to top off your account, you will be forced to transfer 2,000 points."
+      }
+    }, {
+      "@type": "Question",
+      "name": "How often do transfer bonuses happen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It varies widely by bank and airline partner. Programs like British Airways (Avios) or Flying Blue typically see 1-2 transfer bonuses per year from major US banks. However, high-value partners might only see a bonus once every few years."
+      }
+    }]
+  }
+  </script>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  function calcBonus(){
+    let target = parseFloat($('targetMiles').value) || 0;
+    let baseRatio = parseFloat($('baseRatio').value) || 0;
+    let bonus = parseFloat($('bonusPercent').value) || 0;
+    let increment = parseFloat($('increment').value) || 0;
+    
+    const resetState = (msg = 'Please enter valid numbers.') => {
+      $('rawPoints').textContent = '-';
+      $('actualPoints').textContent = '-';
+      $('explain').textContent = msg;
+      $('actualPoints').classList.remove('win');
+    };
+
+    if(target <= 0 || baseRatio <= 0 || bonus < 0 || increment <= 0) {
+      resetState(target <= 0 ? 'Please enter the target miles.' : 'Inputs cannot be negative or zero.');
+      return;
+    }
+    
+    const multiplier = baseRatio * (1 + bonus/100);
+    const rawPoints = target / multiplier;
+    
+    let actualPoints = Math.ceil(rawPoints / increment) * increment;
+    
+    $('rawPoints').textContent = rawPoints.toLocaleString('en-US', {maximumFractionDigits:1});
+    $('actualPoints').textContent = actualPoints.toLocaleString('en-US', {maximumFractionDigits:0});
+    $('actualPoints').classList.add('win');
+    
+    const finalMiles = actualPoints * multiplier;
+    const leftover = finalMiles - target;
+    
+    $('explain').textContent = `You need to transfer ${actualPoints.toLocaleString('en-US', {maximumFractionDigits:0})} bank points. With the ${bonus}% bonus, you will receive ${finalMiles.toLocaleString('en-US', {maximumFractionDigits:0})} miles, leaving you with ${leftover.toLocaleString('en-US', {maximumFractionDigits:0})} extra miles after your redemption.`;
+  }
+
+  ['targetMiles','baseRatio','bonusPercent','increment'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcBonus);
+  });
+</script>

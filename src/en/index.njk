@@ -1,0 +1,238 @@
+---
+layout: base.njk
+title: Points vs Cash Calculator & Miles Value Tools
+description: Free calculators to compare points vs cash, calculate cents per point (CPP), and make smarter travel redemption decisions.
+schemaType: WebApplication
+eyebrow: Tools · 01
+---
+<h1>Make Better Points and Miles Redemption Decisions</h1>
+<p class="sub">Enter your points and redemption terms to compare against cash and see if you are getting a good deal.</p>
+
+<div class="panel">
+  <div class="field">
+    <label for="points">Points you have<span class="hint" id="hintPoints">POINTS</span></label>
+    <input type="number" id="points" value="100000" min="1" step="1" inputmode="numeric" aria-describedby="hintPoints">
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="cashRatio">Cashout ratio<span class="hint" id="hintCashRatio">Points : $1</span></label>
+      <input type="number" id="cashRatio" value="100" min="1" step="1" inputmode="numeric" aria-describedby="hintCashRatio unitCashRatio">
+      <div class="unit" id="unitCashRatio">Example: 100 means 100 points = $1</div>
+    </div>
+    <div class="field">
+      <label for="milesRatio">Transfer ratio<span class="hint" id="hintMilesRatio">Points : Miles</span></label>
+      <input type="number" id="milesRatio" value="3" min="0.1" step="0.1" inputmode="decimal" aria-describedby="hintMilesRatio unitMilesRatio">
+      <div class="unit" id="unitMilesRatio">Example: 3 means 3 points = 1 mile</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="programPreset">Target airline/alliance valuation<span class="hint" id="hintPreset">Cents / Mile</span></label>
+    <select id="programPreset" aria-describedby="hintPreset unitMileValue">
+      <option value="custom">Custom (Enter manually)</option>
+      <option value="2.0">Chase Ultimate Rewards · TPG ~2.0¢</option>
+      <option value="1.5">Short-haul economy · ~1.5¢/mile</option>
+      <option value="2.5">Long-haul economy · ~2.5¢/mile</option>
+      <option value="4.0">Long-haul business · ~4.0¢/mile</option>
+      <option value="8.0">First class/sweet spot · ~8.0¢/mile</option>
+    </select>
+    <input type="number" id="mileValue" value="4.0" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintPreset unitMileValue">
+    <div class="unit" id="unitMileValue">This is a reference estimate. Actual value depends on the specific flight.</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Cashout Value</div>
+        <div class="v" id="cashOut" style="word-break: break-word; overflow-wrap: anywhere;">$0</div>
+      </div>
+      <div class="item">
+        <div class="k">Miles Value (Est.)</div>
+        <div class="v" id="milesOut" style="word-break: break-word; overflow-wrap: anywhere;">$0</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">Verdict</div>
+      <div class="verdict" id="verdictText">—</div>
+    </div>
+    <div class="code" id="verdictCode">RATIO —</div>
+  </div>
+</div>
+
+
+<article class="seo-content" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid #e2e8f0;">
+  <h2>How to Choose Between Points and Cash</h2>
+  <p>The ultimate question in award travel is whether you should use your points or pay cash. This basic <strong>Points vs Cash Calculator</strong> helps you find out if transferring credit card points (like Chase Ultimate Rewards or Amex Membership Rewards) to an airline is actually worth it compared to just cashing them out at their base value.</p>
+  
+  <h3>The Calculation Formula</h3>
+  <p>To determine the better option, we calculate the estimated value of both choices:</p>
+  <div class="formula-box">
+    <span class="formula-name">Cashout Value =</span>
+    <span class="formula-expression">Total Points / Cashout Ratio</span>
+  </div>
+  <div class="formula-box" style="margin-top: -1rem;">
+    <span class="formula-name">Miles Value =</span>
+    <span class="formula-expression">(Total Points / Transfer Ratio) * Estimated Value Per Mile</span>
+  </div>
+  
+  <h3>Real-World Examples</h3>
+  <div class="example-box">
+    <h4>Example 1: The Outsized Value Redemption</h4>
+    <p>You have 100,000 Chase UR points. You can cash them out for $1,000 (100:1). Alternatively, you can transfer them 1:1 to United MileagePlus. You find a business class ticket that gives you an estimated value of 4.0¢ per mile. The miles value is $4,000. <strong>Verdict: Transfer to Miles.</strong></p>
+  </div>
+  <div class="example-box">
+    <h4>Example 2: The Poor Redemption</h4>
+    <p>You have 50,000 points. Cashout value is $500. You want to transfer 1:1 to an airline for a cheap economy ticket where the points are only worth 0.8¢ each. The miles value is $400. <strong>Verdict: Cash Out.</strong></p>
+  </div>
+
+  <h3>Frequently Asked Questions</h3>
+  <div>
+    <details>
+      <summary>Does this include taxes and fees?</summary>
+      <div>
+        <p>No, this basic calculator does not factor in taxes and fees. If your award flight has high fuel surcharges, you should use our <a href="/en/calculators/points-vs-cash/">Advanced Points vs Cash Calculator</a> instead.</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>Are these airline valuations guaranteed?</summary>
+      <div>
+        <p>No. Airline miles do not have a fixed cash value. The valuation (Cents / Mile) you enter is simply an estimate based on industry averages (like TPG) or your own calculations.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>What should I do if the result is a Toss-up?</summary>
+      <div>
+        <p>If you have an immediate travel need and can confirm award availability, transferring points is usually better to save cash out-of-pocket. Otherwise, cash out.</p>
+      </div>
+    </details>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "Does this include taxes and fees?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, this basic calculator does not factor in taxes and fees. If your award flight has high fuel surcharges, you should use our <a href=\"/en/calculators/points-vs-cash/\">Advanced Points vs Cash Calculator</a> instead."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Are these airline valuations guaranteed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Airline miles do not have a fixed cash value. The valuation (Cents / Mile) you enter is simply an estimate based on industry averages (like TPG) or your own calculations."
+      }
+    }, {
+      "@type": "Question",
+      "name": "What should I do if the result is a Toss-up?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you have an immediate travel need and can confirm award availability, transferring points is usually better to save cash out-of-pocket. Otherwise, cash out."
+      }
+    }]
+  }
+  </script>
+
+  <p class="disclaimer" style="margin-top: 20px; font-size: 0.9em; color: #64748b;"><em>Last Fact-Checked: August 2026. Editorial Disclaimer: Valuations and calculations are estimates for educational purposes and do not constitute financial advice.</em></p>
+</article>
+
+<div class="reads">
+  <h2>Popular Calculators & Guides</h2>
+  <a class="item" href="/en/calculators/points-vs-cash/">
+    <span>Advanced Points vs Cash Calculator</span>
+    <span class="arrow">→</span>
+  </a>
+  <a class="item" href="/en/values/chase-ultimate-rewards/">
+    <span>Chase Ultimate Rewards Value Guide</span>
+    <span class="arrow">→</span>
+  </a>
+  <a class="item" href="/en/values/amex-membership-rewards/">
+    <span>Amex Membership Rewards Value Guide</span>
+    <span class="arrow">→</span>
+  </a>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = n => '$' + n.toLocaleString('en-US', {maximumFractionDigits: 0});
+
+  function calc(){
+    let points = parseFloat($('points').value) || 0;
+    let cashRatio = parseFloat($('cashRatio').value) || 0;
+    let milesRatio = parseFloat($('milesRatio').value) || 0;
+    let mileValueCents = parseFloat($('mileValue').value) || 0;
+
+    const resetState = (msg = 'Please enter valid numbers.') => {
+      $('cashOut').textContent = '-';
+      $('milesOut').textContent = '-';
+      $('verdictText').textContent = '—';
+      $('verdictCode').textContent = 'RATIO —';
+      $('explain').textContent = msg;
+      
+      $('verdictText').className = 'verdict';
+      $('cashOut').classList.remove('win');
+      $('milesOut').classList.remove('win');
+    };
+
+    if (points <= 0 || cashRatio <= 0 || milesRatio <= 0 || mileValueCents <= 0) {
+      resetState(points <= 0 ? 'Please enter a valid points amount.' : 'Ratios and valuation must be greater than zero.');
+      return;
+    }
+
+    const cashValue = points / cashRatio;
+    const miles = points / milesRatio;
+    const milesValue = miles * (mileValueCents / 100);
+
+    $('cashOut').textContent = fmt(cashValue);
+    $('milesOut').textContent = fmt(milesValue);
+
+    $('cashOut').classList.remove('win');
+    $('milesOut').classList.remove('win');
+
+    const ratio = cashValue > 0 ? (milesValue / cashValue) : 0;
+    const verdict = $('verdictText');
+    const code = $('verdictCode');
+    const explain = $('explain');
+    
+    verdict.className = 'verdict';
+
+    if(milesValue > cashValue * 1.05){
+      verdict.textContent = 'Transfer to Miles';
+      verdict.className = 'verdict good';
+      $('milesOut').classList.add('win');
+      explain.textContent = `Transferring gives an estimated value ${ratio.toFixed(2)}x higher than cashout, assuming you find an award flight matching this valuation.`;
+    } else if(cashValue > milesValue * 1.05){
+      verdict.textContent = 'Cash Out';
+      verdict.className = 'verdict bad';
+      $('cashOut').classList.add('win');
+      explain.textContent = `Transferring is only worth ${(ratio*100).toFixed(0)}% of the cashout value based on your terms. Cash out unless you can find a significantly better award flight.`;
+    } else {
+      verdict.textContent = 'Toss-up';
+      explain.textContent = 'Both options offer similar value. Choose based on your actual travel needs.';
+    }
+    code.textContent = `RATIO ${ratio.toFixed(2)}×`;
+  }
+
+  $('programPreset').addEventListener('change', e => {
+    if(e.target.value !== 'custom'){
+      $('mileValue').value = e.target.value;
+      calc();
+    }
+  });
+  ['points','cashRatio','milesRatio','mileValue'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calc);
+  });
+  if($('points')) calc();
+</script>

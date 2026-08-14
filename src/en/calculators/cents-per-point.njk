@@ -1,0 +1,175 @@
+---
+layout: base.njk
+title: CPP Calculator (Cents Per Point) | Maximize Redemption Value
+description: Calculate the true Cents Per Point (CPP) value of your award flights. Our free CPP calculator deducts taxes to reveal exactly how much cash you're saving.
+schemaType: WebApplication
+eyebrow: Tools · 03
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: CPP Calculator
+---
+<h1>CPP Calculator (Cents Per Point)</h1>
+<p class="sub">CPP (Cents Per Point) is the standard metric used to evaluate award redemptions. Enter your numbers to see if you are getting a good deal.</p>
+
+<div class="panel">
+  <div class="field">
+    <label for="cashPrice">Cash ticket price<span class="hint" id="hintCash">$</span></label>
+    <input type="number" id="cashPrice" value="500" min="0" step="1" inputmode="decimal" aria-describedby="hintCash">
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label for="awardTaxes">Award taxes & surcharges<span class="hint" id="hintTaxes">$</span></label>
+      <input type="number" id="awardTaxes" value="50" min="0" step="1" inputmode="decimal" aria-describedby="hintTaxes">
+    </div>
+    <div class="field">
+      <label for="pointsNeeded">Points / miles required<span class="hint" id="hintPoints">Points</span></label>
+      <input type="number" id="pointsNeeded" value="15000" min="1" step="1" inputmode="numeric" aria-describedby="hintPoints">
+    </div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Net Cash Saved</div>
+        <div class="v" id="savedCash" style="word-break: break-word; overflow-wrap: anywhere;">$0</div>
+      </div>
+      <div class="item">
+        <div class="k">Value (CPP)</div>
+        <div class="v" id="cppResult" style="word-break: break-word; overflow-wrap: anywhere;">0.00¢ / point</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+</div>
+
+<div class="article-content prose" style="margin-top: 40px;">
+  <h2>What is CPP (Cents Per Point)?</h2>
+  <p><strong>CPP (Cents Per Point)</strong> is the core metric used by frequent flyers to determine if a point redemption is worthwhile. When people discuss whether a loyalty program like <a href="/en/values/chase-ultimate-rewards/">Chase UR</a> or <a href="/en/values/avios/">British Airways Avios</a> is valuable, they are usually referring to how high of a CPP you can get from it.</p>
+
+  <h3>CPP Formula</h3>
+  <p>The basic CPP formula is:</p>
+  <div class="formula-box">
+    <span class="formula-name">CPP =</span>
+    <span class="formula-expression">[(Cash Price - Award Taxes) ÷ Points Required] × 100</span>
+  </div>
+  <p>Our calculator automatically deducts the taxes to show your "true cash savings" before dividing by the points required.</p>
+
+  <h2>How to interpret your results</h2>
+  <ul>
+    <li><strong>Negative or Very Low (< 1.0¢ / point)</strong>: This is generally a poor redemption. It means you are either paying more in taxes than the cash ticket, or redeeming for low-value items (like merchandise or statement credits).</li>
+    <li><strong>Baseline Value (~1.0¢ - 1.5¢ / point)</strong>: This is the typical floor value for most bank points. It's acceptable, but doesn't offer outsized value.</li>
+    <li><strong>Good Value (> 2.0¢ / point)</strong>: Usually achieved when booking international economy flights or peak-season domestic travel.</li>
+    <li><strong>Excellent Value (> 4.0¢ / point)</strong>: These valuations are typically reserved for international <strong>First or Business Class</strong> redemptions, where cash prices are extraordinarily high but the mileage requirement doesn't scale proportionately.</li>
+  </ul>
+
+  <h2>Common CPP Mistakes</h2>
+  <p>Don't fall for these common traps when calculating your CPP:</p>
+  <ol>
+    <li><strong>Using inflated full-fare prices</strong>: If you see a First Class ticket priced at $15,000 and you redeem 100,000 miles for it, your CPP looks like a massive 15¢/point. However, if you would never realistically pay $15,000 cash for that ticket, this CPP is a vanity metric. Always use the cash price you would <em>actually be willing to pay</em>.</li>
+    <li><strong>Ignoring Hidden Costs</strong>: A basic CPP calculation only subtracts taxes. To perform a rigorous analysis that includes the value of points you "give up" by not paying cash, use our <a href="/en/calculators/points-vs-cash/">Advanced Points vs Cash Calculator</a>.</li>
+  </ol>
+
+  <h3>Frequently Asked Questions</h3>
+  <div>
+    <details>
+      <summary>Is a higher CPP always better?</summary>
+      <div>
+        <p>Theoretically yes, but avoid chasing "phantom" high CPP. If a first-class ticket costs $15,000 and you redeem 100,000 points, your CPP is 15¢. However, if you would never actually pay $15,000 for that flight, the 15¢ valuation is inflated. Always use a cash price you are genuinely willing to pay.</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>How do I calculate CPP for hotel points?</summary>
+      <div>
+        <p>It's similar to flights: (Total cash cost including all taxes - any fees on the award stay) ÷ total points required. Note that hotel chains like Hilton and Hyatt often waive resort fees on award stays, which increases the "saved cash" portion of your calculation.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>What does a negative CPP mean?</summary>
+      <div>
+        <p>A negative CPP means the taxes and fuel surcharges on the award ticket are more expensive than buying the cash ticket outright. You should absolutely not use points for this redemption.</p>
+      </div>
+    </details>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "Is a higher CPP always better?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Theoretically yes, but avoid chasing \"phantom\" high CPP. If a first-class ticket costs $15,000 and you redeem 100,000 points, your CPP is 15¢. However, if you would never actually pay $15,000 for that flight, the 15¢ valuation is inflated. Always use a cash price you are genuinely willing to pay."
+      }
+    }, {
+      "@type": "Question",
+      "name": "How do I calculate CPP for hotel points?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It's similar to flights: (Total cash cost including all taxes - any fees on the award stay) ÷ total points required. Note that hotel chains like Hilton and Hyatt often waive resort fees on award stays, which increases the \"saved cash\" portion of your calculation."
+      }
+    }, {
+      "@type": "Question",
+      "name": "What does a negative CPP mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A negative CPP means the taxes and fuel surcharges on the award ticket are more expensive than buying the cash ticket outright. You should absolutely not use points for this redemption."
+      }
+    }]
+  }
+  </script>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  function calcCpp(){
+    let C = parseFloat($('cashPrice').value) || 0;
+    let T = parseFloat($('awardTaxes').value) || 0;
+    let P = parseFloat($('pointsNeeded').value) || 0;
+    
+    const resetState = (msg = 'Please enter valid numbers.') => {
+      $('savedCash').textContent = '-';
+      $('cppResult').textContent = '-';
+      $('explain').textContent = msg;
+      $('cppResult').classList.remove('win', 'bad');
+    };
+
+    if (P <= 0 || C < 0 || T < 0) {
+      resetState(P <= 0 ? 'Please enter the required points.' : 'Inputs cannot be negative.');
+      return;
+    }
+    
+    const saved = C - T;
+    const cpp = (saved / P) * 100;
+    
+    $('savedCash').textContent = '$' + saved.toLocaleString('en-US', {maximumFractionDigits:0});
+    $('cppResult').textContent = cpp.toFixed(2) + '¢ / point';
+    
+    const explain = $('explain');
+    $('cppResult').classList.remove('win', 'bad');
+
+    if(saved < 0){
+      explain.textContent = 'Warning: You are losing money! The award taxes are higher than the cash price of the ticket.';
+      $('cppResult').classList.add('bad');
+    } else if(cpp < 1.0) {
+      explain.textContent = 'Low CPP. This usually means you are redeeming for non-travel items or very cheap economy flights. Consider paying cash.';
+      $('cppResult').classList.add('bad');
+    } else if(cpp > 3.0) {
+      explain.textContent = 'Excellent value! This CPP is very high, typically only seen when redeeming for international Business or First Class flights.';
+      $('cppResult').classList.add('win');
+    } else {
+      explain.textContent = 'Good value. If the flight fits your schedule, it is a solid redemption.';
+    }
+  }
+
+  ['cashPrice','awardTaxes','pointsNeeded'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcCpp);
+  });
+</script>

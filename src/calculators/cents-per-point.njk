@@ -12,15 +12,23 @@ breadcrumbs:
 <h1>CPP 计算器 (Cents Per Point)</h1>
 <p class="sub">CPP (每点价值) 是玩家衡量兑换划算与否的通用标准。输入你的数字，看看这波兑换能跑赢多少人。</p>
 
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right;">
+  <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
+  <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+    <option value="CNY">人民币（CNY ¥）</option>
+    <option value="USD">美元（USD $）</option>
+  </select>
+</div>
+
 <div class="panel">
   <div class="field">
-    <label for="cashPrice">该航班的现金原价<span class="hint" id="hintCash">元</span></label>
+    <label for="cashPrice">该航班的现金原价<span class="hint" id="hintCash">货币单位</span></label>
     <input type="number" id="cashPrice" value="3000" min="0" step="1" inputmode="decimal" aria-describedby="hintCash">
   </div>
   
   <div class="row">
     <div class="field">
-      <label for="awardTaxes">该航班的奖励票税费<span class="hint" id="hintTaxes">元</span></label>
+      <label for="awardTaxes">该航班的奖励票税费<span class="hint" id="hintTaxes">货币单位</span></label>
       <input type="number" id="awardTaxes" value="400" min="0" step="1" inputmode="decimal" aria-describedby="hintTaxes">
     </div>
     <div class="field">
@@ -46,21 +54,22 @@ breadcrumbs:
   </div>
 </div>
 
-<div class="article-content" style="margin-top: 40px;">
+<div class="article-content prose" style="margin-top: 40px;">
   <h2>什么是 CPP (Cents Per Point)？</h2>
   <p><strong>CPP (Cents Per Point)</strong>，即“每点积分或里程的货币价值”，是常旅客界用来衡量积分兑换是否划算的最核心指标。当我们在讨论某个常客计划（如 <a href="/values/chase-ultimate-rewards/">Chase UR</a> 或 <a href="/values/avios/">英国航空 Avios</a>）好不好用时，通常就是看它能用出多高的 CPP。</p>
 
   <h3>CPP 计算公式</h3>
   <p>基础的 CPP 计算公式为：</p>
-  <blockquote>
-    <p><strong>CPP = (机票现金价格 - 奖励票所需税费) ÷ 兑换所需的里程数量</strong></p>
-  </blockquote>
+  <div class="formula-box">
+    <span class="formula-name">CPP =</span>
+    <span class="formula-expression">(机票现金价格 - 奖励票所需税费) ÷ 兑换所需的里程数量</span>
+  </div>
   <p>在这个计算器中，我们已经自动为你扣除了税费，得出了你“真实省下的现金”，然后再除以积分数量。</p>
 
   <h2>如何解读你的计算结果？</h2>
   <ul>
-    <li><strong>负数或极低 (< 0.05 元/点)</strong>：这绝对是一个糟糕的兑换。说明你交的燃油税甚至比直接买机票还贵，或者你把宝贵的积分用来兑换了低价值的商品（如换微波炉、抵扣年费）。</li>
-    <li><strong>及格线水平 (~0.1 元/点)</strong>：这通常是银行积分直接按 1:1 抵现的底线价值。如果你算出来是这个数字，说明“不亏”，但也谈不上“赚”。</li>
+    <li><strong>负数或极低 (< 0.05 元/点)</strong>：这通常是一个较差的兑换。说明你交的燃油税甚至比直接买机票还贵，或者你把宝贵的积分用来兑换了低价值的商品（如换微波炉、抵扣年费）。</li>
+    <li><strong>及格线水平 (~0.1 元/点)</strong>：这通常是银行积分直接按 1:1 抵现的底线价值。如果你算出来是这个数字，说明价值可以接受，但并不具备超额收益。</li>
     <li><strong>优秀兑换 (> 0.15 元/点)</strong>：这通常发生在用航司里程兑换跨国航班或旺季票时。</li>
     <li><strong>神级兑换 (> 0.25 元/点)</strong>：通常只有通过转点换取国际航班的<strong>头等舱或公务舱</strong>才能达到这个数字。因为两舱的现金票价极高，而里程需求并没有成比例增加。</li>
   </ul>
@@ -68,13 +77,128 @@ breadcrumbs:
   <h2>使用 CPP 时常见的计算误区</h2>
   <p>很多新手为了追求高 CPP，容易陷入“自欺欺人”的陷阱：</p>
   <ol>
-    <li><strong>用虚高的全价票计算</strong>：如果你查到一张头等舱标价 10万 人民币，用 10万 里程换了，算出来 CPP 高达 1 元/点。但如果你现实中绝对不会花 10万 去买这张票，这个 CPP 就没有任何参考意义。正确的做法是，用你“真实愿意掏出的现金价格”来计算。</li>
+    <li><strong>用虚高的全价票计算</strong>：如果你查到一张头等舱标价 10万 人民币，用 10万 里程换了，算出来 CPP 高达 1 元/点。但如果你现实中根本不会花 10万 去买这张票，这个 CPP 就没有任何参考意义。正确的做法是，用你“真实愿意掏出的现金价格”来计算。</li>
     <li><strong>忽略隐性成本</strong>：如果你想进行更严谨的测算，比如要把“买现金票本来能累积的回血积分”也算作成本扣除，建议使用我们的 <a href="/calculators/points-vs-cash/">高级积分 vs 现金计算器</a>。</li>
   </ol>
+
+  <h3>常见问题 (FAQ)</h3>
+  <div class="faq">
+    <details>
+      <summary>CPP 是越高越好吗？</summary>
+      <div>
+        <p>理论上是的，但不要盲目追求高 CPP。比如一张两舱机票标价 10 万元，你用了 10 万积分兑换，CPP 达到了 1 元/点。但如果你本来绝不会花 10 万元买这张票，这个 CPP 就只是账面的“虚高”价值。你应该用自己真实愿意支付的金额来重新计算 CPP。</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>酒店积分的 CPP 怎么算？</summary>
+      <div>
+        <p>和机票类似：(包含所有税费的现金总房价 - 积分房额外杂费) ÷ 所需总积分。需要注意的是，希尔顿和凯悦用全积分兑换时会免除度假村费，计算时这部分被免除的费用算作“省下的现金”。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>我的 CPP 是负数，说明什么？</summary>
+      <div>
+        <p>这说明你兑换该机票时需要支付的税费和燃油附加费，已经超过了直接购买这张机票的全部费用！强烈建议放弃兑换，直接花钱买票。</p>
+      </div>
+    </details>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "CPP 是越高越好吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "理论上是的，但不要盲目追求高 CPP。比如一张两舱机票标价 10 万元，你用了 10 万积分兑换，CPP 达到了 1 元/点。但如果你本来绝不会花 10 万元买这张票，这个 CPP 就只是账面的“虚高”价值。你应该用自己真实愿意支付的金额来重新计算 CPP。"
+      }
+    }, {
+      "@type": "Question",
+      "name": "酒店积分的 CPP 怎么算？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "和机票类似：(包含所有税费的现金总房价 - 积分房额外杂费) ÷ 所需总积分。需要注意的是，希尔顿和凯悦用全积分兑换时会免除度假村费，计算时这部分被免除的费用算作“省下的现金”。"
+      }
+    }, {
+      "@type": "Question",
+      "name": "我的 CPP 是负数，说明什么？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "这说明你兑换该机票时需要支付的税费和燃油附加费，已经超过了直接购买这张机票的全部费用！强烈建议放弃兑换，直接花钱买票。"
+      }
+    }]
+  }
+  </script>
 </div>
 
 <script>
   const $ = id => document.getElementById(id);
+
+  const params = new URLSearchParams(window.location.search);
+  let currentCurrency = 'CNY';
+  const validCurrencies = ['CNY', 'USD'];
+  const urlCurr = params.get('currency');
+  if (urlCurr && validCurrencies.includes(urlCurr)) {
+    currentCurrency = urlCurr;
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && validCurrencies.includes(saved)) {
+        currentCurrency = saved;
+      }
+    } catch(e) {}
+  }
+  
+  const updateUnits = () => {
+    if (currentCurrency === 'USD') {
+      if($('hintCash')) $('hintCash').textContent = '美元';
+      if($('hintTaxes')) $('hintTaxes').textContent = '美元';
+    } else {
+      if($('hintCash')) $('hintCash').textContent = '元';
+      if($('hintTaxes')) $('hintTaxes').textContent = '元';
+    }
+  };
+
+  if ($('currency')) {
+    $('currency').value = currentCurrency;
+    $('currency').addEventListener('change', (e) => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      if (oldCurrency !== currentCurrency) {
+        ['cashPrice', 'awardTaxes'].forEach(id => {
+          if ($(id)) $(id).value = '';
+        });
+        const warningMsg = currentCurrency === 'USD' 
+          ? '货币已切换为美元。为避免金额混淆，请重新填写美元金额。' 
+          : '货币已切换为人民币。为避免金额混淆，请重新填写人民币金额。';
+        $('cppResult').textContent = '-';
+        $('cppResult').classList.remove('win');
+        $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+      }
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateUnits();
+      if ($('cashPrice').value) {
+        calcCpp();
+      }
+    });
+  }
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      if (key === 'points' && val === 0) return;
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  parseParam('cash', 'cashPrice');
+  parseParam('points', 'pointsNeeded');
+  parseParam('taxes', 'awardTaxes');
+
   function calcCpp(){
     let C = parseFloat($('cashPrice').value) || 0;
     let T = parseFloat($('awardTaxes').value) || 0;
@@ -95,8 +219,13 @@ breadcrumbs:
     const saved = C - T;
     const cpp = saved / P;
     
-    $('savedCash').textContent = '¥' + saved.toLocaleString('zh-CN', {maximumFractionDigits:0});
-    $('cppResult').textContent = '¥' + cpp.toFixed(4) + ' /点';
+    if (currentCurrency === 'USD') {
+      $('savedCash').textContent = '$' + saved.toLocaleString('en-US', {maximumFractionDigits:2});
+      $('cppResult').textContent = (cpp * 100).toFixed(2) + ' 美分/点';
+    } else {
+      $('savedCash').textContent = '¥' + saved.toLocaleString('zh-CN', {maximumFractionDigits:0});
+      $('cppResult').textContent = '¥' + cpp.toFixed(4) + ' /点';
+    }
     
     const explain = $('explain');
     $('cppResult').classList.remove('win', 'bad');
@@ -104,18 +233,26 @@ breadcrumbs:
     if(saved < 0){
       explain.textContent = '警告：倒贴钱！不仅没省钱，你交的税费比直接买机票还贵。';
       $('cppResult').classList.add('bad');
-    } else if(cpp < 0.05) {
-      explain.textContent = 'CPP 极低。这通常说明你用在了非航司兑换上（例如换微波炉或者极差的经济舱短途），建议直接花现金。';
-      $('cppResult').classList.add('bad');
-    } else if(cpp > 0.2) {
-      explain.textContent = '顶级兑换！这个 CPP 已经处于极高水平，通常只有在兑换热门日期的稀缺两舱（头等舱/商务舱）时才能达到。';
-      $('cppResult').classList.add('win');
     } else {
-      explain.textContent = '表现不错，处于正常合理区间内，只要航线适合你，就可以果断兑换。';
+      // Comparison logic is simpler if we use CNY reference or generic logic
+      // Assuming original logic was for CNY (0.05, 0.20)
+      let cppForCompare = currentCurrency === 'USD' ? cpp * 7 : cpp; // rough logic to reuse same messages
+      if(cppForCompare < 0.05) {
+        explain.textContent = 'CPP 极低。这通常说明你用在了非航司兑换上（例如换微波炉或者极差的经济舱短途），建议直接花现金。';
+        $('cppResult').classList.add('bad');
+      } else if(cppForCompare > 0.2) {
+        explain.textContent = '顶级兑换！这个 CPP 已经处于极高水平，通常只有在兑换热门日期的稀缺两舱（头等舱/商务舱）时才能达到。';
+        $('cppResult').classList.add('win');
+      } else {
+        explain.textContent = '表现不错，处于正常合理区间内，只要航线适合你，就可以果断兑换。';
+      }
     }
   }
 
-  ['cashPrice','awardTaxes','pointsNeeded'].forEach(id => {
+  ['cashPrice','pointsNeeded','awardTaxes'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcCpp);
   });
+  
+  updateUnits();
+  if($('cashPrice').value) calcCpp();
 </script>

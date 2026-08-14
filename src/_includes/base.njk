@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ lang | default(site.lang) }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ title }} | {{ site.name }}</title>
+{% set currentLang = lang | default(site.lang) %}
+{% set isEnglish = currentLang == 'en' %}
+{% set siteName = 'Points & Miles Calculator' if isEnglish else site.name %}
+{% set homeNav = 'Home' if isEnglish else '首页' %}
+{% set homeUrl = '/en/' if isEnglish else '/' %}
+{% set zhUrl = site.url ~ (page.url | replace('/en/', '/')) %}
+{% set enUrl = site.url ~ ('/en' ~ page.url if not isEnglish else page.url) %}
+
+<title>{{ title }} | {{ siteName }}</title>
 <meta name="description" content="{{ description or site.description }}">
 <meta name="google-site-verification" content="wMz2VDeMwD8R6yiCgJIqFD_wM2wSzrSEauzvCtzKHyw" />
-{% if canonical %}
-<link rel="canonical" href="{{ site.url }}{{ canonical }}">
-{% else %}
-<link rel="canonical" href="{{ site.url }}{{ page.url }}">
-{% endif %}
-<meta property="og:title" content="{{ title }} | {{ site.name }}">
+
+<link rel="canonical" href="{{ site.url }}{{ canonical | default(page.url) }}">
+<link rel="alternate" hreflang="zh-CN" href="{{ zhUrl }}">
+<link rel="alternate" hreflang="en" href="{{ enUrl }}">
+<link rel="alternate" hreflang="x-default" href="{{ enUrl }}">
+<meta property="og:title" content="{{ title }} | {{ siteName }}">
 <meta property="og:description" content="{{ description or site.description }}">
 <meta property="og:url" content="{{ site.url }}{{ page.url }}">
 <meta property="og:type" content="website">
@@ -25,18 +33,21 @@
 {
   "@context": "https://schema.org",
   "@type": "{{ schemaType }}",
-  "name": "{{ title }}",
-  "headline": "{{ title }}",
+  "inLanguage": "{{ currentLang }}",
+  "name": "{{ title | safe }}",
+  "headline": "{{ title | safe }}",
   "url": "{{ site.url }}{{ page.url }}",
   "description": "{{ description or site.description }}"
   {% if schemaType == 'Article' %}
   ,"author": {
     "@type": "Organization",
+    "@id": "{{ site.url }}/#organization",
     "name": "Points & Miles Calculator",
     "url": "{{ site.url }}/"
   },
   "publisher": {
     "@type": "Organization",
+    "@id": "{{ site.url }}/#organization",
     "name": "Points & Miles Calculator",
     "url": "{{ site.url }}/"
   },
@@ -44,8 +55,10 @@
     "@type": "WebPage",
     "@id": "{{ site.url }}{{ page.url }}"
   },
-  "datePublished": "{{ date | default('2026-08-11') }}",
-  "dateModified": "{{ date | default('2026-08-11') }}"
+  {% if datePublished %}
+  "datePublished": "{{ datePublished }}",
+  {% endif %}
+  "dateModified": "{{ dateModified | default(page.date.toISOString()) }}"
   {% endif %}
 }
 </script>
@@ -59,14 +72,14 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "首页",
-      "item": "{{ site.url }}/"
+      "name": "{{ homeNav | safe }}",
+      "item": "{{ site.url }}{{ homeUrl }}"
     }
     {% for crumb in breadcrumbs %}
     ,{
       "@type": "ListItem",
       "position": {{ loop.index + 1 }},
-      "name": "{{ crumb.name }}",
+      "name": "{{ crumb.name | safe }}",
       "item": "{{ site.url }}{{ crumb.url | default(page.url) }}"
     }
     {% endfor %}
@@ -78,17 +91,32 @@
 <body>
 <div class="wrap">
   <header class="site-nav">
-    <a href="/" class="brand">{{ site.name }}</a>
+    <a href="{{ homeUrl }}" class="brand">{{ siteName }}</a>
     <nav>
+      {% if isEnglish %}
+      <a href="/en/calculators/">Calculators</a>
+      <a href="/en/values/">Valuations</a>
+      <a href="/en/methodology/">Methodology</a>
+      {% else %}
       <a href="/calculators/">计算器</a>
       <a href="/values/">积分估值</a>
       <a href="/methodology/">方法论</a>
+      {% endif %}
     </nav>
+    <div class="lang-switcher" style="margin-left: 20px; font-size: 14px;">
+      {% if isEnglish %}
+      <a href="{{ zhUrl }}" hreflang="zh-CN" lang="zh-CN" style="margin-right: 10px; color: #64748b; text-decoration: none;">中文</a>
+      <a href="{{ enUrl }}" hreflang="en" lang="en" aria-current="true" style="font-weight: 600; color: #0f172a; text-decoration: none;">English</a>
+      {% else %}
+      <a href="{{ zhUrl }}" hreflang="zh-CN" lang="zh-CN" aria-current="true" style="margin-right: 10px; font-weight: 600; color: #0f172a; text-decoration: none;">中文</a>
+      <a href="{{ enUrl }}" hreflang="en" lang="en" style="color: #64748b; text-decoration: none;">English</a>
+      {% endif %}
+    </div>
   </header>
 
   {% if breadcrumbs %}
   <nav class="breadcrumb">
-    <a href="/">首页</a>
+    <a href="{{ homeUrl }}">{{ homeNav }}</a>
     {% for crumb in breadcrumbs %}
       <span class="sep">/</span>
       {% if loop.last %}
@@ -109,25 +137,25 @@
   <footer class="site-footer" style="margin-top: 80px; padding-top: 40px; border-top: 1px solid #e2e8f0; font-size: 14px; color: #64748b;">
     <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; margin-bottom: 24px;">
       <div>
-        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">工具与资源</strong>
-        <a href="/calculators/" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">全部计算器</a>
-        <a href="/values/" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">积分估值目录</a>
-        <a href="/guides/how-to-calculate-point-value/" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">如何计算积分价值 (CPP)</a>
+        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">{% if isEnglish %}Tools & Resources{% else %}工具与资源{% endif %}</strong>
+        <a href="{{ '/en/calculators/' if isEnglish else '/calculators/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}All Calculators{% else %}全部计算器{% endif %}</a>
+        <a href="{{ '/en/values/' if isEnglish else '/values/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Points Valuations{% else %}积分估值目录{% endif %}</a>
+        <a href="{{ '/en/guides/how-to-calculate-point-value/' if isEnglish else '/guides/how-to-calculate-point-value/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}How to Calculate CPP{% else %}如何计算积分价值 (CPP){% endif %}</a>
       </div>
       <div>
-        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">关于本站</strong>
-        <a href="/about/" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">关于我们</a>
-        <a href="/methodology/" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">估值方法论</a>
-        <a href="/contact/" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">联系我们</a>
+        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">{% if isEnglish %}About Us{% else %}关于本站{% endif %}</strong>
+        <a href="{{ '/en/about/' if isEnglish else '/about/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}About{% else %}关于我们{% endif %}</a>
+        <a href="{{ '/en/methodology/' if isEnglish else '/methodology/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Methodology{% else %}估值方法论{% endif %}</a>
+        <a href="{{ '/en/contact/' if isEnglish else '/contact/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Contact Us{% else %}联系我们{% endif %}</a>
       </div>
       <div>
-        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">法律与政策</strong>
-        <a href="/privacy/" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">隐私政策</a>
-        <a href="/terms/" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">免责声明与条款</a>
+        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">{% if isEnglish %}Legal & Policy{% else %}法律与政策{% endif %}</strong>
+        <a href="{{ '/en/privacy/' if isEnglish else '/privacy/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Privacy Policy{% else %}隐私政策{% endif %}</a>
+        <a href="{{ '/en/terms/' if isEnglish else '/terms/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Terms & Disclaimer{% else %}免责声明与条款{% endif %}</a>
       </div>
     </div>
     <div style="text-align: center; border-top: 1px solid #f1f5f9; padding-top: 24px;">
-      &copy; 2026 Points & Miles Calculator. 不受任何航空公司或金融机构背书。计算结果仅供参考，不构成财务建议。
+      &copy; 2026 Points & Miles Calculator. {% if isEnglish %}Not affiliated with any airlines or financial institutions. Results are for reference only and do not constitute financial advice.{% else %}不受任何航空公司或金融机构背书。计算结果仅供参考，不构成财务建议。{% endif %}
     </div>
   </footer>
 </div>

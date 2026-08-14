@@ -12,9 +12,17 @@ breadcrumbs:
 <h1>积分 vs 现金买票高级计算器</h1>
 <p class="sub">不止比对基础数字，本计算器将“隐藏成本”（如税费、买现金票本可以赚取的积分）一并纳入，给出更精准的决策建议。</p>
 
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right;">
+  <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
+  <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+    <option value="CNY">人民币（CNY ¥）</option>
+    <option value="USD">美元（USD $）</option>
+  </select>
+</div>
+
 <div class="panel">
   <div class="field">
-    <label for="cashPrice">现金购票总价<span class="hint" id="hintCash">元</span></label>
+    <label for="cashPrice">现金购票总价<span class="hint" id="hintCash">货币单位</span></label>
     <input type="number" id="cashPrice" value="5000" min="0" step="1" inputmode="decimal" aria-describedby="hintCash">
   </div>
   
@@ -24,14 +32,14 @@ breadcrumbs:
       <input type="number" id="pointsNeeded" value="40000" min="1" step="1" inputmode="numeric" aria-describedby="hintPoints">
     </div>
     <div class="field">
-      <label for="awardTaxes">里程票税费及附加费<span class="hint" id="hintTaxes">元</span></label>
+      <label for="awardTaxes">里程票税费及附加费<span class="hint" id="hintTaxes">货币单位</span></label>
       <input type="number" id="awardTaxes" value="800" min="0" step="1" inputmode="decimal" aria-describedby="hintTaxes">
     </div>
   </div>
 
   <div class="row">
     <div class="field">
-      <label for="forgoneValue">放弃的现金票回血价值<span class="hint" id="hintForgone">元 (选填)</span></label>
+      <label for="forgoneValue">放弃的现金票回血价值<span class="hint" id="hintForgone">货币单位 (选填)</span></label>
       <input type="number" id="forgoneValue" value="200" min="0" step="1" inputmode="decimal" aria-describedby="hintForgone unitForgone">
       <div class="unit" id="unitForgone">如果花钱买这张票能攒积分，那些积分值多少钱</div>
     </div>
@@ -43,7 +51,7 @@ breadcrumbs:
   </div>
 
   <div class="field">
-    <label for="personalValuation">你对该积分的个人估值<span class="hint" id="hintValuation">元 / 点 (选填)</span></label>
+    <label for="personalValuation">你对该积分的个人估值<span class="hint" id="hintValuation">价值 / 点 (选填)</span></label>
     <input type="number" id="personalValuation" value="0.1" min="0" step="0.01" inputmode="decimal" aria-describedby="hintValuation unitValuation">
     <div class="unit" id="unitValuation">用于对比实际兑换价值是否达到你的心理底线</div>
   </div>
@@ -73,8 +81,159 @@ breadcrumbs:
   </div>
 </div>
 
+<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>为什么需要使用高级计算器？</h2>
+  <p>在决定是否用积分或里程兑换奖励机票时，仅仅比较“所需积分”和“机票现金价格”往往是不够的。真实的兑换场景中充满了各种“隐藏成本”。我们的高级计算器综合考量了以下四大核心变量，以得出最精确的“真实每点价值 (Actual CPP)”：</p>
+  <ul>
+    <li><strong>高昂的燃油附加费 (Taxes and Surcharges)</strong>：部分航司（如英国航空、阿联酋航空）会对里程票收取极高的附加费，有时甚至与现金票价相差无几。</li>
+    <li><strong>放弃的现金票回血 (Forgone Points Value)</strong>：如果你花钱买票，不仅能获得飞行里程，还能用信用卡赚取消费积分。用积分兑换就意味着你“放弃”了这部分回血。</li>
+    <li><strong>转点奖励活动 (Transfer Bonus)</strong>：当你恰好遇到银行转点到航司有 20% 或 30% 加赠时，你实际付出的银行积分成本会大幅降低。</li>
+    <li><strong>个人估值对齐 (Personal Valuation)</strong>：市场估值只是参考，高级计算器允许你输入自己的心理预期，帮你判断这次兑换是否真正符合你的利益。</li>
+  </ul>
+
+  <h3>高级计算公式</h3>
+  <p>高级计算器的核心公式并非简单的除法，而是经过多重变量修正后的结果：</p>
+  <div class="formula-box">
+    <span class="formula-name">真实兑换价值 (Actual CPP) =</span>
+    <span class="formula-expression">(现金票价 - 里程票税费 - 放弃的回血价值) ÷ (所需里程 ÷ (1 + 转点奖励比例))</span>
+  </div>
+
+  <h3>常见问题解答 (FAQ)</h3>
+  <div class="faq">
+    <details>
+      <summary>如果税费超过了现金票价怎么办？</summary>
+      <div>
+        <p>绝对不要使用积分兑换。当税费等于或超过直接购买机票的价格时，意味着你不仅在白白浪费积分，还要倒贴钱。这在经济舱短途航班中非常常见。</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>“放弃的回血价值”应该怎么算？</summary>
+      <div>
+        <p>假设现金买这张票能攒 10,000 里程，而你对这些里程的估值是 0.1 元/点，那么回血价值就是 1,000 元。这部分钱应该被视为里程兑换的“沉没成本”。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>建议决策中的 "DIFF" 是什么意思？</summary>
+      <div>
+        <p>DIFF 代表你的“实际兑换价值 (Actual CPP)”与你输入的“个人估值”之间的百分比差异。如果为正数（如 +20%），说明这次兑换超出了你的预期，非常划算；如果为负数，则说明这笔买卖亏了。</p>
+      </div>
+    </details>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "如果税费超过了现金票价怎么办？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "绝对不要使用积分兑换。当税费等于或超过直接购买机票的价格时，意味着你不仅在白白浪费积分，还要倒贴钱。这在经济舱短途航班中非常常见。"
+      }
+    }, {
+      "@type": "Question",
+      "name": "“放弃的回血价值”应该怎么算？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "假设现金买这张票能攒 10,000 里程，而你对这些里程的估值是 0.1 元/点，那么回血价值就是 1,000 元。这部分钱应该被视为里程兑换的“沉没成本”。"
+      }
+    }, {
+      "@type": "Question",
+      "name": "建议决策中的 \"DIFF\" 是什么意思？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DIFF 代表你的“实际兑换价值 (Actual CPP)”与你输入的“个人估值”之间的百分比差异。如果为正数（如 +20%），说明这次兑换超出了你的预期，非常划算；如果为负数，则说明这笔买卖亏了。"
+      }
+    }]
+  }
+  </script>
+
+  <h2>相关案例分析</h2>
+  <ul>
+    <li><a href="/examples/points-vs-cash-economy-flight/">经济舱机票案例：积分还是现金？</a></li>
+    <li><a href="/examples/business-class-redemption-value/">商务舱兑换案例：探索超高性价比</a></li>
+    <li><a href="/examples/hotel-points-vs-cash/">酒店兑换案例：免除度假村费用的秘密</a></li>
+  </ul>
+  
+  <p class="disclaimer" style="margin-top: 30px; font-size: 0.85em; color: #64748b;"><em>最后事实审核：2026年8月。工具计算结果仅供参考，不代表实时票价或真实库存。</em></p>
+</div>
+
 <script>
   const $ = id => document.getElementById(id);
+  
+  const params = new URLSearchParams(window.location.search);
+  let currentCurrency = 'CNY';
+  const validCurrencies = ['CNY', 'USD'];
+  const urlCurr = params.get('currency');
+  if (urlCurr && validCurrencies.includes(urlCurr)) {
+    currentCurrency = urlCurr;
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && validCurrencies.includes(saved)) {
+        currentCurrency = saved;
+      }
+    } catch(e) {}
+  }
+  
+  const updateUnits = () => {
+    if (currentCurrency === 'USD') {
+      if($('hintCash')) $('hintCash').textContent = '美元';
+      if($('hintTaxes')) $('hintTaxes').textContent = '美元';
+      if($('hintForgone')) $('hintForgone').textContent = '美元 (选填)';
+      if($('hintValuation')) $('hintValuation').textContent = '美分/点 (选填)';
+    } else {
+      if($('hintCash')) $('hintCash').textContent = '元';
+      if($('hintTaxes')) $('hintTaxes').textContent = '元';
+      if($('hintForgone')) $('hintForgone').textContent = '元 (选填)';
+      if($('hintValuation')) $('hintValuation').textContent = '元/点 (选填)';
+    }
+  };
+
+  if ($('currency')) {
+    $('currency').value = currentCurrency;
+    $('currency').addEventListener('change', (e) => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      if (oldCurrency !== currentCurrency) {
+        ['cashPrice', 'awardTaxes', 'forgoneValue', 'personalValuation'].forEach(id => {
+          if ($(id)) $(id).value = '';
+        });
+        const warningMsg = currentCurrency === 'USD' 
+          ? '货币已切换为美元。为避免金额混淆，请重新填写美元金额和美分/点估值。' 
+          : '货币已切换为人民币。为避免金额混淆，请重新填写人民币金额和元/点估值。';
+        $('cppResult').textContent = '-';
+        $('verdictText').textContent = '—';
+        $('verdictCode').textContent = '-';
+        $('verdictText').className = 'v';
+        $('cppResult').classList.remove('win');
+        $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+      }
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateUnits();
+      if ($('cashPrice').value) {
+        calcAdv();
+      }
+    });
+  }
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      if (key === 'points' && val === 0) return;
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  parseParam('cash', 'cashPrice');
+  parseParam('points', 'pointsNeeded');
+  parseParam('taxes', 'awardTaxes');
+  parseParam('forgone', 'forgoneValue');
+  parseParam('bonus', 'transferBonus', 1000);
+  parseParam('valuation', 'personalValuation', 1000);
 
   function calcAdv(){
     let C = parseFloat($('cashPrice').value) || 0;
@@ -84,7 +243,6 @@ breadcrumbs:
     let V = parseFloat($('personalValuation').value) || 0;
     let B = parseFloat($('transferBonus').value) || 0;
 
-    // Reset UI state function
     const resetState = (msg = '请输入里程票所需积分数量。') => {
       $('cppResult').textContent = '-';
       $('costCompare').innerHTML = '积分成本: -<br>现金成本: -';
@@ -103,8 +261,8 @@ breadcrumbs:
     }
 
     if (T >= C && C > 0) {
-      resetState('税费已经等于或超过了直接买票的现金价格，严禁使用积分兑换！');
-      $('verdictText').textContent = '绝对亏本';
+      resetState('税费已经等于或超过了直接买票的现金价格，不建议使用积分兑换！');
+      $('verdictText').textContent = '不建议兑换';
       $('verdictText').className = 'verdict bad';
       $('verdictCode').textContent = 'DIFF < 0';
       return;
@@ -112,15 +270,38 @@ breadcrumbs:
 
     const actualPointsUsed = P / (1 + (B / 100));
     const netCashSaved = C - T - F;
-    const actualCpp = netCashSaved / actualPointsUsed;
     
-    $('cppResult').textContent = '¥' + actualCpp.toFixed(4) + ' / 点';
+    // actualCpp is basically amount / points. 
+    // If USD, netCashSaved is in $, points is points. CPP is usually Cents Per Point.
+    let displayCpp = '';
+    let actualCpp = netCashSaved / actualPointsUsed; // used for V comparison
+    
+    if (currentCurrency === 'USD') {
+      // actualCpp is $ / point. Cents per point = actualCpp * 100
+      displayCpp = (actualCpp * 100).toFixed(2) + ' 美分/点';
+      // For V, if V is entered as cents (e.g., 2.0), we need to compare V with actualCpp * 100
+      actualCpp = actualCpp * 100; // So actualCpp is now Cents, V is Cents.
+    } else {
+      displayCpp = '¥' + actualCpp.toFixed(4) + ' / 点';
+    }
+    
+    $('cppResult').textContent = displayCpp;
 
     // Costs
-    const costIfPoints = (actualPointsUsed * V) + T;
+    // If USD, V is in cents. So V/100 is in dollars.
+    let costIfPoints = 0;
+    if (currentCurrency === 'USD') {
+      costIfPoints = (actualPointsUsed * (V / 100)) + T;
+    } else {
+      costIfPoints = (actualPointsUsed * V) + T;
+    }
     const costIfCash = C - F;
 
-    $('costCompare').innerHTML = `积分等价: ¥${costIfPoints.toLocaleString('zh-CN', {maximumFractionDigits:0})}<br>现金净成本: ¥${costIfCash.toLocaleString('zh-CN', {maximumFractionDigits:0})}`;
+    if (currentCurrency === 'USD') {
+      $('costCompare').innerHTML = `积分等价: $${costIfPoints.toLocaleString('en-US', {maximumFractionDigits:0})}<br>现金净成本: $${costIfCash.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+    } else {
+      $('costCompare').innerHTML = `积分等价: ¥${costIfPoints.toLocaleString('zh-CN', {maximumFractionDigits:0})}<br>现金净成本: ¥${costIfCash.toLocaleString('zh-CN', {maximumFractionDigits:0})}`;
+    }
 
     const verdict = $('verdictText');
     const code = $('verdictCode');
@@ -131,9 +312,9 @@ breadcrumbs:
     verdict.className = 'verdict';
 
     if (actualCpp <= 0) {
-      verdict.textContent = '绝对亏本';
+      verdict.textContent = '不建议兑换';
       verdict.className = 'verdict bad';
-      explain.textContent = '税费和损失的回血已经超过了直接买票的现金价格！千万别用积分换！';
+      explain.textContent = '税费和损失的回血已经超过了直接买票的现金价格，使用积分并不划算。';
       code.textContent = 'DIFF < 0';
     } else if (actualCpp > V && V > 0) {
       verdict.textContent = '推荐用积分';
@@ -156,8 +337,10 @@ breadcrumbs:
     }
   }
 
-  ['cashPrice','pointsNeeded','awardTaxes','forgoneValue','personalValuation','transferBonus'].forEach(id => {
+  ['cashPrice','pointsNeeded','awardTaxes','forgoneValue','transferBonus','personalValuation'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcAdv);
   });
-  if($('cashPrice')) calcAdv();
+  
+  updateUnits();
+  if($('cashPrice').value) calcAdv();
 </script>

@@ -1,0 +1,241 @@
+---
+layout: base.njk
+title: Advanced Points vs Cash Calculator
+description: Factor in taxes, surcharges, transfer bonuses, and the forgone points from paying cash to accurately determine if a redemption is worth it.
+schemaType: WebApplication
+eyebrow: Tools · 02
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: Points vs Cash Calculator
+---
+<h1>Advanced Points vs Cash Calculator</h1>
+<p class="sub">Stop comparing just the base numbers. This calculator factors in "hidden costs" like taxes and the points you would have earned by paying cash to give you a precise redemption verdict.</p>
+
+<div class="panel">
+  <div class="field">
+    <label for="cashPrice">Cash ticket price<span class="hint" id="hintCash">$</span></label>
+    <input type="number" id="cashPrice" value="500" min="0" step="1" inputmode="decimal" aria-describedby="hintCash">
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label for="pointsNeeded">Points or miles required<span class="hint" id="hintPoints">Points</span></label>
+      <input type="number" id="pointsNeeded" value="40000" min="1" step="1" inputmode="numeric" aria-describedby="hintPoints">
+    </div>
+    <div class="field">
+      <label for="awardTaxes">Award taxes and surcharges<span class="hint" id="hintTaxes">$</span></label>
+      <input type="number" id="awardTaxes" value="50" min="0" step="1" inputmode="decimal" aria-describedby="hintTaxes">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="forgoneValue">Value of forgone points<span class="hint" id="hintForgone">$ (Optional)</span></label>
+      <input type="number" id="forgoneValue" value="20" min="0" step="1" inputmode="decimal" aria-describedby="hintForgone unitForgone">
+      <div class="unit" id="unitForgone">The value of points you would earn if you bought the cash ticket</div>
+    </div>
+    <div class="field">
+      <label for="transferBonus">Transfer bonus<span class="hint" id="hintBonus">% (Optional)</span></label>
+      <input type="number" id="transferBonus" value="0" min="0" step="1" inputmode="numeric" aria-describedby="hintBonus unitBonus">
+      <div class="unit" id="unitBonus">E.g., enter 20 for a 20% transfer bonus</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="personalValuation">Personal point valuation<span class="hint" id="hintValuation">¢ / Point (Optional)</span></label>
+    <input type="number" id="personalValuation" value="1.5" min="0" step="0.01" inputmode="decimal" aria-describedby="hintValuation unitValuation">
+    <div class="unit" id="unitValuation">Your baseline expectation for how much a point is worth</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Redemption Value (CPP)</div>
+        <div class="v" id="cppResult" style="word-break: break-word; overflow-wrap: anywhere;">0.00¢ / point</div>
+      </div>
+      <div class="item">
+        <div class="k">Equivalent Cost</div>
+        <div class="v" id="costCompare" style="font-size:18px; margin-top:10px; word-break: break-word; overflow-wrap: anywhere;">Points Cost: -<br>Cash Cost: -</div>
+      </div>
+    </div>
+    <div class="note" id="explain"></div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">Recommendation</div>
+      <div class="verdict" id="verdictText">—</div>
+    </div>
+    <div class="code" id="verdictCode">DIFF —</div>
+  </div>
+</div>
+
+<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>Why Use an Advanced Calculator?</h2>
+  <p>When deciding whether to use points or pay cash for an award ticket, simply comparing "points required" to the "cash ticket price" is often not enough. Real-world redemptions are full of "hidden costs". Our advanced calculator factors in four key variables to determine your True Cents Per Point (Actual CPP):</p>
+  <ul>
+    <li><strong>High Taxes and Surcharges:</strong> Some airlines (like British Airways or Emirates) charge exorbitant carrier-imposed surcharges on award tickets that can rival the cash price.</li>
+    <li><strong>Forgone Points Value:</strong> If you pay cash for a flight, you earn frequent flyer miles and credit card points. When you redeem points, you "forgo" those earnings.</li>
+    <li><strong>Transfer Bonuses:</strong> When banks offer a 20% or 30% bonus for transferring points to a specific airline, your actual point cost drops significantly.</li>
+    <li><strong>Personal Valuation:</strong> Market values are just a baseline. This calculator lets you input your own personal valuation to see if the redemption meets your specific goals.</li>
+  </ul>
+
+  <h3>The Advanced Formula</h3>
+  <p>The advanced calculator uses a modified formula that accounts for these hidden variables:</p>
+  <div class="formula-box">
+    <span class="formula-name">Actual CPP =</span>
+    <span class="formula-expression">(Cash Price - Award Taxes - Forgone Value) ÷ (Points Required ÷ (1 + Transfer Bonus %))</span>
+  </div>
+
+  <h3>Frequently Asked Questions (FAQ)</h3>
+  <div class="faq">
+    <details>
+      <summary>What if the taxes are higher than the cash price?</summary>
+      <div>
+        <p>You should absolutely avoid the redemption. If the taxes and fees equal or exceed the cash price of the ticket, you are wasting your points and losing money. This is very common on short-haul economy flights.</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>How do I calculate "Forgone Value"?</summary>
+      <div>
+        <p>Imagine you would earn 10,000 miles if you paid cash for the ticket. If you personally value those miles at 1.0 cents each, your forgone value is $100. This amount should be subtracted from the cash price as a hidden cost of using points.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>What does the "DIFF" percentage mean?</summary>
+      <div>
+        <p>DIFF represents the percentage difference between the Actual CPP and your Personal Valuation. If it's positive (e.g., +20%), the redemption exceeded your expectations. If it's negative, it fell short.</p>
+      </div>
+    </details>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "What if the taxes are higher than the cash price?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You should absolutely avoid the redemption. If the taxes and fees equal or exceed the cash price of the ticket, you are wasting your points and losing money. This is very common on short-haul economy flights."
+      }
+    }, {
+      "@type": "Question",
+      "name": "How do I calculate \"Forgone Value\"?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Imagine you would earn 10,000 miles if you paid cash for the ticket. If you personally value those miles at 1.0 cents each, your forgone value is $100. This amount should be subtracted from the cash price as a hidden cost of using points."
+      }
+    }, {
+      "@type": "Question",
+      "name": "What does the \"DIFF\" percentage mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DIFF represents the percentage difference between the Actual CPP and your Personal Valuation. If it's positive (e.g., +20%), the redemption exceeded your expectations. If it's negative, it fell short."
+      }
+    }]
+  }
+  </script>
+
+  <h2>Related Case Studies</h2>
+  <ul>
+    <li><a href="/en/examples/points-vs-cash-economy-flight/">Economy Flight Case Study: Points or Cash?</a></li>
+    <li><a href="/en/examples/business-class-redemption-value/">Business Class Case Study: Outsized Value</a></li>
+    <li><a href="/en/examples/hotel-points-vs-cash/">Hotel Points Case Study: Waived Resort Fees</a></li>
+  </ul>
+  
+  <p class="disclaimer" style="margin-top: 30px; font-size: 0.85em; color: #64748b;"><em>Last Fact-Checked: August 2026. Calculator results are for informational purposes only and do not represent live award availability.</em></p>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  function calcAdv(){
+    let C = parseFloat($('cashPrice').value) || 0;
+    let P = parseFloat($('pointsNeeded').value) || 0;
+    let T = parseFloat($('awardTaxes').value) || 0;
+    let F = parseFloat($('forgoneValue').value) || 0;
+    let V = parseFloat($('personalValuation').value) || 0;
+    let B = parseFloat($('transferBonus').value) || 0;
+
+    const resetState = (msg = 'Please enter the required points.') => {
+      $('cppResult').textContent = '-';
+      $('costCompare').innerHTML = 'Points Cost: -<br>Cash Cost: -';
+      $('verdictText').textContent = '—';
+      $('verdictCode').textContent = 'DIFF —';
+      $('explain').textContent = msg;
+      
+      $('verdictText').className = 'verdict';
+      $('cppResult').classList.remove('win');
+      $('cppResult').parentElement.classList.remove('win');
+    };
+
+    if (P <= 0 || C < 0 || T < 0 || F < 0 || V < 0 || B < 0) {
+      resetState(P <= 0 ? 'Please enter the required points.' : 'Inputs cannot be negative.');
+      return;
+    }
+
+    if (T >= C && C > 0) {
+      resetState('Taxes are equal to or higher than the cash price. Avoid this redemption!');
+      $('verdictText').textContent = 'Avoid';
+      $('verdictText').className = 'verdict bad';
+      $('verdictCode').textContent = 'DIFF < 0';
+      return;
+    }
+
+    const actualPointsUsed = P / (1 + (B / 100));
+    const netCashSaved = C - T - F;
+    const actualCpp = (netCashSaved / actualPointsUsed) * 100; // in cents
+    
+    $('cppResult').textContent = actualCpp.toFixed(2) + '¢ / point';
+
+    const costIfPoints = (actualPointsUsed * (V / 100)) + T;
+    const costIfCash = C - F;
+
+    $('costCompare').innerHTML = `Points Equiv: $${costIfPoints.toLocaleString('en-US', {maximumFractionDigits:0})}<br>Net Cash: $${costIfCash.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+
+    const verdict = $('verdictText');
+    const code = $('verdictCode');
+    const explain = $('explain');
+
+    $('cppResult').classList.remove('win');
+    $('cppResult').parentElement.classList.remove('win');
+    verdict.className = 'verdict';
+
+    if (actualCpp <= 0) {
+      verdict.textContent = 'Avoid';
+      verdict.className = 'verdict bad';
+      explain.textContent = 'Taxes and forgone points wipe out the cash price. Save your points!';
+      code.textContent = 'DIFF < 0';
+    } else if (actualCpp > V && V > 0) {
+      verdict.textContent = 'Use Points';
+      verdict.className = 'verdict good';
+      $('cppResult').classList.add('win');
+      const diff = ((actualCpp - V) / V * 100).toFixed(0);
+      explain.textContent = `This redemption offers ${diff}% more value than your personal valuation. It's a solid use of points.`;
+      code.textContent = `DIFF +${diff}%`;
+    } else if (actualCpp < V && V > 0) {
+      verdict.textContent = 'Pay Cash';
+      verdict.className = 'verdict bad';
+      const diff = ((V - actualCpp) / V * 100).toFixed(0);
+      explain.textContent = `The actual value falls ${diff}% short of your personal valuation. You are better off paying cash and saving the points.`;
+      code.textContent = `DIFF -${diff}%`;
+    } else {
+      verdict.textContent = 'Either Option';
+      verdict.className = 'verdict';
+      explain.textContent = V === 0 ? 'You did not enter a personal valuation. Decide based on the CPP above.' : 'The redemption value closely matches your expectations. Either option is reasonable.';
+      code.textContent = 'DIFF ~0%';
+    }
+  }
+
+  ['cashPrice','pointsNeeded','awardTaxes','forgoneValue','personalValuation','transferBonus'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcAdv);
+  });
+  if($('cashPrice')) calcAdv();
+</script>

@@ -12,6 +12,14 @@ breadcrumbs:
 <h1>积分折现计算器 (Points to Dollars)</h1>
 <p class="sub">别把积分当欢乐豆，它们是真金白银。输入你账户里的点数和当前市场估值，算算你一共持有多少“无形资产”。</p>
 
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right;">
+  <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
+  <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+    <option value="CNY">人民币（CNY ¥）</option>
+    <option value="USD">美元（USD $）</option>
+  </select>
+</div>
+
 <div class="panel">
   <div class="field">
     <label for="totalPoints">你账户里的总积分/里程<span class="hint" id="hintTotal">点</span></label>
@@ -19,7 +27,7 @@ breadcrumbs:
   </div>
   
   <div class="field">
-    <label for="presetValuation">当前市场单点估值 (CPP)<span class="hint" id="hintValuation">元 / 点</span></label>
+    <label for="presetValuation">当前市场单点估值 (CPP)<span class="hint" id="hintValuation">价值 / 点</span></label>
     <select id="presetValuation" aria-describedby="hintValuation unitValuation">
       <option value="custom">自定义(手动输入)</option>
       <option value="0.12">0.12 (国内航司里程估值示例)</option>
@@ -36,7 +44,7 @@ breadcrumbs:
   <div class="main">
     <div class="compare">
       <div class="item">
-        <div class="k">折合人民币资产估值约</div>
+        <div class="k">折合资产估值约</div>
         <div class="v" id="dollarValue" style="word-break: break-word; overflow-wrap: anywhere;">¥0</div>
       </div>
     </div>
@@ -48,7 +56,7 @@ breadcrumbs:
   <strong>核心警告：</strong> 积分不像现金能够稳定保值。各大航司和酒店几乎每年都会进行不同程度的“贬值”（调高兑换门槛或改恶兑换图表）。因此我们强烈建议“Earn and Burn”——赚了就赶紧花，绝对不要把积分当成理财产品囤积。
 </div>
 
-<div class="article-content" style="margin-top: 40px;">
+<div class="article-content prose" style="margin-top: 40px;">
   <h2>为什么要计算“积分折现价值”？</h2>
   <p>很多常旅客玩家会沉迷于开卡奖励，看着账户里高达几十上百万的积分余额感到满足。然而，这些数字并非银行存款。计算“积分折现价值”（Points to Dollars）主要有两个实际意义：</p>
   <ul>
@@ -69,10 +77,123 @@ breadcrumbs:
     <li><strong>了解保级与过期规则</strong><br>
     各计划过期规则不同。ANA 和普通 KrisFlyer 里程通常按赚取时间计算有效期（最长36个月）；2020年起赚取的亚洲万里通 (Asia Miles) 则可通过符合条件的赚取或兑换活动自动顺延 18 个月。请务必以各家航司最新官方规则为准，避免积分失效。</li>
   </ol>
+
+  <h3>常见问题 (FAQ)</h3>
+  <h3>常见问题 (FAQ)</h3>
+  <div class="faq">
+    <details>
+      <summary>如果我的积分即将过期怎么办？</summary>
+      <div>
+        <p>很多计划（如万豪、英国航空）只要账户有任何余额变动（如赚取或消费积分）即可顺延所有积分的有效期。最简单的办法是通过相关信用卡消费一笔，或者通过购物返利网站（Shopping Portal）赚取少量积分来激活账户。</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>我可以把积分卖给别人换成现金吗？</summary>
+      <div>
+        <p>绝对不行。几乎所有航空公司和酒店的条款都明确禁止买卖积分。如果被发现，你的账户将被封禁，所有积分清零，且已经出票的机票也会被取消。你可以合法地为亲友出票，但不能涉及金钱交易。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>这个计算器可以直接提现吗？</summary>
+      <div>
+        <p>本计算器仅提供资产估算功能，不能进行任何实际的金融交易。我们只是帮你弄清楚“你的积分大概值多少钱”。</p>
+      </div>
+    </details>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "如果我的积分即将过期怎么办？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "很多计划（如万豪、英国航空）只要账户有任何余额变动（如赚取或消费积分）即可顺延所有积分的有效期。最简单的办法是通过相关信用卡消费一笔，或者通过购物返利网站（Shopping Portal）赚取少量积分来激活账户。"
+      }
+    }, {
+      "@type": "Question",
+      "name": "我可以把积分卖给别人换成现金吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "绝对不行。几乎所有航空公司和酒店的条款都明确禁止买卖积分。如果被发现，你的账户将被封禁，所有积分清零，且已经出票的机票也会被取消。你可以合法地为亲友出票，但不能涉及金钱交易。"
+      }
+    }, {
+      "@type": "Question",
+      "name": "这个计算器可以直接提现吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "本计算器仅提供资产估算功能，不能进行任何实际的金融交易。我们只是帮你弄清楚“你的积分大概值多少钱”。"
+      }
+    }]
+  }
+  </script>
 </div>
 
 <script>
   const $ = id => document.getElementById(id);
+  
+  const params = new URLSearchParams(window.location.search);
+  let currentCurrency = 'CNY';
+  const validCurrencies = ['CNY', 'USD'];
+  const urlCurr = params.get('currency');
+  if (urlCurr && validCurrencies.includes(urlCurr)) {
+    currentCurrency = urlCurr;
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && validCurrencies.includes(saved)) {
+        currentCurrency = saved;
+      }
+    } catch(e) {}
+  }
+  
+  const updateUnits = () => {
+    if (currentCurrency === 'USD') {
+      if($('hintValuation')) $('hintValuation').textContent = '美分/点';
+    } else {
+      if($('hintValuation')) $('hintValuation').textContent = '元/点';
+    }
+  };
+
+  if ($('currency')) {
+    $('currency').value = currentCurrency;
+    $('currency').addEventListener('change', (e) => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      if (oldCurrency !== currentCurrency) {
+        ['cppValue'].forEach(id => {
+          if ($(id)) $(id).value = '';
+        });
+        const warningMsg = currentCurrency === 'USD' 
+          ? '货币已切换为美元。为避免金额混淆，请重新填写美分/点估值。' 
+          : '货币已切换为人民币。为避免金额混淆，请重新填写元/点估值。';
+        $('dollarValue').textContent = '-';
+        $('dollarValue').classList.remove('win');
+        $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+      }
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateUnits();
+      if ($('cppValue').value) {
+        calcDollars();
+      }
+    });
+  }
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      if (key === 'points' && val === 0) return;
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  parseParam('points', 'totalPoints');
+  parseParam('valuation', 'cppValue', 1000);
+
   function calcDollars(){
     let P = parseFloat($('totalPoints').value) || 0;
     let V = parseFloat($('cppValue').value) || 0;
@@ -83,16 +204,23 @@ breadcrumbs:
       $('dollarValue').classList.remove('win');
     };
 
-    if (P <= 0 || V <= 0) {
+    if (P <= 0 || V <= 0 || !$('cppValue').value) {
       resetState(P < 0 || V < 0 ? '输入不能为负数。' : '请输入积分余额和估值。');
       return;
     }
     
-    const total = P * V;
-    
-    $('dollarValue').textContent = '¥' + total.toLocaleString('zh-CN', {maximumFractionDigits:0});
+    // If USD, V is in Cents, we divide by 100 to get dollar amount
+    let total = 0;
+    if (currentCurrency === 'USD') {
+      total = P * (V / 100);
+      $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:2});
+      $('explain').textContent = `按 ${V} 美分/点的估值计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 $${total.toLocaleString('en-US', {maximumFractionDigits:2})} 的购买力。如果一直闲置不用，这笔无形资产将面临缩水风险。`;
+    } else {
+      total = P * V;
+      $('dollarValue').textContent = '¥' + total.toLocaleString('zh-CN', {maximumFractionDigits:0});
+      $('explain').textContent = `按 ${V} 元/点的估值计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 ${total.toLocaleString('zh-CN', {maximumFractionDigits:0})} 元的购买力。如果一直闲置不用，这笔无形资产将面临缩水风险。`;
+    }
     $('dollarValue').classList.add('win');
-    $('explain').textContent = `按 ${V} 元/点的估值计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 ${total.toLocaleString('zh-CN', {maximumFractionDigits:0})} 元的购买力。如果一直闲置不用，这笔无形资产将面临缩水风险。`;
   }
 
   $('presetValuation').addEventListener('change', e => {
@@ -104,4 +232,7 @@ breadcrumbs:
   ['totalPoints','cppValue'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcDollars);
   });
+  
+  updateUnits();
+  if($('cppValue').value) calcDollars();
 </script>
