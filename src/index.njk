@@ -203,21 +203,25 @@ eyebrow: 里程账 · 工具 01
       const oldCurrency = currentCurrency;
       currentCurrency = e.target.value;
       if (oldCurrency !== currentCurrency) {
-        ['cashRatio', 'mileValue'].forEach(id => {
-          if ($(id)) $(id).value = '';
-        });
+        $('cashRatio').value = '';
+        $('mileValue').value = '';
+        
         $('programPreset').value = 'custom';
         const warningMsg = currentCurrency === 'USD' 
-          ? '货币已切换为美元。为避免金额混淆，请重新填写估值和抵扣比例。' 
-          : '货币已切换为人民币。为避免金额混淆，请重新填写估值和抵扣比例。';
-        $('cashOut').textContent = '-';
-        $('milesOut').textContent = '-';
-        $('verdictText').textContent = '—';
-        $('verdictCode').textContent = '-';
-        $('verdictText').className = 'verdict';
-        $('cashOut').classList.remove('win');
-        $('milesOut').classList.remove('win');
-        $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+          ? '货币已切换。为避免人民币和美元金额混淆，请重新填写估值和抵扣比例。' 
+          : '货币已切换。为避免人民币和美元金额混淆，请重新填写估值和抵扣比例。';
+          
+        function clearCalculatorResults() {
+          $('cashOut').textContent = '-';
+          $('milesOut').textContent = '-';
+          $('verdictText').textContent = '—';
+          $('verdictCode').textContent = '-';
+          $('verdictText').className = 'verdict';
+          $('cashOut').classList.remove('win');
+          $('milesOut').classList.remove('win');
+          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+        }
+        clearCalculatorResults();
       }
       try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
       updateUnits();

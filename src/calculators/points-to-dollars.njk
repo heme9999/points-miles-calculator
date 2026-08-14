@@ -165,15 +165,18 @@ breadcrumbs:
       const oldCurrency = currentCurrency;
       currentCurrency = e.target.value;
       if (oldCurrency !== currentCurrency) {
-        ['cppValue'].forEach(id => {
-          if ($(id)) $(id).value = '';
-        });
+        $('cppValue').value = '';
+        
         const warningMsg = currentCurrency === 'USD' 
-          ? '货币已切换为美元。为避免金额混淆，请重新填写美分/点估值。' 
-          : '货币已切换为人民币。为避免金额混淆，请重新填写元/点估值。';
-        $('dollarValue').textContent = '-';
-        $('dollarValue').classList.remove('win');
-        $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+          ? '货币已切换。为避免人民币和美元金额混淆，请重新填写个人估值。' 
+          : '货币已切换。为避免人民币和美元金额混淆，请重新填写个人估值。';
+          
+        function clearCalculatorResults() {
+          $('dollarValue').textContent = '-';
+          $('dollarValue').classList.remove('win');
+          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+        }
+        clearCalculatorResults();
       }
       try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
       updateUnits();

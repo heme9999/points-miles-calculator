@@ -103,7 +103,7 @@ breadcrumbs:
     <details>
       <summary>如果税费超过了现金票价怎么办？</summary>
       <div>
-        <p>绝对不要使用积分兑换。当税费等于或超过直接购买机票的价格时，意味着你不仅在白白浪费积分，还要倒贴钱。这在经济舱短途航班中非常常见。</p>
+        <p>通常不建议使用积分兑换。此时奖励票的现金支出已经达到或超过现金票价格，继续消耗积分一般没有经济意义。</p>
       </div>
     </details>
     
@@ -131,7 +131,7 @@ breadcrumbs:
       "name": "如果税费超过了现金票价怎么办？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "绝对不要使用积分兑换。当税费等于或超过直接购买机票的价格时，意味着你不仅在白白浪费积分，还要倒贴钱。这在经济舱短途航班中非常常见。"
+        "text": "通常不建议使用积分兑换。此时奖励票的现金支出已经达到或超过现金票价格，继续消耗积分一般没有经济意义。"
       }
     }, {
       "@type": "Question",
@@ -199,18 +199,25 @@ breadcrumbs:
       const oldCurrency = currentCurrency;
       currentCurrency = e.target.value;
       if (oldCurrency !== currentCurrency) {
-        ['cashPrice', 'awardTaxes', 'forgoneValue', 'personalValuation'].forEach(id => {
-          if ($(id)) $(id).value = '';
-        });
+        $('cashPrice').value = '';
+        $('awardTaxes').value = '';
+        $('forgoneValue').value = '';
+        $('personalValuation').value = '';
+        
         const warningMsg = currentCurrency === 'USD' 
-          ? '货币已切换为美元。为避免金额混淆，请重新填写美元金额和美分/点估值。' 
-          : '货币已切换为人民币。为避免金额混淆，请重新填写人民币金额和元/点估值。';
-        $('cppResult').textContent = '-';
-        $('verdictText').textContent = '—';
-        $('verdictCode').textContent = '-';
-        $('verdictText').className = 'v';
-        $('cppResult').classList.remove('win');
-        $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+          ? '货币已切换。为避免人民币和美元金额混淆，请重新填写金额与个人估值。' 
+          : '货币已切换。为避免人民币和美元金额混淆，请重新填写金额与个人估值。';
+          
+        function clearCalculatorResults() {
+          $('cppResult').textContent = '-';
+          $('costCompare').innerHTML = '积分成本: -<br>现金成本: -';
+          $('verdictText').textContent = '—';
+          $('verdictCode').textContent = '-';
+          $('verdictText').className = 'v';
+          $('cppResult').classList.remove('win');
+          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+        }
+        clearCalculatorResults();
       }
       try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
       updateUnits();
