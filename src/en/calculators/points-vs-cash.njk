@@ -155,6 +155,82 @@ breadcrumbs:
 
 <script>
   const $ = id => document.getElementById(id);
+  
+  const params = new URLSearchParams(window.location.search);
+  let currentCurrency = 'USD';
+  const validCurrencies = ['CNY', 'USD'];
+  const urlCurr = params.get('currency');
+  if (urlCurr && validCurrencies.includes(urlCurr)) {
+    currentCurrency = urlCurr;
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && validCurrencies.includes(saved)) {
+        currentCurrency = saved;
+      }
+    } catch(e) {}
+  }
+  
+  const updateUnits = () => {
+    if (currentCurrency === 'USD') {
+      if($('hintCash')) $('hintCash').textContent = 'USD';
+      if($('hintTaxes')) $('hintTaxes').textContent = 'USD';
+      if($('hintForgone')) $('hintForgone').textContent = 'USD (Optional)';
+      if($('hintValuation')) $('hintValuation').textContent = 'cents/point (Optional)';
+    } else {
+      if($('hintCash')) $('hintCash').textContent = 'CNY';
+      if($('hintTaxes')) $('hintTaxes').textContent = 'CNY';
+      if($('hintForgone')) $('hintForgone').textContent = 'CNY (Optional)';
+      if($('hintValuation')) $('hintValuation').textContent = 'CNY/point (Optional)';
+    }
+  };
+
+  if ($('currency')) {
+    $('currency').value = currentCurrency;
+    $('currency').addEventListener('change', (e) => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      if (oldCurrency !== currentCurrency) {
+        $('cashPrice').value = '';
+        $('awardTaxes').value = '';
+        $('forgoneValue').value = '';
+        $('personalValuation').value = '';
+        
+        const warningMsg = 'Currency changed. To avoid confusion, please re-enter all amounts and your personal valuation.';
+          
+        function clearCalculatorResults() {
+          $('cppResult').textContent = '-';
+          $('costCompare').innerHTML = 'Points Cost: -<br>Cash Cost: -';
+          $('verdictText').textContent = '—';
+          $('verdictCode').textContent = '-';
+          $('verdictText').className = 'verdict';
+          $('cppResult').classList.remove('win');
+          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+        }
+        clearCalculatorResults();
+      }
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateUnits();
+      if ($('cashPrice').value) {
+        calcAdv();
+      }
+    });
+  }
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      if (key === 'points' && val === 0) return;
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  parseParam('cash', 'cashPrice');
+  parseParam('points', 'pointsNeeded');
+  parseParam('taxes', 'awardTaxes');
+  parseParam('forgone', 'forgoneValue');
+  parseParam('bonus', 'transferBonus', 1000);
+  parseParam('valuation', 'personalValuation', 1000);
 
   function calcAdv(){
     let C = parseFloat($('cashPrice').value) || 0;
@@ -164,41 +240,35 @@ breadcrumbs:
     let V = parseFloat($('personalValuation').value) || 0;
     let B = parseFloat($('transferBonus').value) || 0;
 
-    const resetState = (msg = 'Please enter the required points.') => {
-      $('cppResult').textContent = '-';
-      $('costCompare').innerHTML = 'Points Cost: -<br>Cash Cost: -';
-      $('verdictText').textContent = '—';
-      $('verdictCode').textContent = 'DIFF —';
-      $('explain').textContent = msg;
-      
-      $('verdictText').className = 'verdict';
-      $('cppResult').classList.remove('win');
-      $('cppResult').parentElement.classList.remove('win');
-    };
-
     if (P <= 0 || C < 0 || T < 0 || F < 0 || V < 0 || B < 0) {
-      resetState(P <= 0 ? 'Please enter the required points.' : 'Inputs cannot be negative.');
-      return;
-    }
-
-    if (T >= C && C > 0) {
-      resetState('Taxes are equal to or higher than the cash price. Avoid this redemption!');
-      $('verdictText').textContent = 'Avoid';
-      $('verdictText').className = 'verdict bad';
-      $('verdictCode').textContent = 'DIFF < 0';
       return;
     }
 
     const actualPointsUsed = P / (1 + (B / 100));
     const netCashSaved = C - T - F;
-    const actualCpp = (netCashSaved / actualPointsUsed) * 100; // in cents
+    const actualCpp = (netCashSaved / actualPointsUsed);
+    let compActualCpp = actualCpp;
     
-    $('cppResult').textContent = actualCpp.toFixed(2) + '¢ / point';
+    if (currentCurrency === 'USD') {
+      compActualCpp = actualCpp * 100;
+      $('cppResult').textContent = compActualCpp.toFixed(2) + '¢ / point';
+    } else {
+      $('cppResult').textContent = '¥' + actualCpp.toFixed(4) + ' / point';
+    }
 
-    const costIfPoints = (actualPointsUsed * (V / 100)) + T;
+    let costIfPoints = 0;
+    if (currentCurrency === 'USD') {
+      costIfPoints = (actualPointsUsed * (V / 100)) + T;
+    } else {
+      costIfPoints = (actualPointsUsed * V) + T;
+    }
     const costIfCash = C - F;
 
-    $('costCompare').innerHTML = `Points Equiv: $${costIfPoints.toLocaleString('en-US', {maximumFractionDigits:0})}<br>Net Cash: $${costIfCash.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+    if (currentCurrency === 'USD') {
+      $('costCompare').innerHTML = `Points Cost: $${costIfPoints.toLocaleString('en-US', {maximumFractionDigits:0})}<br>Cash Cost: $${costIfCash.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+    } else {
+      $('costCompare').innerHTML = `Points Cost: ¥${costIfPoints.toLocaleString('zh-CN', {maximumFractionDigits:0})}<br>Cash Cost: ¥${costIfCash.toLocaleString('zh-CN', {maximumFractionDigits:0})}`;
+    }
 
     const verdict = $('verdictText');
     const code = $('verdictCode');
@@ -208,34 +278,63 @@ breadcrumbs:
     $('cppResult').parentElement.classList.remove('win');
     verdict.className = 'verdict';
 
-    if (actualCpp <= 0) {
-      verdict.textContent = 'Avoid';
+    if (compActualCpp <= 0) {
+      verdict.textContent = 'Pay Cash';
       verdict.className = 'verdict bad';
-      explain.textContent = 'Taxes and forgone points wipe out the cash price. Save your points!';
+      explain.textContent = 'Using points is a poor value.';
       code.textContent = 'DIFF < 0';
-    } else if (actualCpp > V && V > 0) {
+    } else if (compActualCpp > V && V > 0) {
       verdict.textContent = 'Use Points';
       verdict.className = 'verdict good';
       $('cppResult').classList.add('win');
-      const diff = ((actualCpp - V) / V * 100).toFixed(0);
-      explain.textContent = `This redemption offers ${diff}% more value than your personal valuation. It's a solid use of points.`;
+      $('cppResult').parentElement.classList.add('win');
+      const diff = ((compActualCpp - V) / V * 100).toFixed(0);
+      explain.textContent = `This redemption yields ${diff}% more value than your personal valuation. A great deal!`;
       code.textContent = `DIFF +${diff}%`;
-    } else if (actualCpp < V && V > 0) {
+    } else if (compActualCpp < V && V > 0) {
       verdict.textContent = 'Pay Cash';
       verdict.className = 'verdict bad';
-      const diff = ((V - actualCpp) / V * 100).toFixed(0);
+      const diff = ((V - compActualCpp) / V * 100).toFixed(0);
       explain.textContent = `The actual value falls ${diff}% short of your personal valuation. You are better off paying cash and saving the points.`;
       code.textContent = `DIFF -${diff}%`;
     } else {
       verdict.textContent = 'Either Option';
       verdict.className = 'verdict';
-      explain.textContent = V === 0 ? 'You did not enter a personal valuation. Decide based on the CPP above.' : 'The redemption value closely matches your expectations. Either option is reasonable.';
+      explain.textContent = V === 0 ? 'No personal valuation provided. Please judge based on the CPP above.' : 'The value aligns with your baseline. Either option is fine.';
       code.textContent = 'DIFF ~0%';
     }
   }
 
-  ['cashPrice','pointsNeeded','awardTaxes','forgoneValue','personalValuation','transferBonus'].forEach(id => {
+  ['cashPrice', 'pointsNeeded', 'awardTaxes', 'forgoneValue', 'transferBonus', 'personalValuation'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcAdv);
   });
-  if($('cashPrice')) calcAdv();
+  
+  updateUnits();
+  if($('cashPrice').value) calcAdv();
+
+  if($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const newParams = new URLSearchParams();
+      const safeSet = (key, id) => {
+        const v = parseFloat($(id).value);
+        if (!isNaN(v) && v > 0) newParams.set(key, v);
+      };
+      safeSet('cash', 'cashPrice');
+      safeSet('points', 'pointsNeeded');
+      safeSet('taxes', 'awardTaxes');
+      safeSet('forgone', 'forgoneValue');
+      safeSet('bonus', 'transferBonus');
+      safeSet('valuation', 'personalValuation');
+      newParams.set('currency', currentCurrency);
+      
+      const newUrl = window.location.pathname + '?' + newParams.toString();
+      history.replaceState(null, '', newUrl);
+      
+      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
+        const toast = $('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+      });
+    });
+  }
 </script>

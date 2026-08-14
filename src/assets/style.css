@@ -273,3 +273,29 @@ h3 + .faq, h2 + .faq {
     padding: 1rem 1rem;
   }
 }
+
+.btn-share {
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid #0284c7;
+  background: #e0f2fe;
+  color: #0284c7;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+.btn-share:hover {
+  background: #bae6fd;
+}
+.toast {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #22c55e;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}

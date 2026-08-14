@@ -12,6 +12,8 @@ breadcrumbs:
 <h1>CPP Calculator (Cents Per Point)</h1>
 <p class="sub">CPP (Cents Per Point) is the standard metric used to evaluate award redemptions. Enter your numbers to see if you are getting a good deal.</p>
 
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
+<div id="toast" class="toast">Link copied to clipboard!</div>
 <div class="panel">
   <div class="field">
     <label for="cashPrice">Cash ticket price<span class="hint" id="hintCash">$</span></label>
@@ -124,11 +126,52 @@ breadcrumbs:
       }
     }]
   }
-  </script>
+  
+  if($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const newParams = new URLSearchParams();
+      const safeSet = (key, id) => {
+        const el = $(id);
+        if(el) {
+          const v = parseFloat(el.value);
+          if (!isNaN(v) && v > 0) newParams.set(key, v);
+        }
+      };
+      safeSet('cashPrice', 'cashPrice');
+      safeSet('awardTaxes', 'awardTaxes');
+      safeSet('pointsNeeded', 'pointsNeeded');
+      safeSet('savedCash', 'savedCash');
+      if (typeof currentCurrency !== 'undefined') newParams.set('currency', currentCurrency);
+      
+      const newUrl = window.location.pathname + '?' + newParams.toString();
+      history.replaceState(null, '', newUrl);
+      
+      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
+        const toast = $('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+      });
+    });
+  }
+</script>
 </div>
 
 <script>
   const $ = id => document.getElementById(id);
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    const params = new URLSearchParams(window.location.search);
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  parseParam('cashPrice', 'cashPrice');
+  parseParam('awardTaxes', 'awardTaxes');
+  parseParam('pointsNeeded', 'pointsNeeded');
+  parseParam('savedCash', 'savedCash');
+
   function calcCpp(){
     let C = parseFloat($('cashPrice').value) || 0;
     let T = parseFloat($('awardTaxes').value) || 0;

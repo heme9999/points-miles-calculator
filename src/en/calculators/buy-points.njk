@@ -1,0 +1,394 @@
+---
+layout: base.njk
+title: Is Buying Points Worth It? Buy Points Calculator
+description: Evaluate the true cost of hotel or airline buy-points promotions (like 100% bonuses) against your target redemption value.
+schemaType: WebApplication
+eyebrow: Points & Miles · Tool 06
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: Buy Points Calculator
+---
+<h1>Is Buying Points Worth It? Calculator</h1>
+<p class="sub">Tempted by a "Buy Points with a 100% Bonus" promotion? This calculator reveals the true Cost per Point (CPP) and compares it against your target redemption value.</p>
+
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+  <button id="btnShare" style="padding: 4px 12px; border-radius: 4px; border: 1px solid #0284c7; background: #e0f2fe; color: #0284c7; cursor: pointer; font-size: 14px;">Share this calculation</button>
+  <div>
+    <label for="currency" style="font-weight: bold; margin-right: 8px;">Currency</label>
+    <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <option value="USD">USD ($)</option>
+      <option value="CNY">CNY (¥)</option>
+    </select>
+  </div>
+</div>
+<div id="toast" style="display: none; position: fixed; top: 20px; right: 20px; background: #22c55e; color: white; padding: 10px 20px; border-radius: 4px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Link copied to clipboard!</div>
+
+<div class="panel">
+  <h3>Purchase Costs</h3>
+  <div class="row">
+    <div class="field">
+      <label for="pointsToBuy">Base Points to Buy<span class="hint">pts/miles</span></label>
+      <input type="number" id="pointsToBuy" min="0" step="1" inputmode="numeric" placeholder="e.g. 50000">
+    </div>
+    <div class="field">
+      <label for="purchasePrice">Base Purchase Price<span class="hint" id="hintPrice">Currency</span></label>
+      <input type="number" id="purchasePrice" min="0" step="1" inputmode="decimal" placeholder="e.g. 500">
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label for="bonusPercentage">Bonus Percentage<span class="hint">% (opt)</span></label>
+      <input type="number" id="bonusPercentage" value="0" min="0" step="1" inputmode="numeric">
+      <div class="unit">For a 100% bonus, enter 100</div>
+    </div>
+    <div class="field">
+      <label for="fixedBonusPoints">Fixed Bonus Points<span class="hint">pts (opt)</span></label>
+      <input type="number" id="fixedBonusPoints" value="0" min="0" step="1" inputmode="numeric">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="purchaseTaxes">Purchase Taxes<span class="hint" id="hintTaxes">Currency (opt)</span></label>
+      <input type="number" id="purchaseTaxes" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label for="fxFees">FX / Processing Fees<span class="hint" id="hintFxFees">Currency (opt)</span></label>
+      <input type="number" id="fxFees" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <h3>Target Redemption & Valuation (Optional, for recommendations)</h3>
+  
+  <div class="row">
+    <div class="field">
+      <label for="targetPoints">Target Required Points<span class="hint">pts</span></label>
+      <input type="number" id="targetPoints" min="0" step="1" inputmode="numeric" placeholder="e.g. 60000">
+    </div>
+    <div class="field">
+      <label for="targetCash">Target Cash Price<span class="hint" id="hintTargetCash">Currency</span></label>
+      <input type="number" id="targetCash" min="0" step="1" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="field">
+      <label for="targetAwardTaxes">Target Award Taxes/Fees<span class="hint" id="hintTargetAwardTaxes">Currency</span></label>
+      <input type="number" id="targetAwardTaxes" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label for="personalValuation">Your Point Valuation<span class="hint" id="hintValuation">Value/pt</span></label>
+      <input type="number" id="personalValuation" value="0" min="0" step="0.0001" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Purchase Cost per Point (CPP)</div>
+        <div class="v" id="cppResult" style="word-break: break-word; overflow-wrap: anywhere;">-</div>
+      </div>
+      <div class="item">
+        <div class="k">Totals</div>
+        <div class="v" id="totalsResult" style="font-size:16px; margin-top:10px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5;">Total Points: -<br>Total Cash Spent: -</div>
+      </div>
+    </div>
+    <div class="note" id="explain">Please enter points to buy and purchase price.</div>
+    <div class="note" id="targetBreakdown" style="font-size: 14px; color: #1e293b; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1; display: none;"></div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">Recommendation</div>
+      <div class="verdict" id="verdictText">—</div>
+    </div>
+    <div class="code" id="verdictCode">DIFF —</div>
+  </div>
+</div>
+
+<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>Risks: Buying Points Does Not Equal Cash</h2>
+  <p>When deciding to buy points, remember: <strong>purchased points are not cash deposits</strong>. Just because the redemption value exceeds the purchase cost doesn't guarantee a "win". We strongly advise considering these risks before buying:</p>
+  <ul>
+    <li><strong>Award Availability</strong>: Your desired hotel dates or flight may have zero award inventory available for booking.</li>
+    <li><strong>Posting Time</strong>: Some points purchases take 24-72 hours to post to your account. By then, your desired award space may be gone.</li>
+    <li><strong>Devaluation</strong>: Programs can devalue their award charts without warning. <strong>Never buy points speculatively to hoard them</strong>.</li>
+    <li><strong>Refund Restrictions</strong>: Points purchases are almost universally final and non-refundable.</li>
+  </ul>
+  <p>The optimal strategy: <strong>Find a specific award redemption, verify it is available, use this calculator to confirm buying points is cheaper than paying cash, and then buy and book immediately.</strong></p>
+
+  <h3>Core Buy Points Logic</h3>
+  <div class="formula-box">
+    <span class="formula-name">Final Points Received =</span>
+    <span class="formula-expression">Base Points × (1 + Bonus Percentage) + Fixed Bonus Points</span>
+  </div>
+  <div class="formula-box" style="margin-top: -1rem;">
+    <span class="formula-name">Total Cash Spent =</span>
+    <span class="formula-expression">Base Price + Taxes + FX/Processing Fees</span>
+  </div>
+  <div class="formula-box" style="margin-top: -1rem;">
+    <span class="formula-name">Purchase Cost per Point =</span>
+    <span class="formula-expression">Total Cash Spent ÷ Final Points Received</span>
+  </div>
+
+  <h2>Related Guides & Tools</h2>
+  <ul>
+    <li><a href="/en/guides/is-buying-points-worth-it/">In-Depth Guide: Should You Buy Points During Promotions?</a></li>
+    <li><a href="/en/calculators/hotel-points-vs-cash/">Hotel Points vs Cash Calculator</a></li>
+    <li><a href="/en/calculators/points-vs-cash/">Flight Points vs Cash Calculator</a></li>
+  </ul>
+  
+  <p class="disclaimer" style="margin-top: 30px; font-size: 0.85em; color: #64748b;"><em>Last verified: August 2026. Tool results are for reference only. Always verify final checkout amounts on the official program website.</em></p>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  
+  const params = new URLSearchParams(window.location.search);
+  let currentCurrency = 'USD'; // Buy points usually default to USD
+  const validCurrencies = ['CNY', 'USD'];
+  const urlCurr = params.get('currency');
+  if (urlCurr && validCurrencies.includes(urlCurr)) {
+    currentCurrency = urlCurr;
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && validCurrencies.includes(saved)) {
+        currentCurrency = saved;
+      }
+    } catch(e) {}
+  }
+  
+  const updateUnits = () => {
+    const isUSD = currentCurrency === 'USD';
+    const cHint = isUSD ? 'USD' : 'CNY';
+    const cValHint = isUSD ? 'cents/pt' : 'CNY/pt';
+    
+    ['hintPrice', 'hintTaxes', 'hintFxFees', 'hintTargetCash', 'hintTargetAwardTaxes'].forEach(id => {
+      if($(id)) $(id).textContent = cHint;
+    });
+    if($('hintValuation')) $('hintValuation').textContent = cValHint;
+  };
+
+  if ($('currency')) {
+    $('currency').value = currentCurrency;
+    $('currency').addEventListener('change', (e) => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      if (oldCurrency !== currentCurrency) {
+        ['purchasePrice', 'purchaseTaxes', 'fxFees', 'targetCash', 'targetAwardTaxes', 'personalValuation'].forEach(id => {
+           if($(id)) $(id).value = '';
+        });
+        
+        const warningMsg = 'Currency changed. To avoid confusion, please re-enter all amounts and your personal valuation.';
+          
+        function clearCalculatorResults() {
+          $('cppResult').textContent = '-';
+          $('totalsResult').innerHTML = 'Total Points: -<br>Total Cash Spent: -';
+          $('verdictText').textContent = '—';
+          $('verdictCode').textContent = '-';
+          $('verdictText').className = 'v';
+          $('cppResult').classList.remove('win');
+          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+          $('targetBreakdown').style.display = 'none';
+        }
+        clearCalculatorResults();
+      }
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateUnits();
+      if ($('pointsToBuy').value) calcBuy();
+    });
+  }
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      if (key === 'points' && val === 0) return;
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  
+  // URL Param Extraction
+  parseParam('buy', 'pointsToBuy');
+  parseParam('price', 'purchasePrice');
+  parseParam('bonus', 'bonusPercentage', 1000);
+  parseParam('fbonus', 'fixedBonusPoints');
+  parseParam('taxes', 'purchaseTaxes');
+  parseParam('fx', 'fxFees');
+  parseParam('tpoints', 'targetPoints');
+  parseParam('tcash', 'targetCash');
+  parseParam('ttaxes', 'targetAwardTaxes');
+  parseParam('val', 'personalValuation', 1000);
+
+  function calcBuy(){
+    let pointsToBuy = parseInt($('pointsToBuy').value) || 0;
+    let purchasePrice = parseFloat($('purchasePrice').value) || 0;
+    let bonusPct = parseFloat($('bonusPercentage').value) || 0;
+    let fixedBonus = parseInt($('fixedBonusPoints').value) || 0;
+    let taxes = parseFloat($('purchaseTaxes').value) || 0;
+    let fx = parseFloat($('fxFees').value) || 0;
+    
+    let targetPoints = parseInt($('targetPoints').value) || 0;
+    let targetCash = parseFloat($('targetCash').value) || 0;
+    let targetAwardTaxes = parseFloat($('targetAwardTaxes').value) || 0;
+    let val = parseFloat($('personalValuation').value) || 0;
+
+    const resetState = (msg) => {
+      $('cppResult').textContent = '-';
+      $('totalsResult').innerHTML = 'Total Points: -<br>Total Cash Spent: -';
+      $('verdictText').textContent = '—';
+      $('verdictCode').textContent = 'DIFF —';
+      $('explain').textContent = msg;
+      $('verdictText').className = 'verdict';
+      $('cppResult').classList.remove('win');
+      $('cppResult').parentElement.classList.remove('win');
+      $('targetBreakdown').style.display = 'none';
+    };
+
+    if (pointsToBuy <= 0 || purchasePrice <= 0) {
+      resetState('Please enter Base Points to Buy and Purchase Price.');
+      return;
+    }
+
+    let finalPoints = pointsToBuy * (1 + bonusPct/100) + fixedBonus;
+    let totalCash = purchasePrice + taxes + fx;
+    let actualCpp = totalCash / finalPoints;
+
+    let compActualCpp = actualCpp;
+    let displayCpp = '';
+    
+    if (currentCurrency === 'USD') {
+      compActualCpp = actualCpp * 100; // cents
+      displayCpp = compActualCpp.toFixed(4) + ' cents/pt';
+    } else {
+      displayCpp = '¥' + actualCpp.toFixed(4) + ' / pt';
+    }
+    
+    $('cppResult').textContent = displayCpp;
+    
+    if (currentCurrency === 'USD') {
+      $('totalsResult').innerHTML = `Total Points: ${finalPoints.toLocaleString('en-US')} pts<br>Total Cash Spent: $${totalCash.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    } else {
+      $('totalsResult').innerHTML = `Total Points: ${finalPoints.toLocaleString('zh-CN')} pts<br>Total Cash Spent: ¥${totalCash.toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    }
+
+    let currSym = currentCurrency === 'USD' ? '$' : '¥';
+    const verdict = $('verdictText');
+    const code = $('verdictCode');
+    const explain = $('explain');
+    const bd = $('targetBreakdown');
+
+    $('cppResult').classList.remove('win');
+    $('cppResult').parentElement.classList.remove('win');
+    verdict.className = 'verdict';
+    
+    // Evaluate based on Target Redemption first
+    if (targetPoints > 0 && targetCash > 0) {
+      // Net cash saved by redeeming
+      let targetCashAvoided = targetCash - targetAwardTaxes;
+      let targetCpp = targetCashAvoided / targetPoints;
+      let compTargetCpp = currentCurrency === 'USD' ? targetCpp * 100 : targetCpp;
+      
+      let costOfTargetPoints = targetPoints * actualCpp;
+      let netSavings = targetCashAvoided - costOfTargetPoints;
+      let pointDiff = finalPoints - targetPoints;
+
+      bd.style.display = 'block';
+      bd.innerHTML = `
+        <strong>Target Redemption Analysis:</strong><br>
+        • Value derived from redemption: ${currentCurrency === 'USD' ? compTargetCpp.toFixed(2) + ' cents' : '¥' + compTargetCpp.toFixed(4)} / pt<br>
+        • Purchase cost per point: ${displayCpp}<br>
+        • Points cost for this redemption: ${currSym}${costOfTargetPoints.toFixed(2)}<br>
+        • Paying cash outright would cost: ${currSym}${targetCashAvoided.toFixed(2)}<br>
+        • <strong>Net savings by buying points: ${netSavings >= 0 ? '<span style="color:green;">' + currSym + netSavings.toFixed(2) + '</span>' : '<span style="color:red;">' + currSym + netSavings.toFixed(2) + '</span>'}</strong><br>
+        • Point balance: ${pointDiff >= 0 ? `${pointDiff} pts remaining` : `<span style="color:red;">Short by ${Math.abs(pointDiff)} pts</span>`}
+      `;
+
+      if (netSavings > 0) {
+        if (pointDiff >= 0) {
+          verdict.textContent = 'Worth It (For this redemption)';
+          verdict.className = 'verdict good';
+          $('cppResult').classList.add('win');
+          explain.textContent = `Buying points saves you ${currSym}${netSavings.toFixed(0)} for this specific redemption, and you are buying enough points to cover it. Proceed if award space is confirmed.`;
+        } else {
+          verdict.textContent = 'Profitable, but Short on Points';
+          verdict.className = 'verdict';
+          explain.textContent = `The math works in your favor (saving ${currSym}${netSavings.toFixed(0)}), but you are still short ${Math.abs(pointDiff)} points for the redemption.`;
+        }
+        code.textContent = `SAVED ${currSym}${netSavings.toFixed(0)}`;
+      } else {
+        verdict.textContent = 'Not Worth It';
+        verdict.className = 'verdict bad';
+        explain.textContent = `Buying points for this redemption results in a net loss of ${currSym}${Math.abs(netSavings).toFixed(0)}. Just pay cash.`;
+        code.textContent = `LOSS ${currSym}${Math.abs(netSavings).toFixed(0)}`;
+      }
+      
+    // If no target redemption, evaluate based on personal valuation
+    } else if (val > 0) {
+      bd.style.display = 'none';
+      if (compActualCpp < val) {
+        verdict.textContent = 'Consider Buying';
+        verdict.className = 'verdict good';
+        $('cppResult').classList.add('win');
+        let diff = ((val - compActualCpp) / compActualCpp * 100).toFixed(0);
+        explain.textContent = `The purchase cost is ${diff}% lower than your valuation. While a good deal, avoid buying speculatively due to devaluation risks.`;
+        code.textContent = `CHEAP -${diff}%`;
+      } else {
+        verdict.textContent = 'Do Not Buy';
+        verdict.className = 'verdict bad';
+        let diff = ((compActualCpp - val) / val * 100).toFixed(0);
+        explain.textContent = `The purchase cost is ${diff}% higher than your valuation. Do not buy without a specific high-value redemption in mind.`;
+        code.textContent = `EXP +${diff}%`;
+      }
+    } else {
+      bd.style.display = 'none';
+      verdict.textContent = 'It Depends';
+      verdict.className = 'verdict';
+      explain.textContent = 'No target redemption or valuation provided. Use the purchase CPP to make your own judgement.';
+      code.textContent = 'NO TARGET';
+    }
+  }
+
+  ['pointsToBuy','purchasePrice','bonusPercentage','fixedBonusPoints','purchaseTaxes','fxFees','targetPoints','targetCash','targetAwardTaxes','personalValuation'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcBuy);
+  });
+  
+  updateUnits();
+  if($('pointsToBuy').value) calcBuy();
+
+  // Share functionality
+  $('btnShare').addEventListener('click', () => {
+    const newParams = new URLSearchParams();
+    const safeSet = (key, id) => {
+      const v = parseFloat($(id).value);
+      if (!isNaN(v) && v > 0) newParams.set(key, v);
+    };
+    safeSet('buy', 'pointsToBuy');
+    safeSet('price', 'purchasePrice');
+    safeSet('bonus', 'bonusPercentage');
+    safeSet('fbonus', 'fixedBonusPoints');
+    safeSet('taxes', 'purchaseTaxes');
+    safeSet('fx', 'fxFees');
+    safeSet('tpoints', 'targetPoints');
+    safeSet('tcash', 'targetCash');
+    safeSet('ttaxes', 'targetAwardTaxes');
+    safeSet('val', 'personalValuation');
+    
+    newParams.set('currency', currentCurrency);
+    
+    const newUrl = window.location.pathname + '?' + newParams.toString();
+    history.replaceState(null, '', newUrl);
+    
+    navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
+      const toast = $('toast');
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    });
+  });
+</script>

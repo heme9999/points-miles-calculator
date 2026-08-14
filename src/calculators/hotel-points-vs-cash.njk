@@ -1,0 +1,473 @@
+---
+layout: base.njk
+title: 酒店积分 vs 现金决策计算器
+description: 综合考量税费、度假村费、免费房晚政策及回血积分，精确计算酒店积分兑换是否划算。
+schemaType: WebApplication
+eyebrow: 里程账 · 工具 05
+breadcrumbs:
+  - name: 计算器
+    url: /calculators/
+  - name: 酒店积分计算器
+---
+<h1>酒店积分 vs 现金决策计算器</h1>
+<p class="sub">不止比对基础数字，本计算器将税费、度假村费、免费房晚政策（如住四送一）及本可赚取的积分回血一并纳入，给出更精准的决策建议。</p>
+
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+  <button id="btnShare" style="padding: 4px 12px; border-radius: 4px; border: 1px solid #0284c7; background: #e0f2fe; color: #0284c7; cursor: pointer; font-size: 14px;">分享此计算</button>
+  <div>
+    <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
+    <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <option value="CNY">人民币（CNY ¥）</option>
+      <option value="USD">美元（USD $）</option>
+    </select>
+  </div>
+</div>
+<div id="toast" style="display: none; position: fixed; top: 20px; right: 20px; background: #22c55e; color: white; padding: 10px 20px; border-radius: 4px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">已复制分享链接！</div>
+
+<div class="panel">
+  <h3>现金预订成本</h3>
+  <div class="row">
+    <div class="field">
+      <label for="cashPrice">每晚现金房价<span class="hint" id="hintCash">货币单位</span></label>
+      <input type="number" id="cashPrice" min="0" step="1" inputmode="decimal" placeholder="例如: 1000">
+    </div>
+    <div class="field">
+      <label for="nights">入住总晚数<span class="hint">晚</span></label>
+      <input type="number" id="nights" value="1" min="1" step="1" inputmode="numeric">
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label for="cashTaxes">总税费及附加费<span class="hint" id="hintTaxes">货币单位</span></label>
+      <input type="number" id="cashTaxes" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label for="cashResortFees">总度假村/目的地费<span class="hint" id="hintCashResort">货币单位</span></label>
+      <input type="number" id="cashResortFees" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="cashValueEarned">预计基础回血价值<span class="hint" id="hintValueEarned">货币单位 (选填)</span></label>
+      <input type="number" id="cashValueEarned" value="0" min="0" step="1" inputmode="decimal">
+      <div class="unit">现金预订能赚取的酒店积分价值</div>
+    </div>
+    <div class="field">
+      <label for="ccRewardsValue">信用卡刷卡回血<span class="hint" id="hintCCRewards">货币单位 (选填)</span></label>
+      <input type="number" id="ccRewardsValue" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <h3>积分预订成本</h3>
+  
+  <div class="row">
+    <div class="field">
+      <label for="programPreset">酒店计划预设<span class="hint">规则提示</span></label>
+      <select id="programPreset" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d7dee8;">
+        <option value="custom">自定义 (Custom)</option>
+        <option value="hyatt">凯悦 (World of Hyatt)</option>
+        <option value="hilton">希尔顿 (Hilton Honors)</option>
+        <option value="marriott">万豪 (Marriott Bonvoy)</option>
+      </select>
+      <div class="unit" id="presetNote" style="color: #0284c7; margin-top: 5px;">预订前请查看计划及具体酒店的最新条款。</div>
+    </div>
+    <div class="field">
+      <label for="freeNightRule">免费房晚政策<span class="hint">连住优惠</span></label>
+      <select id="freeNightRule" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d7dee8;">
+        <option value="none">无免费房晚 (None)</option>
+        <option value="5th">住5付4 (5th Night Free)</option>
+        <option value="custom">自定义每N晚免1晚</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field" id="customNField" style="display: none;">
+    <label for="customN">每N晚免1晚<span class="hint">N的值</span></label>
+    <input type="number" id="customN" value="4" min="2" step="1" inputmode="numeric">
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="pointsPerNight">每晚所需积分<span class="hint">点/晚</span></label>
+      <input type="number" id="pointsPerNight" min="0" step="1" inputmode="numeric" placeholder="例如: 20000">
+    </div>
+    <div class="field">
+      <label for="personalValuation">你的积分个人估值<span class="hint" id="hintValuation">价值/点 (选填)</span></label>
+      <input type="number" id="personalValuation" value="0.1" min="0" step="0.0001" inputmode="decimal">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="awardTaxes">积分房现金税费<span class="hint" id="hintAwardTaxes">货币单位</span></label>
+      <input type="number" id="awardTaxes" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label for="awardResortFees">积分房度假村费<span class="hint" id="hintAwardResort">货币单位</span></label>
+      <input type="number" id="awardResortFees" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">实际兑换价值 (CPP)</div>
+        <div class="v" id="cppResult" style="word-break: break-word; overflow-wrap: anywhere;">-</div>
+      </div>
+      <div class="item">
+        <div class="k">等价成本对比</div>
+        <div class="v" id="costCompare" style="font-size:16px; margin-top:10px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5;">积分成本: -<br>现金成本: -</div>
+      </div>
+    </div>
+    <div class="note" id="explain">请输入必要信息以进行计算。</div>
+    <div class="note" id="mathBreakdown" style="font-size: 13px; color: #64748b; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1; display: none;"></div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">建议决策</div>
+      <div class="verdict" id="verdictText">—</div>
+    </div>
+    <div class="code" id="verdictCode">DIFF —</div>
+  </div>
+</div>
+
+<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>酒店积分估值核心公式</h2>
+  <p>决定是否使用酒店积分的关键在于“实际避免的现金支出”与“实际消耗的积分”之比。本计算器采用以下精密公式：</p>
+  <div class="formula-box">
+    <span class="formula-name">避免的现金支出 =</span>
+    <span class="formula-expression">(每晚房价 × 入住晚数) + 现金总税费 + 现金度假村费 - (基础回血 + 信用卡回血) - 积分房相关现金税费和度假村费</span>
+  </div>
+  <div class="formula-box" style="margin-top: -1rem;">
+    <span class="formula-name">实际兑换价值 (CPP) =</span>
+    <span class="formula-expression">避免的现金支出 ÷ 实际消耗总积分</span>
+  </div>
+
+  <h3>常见问题解答 (FAQ)</h3>
+  <div class="faq">
+    <details>
+      <summary>为什么要考虑度假村费 (Resort Fees)？</summary>
+      <div>
+        <p>很多热门旅游目的地的酒店会强制收取高昂的度假村费。某些酒店计划（如凯悦、希尔顿）在全积分兑换时会免除这笔费用，这大大提升了积分的实际价值。而另一些计划（如万豪）在全积分兑换时依然要收取度假村费。在计算器中请务必正确填入积分房是否产生该费用。</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>“住五付四”是如何影响计算的？</summary>
+      <div>
+        <p>如果你连住 5 晚且该计划支持免一晚积分，你实际只需支付 4 晚的积分。此时积分的购买力等于放大了 25%，这通常是实现超高兑换价值 (CPP) 的关键。但请注意，现金房有时也会有住五付四的促销，不要将两者混淆。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>为什么放弃的现金票回血很重要？</summary>
+      <div>
+        <p>用积分换房意味着你不再能获得现金住店通常附带的丰厚积分奖励（甚至叠加各类 Q1/Q2 活动），同时你也失去了用高端酒店信用卡结账时的多倍积分返现。这部分本可获取的价值，是你用积分换房的“沉没成本”。</p>
+      </div>
+    </details>
+  </div>
+
+  <h2>相关指南与工具</h2>
+  <ul>
+    <li><a href="/guides/hotel-free-night-calculator/">如何最大化使用酒店第五晚免费政策？</a></li>
+    <li><a href="/compare/">各大酒店与信用卡积分价值对比</a></li>
+  </ul>
+  
+  <p class="disclaimer" style="margin-top: 30px; font-size: 0.85em; color: #64748b;"><em>最后事实审核：2026年8月。预设规则与估值仅作演示，不保证100%覆盖所有酒店及促销，预订前请查看计划及具体酒店的最新条款。</em></p>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  
+  const params = new URLSearchParams(window.location.search);
+  let currentCurrency = 'CNY';
+  const validCurrencies = ['CNY', 'USD'];
+  const urlCurr = params.get('currency');
+  if (urlCurr && validCurrencies.includes(urlCurr)) {
+    currentCurrency = urlCurr;
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && validCurrencies.includes(saved)) {
+        currentCurrency = saved;
+      }
+    } catch(e) {}
+  }
+  
+  const updateUnits = () => {
+    const isUSD = currentCurrency === 'USD';
+    const cHint = isUSD ? '美元' : '元';
+    const cValHint = isUSD ? '美分/点 (选填)' : '元/点 (选填)';
+    
+    ['hintCash', 'hintTaxes', 'hintCashResort', 'hintValueEarned', 'hintCCRewards', 'hintAwardTaxes', 'hintAwardResort'].forEach(id => {
+      if($(id)) $(id).textContent = cHint;
+    });
+    if($('hintValuation')) $('hintValuation').textContent = cValHint;
+  };
+
+  if ($('currency')) {
+    $('currency').value = currentCurrency;
+    $('currency').addEventListener('change', (e) => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      if (oldCurrency !== currentCurrency) {
+        ['cashPrice', 'cashTaxes', 'cashResortFees', 'cashValueEarned', 'ccRewardsValue', 'personalValuation', 'awardTaxes', 'awardResortFees'].forEach(id => {
+           if($(id)) $(id).value = '';
+        });
+        
+        const warningMsg = '货币已切换。为避免人民币和美元金额混淆，请重新填写金额与估值。';
+          
+        function clearCalculatorResults() {
+          $('cppResult').textContent = '-';
+          $('costCompare').innerHTML = '积分成本: -<br>现金成本: -';
+          $('verdictText').textContent = '—';
+          $('verdictCode').textContent = '-';
+          $('verdictText').className = 'v';
+          $('cppResult').classList.remove('win');
+          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+          $('mathBreakdown').style.display = 'none';
+        }
+        clearCalculatorResults();
+      }
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateUnits();
+      if ($('cashPrice').value) calcAdv();
+    });
+  }
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      if (key === 'points' && val === 0) return;
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  
+  // URL Param Extraction
+  parseParam('cash', 'cashPrice');
+  parseParam('nights', 'nights', 365);
+  parseParam('taxes', 'cashTaxes');
+  parseParam('resort', 'cashResortFees');
+  parseParam('points', 'pointsPerNight');
+  parseParam('ataxes', 'awardTaxes');
+  parseParam('aresort', 'awardResortFees');
+  parseParam('earned', 'cashValueEarned');
+  parseParam('cc', 'ccRewardsValue');
+  parseParam('valuation', 'personalValuation', 1000);
+  
+  const pFreeRule = params.get('freeRule');
+  if (['none', '5th', 'custom'].includes(pFreeRule)) {
+    $('freeNightRule').value = pFreeRule;
+  }
+  parseParam('customN', 'customN', 30);
+  const pPreset = params.get('preset');
+  if (['custom', 'hyatt', 'hilton', 'marriott'].includes(pPreset)) {
+    $('programPreset').value = pPreset;
+  }
+
+  // Presets logic
+  $('programPreset').addEventListener('change', (e) => {
+    const v = e.target.value;
+    const note = $('presetNote');
+    if (v === 'hyatt') {
+      note.textContent = '凯悦 (Hyatt): 全积分房通常免度假村费；仅少数高端卡可能有住宿优惠。';
+      if (!params.has('valuation')) { $('personalValuation').value = currentCurrency === 'USD' ? '1.7' : '0.12'; }
+    } else if (v === 'hilton') {
+      note.textContent = '希尔顿 (Hilton): 银卡及以上会员享全积分住五付四；全积分房免度假村费。';
+      if (!params.has('valuation')) { $('personalValuation').value = currentCurrency === 'USD' ? '0.5' : '0.035'; }
+      $('freeNightRule').value = '5th';
+    } else if (v === 'marriott') {
+      note.textContent = '万豪 (Marriott): 所有人全积分连住五晚最便宜的一晚免费；积分房仍收度假村费。';
+      if (!params.has('valuation')) { $('personalValuation').value = currentCurrency === 'USD' ? '0.7' : '0.05'; }
+      $('freeNightRule').value = '5th';
+    } else {
+      note.textContent = '预订前请查看计划及具体酒店的最新条款。';
+    }
+    calcAdv();
+  });
+
+  $('freeNightRule').addEventListener('change', (e) => {
+    $('customNField').style.display = (e.target.value === 'custom') ? 'block' : 'none';
+    calcAdv();
+  });
+  if($('freeNightRule').value === 'custom') $('customNField').style.display = 'block';
+
+  function calcAdv(){
+    let cashRate = parseFloat($('cashPrice').value) || 0;
+    let nights = parseInt($('nights').value) || 1;
+    let cashTaxes = parseFloat($('cashTaxes').value) || 0;
+    let cashResort = parseFloat($('cashResortFees').value) || 0;
+    let pointsPerNight = parseFloat($('pointsPerNight').value) || 0;
+    let awardTaxes = parseFloat($('awardTaxes').value) || 0;
+    let awardResort = parseFloat($('awardResortFees').value) || 0;
+    let earned = parseFloat($('cashValueEarned').value) || 0;
+    let cc = parseFloat($('ccRewardsValue').value) || 0;
+    let V = parseFloat($('personalValuation').value) || 0;
+    
+    let freeRule = $('freeNightRule').value;
+    let customN = parseInt($('customN').value) || 4;
+
+    const resetState = (msg) => {
+      $('cppResult').textContent = '-';
+      $('costCompare').innerHTML = '积分成本: -<br>现金成本: -';
+      $('verdictText').textContent = '—';
+      $('verdictCode').textContent = 'DIFF —';
+      $('explain').textContent = msg;
+      $('verdictText').className = 'verdict';
+      $('cppResult').classList.remove('win');
+      $('cppResult').parentElement.classList.remove('win');
+      $('mathBreakdown').style.display = 'none';
+    };
+
+    if (pointsPerNight <= 0 || cashRate <= 0) {
+      resetState('请输入每晚现金房价和每晚所需积分。');
+      return;
+    }
+
+    // Free nights logic
+    let paidAwardNights = nights;
+    let freeNights = 0;
+    if (freeRule === '5th') {
+      freeNights = Math.floor(nights / 5);
+      paidAwardNights = nights - freeNights;
+    } else if (freeRule === 'custom') {
+      freeNights = Math.floor(nights / customN);
+      paidAwardNights = nights - freeNights;
+    }
+
+    let totalPointsRequired = paidAwardNights * pointsPerNight;
+    let totalCashCost = (cashRate * nights) + cashTaxes + cashResort;
+    let forgoneValue = earned + cc;
+    let awardCashCost = awardTaxes + awardResort;
+    
+    let netCashSaved = totalCashCost - forgoneValue - awardCashCost;
+    
+    if (netCashSaved < 0) {
+      resetState('现金房回血和积分房税费过高，导致使用积分反而亏损现金。强烈建议直接买票/订房。');
+      $('verdictText').textContent = '不建议兑换';
+      $('verdictText').className = 'verdict bad';
+      $('verdictCode').textContent = 'DIFF < 0';
+      return;
+    }
+
+    let displayCpp = '';
+    let actualCpp = totalPointsRequired > 0 ? (netCashSaved / totalPointsRequired) : 0; 
+    let compActualCpp = actualCpp;
+
+    if (currentCurrency === 'USD') {
+      compActualCpp = actualCpp * 100; // cents
+      displayCpp = compActualCpp.toFixed(2) + ' 美分/点';
+    } else {
+      displayCpp = '¥' + actualCpp.toFixed(4) + ' / 点';
+    }
+    
+    $('cppResult').textContent = displayCpp;
+
+    let costIfPoints = 0;
+    if (currentCurrency === 'USD') {
+      costIfPoints = (totalPointsRequired * (V / 100)) + awardCashCost;
+    } else {
+      costIfPoints = (totalPointsRequired * V) + awardCashCost;
+    }
+    const costIfCash = totalCashCost - forgoneValue;
+
+    if (currentCurrency === 'USD') {
+      $('costCompare').innerHTML = `积分等价: $${costIfPoints.toLocaleString('en-US', {maximumFractionDigits:0})}<br>现金净成本: $${costIfCash.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+    } else {
+      $('costCompare').innerHTML = `积分等价: ¥${costIfPoints.toLocaleString('zh-CN', {maximumFractionDigits:0})}<br>现金净成本: ¥${costIfCash.toLocaleString('zh-CN', {maximumFractionDigits:0})}`;
+    }
+
+    // Breakdown math
+    let currSym = currentCurrency === 'USD' ? '$' : '¥';
+    $('mathBreakdown').style.display = 'block';
+    $('mathBreakdown').innerHTML = `
+      <strong>计算过程:</strong><br>
+      • 现金原价: ${nights}晚 × ${currSym}${cashRate} + 税费/度假村费 ${currSym}${cashTaxes + cashResort} = ${currSym}${totalCashCost}<br>
+      • 减去放弃的回血: -${currSym}${forgoneValue}<br>
+      • 减去积分房所需税费: -${currSym}${awardCashCost}<br>
+      • 实际避免的现金支出: <strong>${currSym}${netCashSaved}</strong><br>
+      • 实际消耗积分: ${nights}晚 - ${freeNights}晚免费 = ${paidAwardNights}晚 × ${pointsPerNight} = <strong>${totalPointsRequired} 积分</strong>
+    `;
+
+    const verdict = $('verdictText');
+    const code = $('verdictCode');
+    const explain = $('explain');
+
+    $('cppResult').classList.remove('win');
+    $('cppResult').parentElement.classList.remove('win');
+    verdict.className = 'verdict';
+
+    if (compActualCpp <= 0) {
+      verdict.textContent = '不如付现金';
+      verdict.className = 'verdict bad';
+      explain.textContent = '使用积分并不划算。';
+      code.textContent = 'DIFF < 0';
+    } else if (compActualCpp > V && V > 0) {
+      verdict.textContent = '推荐用积分';
+      verdict.className = 'verdict good';
+      $('cppResult').classList.add('win');
+      const diff = ((compActualCpp - V) / V * 100).toFixed(0);
+      explain.textContent = `这次兑换的实际价值高出你的个人估值 ${diff}%。综合来看，使用积分比花现金更划算。`;
+      code.textContent = `DIFF +${diff}%`;
+    } else if (compActualCpp < V && V > 0) {
+      verdict.textContent = '不如付现金';
+      verdict.className = 'verdict bad';
+      const diff = ((V - compActualCpp) / V * 100).toFixed(0);
+      explain.textContent = `实际价值低于你的个人估值，相当于这波积分用亏了 ${diff}%。建议保留积分，直接现金预订。`;
+      code.textContent = `DIFF -${diff}%`;
+    } else {
+      verdict.textContent = '看情况';
+      verdict.className = 'verdict';
+      explain.textContent = V === 0 ? '你没有输入个人估值，无法直接给出建议。请根据这个 CPP 自行判断。' : '兑换价值与你的心理预期差不多，选哪种都可以。';
+      code.textContent = 'DIFF ~0%';
+    }
+  }
+
+  ['cashPrice','nights','cashTaxes','cashResortFees','cashValueEarned','ccRewardsValue','personalValuation','awardTaxes','awardResortFees','pointsPerNight','customN'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcAdv);
+  });
+  
+  updateUnits();
+  if($('cashPrice').value) calcAdv();
+
+  // Share functionality
+  $('btnShare').addEventListener('click', () => {
+    const newParams = new URLSearchParams();
+    const safeSet = (key, id) => {
+      const v = parseFloat($(id).value);
+      if (!isNaN(v) && v > 0) newParams.set(key, v);
+    };
+    safeSet('cash', 'cashPrice');
+    safeSet('nights', 'nights');
+    safeSet('taxes', 'cashTaxes');
+    safeSet('resort', 'cashResortFees');
+    safeSet('points', 'pointsPerNight');
+    safeSet('ataxes', 'awardTaxes');
+    safeSet('aresort', 'awardResortFees');
+    safeSet('earned', 'cashValueEarned');
+    safeSet('cc', 'ccRewardsValue');
+    safeSet('valuation', 'personalValuation');
+    
+    if ($('freeNightRule').value !== 'none') newParams.set('freeRule', $('freeNightRule').value);
+    if ($('freeNightRule').value === 'custom') safeSet('customN', 'customN');
+    if ($('programPreset').value !== 'custom') newParams.set('preset', $('programPreset').value);
+    newParams.set('currency', currentCurrency);
+    
+    const newUrl = window.location.pathname + '?' + newParams.toString();
+    history.replaceState(null, '', newUrl);
+    
+    navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
+      const toast = $('toast');
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    });
+  });
+</script>

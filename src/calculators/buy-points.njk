@@ -1,0 +1,394 @@
+---
+layout: base.njk
+title: 购买积分划算吗？官方买分计算器
+description: 评估酒店或航司买分促销（如加赠100%）的真实成本，计算购买成本与兑换价值的差额，避免被反薅。
+schemaType: WebApplication
+eyebrow: 里程账 · 工具 06
+breadcrumbs:
+  - name: 计算器
+    url: /calculators/
+  - name: 购买积分计算器
+---
+<h1>购买酒店/航司积分计算器</h1>
+<p class="sub">遇到“买分加赠 100%”的促销不知道该不该下手？本计算器帮你计算真实的每点购买成本，并直观对比你的目标兑换价值。</p>
+
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+  <button id="btnShare" style="padding: 4px 12px; border-radius: 4px; border: 1px solid #0284c7; background: #e0f2fe; color: #0284c7; cursor: pointer; font-size: 14px;">分享此计算</button>
+  <div>
+    <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
+    <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <option value="USD">美元（USD $）</option>
+      <option value="CNY">人民币（CNY ¥）</option>
+    </select>
+  </div>
+</div>
+<div id="toast" style="display: none; position: fixed; top: 20px; right: 20px; background: #22c55e; color: white; padding: 10px 20px; border-radius: 4px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">已复制分享链接！</div>
+
+<div class="panel">
+  <h3>购买成本输入</h3>
+  <div class="row">
+    <div class="field">
+      <label for="pointsToBuy">基础购买积分数量<span class="hint">点/英里</span></label>
+      <input type="number" id="pointsToBuy" min="0" step="1" inputmode="numeric" placeholder="例如: 50000">
+    </div>
+    <div class="field">
+      <label for="purchasePrice">基础购买价格<span class="hint" id="hintPrice">货币单位</span></label>
+      <input type="number" id="purchasePrice" min="0" step="1" inputmode="decimal" placeholder="例如: 500">
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="field">
+      <label for="bonusPercentage">购买奖励比例<span class="hint">% (选填)</span></label>
+      <input type="number" id="bonusPercentage" value="0" min="0" step="1" inputmode="numeric">
+      <div class="unit">如遇到 100% 加赠，填 100</div>
+    </div>
+    <div class="field">
+      <label for="fixedBonusPoints">固定额外赠送积分<span class="hint">点 (选填)</span></label>
+      <input type="number" id="fixedBonusPoints" value="0" min="0" step="1" inputmode="numeric">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="purchaseTaxes">买分税费<span class="hint" id="hintTaxes">货币单位 (选填)</span></label>
+      <input type="number" id="purchaseTaxes" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label for="fxFees">外币/手续费<span class="hint" id="hintFxFees">货币单位 (选填)</span></label>
+      <input type="number" id="fxFees" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <h3>目标兑换与估值 (选填，用于决策建议)</h3>
+  
+  <div class="row">
+    <div class="field">
+      <label for="targetPoints">目标兑换所需积分<span class="hint">点</span></label>
+      <input type="number" id="targetPoints" min="0" step="1" inputmode="numeric" placeholder="例如: 60000">
+    </div>
+    <div class="field">
+      <label for="targetCash">目标兑换的现金价<span class="hint" id="hintTargetCash">货币单位</span></label>
+      <input type="number" id="targetCash" min="0" step="1" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="field">
+      <label for="targetAwardTaxes">兑换奖励房/票的税费<span class="hint" id="hintTargetAwardTaxes">货币单位</span></label>
+      <input type="number" id="targetAwardTaxes" value="0" min="0" step="1" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label for="personalValuation">你的积分个人估值<span class="hint" id="hintValuation">价值/点</span></label>
+      <input type="number" id="personalValuation" value="0" min="0" step="0.0001" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">买分实际成本 (Cost per Point)</div>
+        <div class="v" id="cppResult" style="word-break: break-word; overflow-wrap: anywhere;">-</div>
+      </div>
+      <div class="item">
+        <div class="k">总计</div>
+        <div class="v" id="totalsResult" style="font-size:16px; margin-top:10px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5;">获得积分: -<br>总现金支出: -</div>
+      </div>
+    </div>
+    <div class="note" id="explain">请输入购买数量和价格。</div>
+    <div class="note" id="targetBreakdown" style="font-size: 14px; color: #1e293b; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1; display: none;"></div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">建议决策</div>
+      <div class="verdict" id="verdictText">—</div>
+    </div>
+    <div class="code" id="verdictCode">DIFF —</div>
+  </div>
+</div>
+
+<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>“买分不等于获得现金资产”的风险提示</h2>
+  <p>在决定购买积分时，请务必牢记：<strong>购买的积分并不等同于现金存款</strong>。兑换价值高于购买成本，并不意味着你一定能“赚到”。强烈建议在买分前考虑以下风险：</p>
+  <ul>
+    <li><strong>奖励库存 (Award Availability)</strong>：你心仪的酒店日期或航班，可能根本没有积分房/里程票可供兑换。</li>
+    <li><strong>积分到账时间</strong>：部分买分活动可能需要 24-72 小时才能到账，到账时你想兑换的票可能已经没了。</li>
+    <li><strong>积分贬值 (Devaluation)</strong>：酒店和航司可以随时单方面改变兑换表格，贬值你手中的积分。<strong>绝对不要囤积积分</strong>。</li>
+    <li><strong>退款限制</strong>：买分交易通常是最终的，无法退款。</li>
+  </ul>
+  <p>最佳的买分策略是：<strong>看准了具体的兑换目标、确认有票、计算后确认差价值得买，然后再下单（即“即买即用”）。</strong></p>
+
+  <h3>买分核心计算逻辑</h3>
+  <div class="formula-box">
+    <span class="formula-name">最终到账积分 =</span>
+    <span class="formula-expression">基础购买数量 × (1 + 购买奖励百分比) + 固定额外赠送积分</span>
+  </div>
+  <div class="formula-box" style="margin-top: -1rem;">
+    <span class="formula-name">总现金支出 =</span>
+    <span class="formula-expression">基础购买价格 + 税费 + 外币交易手续费</span>
+  </div>
+  <div class="formula-box" style="margin-top: -1rem;">
+    <span class="formula-name">实际每点购买成本 =</span>
+    <span class="formula-expression">总现金支出 ÷ 最终到账积分</span>
+  </div>
+
+  <h2>相关指南与工具</h2>
+  <ul>
+    <li><a href="/guides/is-buying-points-worth-it/">深度指南：官方买分促销值得上车吗？</a></li>
+    <li><a href="/calculators/hotel-points-vs-cash/">酒店积分 vs 现金高级决策计算器</a></li>
+    <li><a href="/calculators/points-vs-cash/">机票积分 vs 现金高级决策计算器</a></li>
+  </ul>
+  
+  <p class="disclaimer" style="margin-top: 30px; font-size: 0.85em; color: #64748b;"><em>最后事实审核：2026年8月。工具计算结果仅供决策参考，请以官方最终结账金额为准。</em></p>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  
+  const params = new URLSearchParams(window.location.search);
+  let currentCurrency = 'USD'; // Buy points usually default to USD
+  const validCurrencies = ['CNY', 'USD'];
+  const urlCurr = params.get('currency');
+  if (urlCurr && validCurrencies.includes(urlCurr)) {
+    currentCurrency = urlCurr;
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && validCurrencies.includes(saved)) {
+        currentCurrency = saved;
+      }
+    } catch(e) {}
+  }
+  
+  const updateUnits = () => {
+    const isUSD = currentCurrency === 'USD';
+    const cHint = isUSD ? '美元' : '元';
+    const cValHint = isUSD ? '美分/点' : '元/点';
+    
+    ['hintPrice', 'hintTaxes', 'hintFxFees', 'hintTargetCash', 'hintTargetAwardTaxes'].forEach(id => {
+      if($(id)) $(id).textContent = cHint;
+    });
+    if($('hintValuation')) $('hintValuation').textContent = cValHint;
+  };
+
+  if ($('currency')) {
+    $('currency').value = currentCurrency;
+    $('currency').addEventListener('change', (e) => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      if (oldCurrency !== currentCurrency) {
+        ['purchasePrice', 'purchaseTaxes', 'fxFees', 'targetCash', 'targetAwardTaxes', 'personalValuation'].forEach(id => {
+           if($(id)) $(id).value = '';
+        });
+        
+        const warningMsg = '货币已切换。为避免人民币和美元金额混淆，请重新填写金额与估值。';
+          
+        function clearCalculatorResults() {
+          $('cppResult').textContent = '-';
+          $('totalsResult').innerHTML = '获得积分: -<br>总现金支出: -';
+          $('verdictText').textContent = '—';
+          $('verdictCode').textContent = '-';
+          $('verdictText').className = 'v';
+          $('cppResult').classList.remove('win');
+          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+          $('targetBreakdown').style.display = 'none';
+        }
+        clearCalculatorResults();
+      }
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateUnits();
+      if ($('pointsToBuy').value) calcBuy();
+    });
+  }
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      if (key === 'points' && val === 0) return;
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  
+  // URL Param Extraction
+  parseParam('buy', 'pointsToBuy');
+  parseParam('price', 'purchasePrice');
+  parseParam('bonus', 'bonusPercentage', 1000);
+  parseParam('fbonus', 'fixedBonusPoints');
+  parseParam('taxes', 'purchaseTaxes');
+  parseParam('fx', 'fxFees');
+  parseParam('tpoints', 'targetPoints');
+  parseParam('tcash', 'targetCash');
+  parseParam('ttaxes', 'targetAwardTaxes');
+  parseParam('val', 'personalValuation', 1000);
+
+  function calcBuy(){
+    let pointsToBuy = parseInt($('pointsToBuy').value) || 0;
+    let purchasePrice = parseFloat($('purchasePrice').value) || 0;
+    let bonusPct = parseFloat($('bonusPercentage').value) || 0;
+    let fixedBonus = parseInt($('fixedBonusPoints').value) || 0;
+    let taxes = parseFloat($('purchaseTaxes').value) || 0;
+    let fx = parseFloat($('fxFees').value) || 0;
+    
+    let targetPoints = parseInt($('targetPoints').value) || 0;
+    let targetCash = parseFloat($('targetCash').value) || 0;
+    let targetAwardTaxes = parseFloat($('targetAwardTaxes').value) || 0;
+    let val = parseFloat($('personalValuation').value) || 0;
+
+    const resetState = (msg) => {
+      $('cppResult').textContent = '-';
+      $('totalsResult').innerHTML = '获得积分: -<br>总现金支出: -';
+      $('verdictText').textContent = '—';
+      $('verdictCode').textContent = 'DIFF —';
+      $('explain').textContent = msg;
+      $('verdictText').className = 'verdict';
+      $('cppResult').classList.remove('win');
+      $('cppResult').parentElement.classList.remove('win');
+      $('targetBreakdown').style.display = 'none';
+    };
+
+    if (pointsToBuy <= 0 || purchasePrice <= 0) {
+      resetState('请输入基础购买积分数量和价格。');
+      return;
+    }
+
+    let finalPoints = pointsToBuy * (1 + bonusPct/100) + fixedBonus;
+    let totalCash = purchasePrice + taxes + fx;
+    let actualCpp = totalCash / finalPoints;
+
+    let compActualCpp = actualCpp;
+    let displayCpp = '';
+    
+    if (currentCurrency === 'USD') {
+      compActualCpp = actualCpp * 100; // cents
+      displayCpp = compActualCpp.toFixed(4) + ' 美分/点';
+    } else {
+      displayCpp = '¥' + actualCpp.toFixed(4) + ' / 点';
+    }
+    
+    $('cppResult').textContent = displayCpp;
+    
+    if (currentCurrency === 'USD') {
+      $('totalsResult').innerHTML = `获得积分: ${finalPoints.toLocaleString('en-US')} 点<br>总现金支出: $${totalCash.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    } else {
+      $('totalsResult').innerHTML = `获得积分: ${finalPoints.toLocaleString('zh-CN')} 点<br>总现金支出: ¥${totalCash.toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    }
+
+    let currSym = currentCurrency === 'USD' ? '$' : '¥';
+    const verdict = $('verdictText');
+    const code = $('verdictCode');
+    const explain = $('explain');
+    const bd = $('targetBreakdown');
+
+    $('cppResult').classList.remove('win');
+    $('cppResult').parentElement.classList.remove('win');
+    verdict.className = 'verdict';
+    
+    // Evaluate based on Target Redemption first
+    if (targetPoints > 0 && targetCash > 0) {
+      // Net cash saved by redeeming
+      let targetCashAvoided = targetCash - targetAwardTaxes;
+      let targetCpp = targetCashAvoided / targetPoints;
+      let compTargetCpp = currentCurrency === 'USD' ? targetCpp * 100 : targetCpp;
+      
+      let costOfTargetPoints = targetPoints * actualCpp;
+      let netSavings = targetCashAvoided - costOfTargetPoints;
+      let pointDiff = finalPoints - targetPoints;
+
+      bd.style.display = 'block';
+      bd.innerHTML = `
+        <strong>目标兑换分析:</strong><br>
+        • 目标兑换发挥的价值: ${currentCurrency === 'USD' ? compTargetCpp.toFixed(2) + ' 美分' : '¥' + compTargetCpp.toFixed(4)} / 点<br>
+        • 本次买分成本: ${displayCpp}<br>
+        • 为此次兑换所支付的买分成本: ${currSym}${costOfTargetPoints.toFixed(2)}<br>
+        • 直接现金买票/房需要: ${currSym}${targetCashAvoided.toFixed(2)}<br>
+        • <strong>通过买分净节省现金: ${netSavings >= 0 ? '<span style="color:green;">' + currSym + netSavings.toFixed(2) + '</span>' : '<span style="color:red;">' + currSym + netSavings.toFixed(2) + '</span>'}</strong><br>
+        • 积分余额: ${pointDiff >= 0 ? `剩余 ${pointDiff} 点` : `<span style="color:red;">还差 ${Math.abs(pointDiff)} 点才能兑换</span>`}
+      `;
+
+      if (netSavings > 0) {
+        if (pointDiff >= 0) {
+          verdict.textContent = '值得购买 (为了该兑换)';
+          verdict.className = 'verdict good';
+          $('cppResult').classList.add('win');
+          explain.textContent = `为了这个特定的兑换，买分能帮你省下 ${currSym}${netSavings.toFixed(0)}。并且你购买的积分足够兑换。在确认有空房/空座的前提下，可以购买。`;
+        } else {
+          verdict.textContent = '有赚头，但积分不够';
+          verdict.className = 'verdict';
+          explain.textContent = `从比例上看是划算的，能省 ${currSym}${netSavings.toFixed(0)}，但你买的积分还差 ${Math.abs(pointDiff)} 点才够这次兑换。`;
+        }
+        code.textContent = `SAVED ${currSym}${netSavings.toFixed(0)}`;
+      } else {
+        verdict.textContent = '不值得购买';
+        verdict.className = 'verdict bad';
+        explain.textContent = `为了这次兑换买分是不划算的，你相当于多花了 ${currSym}${Math.abs(netSavings).toFixed(0)}。请直接支付现金预订。`;
+        code.textContent = `LOSS ${currSym}${Math.abs(netSavings).toFixed(0)}`;
+      }
+      
+    // If no target redemption, evaluate based on personal valuation
+    } else if (val > 0) {
+      bd.style.display = 'none';
+      if (compActualCpp < val) {
+        verdict.textContent = '可以考虑囤积';
+        verdict.className = 'verdict good';
+        $('cppResult').classList.add('win');
+        let diff = ((val - compActualCpp) / compActualCpp * 100).toFixed(0);
+        explain.textContent = `买分成本比你的个人估值低了 ${diff}%。虽然划算，但仍建议“即买即用”，避免积分贬值风险。`;
+        code.textContent = `CHEAP -${diff}%`;
+      } else {
+        verdict.textContent = '不建议购买';
+        verdict.className = 'verdict bad';
+        let diff = ((compActualCpp - val) / val * 100).toFixed(0);
+        explain.textContent = `买分成本高出你的个人估值 ${diff}%。没有明确的高价值兑换目标前，请勿购买。`;
+        code.textContent = `EXP +${diff}%`;
+      }
+    } else {
+      bd.style.display = 'none';
+      verdict.textContent = '看情况';
+      verdict.className = 'verdict';
+      explain.textContent = '你没有输入目标兑换或个人估值。请根据算出的买分成本自行判断是否值得购买。';
+      code.textContent = 'NO TARGET';
+    }
+  }
+
+  ['pointsToBuy','purchasePrice','bonusPercentage','fixedBonusPoints','purchaseTaxes','fxFees','targetPoints','targetCash','targetAwardTaxes','personalValuation'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calcBuy);
+  });
+  
+  updateUnits();
+  if($('pointsToBuy').value) calcBuy();
+
+  // Share functionality
+  $('btnShare').addEventListener('click', () => {
+    const newParams = new URLSearchParams();
+    const safeSet = (key, id) => {
+      const v = parseFloat($(id).value);
+      if (!isNaN(v) && v > 0) newParams.set(key, v);
+    };
+    safeSet('buy', 'pointsToBuy');
+    safeSet('price', 'purchasePrice');
+    safeSet('bonus', 'bonusPercentage');
+    safeSet('fbonus', 'fixedBonusPoints');
+    safeSet('taxes', 'purchaseTaxes');
+    safeSet('fx', 'fxFees');
+    safeSet('tpoints', 'targetPoints');
+    safeSet('tcash', 'targetCash');
+    safeSet('ttaxes', 'targetAwardTaxes');
+    safeSet('val', 'personalValuation');
+    
+    newParams.set('currency', currentCurrency);
+    
+    const newUrl = window.location.pathname + '?' + newParams.toString();
+    history.replaceState(null, '', newUrl);
+    
+    navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
+      const toast = $('toast');
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    });
+  });
+</script>

@@ -12,6 +12,8 @@ breadcrumbs:
 <h1>积分转点加赠计算器 (Transfer Bonus)</h1>
 <p class="sub">遇到例如“Amex 转 BA 额外赠送 30%”的活动时，手动算往往会产生零头。本工具能自动计算出为了凑齐目标里程，你实际应该从信用卡转出多少整数积分。</p>
 
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">分享此计算</button></div>
+<div id="toast" class="toast">已复制分享链接！</div>
 <div class="panel">
   <div class="field">
     <label for="targetMiles">兑换机票所需的总里程数<span class="hint" id="hintTarget">英里/点</span></label>
@@ -128,11 +130,56 @@ breadcrumbs:
       }
     }]
   }
-  </script>
+  
+  if($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const newParams = new URLSearchParams();
+      const safeSet = (key, id) => {
+        const el = $(id);
+        if(el) {
+          const v = parseFloat(el.value);
+          if (!isNaN(v) && v > 0) newParams.set(key, v);
+        }
+      };
+      safeSet('targetMiles', 'targetMiles');
+      safeSet('baseRatio', 'baseRatio');
+      safeSet('bonusPercent', 'bonusPercent');
+      safeSet('increment', 'increment');
+      safeSet('rawPoints', 'rawPoints');
+      safeSet('actualPoints', 'actualPoints');
+      if (typeof currentCurrency !== 'undefined') newParams.set('currency', currentCurrency);
+      
+      const newUrl = window.location.pathname + '?' + newParams.toString();
+      history.replaceState(null, '', newUrl);
+      
+      navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
+        const toast = $('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+      });
+    });
+  }
+</script>
 </div>
 
 <script>
   const $ = id => document.getElementById(id);
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    const params = new URLSearchParams(window.location.search);
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+  parseParam('targetMiles', 'targetMiles');
+  parseParam('baseRatio', 'baseRatio');
+  parseParam('bonusPercent', 'bonusPercent');
+  parseParam('increment', 'increment');
+  parseParam('rawPoints', 'rawPoints');
+  parseParam('actualPoints', 'actualPoints');
+
   function calcBonus(){
     let target = parseFloat($('targetMiles').value) || 0;
     let baseRatio = parseFloat($('baseRatio').value) || 0;
