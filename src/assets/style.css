@@ -188,7 +188,7 @@ nav.breadcrumb span.sep{ margin: 0 8px; opacity: 0.4; }
   gap: 0.625rem;
   padding: 1rem 1.125rem;
   background: #f8fafc;
-  color: #172033; /* enforce dark text over any container inherited color */
+  color: #172238; /* enforce dark text over any container inherited color */
   font-weight: 600;
   line-height: 1.45;
   cursor: pointer;
@@ -226,8 +226,28 @@ nav.breadcrumb span.sep{ margin: 0 8px; opacity: 0.4; }
 
 .faq details > :not(summary) {
   padding: 1rem 1.125rem;
-  color: #334155;
+  color: #273449;
   line-height: 1.7;
+}
+
+/* Force dark text for paragraph and list elements inside light FAQ cards to override global dark mode colors */
+.faq details > :not(summary) p,
+.faq details > :not(summary) ul,
+.faq details > :not(summary) ol,
+.faq details > :not(summary) div {
+  color: #273449;
+  line-height: 1.7;
+}
+
+.faq details > :not(summary) a {
+  color: #1e3a8a; /* Accessible deep blue */
+  text-decoration: underline;
+}
+
+.faq details > :not(summary) a:hover,
+.faq details > :not(summary) a:focus-visible,
+.faq details > :not(summary) a:visited {
+  color: #172554;
 }
 
 .formula-box,

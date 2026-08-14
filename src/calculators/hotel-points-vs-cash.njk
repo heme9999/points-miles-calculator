@@ -242,8 +242,15 @@ breadcrumbs:
     });
   }
 
-  const parseParam = (key, elId, maxVal = 1000000000) => {
-    let val = parseFloat(params.get(key));
+  const parseParam = (key, elId, maxVal = 1000000000, aliasKeys = []) => {
+    let raw = params.get(key);
+    if (raw === null) {
+      for (const alias of aliasKeys) {
+        raw = params.get(alias);
+        if (raw !== null) break;
+      }
+    }
+    let val = parseFloat(raw);
     if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
       if (key === 'points' && val === 0) return;
       const el = $(elId);
@@ -263,7 +270,10 @@ breadcrumbs:
   parseParam('cc', 'ccRewardsValue');
   parseParam('valuation', 'personalValuation', 1000);
   
-  const pFreeRule = params.get('freeRule');
+  let pFreeRule = params.get('freeRule');
+  if (pFreeRule === null && params.get('fifthNight') === 'true') {
+    pFreeRule = '5th';
+  }
   if (['none', '5th', 'custom'].includes(pFreeRule)) {
     $('freeNightRule').value = pFreeRule;
   }

@@ -205,8 +205,15 @@ breadcrumbs:
     });
   }
 
-  const parseParam = (key, elId, maxVal = 1000000000) => {
-    let val = parseFloat(params.get(key));
+  const parseParam = (key, elId, maxVal = 1000000000, aliasKeys = []) => {
+    let raw = params.get(key);
+    if (raw === null) {
+      for (const alias of aliasKeys) {
+        raw = params.get(alias);
+        if (raw !== null) break;
+      }
+    }
+    let val = parseFloat(raw);
     if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
       if (key === 'points' && val === 0) return;
       const el = $(elId);
@@ -215,9 +222,9 @@ breadcrumbs:
   };
   
   // URL Param Extraction
-  parseParam('buy', 'pointsToBuy');
+  parseParam('buy', 'pointsToBuy', 1000000000, ['buyAmt']);
   parseParam('price', 'purchasePrice');
-  parseParam('bonus', 'bonusPercentage', 1000);
+  parseParam('bonus', 'bonusPercentage', 1000, ['bonusPct']);
   parseParam('fbonus', 'fixedBonusPoints');
   parseParam('taxes', 'purchaseTaxes');
   parseParam('fx', 'fxFees');
