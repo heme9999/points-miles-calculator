@@ -15,6 +15,9 @@
 <meta name="description" content="{{ description or site.description }}">
 <meta name="google-site-verification" content="wMz2VDeMwD8R6yiCgJIqFD_wM2wSzrSEauzvCtzKHyw" />
 
+{% if noindex %}
+<meta name="robots" content="noindex">
+{% endif %}
 <link rel="canonical" href="{{ site.url }}{{ canonical | default(page.url) }}">
 <link rel="alternate" hreflang="zh-CN" href="{{ zhUrl }}">
 <link rel="alternate" hreflang="en" href="{{ enUrl }}">
