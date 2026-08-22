@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>What is British Airways / Qatar Airways Avios?</h2>
 <p>Avios is the shared currency of British Airways, Qatar Airways, Iberia, and Finnair. Because you can freely transfer Avios between these programs at a 1:1 ratio, it offers incredible flexibility and is widely known as the king of short-haul redemptions. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
 
-<h2>Current Market Valuation (CPP)</h2>
+<h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
   <strong>Editorial Disclaimer:</strong> Loyalty points and miles do not have a fixed, legal cash value. The valuations below are editorial estimates based on industry consensus and real-world redemption data.
 </div>

@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>What is Hilton Honors?</h2>
 <p>Hilton Honors is the loyalty program for Hilton Hotels. It is incredibly easy to earn large quantities of Hilton points through credit card sign-up bonuses and hotel stays, but this inflation results in a very low per-point valuation. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
 
-<h2>Current Market Valuation (CPP)</h2>
+<h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
   <strong>Editorial Disclaimer:</strong> Loyalty points and miles do not have a fixed, legal cash value. The valuations below are editorial estimates based on industry consensus and real-world redemption data.
 </div>

@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>What is Capital One Miles?</h2>
 <p>Capital One Miles is the flexible rewards currency earned on Venture cards. By expanding its roster of 1:1 transfer partners (like Aeroplan and Avianca LifeMiles) over recent years, it has become a top-tier travel currency. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
 
-<h2>Current Market Valuation (CPP)</h2>
+<h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
   <strong>Editorial Disclaimer:</strong> Loyalty points and miles do not have a fixed, legal cash value. The valuations below are editorial estimates based on industry consensus and real-world redemption data.
 </div>

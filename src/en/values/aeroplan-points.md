@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>What is Air Canada Aeroplan?</h2>
 <p>Aeroplan is the frequent flyer program of Air Canada. As a key member of the Star Alliance, Aeroplan is renowned for its competitive award charts, generous stopover policies, and vast network of partner airlines, making it one of the most highly sought-after mileage currencies. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
 
-<h2>Current Market Valuation (CPP)</h2>
+<h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
   <strong>Editorial Disclaimer:</strong> Loyalty points and miles do not have a fixed, legal cash value. The valuations below are editorial estimates based on industry consensus and real-world redemption data.
 </div>

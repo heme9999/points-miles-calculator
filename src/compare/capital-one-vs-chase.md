@@ -15,7 +15,7 @@ Capital One Miles（第一资本里程）和 Chase Ultimate Rewards（大通银�
 
 ## 攒点结构 (2x 统一返点 vs 类别加成)
 
-*   **Capital One:** Venture X 和 Venture Rewards 信用卡最大的魅力在于**所有消费一律 2x 里程返点**。你无需记住复杂的消费类别。这让它成为了完美的“无脑刷”日常用卡。
+*   **Capital One:** Venture X 和 Venture Rewards 信用卡最大的特色在于**所有消费一律 2x 里程返点**。你无需记住复杂的消费类别，适合作为通用日常消费卡。
 *   **Chase:** Chase 生态系统依赖于类别加成。比如餐饮和旅行 3x (Sapphire Reserve)、季度轮换类别 5x (Freedom Flex)，以及其他所有消费 1.5x (Freedom Unlimited)。想要实现积分最大化，你需要持有并合理搭配多张卡片。
 
 ## 官方旅游门户 (Travel Portals)
@@ -35,5 +35,5 @@ Capital One Miles（第一资本里程）和 Chase Ultimate Rewards（大通银�
 
 ## 总结
 
-*   **选择 Capital One 如果：** 你追求极简的一卡流配置（所有消费无脑 2x），计划将里程转给国际航空伙伴，或者喜欢用里程直接报销各类杂项旅行开销。
+*   **选择 Capital One 如果：** 你追求极简的一卡流配置（所有消费 2x 返点），计划将里程转给国际航空伙伴，或者喜欢用里程直接报销各类杂项旅行开销。
 *   **选择 Chase 如果：** 你愿意搭配使用多张卡来最大化多类别的返点，经常乘坐美联航或西南航空等美国国内航线，或者非常喜欢将积分换成高价值的凯悦酒店住宿。

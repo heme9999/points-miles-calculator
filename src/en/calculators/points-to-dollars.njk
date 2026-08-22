@@ -1,6 +1,6 @@
 ---
 layout: base.njk
-title: Points to Dollars Calculator | Convert Airline Miles to Cash
+title: Points to Dollars Calculator | Miles Value
 description: Convert airline miles and credit card points to dollar value. See how much 5,000, 50,000, or 60,000 miles are worth across common valuation benchmarks.
 schemaType: WebApplication
 eyebrow: Tools · 05
@@ -22,18 +22,16 @@ breadcrumbs:
   </div>
   
   <div class="field">
-    <label for="presetValuation">Current market valuation (CPP)<span class="hint" id="hintValuation">¢ / Point</span></label>
+    <label for="presetValuation">Valuation assumption (CPP)<span class="hint" id="hintValuation">¢ / Point</span></label>
     <select id="presetValuation" aria-describedby="hintValuation unitValuation">
-      <option value="custom">Custom (Enter manually)</option>
-      <option value="2.0">2.0¢ (Chase Ultimate Rewards estimate)</option>
-      <option value="2.0">2.0¢ (Amex Membership Rewards estimate)</option>
-      <option value="1.85">1.85¢ (Capital One Miles estimate)</option>
-      <option value="1.5">1.5¢ (Average Airline Mile benchmark)</option>
-      <option value="1.2">1.2¢ (Conservative / Economy benchmark)</option>
-      <option value="0.6">0.6¢ (Hilton Honors estimate)</option>
+      <option value="custom">Custom valuation assumption</option>
+      <option value="2.0">Example 2.0¢ per point assumption</option>
+      <option value="1.5">Example 1.5¢ per airline mile assumption</option>
+      <option value="1.2">Example 1.2¢ conservative assumption</option>
+      <option value="0.6">Example 0.6¢ hotel-points assumption</option>
     </select>
     <input type="number" id="cppValue" value="2.0" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
-    <div class="unit" id="unitValuation">Note: Preset values are for demonstration purposes and may not reflect real-time valuations.</div>
+    <div class="unit" id="unitValuation">Preset values are calculation examples, not live valuations. Actual value depends on the loyalty program, award availability, taxes, transfer ratios, and the specific redemption. Review the program’s current terms before making a decision.</div>
   </div>
 </div>
 
@@ -50,7 +48,7 @@ breadcrumbs:
 </div>
 
 <div class="callout" style="margin-top: 24px;">
-  <strong>Core Warning:</strong> Points are not immune to inflation. Airlines and hotels devalue their loyalty programs regularly. We strongly recommend "Earn and Burn"—use your points as you earn them rather than holding them indefinitely.
+  <strong>Core Consideration:</strong> Points are subject to inflation as airline and hotel loyalty programs adjust award charts. A practical approach is to earn points for planned redemptions and avoid holding unnecessarily large balances for long periods.
 </div>
 
 <div class="article-content prose" style="margin-top: 40px;">
@@ -132,12 +130,12 @@ breadcrumbs:
     <li><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a>: Calculate how many flexible bank points you need to transfer to hit a target mileage requirement during bonus promotions.</li>
   </ul>
 
-  <h2>Three Rules of Points Management</h2>
+  <h2>Three Practical Principles of Points Management</h2>
   <ol>
-    <li><strong>Earn and Burn</strong><br>
-    Points only deliver value once redeemed. Loyalty programs adjust pricing dynamically and change award charts over time. Keeping points indefinitely guarantees loss of purchasing power.</li>
+    <li><strong>Earn for Specific Goals</strong><br>
+    Points only deliver value once redeemed. Holding points for long periods can reduce their purchasing power when loyalty programs devalue.</li>
     <li><strong>Flexibility is King</strong><br>
-    Transferable points like <a href="/en/values/chase-ultimate-rewards/">Chase UR</a> or <a href="/en/values/amex-membership-rewards/">Amex MR</a> are more valuable than points locked into a single airline. Keep points in your bank account until you have verified award availability.</li>
+    Transferable points like <a href="/en/values/chase-ultimate-rewards/">Chase UR</a> or <a href="/en/values/amex-membership-rewards/">Amex MR</a> are more versatile than points locked into a single airline. Keep points in your bank account until you have verified award availability.</li>
     <li><strong>Understand Expiration Policies</strong><br>
     Expiration rules vary. Some programs expire miles after 24–36 months of inactivity, while others allow extensions through qualifying card spending or shopping portal activity.</li>
   </ol>
@@ -154,7 +152,7 @@ breadcrumbs:
     <details>
       <summary>Can I sell my airline miles for cash?</summary>
       <div>
-        <p>No. Airline and hotel loyalty program terms strictly prohibit the commercial sale or barter of points. Doing so can lead to account closure and forfeiture of rewards. You can, however, legally book award travel for friends or family.</p>
+        <p>Many loyalty programs restrict or prohibit unauthorized sale or barter of points. Review the applicable program terms before transferring or using rewards for another person.</p>
       </div>
     </details>
 

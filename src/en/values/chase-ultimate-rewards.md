@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>What is Chase Ultimate Rewards (UR)?</h2>
 <p>Chase Ultimate Rewards (UR) is JPMorgan Chase's highly flexible credit card points program. Thanks to its remarkable stability and a uniquely powerful 1:1 transfer partnership with World of Hyatt, UR points are widely considered the gold standard of bank rewards. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
 
-<h2>Current Market Valuation (CPP)</h2>
+<h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
   <strong>Editorial Disclaimer:</strong> Loyalty points and miles do not have a fixed, legal cash value. The valuations below are editorial estimates based on industry consensus and real-world redemption data.
 </div>

@@ -16,7 +16,7 @@ Unlike airline miles, which can yield wildly different values depending on the c
 
 Historically, hotel programs used fixed award charts (e.g., a Category 5 hotel always cost 35,000 points). Today, major programs like Marriott and Hilton have shifted to **dynamic pricing**, where the point cost fluctuates based on the cash price of the room.
 
-While dynamic pricing reduces the occurrence of outsized, astronomical redemptions, it guarantees a more consistent baseline value for your points.
+While dynamic pricing reduces the occurrence of outsized, astronomical redemptions, it tends to establish a more consistent baseline value for your points.
 
 ## The 5th Night Free Trick
 

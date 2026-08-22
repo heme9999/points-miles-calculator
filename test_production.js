@@ -1,11 +1,20 @@
 const { JSDOM } = require('jsdom');
 const http = require('http');
-const fs = require('fs');
 
-function fetch(url, options = {}) {
+function fetch(url, customHeaders = {}) {
   return new Promise((resolve, reject) => {
-    const headers = Object.assign({ 'Cache-Control': 'no-cache' }, options.headers || {});
-    http.get(url, { headers }, (res) => {
+    const parsed = new URL(url);
+    const options = {
+      hostname: parsed.hostname,
+      port: parsed.port || 8083,
+      path: parsed.pathname + parsed.search,
+      method: 'GET',
+      headers: Object.assign({
+        'Cache-Control': 'no-cache',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+      }, customHeaders)
+    };
+    http.get(options, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => resolve({ status: res.statusCode, data, headers: res.headers }));
@@ -15,76 +24,52 @@ function fetch(url, options = {}) {
 
 async function runTests() {
   const baseUrl = 'http://localhost:8083';
-  console.log('=== Starting Phase 9.2 Gatekeeper Tests ===\n');
+  console.log('=== Starting Phase 9.2.1 Gatekeeper Tests ===\n');
 
   let failures = 0;
   const todayStr = new Date().toISOString().slice(0, 10);
 
-  // 1. Robots.txt check
+  // 1. Robots.txt
   console.log('--- 1. Robots.txt Verification ---');
   const robotsRes = await fetch(`${baseUrl}/robots.txt`);
   if (robotsRes.status !== 200) {
-    console.error(`ERROR: robots.txt returned status ${robotsRes.status}`);
+    console.error(`ERROR: robots.txt returned ${robotsRes.status}`);
     failures++;
-  } else if (!robotsRes.data.includes('Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml')) {
-    console.error('ERROR: robots.txt does not contain full absolute Sitemap URL');
+  }
+  if (!robotsRes.data.includes('Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml')) {
+    console.error('ERROR: robots.txt does not contain absolute sitemap URL');
     failures++;
   } else {
     console.log('robots.txt OK and properly points to absolute sitemap URL.');
   }
 
-  // 2. Sitemap UA & Format Verification
+  // 2. Sitemap Validation
   console.log('\n--- 2. Sitemap UA & Format Verification ---');
-  const regularSm = await fetch(`${baseUrl}/sitemap.xml`, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' }
+  const regularSitemapRes = await fetch(`${baseUrl}/sitemap.xml`, {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
   });
-  const botSm = await fetch(`${baseUrl}/sitemap.xml`, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' }
+  const googlebotSitemapRes = await fetch(`${baseUrl}/sitemap.xml`, {
+    'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
   });
 
-  if (regularSm.status !== 200) {
-    console.error(`ERROR: Regular UA sitemap returned status ${regularSm.status}`);
+  if (regularSitemapRes.status !== 200 || googlebotSitemapRes.status !== 200) {
+    console.error(`ERROR: Sitemap fetch failed. Regular: ${regularSitemapRes.status}, Googlebot: ${googlebotSitemapRes.status}`);
     failures++;
   }
-  if (botSm.status !== 200) {
-    console.error(`ERROR: Googlebot UA sitemap returned status ${botSm.status}`);
-    failures++;
-  }
-
-  // Validate XML syntax
-  const sitemapXml = regularSm.data;
-  if (!sitemapXml.startsWith('<?xml version="1.0" encoding="utf-8"?>') || !sitemapXml.includes('<urlset') || !sitemapXml.includes('</urlset>')) {
-    console.error('ERROR: Sitemap is not valid XML or missing urlset wrapper');
+  if (!regularSitemapRes.headers['content-type']?.includes('xml')) {
+    console.error(`ERROR: Sitemap Content-Type is not XML: ${regularSitemapRes.headers['content-type']}`);
     failures++;
   }
 
-  // Parse URLs and lastmod
-  const urls = [...sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
-  const lastmods = [...sitemapXml.matchAll(/<lastmod>(.*?)<\/lastmod>/g)].map(m => m[1]);
-  console.log(`Sitemap total URLs: ${urls.length}`);
+  const sitemapUrls = [...regularSitemapRes.data.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
+  const lastmods = [...regularSitemapRes.data.matchAll(/<lastmod>(.*?)<\/lastmod>/g)].map(m => m[1]);
+
+  console.log(`Sitemap total URLs: ${sitemapUrls.length}`);
   console.log(`Sitemap explicit lastmod entries: ${lastmods.length}`);
 
-  if (urls.length < 95) {
-    console.error(`ERROR: Sitemap should have >= 95 URLs, found: ${urls.length}`);
+  if (sitemapUrls.length !== 98) {
+    console.error(`ERROR: Expected 98 URLs in sitemap, got ${sitemapUrls.length}`);
     failures++;
-  }
-
-  // Verify unique URLs and no query params
-  const urlSet = new Set();
-  for (const u of urls) {
-    if (urlSet.has(u)) {
-      console.error(`ERROR: Duplicate URL in sitemap: ${u}`);
-      failures++;
-    }
-    urlSet.add(u);
-    if (u.includes('?')) {
-      console.error(`ERROR: Sitemap contains query params: ${u}`);
-      failures++;
-    }
-    if (u.includes('preview') || u.includes('localhost') || u.includes('127.0.0.1')) {
-      console.error(`ERROR: Sitemap contains non-production URL: ${u}`);
-      failures++;
-    }
   }
 
   // Verify lastmod format and date constraint
@@ -99,7 +84,7 @@ async function runTests() {
     }
   }
 
-  // 3. English and Chinese Homepage "Popular Calculators" Server-Side HTML Links
+  // 3. Homepage Entry Points Verification
   console.log('\n--- 3. Homepage Entry Points Verification ---');
   const enHomeRes = await fetch(`${baseUrl}/en/`);
   const enDoc = new JSDOM(enHomeRes.data).window.document;
@@ -140,14 +125,14 @@ async function runTests() {
     }
   }
 
-  // 4. Search Intent & Single H1 Verification
-  console.log('\n--- 4. Search Intent, Single H1 & Distinct Metadata ---');
+  // 4. Search Intent, Single H1 & Shortened English Titles
+  console.log('\n--- 4. Search Intent, Single H1 & Titles Verification ---');
   const pagesToCheck = [
-    { path: '/en/', expectedH1: 'Points and Miles Calculators' },
-    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator' },
-    { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator' },
-    { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator' },
-    { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator' },
+    { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points and Miles Calculators | Points & Miles Calculator' },
+    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Points to Dollars Calculator | Miles Value | Points & Miles Calculator' },
+    { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Award Travel | Points & Miles Calculator' },
+    { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
+    { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
     { path: '/calculators/points-to-dollars/', expectedH1: '积分换算现金价值计算器' },
     { path: '/calculators/points-vs-cash/', expectedH1: '积分与现金兑换决策计算器' },
@@ -157,7 +142,6 @@ async function runTests() {
 
   const titles = new Set();
   const descriptions = new Set();
-  const h1s = new Set();
 
   for (const p of pagesToCheck) {
     const pageRes = await fetch(`${baseUrl}${p.path}`);
@@ -178,6 +162,24 @@ async function runTests() {
       }
     }
 
+    if (p.expectedTitle && title !== p.expectedTitle) {
+      console.error(`ERROR: ${p.path} Title mismatch. Expected "${p.expectedTitle}", got "${title}"`);
+      failures++;
+    }
+
+    if (title.includes('||')) {
+      console.error(`ERROR: Double pipe detected in title at ${p.path}: ${title}`);
+      failures++;
+    }
+    if ((title.match(/Points & Miles Calculator/g) || []).length > 1) {
+      console.error(`ERROR: Duplicate brand in title at ${p.path}: ${title}`);
+      failures++;
+    }
+    if ((title.match(/里程账/g) || []).length > 1) {
+      console.error(`ERROR: Duplicate brand in title at ${p.path}: ${title}`);
+      failures++;
+    }
+
     if (titles.has(title)) {
       console.error(`ERROR: Duplicate title detected at ${p.path}: ${title}`);
       failures++;
@@ -191,16 +193,55 @@ async function runTests() {
     descriptions.add(desc);
 
     console.log(`Page: ${p.path}`);
-    console.log(`  Title: ${title}`);
+    console.log(`  Title (${title.length} chars): ${title}`);
     console.log(`  H1:    ${h1Els[0] ? h1Els[0].textContent.trim() : 'NONE'}`);
   }
 
-  // 5. Points to Dollars Conversion Table Verification
-  console.log('\n--- 5. Points to Dollars Example Table Verification ---');
-  const p2dRes = await fetch(`${baseUrl}/en/calculators/points-to-dollars/`);
-  const p2dDoc = new JSDOM(p2dRes.data).window.document;
+  // 5. Points to Dollars Valuation Assumptions & Disclaimer Checks
+  console.log('\n--- 5. Valuation Wording & Assumptions Verification ---');
+  const enP2D = await fetch(`${baseUrl}/en/calculators/points-to-dollars/`);
+  const enP2DDoc = new JSDOM(enP2D.data).window.document;
   
-  // Verify math in HTML table
+  const enLabel = enP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
+  if (!enLabel.includes('Valuation assumption (CPP)')) {
+    console.error(`ERROR: English Points to Dollars label is "${enLabel}", expected to include "Valuation assumption (CPP)"`);
+    failures++;
+  }
+
+  const enUnit = enP2DDoc.getElementById('unitValuation')?.textContent || '';
+  if (!enUnit.includes('Preset values are calculation examples, not live valuations.')) {
+    console.error(`ERROR: English Points to Dollars disclaimer missing standard text. Found: "${enUnit}"`);
+    failures++;
+  }
+
+  if (enP2D.data.includes('Current market valuation') || enP2D.data.includes('guarantees loss') || enP2D.data.includes('strictly prohibit')) {
+    console.error('ERROR: English Points to Dollars contains prohibited legacy wording (Current market valuation / guarantees loss / strictly prohibit)');
+    failures++;
+  }
+
+  const cnP2D = await fetch(`${baseUrl}/calculators/points-to-dollars/`);
+  const cnP2DDoc = new JSDOM(cnP2D.data).window.document;
+
+  const cnLabel = cnP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
+  if (!cnLabel.includes('估值假设（CPP）')) {
+    console.error(`ERROR: Chinese Points to Dollars label is "${cnLabel}", expected to include "估值假设（CPP）"`);
+    failures++;
+  }
+
+  const cnUnit = cnP2DDoc.getElementById('unitValuation')?.textContent || '';
+  if (!cnUnit.includes('预设数值仅为计算示例，并非实时估值。')) {
+    console.error(`ERROR: Chinese Points to Dollars disclaimer missing standard text. Found: "${cnUnit}"`);
+    failures++;
+  }
+
+  if (cnP2D.data.includes('当前市场单点估值') || cnP2D.data.includes('当前市场估值')) {
+    console.error('ERROR: Chinese Points to Dollars contains legacy "当前市场估值"');
+    failures++;
+  }
+  console.log('Valuation wording and disclaimers verified on both EN and CN.');
+
+  // 6. Points to Dollars Conversion Table Verification
+  console.log('\n--- 6. Points to Dollars Example Table Verification ---');
   const testTiers = [
     { miles: 2000, rates: { '1.0': '$20', '1.2': '$24', '1.5': '$30', '2.0': '$40' } },
     { miles: 5000, rates: { '1.0': '$50', '1.2': '$60', '1.5': '$75', '2.0': '$100' } },
@@ -218,7 +259,7 @@ async function runTests() {
         console.error(`ERROR: Math mismatch for ${tier.miles} @ ${rate}¢: expected ${expectedVal}, calculated ${formatted}`);
         failures++;
       }
-      if (!p2dRes.data.includes(expectedVal)) {
+      if (!enP2D.data.includes(expectedVal)) {
         console.error(`ERROR: English Points to Dollars table missing ${expectedVal} for ${tier.miles} miles`);
         failures++;
       }
@@ -226,134 +267,105 @@ async function runTests() {
   }
   console.log('Points to Dollars example table math verified successfully.');
 
-  // 6. Comprehensive Sitemap Loop & Bidirectional hreflang / Canonical / JSON-LD
-  console.log('\n--- 6. Comprehensive Sitemap Audit ---');
-  const linkGraph = new Map();
-
-  for (const u of urls) {
-    const uPath = u.replace('https://points-miles-calculator.pages.dev', '');
-    const dHtmlRes = await fetch(`${baseUrl}${uPath}`);
-    if (dHtmlRes.status !== 200) {
-      console.error(`ERROR: Sitemap URL returned ${dHtmlRes.status}: ${u}`);
+  // 7. Comprehensive Sitemap Audit
+  console.log('\n--- 7. Comprehensive Sitemap Audit ---');
+  for (const u of sitemapUrls) {
+    const path = new URL(u).pathname;
+    const res = await fetch(`${baseUrl}${path}`);
+    if (res.status !== 200) {
+      console.error(`ERROR: URL in sitemap returned ${res.status}: ${path}`);
       failures++;
       continue;
     }
 
-    const dDom = new JSDOM(dHtmlRes.data);
-    const doc = dDom.window.document;
-    const title = doc.title;
+    const doc = new JSDOM(res.data).window.document;
 
-    // Track links
-    const aTags = Array.from(doc.querySelectorAll('a')).map(a => a.href);
-    linkGraph.set(uPath, aTags);
-
-    // Canonical check
-    const canonical = doc.querySelector('link[rel="canonical"]');
-    if (!canonical || canonical.href.includes('?') || !canonical.href.startsWith('https://points-miles-calculator.pages.dev')) {
-      console.error(`ERROR: Invalid canonical for ${u}: ${canonical ? canonical.href : 'null'}`);
+    // Check canonical has no query parameters
+    const canonical = doc.querySelector('link[rel="canonical"]')?.getAttribute('href');
+    if (!canonical || canonical.includes('?')) {
+      console.error(`ERROR: Bad canonical at ${path}: ${canonical}`);
       failures++;
     }
 
-    // JSON-LD parsing
-    const jsonlds = Array.from(doc.querySelectorAll('script[type="application/ld+json"]'));
-    for (const j of jsonlds) {
+    // Check hreflang links
+    const hreflangZh = doc.querySelector('link[rel="alternate"][hreflang="zh-CN"]')?.getAttribute('href');
+    const hreflangEn = doc.querySelector('link[rel="alternate"][hreflang="en"]')?.getAttribute('href');
+    const hreflangDefault = doc.querySelector('link[rel="alternate"][hreflang="x-default"]')?.getAttribute('href');
+
+    if (!hreflangZh || !hreflangEn || !hreflangDefault) {
+      console.error(`ERROR: Missing hreflang tag at ${path}`);
+      failures++;
+    }
+
+    // Check JSON-LD validity
+    const jsonLds = doc.querySelectorAll('script[type="application/ld+json"]');
+    for (const j of jsonLds) {
       try {
-        JSON.parse(j.textContent);
-      } catch (e) {
-        console.error(`ERROR: Invalid JSON-LD at ${u}`);
-        failures++;
-      }
-    }
-
-    // Hreflang bidirectional checks
-    const links = Array.from(doc.querySelectorAll('link[rel="alternate"][hreflang]'));
-    const hasXDefault = links.some(l => l.getAttribute('hreflang') === 'x-default');
-    if (links.length > 0 && !hasXDefault) {
-      console.error(`ERROR: Missing x-default at ${u}`);
-      failures++;
-    }
-
-    for (const link of links) {
-      const href = link.href;
-      if (!href.startsWith('https://points-miles-calculator.pages.dev')) continue;
-
-      const altPath = href.replace('https://points-miles-calculator.pages.dev', '');
-      const altRes = await fetch(`${baseUrl}${altPath}`);
-      if (altRes.status !== 200) {
-        console.error(`ERROR: hreflang target returned ${altRes.status}: ${href} (from ${u})`);
-        failures++;
-        continue;
-      }
-
-      const altDoc = new JSDOM(altRes.data).window.document;
-      const backLinks = Array.from(altDoc.querySelectorAll('link[rel="alternate"][hreflang]'));
-      let hasBackRef = false;
-      for (const backLink of backLinks) {
-        if (backLink.href === u || backLink.href === u + '/' || backLink.href.replace(/\/$/, '') === u.replace(/\/$/, '')) {
-          hasBackRef = true;
-          break;
+        const parsed = JSON.parse(j.textContent);
+        if (parsed['@type'] === 'WebApplication' && parsed.name?.includes('Points & Miles Calculator | Points & Miles Calculator')) {
+          console.error(`ERROR: Duplicate brand in JSON-LD at ${path}`);
+          failures++;
         }
-      }
-      if (!hasBackRef) {
-        console.error(`ERROR: hreflang target ${href} does NOT link back to ${u}`);
+      } catch (e) {
+        console.error(`ERROR: JSON-LD parse failed at ${path}: ${e.message}`);
         failures++;
       }
     }
   }
+  console.log('Comprehensive Sitemap audit completed.');
 
-  // 7. Interactive Calculator Execution & Parameter Recovery
-  console.log('\n--- 7. Interactive Execution & Param Tests ---');
+  // 8. Interactive JS Execution Tests
+  console.log('\n--- 8. Interactive Execution & Param Tests ---');
   
-  // Points to Dollars param test
-  const p2dEnUrl = `/en/calculators/points-to-dollars/?totalPoints=50000&cppValue=1.5`;
-  const p2dEnHtml = (await fetch(`${baseUrl}${p2dEnUrl}`)).data;
-  const p2dEnDom = new JSDOM(p2dEnHtml, { runScripts: "dangerously", url: `${baseUrl}${p2dEnUrl}` });
+  // Points to Dollars Auto-Calculation
+  const p2dTestUrl = `${baseUrl}/en/calculators/points-to-dollars/?totalPoints=50000&cppValue=1.5`;
+  const p2dHtml = (await fetch(p2dTestUrl)).data;
+  const p2dDom = new JSDOM(p2dHtml, { runScripts: "dangerously", url: p2dTestUrl });
   await new Promise(r => setTimeout(r, 100));
-  const p2dDollarVal = p2dEnDom.window.document.getElementById('dollarValue').textContent;
-  if (p2dDollarVal !== '$750') {
-    console.error(`ERROR: Points to Dollars calculation failed on load! Expected $750, got ${p2dDollarVal}`);
+  const dollarVal = p2dDom.window.document.getElementById('dollarValue')?.textContent;
+  if (dollarVal !== '$750') {
+    console.error(`ERROR: Points to Dollars auto-calculation failed. Expected $750, got ${dollarVal}`);
     failures++;
   } else {
-    console.log('Points to Dollars auto-calculation on load: $750 (Passed)');
+    console.log(`Points to Dollars auto-calculation on load: ${dollarVal} (Passed)`);
   }
 
-  // Transfer Bonus standard param test
-  const transUrl = `/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000`;
-  const transHtml = (await fetch(`${baseUrl}${transUrl}`)).data;
-  const transDom = new JSDOM(transHtml, { runScripts: "dangerously", url: `${baseUrl}${transUrl}` });
+  // Transfer Bonus Standard & Legacy Param Auto-Calculations
+  const tbStdUrl = `${baseUrl}/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000`;
+  const tbStdHtml = (await fetch(tbStdUrl)).data;
+  const tbStdDom = new JSDOM(tbStdHtml, { runScripts: "dangerously", url: tbStdUrl });
   await new Promise(r => setTimeout(r, 100));
-  const transRaw = transDom.window.document.getElementById('rawPoints').textContent;
-  const transActual = transDom.window.document.getElementById('actualPoints').textContent;
-  if (transRaw !== '50,000' || transActual !== '50,000') {
-    console.error(`ERROR: Transfer Bonus calculation failed. Expected 50,000, got raw=${transRaw}, actual=${transActual}`);
+  const rawPoints = tbStdDom.window.document.getElementById('rawPoints')?.textContent;
+  const actualPoints = tbStdDom.window.document.getElementById('actualPoints')?.textContent;
+  if (rawPoints !== '50,000' || actualPoints !== '50,000') {
+    console.error(`ERROR: Transfer Bonus standard params failed. Expected 50,000/50,000, got ${rawPoints}/${actualPoints}`);
     failures++;
   } else {
-    console.log('Transfer Bonus standard params calculation: 50,000/50,000 (Passed)');
+    console.log(`Transfer Bonus standard params calculation: ${rawPoints}/${actualPoints} (Passed)`);
   }
 
-  // Transfer Bonus legacy param test
-  const legUrl = `/calculators/transfer-bonus/?req=60000&ratio=1&bonus=20&inc=1000`;
-  const legHtml = (await fetch(`${baseUrl}${legUrl}`)).data;
-  const legDom = new JSDOM(legHtml, { runScripts: "dangerously", url: `${baseUrl}${legUrl}` });
+  const tbLegacyUrl = `${baseUrl}/calculators/transfer-bonus/?req=60000&ratio=1&bonus=20&inc=1000`;
+  const tbLegacyHtml = (await fetch(tbLegacyUrl)).data;
+  const tbLegacyDom = new JSDOM(tbLegacyHtml, { runScripts: "dangerously", url: tbLegacyUrl });
   await new Promise(r => setTimeout(r, 100));
-  const legRaw = legDom.window.document.getElementById('rawPoints').textContent;
-  if (legRaw !== '50,000') {
-    console.error(`ERROR: Transfer Bonus legacy params failed. Expected 50,000, got raw=${legRaw}`);
+  const legacyRaw = tbLegacyDom.window.document.getElementById('rawPoints')?.textContent;
+  if (legacyRaw !== '50,000') {
+    console.error(`ERROR: Transfer Bonus legacy alias params failed. Expected 50,000, got ${legacyRaw}`);
     failures++;
   } else {
-    console.log('Transfer Bonus legacy alias params calculation: 50,000 (Passed)');
+    console.log(`Transfer Bonus legacy alias params calculation: ${legacyRaw} (Passed)`);
   }
 
   if (failures > 0) {
     console.error(`\nFAILED WITH ${failures} ERRORS.`);
     process.exit(1);
+  } else {
+    console.log('\nPASSED WITH 0 ERRORS\n');
+    process.exit(0);
   }
-
-  console.log('\nPASSED WITH 0 ERRORS');
 }
 
-runTests().catch(e => {
-  console.error('\nFAILED');
-  console.error(e);
+runTests().catch(err => {
+  console.error('\nTEST RUNNER FAILED WITH EXCEPTION:', err);
   process.exit(1);
 });

@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>What is World of Hyatt?</h2>
 <p>World of Hyatt is the loyalty program for Hyatt Hotels. As other major hotel chains have moved to fully dynamic pricing, Hyatt is one of the few that still maintains a fixed award chart (with Off-Peak, Standard, and Peak pricing). This makes Hyatt points the most valuable hotel currency on the market. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
 
-<h2>Current Market Valuation (CPP)</h2>
+<h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
   <strong>Editorial Disclaimer:</strong> Loyalty points and miles do not have a fixed, legal cash value. The valuations below are editorial estimates based on industry consensus and real-world redemption data.
 </div>

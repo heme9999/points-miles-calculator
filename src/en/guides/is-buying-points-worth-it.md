@@ -21,15 +21,15 @@ You need to ask yourself: **Can I redeem these points for more than 1.5 cents ea
 To make this calculation effortless, use our [Buy Points Calculator](/en/calculators/buy-points/). It factors in the purchase price, the bonus, and any transaction fees to give you the exact Cost Per Point (CPP) of your purchase.
 
 ## The Risk of Hoarding
-
-Never buy points just because there is a sale. Points are not cash; they do not earn interest and they are subject to sudden devaluation without warning. If you buy points today without a plan, they might be worth 20% less when you finally decide to use them next year.
-
-## When You Should Absolutely Buy Points
-
-There are two scenarios where buying points is a smart move:
-
-1. **Topping Off an Account**: If you have 55,000 miles and need 60,000 for a business class flight, buying the remaining 5,000 miles is absolutely worth the small cash outlay to secure a high-value redemption.
-2. **Immediate High-Value Redemptions**: If you find an available first-class flight or a luxury resort stay that costs $5,000 in cash, but buying the required points only costs you $1,500, you are effectively buying the experience at a 70% discount. **Always verify award availability before you buy.**
-
-**The Golden Rule**: Find the award space, calculate the cost, buy the points, and book immediately.
+ 
+Avoid buying points simply because of a promotion. Points are not cash; they do not earn interest and loyalty programs adjust award charts over time. If you buy points today without a plan, their purchasing power could decrease before you use them.
+ 
+## When Buying Points Makes Sense
+ 
+There are two common scenarios where buying points can be advantageous:
+ 
+1. **Topping Off an Account**: If you have 55,000 miles and need 60,000 for a business class flight, buying the remaining 5,000 miles offers a practical way to secure a high-value redemption.
+2. **Immediate High-Value Redemptions**: If you find an available first-class flight or a luxury resort stay that costs $5,000 in cash, but buying the required points only costs you $1,500, you are effectively securing the experience at a significant discount. **Always verify award availability before buying points.**
+ 
+**The Practical Rule**: Find the award space, calculate the cost, buy the points, and book immediately.
 "

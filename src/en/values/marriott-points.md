@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>What is Marriott Bonvoy?</h2>
 <p>Marriott Bonvoy is the loyalty program for Marriott International, the largest hotel chain in the world. While it boasts an unmatched global footprint, the points program has suffered from significant devaluations and a transition to dynamic pricing. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
 
-<h2>Current Market Valuation (CPP)</h2>
+<h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
   <strong>Editorial Disclaimer:</strong> Loyalty points and miles do not have a fixed, legal cash value. The valuations below are editorial estimates based on industry consensus and real-world redemption data.
 </div>

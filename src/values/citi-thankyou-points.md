@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>什么是 Citi ThankYou Points (TYP)？</h2>
 <p>Citi TYP 是花旗银行 (Citibank) 的灵活信用卡积分。虽然其国内航班合作伙伴不如 Chase 和 Amex 强势，但 TYP 在兑换长荣航空 (EVA Air) 和土耳其航空 (Turkish Airlines) 时具有独特优势。 本文将全面解析该常客计划的市场参考估值、常见兑换方式以及你需要警惕的潜在风险。</p>
 
-<h2>当前市场参考估值 (CPP)</h2>
+<h2>行业基准参考估值 (CPP)</h2>
 <div class="callout">
   <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了英文媒体与常旅客圈的行业参考（美元原值按汇率 约 7.00 概算为人民币），仅供参考。
 </div>

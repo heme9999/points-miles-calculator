@@ -15,7 +15,7 @@ breadcrumbs:
 <h2>What is Amex Membership Rewards (MR)?</h2>
 <p>Amex Membership Rewards (MR) is American Express's flexible credit card rewards program. It is one of the most popular and easiest-to-earn points currencies globally. Its immense value lies in a massive network of airline and hotel transfer partners. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
 
-<h2>Current Market Valuation (CPP)</h2>
+<h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
   <strong>Editorial Disclaimer:</strong> Loyalty points and miles do not have a fixed, legal cash value. The valuations below are editorial estimates based on industry consensus and real-world redemption data.
 </div>

@@ -361,7 +361,7 @@ breadcrumbs:
     let netCashSaved = totalCashCost - forgoneValue - awardCashCost;
     
     if (netCashSaved < 0) {
-      resetState('Forgone rewards and award fees exceed cash cost. It is strongly recommended to pay cash.');
+      resetState('Forgone rewards and award fees exceed cash cost. Paying cash yields better value in this scenario.');
       $('verdictText').textContent = 'Pay Cash';
       $('verdictText').className = 'verdict bad';
       $('verdictCode').textContent = 'DIFF < 0';

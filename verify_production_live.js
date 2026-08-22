@@ -25,7 +25,7 @@ function fetch(url, customHeaders = {}) {
 async function verifyLiveProduction() {
   const prodBase = 'https://points-miles-calculator.pages.dev';
   const ts = Date.now();
-  console.log(`=== STARTING PHASE 9.2 LIVE PRODUCTION VERIFICATION (${prodBase}) ===\n`);
+  console.log(`=== STARTING PHASE 9.2.1 LIVE PRODUCTION VERIFICATION (${prodBase}) ===\n`);
 
   let failures = 0;
   const todayStr = new Date().toISOString().slice(0, 10);
@@ -123,14 +123,14 @@ async function verifyLiveProduction() {
     }
   }
 
-  // 4. Search Intent & Single H1 Verification on Live Production
-  console.log('\n4. Verifying Search Intent & Single H1 on Live Production...');
+  // 4. Search Intent, Single H1 & Shortened Titles Verification
+  console.log('\n4. Verifying Search Intent, Single H1 & Shortened Titles on Live Production...');
   const pagesToCheck = [
-    { path: '/en/', expectedH1: 'Points and Miles Calculators' },
-    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator' },
-    { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator' },
-    { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator' },
-    { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator' },
+    { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points and Miles Calculators | Points & Miles Calculator' },
+    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Points to Dollars Calculator | Miles Value | Points & Miles Calculator' },
+    { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Award Travel | Points & Miles Calculator' },
+    { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
+    { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
     { path: '/calculators/points-to-dollars/', expectedH1: '积分换算现金价值计算器' },
     { path: '/calculators/points-vs-cash/', expectedH1: '积分与现金兑换决策计算器' },
@@ -152,19 +152,48 @@ async function verifyLiveProduction() {
         failures++;
       }
     }
-    console.log(`Verified ${p.path} -> Title: "${doc.title}", H1: "${h1Els[0] ? h1Els[0].textContent.trim() : ''}"`);
+    if (p.expectedTitle && doc.title !== p.expectedTitle) {
+      console.error(`ERROR: ${p.path} Title mismatch. Expected "${p.expectedTitle}", got "${doc.title}"`);
+      failures++;
+    }
+    if (doc.title.includes('||') || (doc.title.match(/Points & Miles Calculator/g) || []).length > 1) {
+      console.error(`ERROR: Bad title formatting at ${p.path}: ${doc.title}`);
+      failures++;
+    }
+    console.log(`Verified ${p.path} -> Title (${doc.title.length} chars): "${doc.title}", H1: "${h1Els[0] ? h1Els[0].textContent.trim() : ''}"`);
   }
 
-  // 5. Points to Dollars Live HTML Table & Interactive Calculations
-  console.log('\n5. Verifying Points to Dollars Live HTML Table & Interactive Calculations...');
-  const p2dLiveRes = await fetch(`${prodBase}/en/calculators/points-to-dollars/?audit=${ts}`);
-  if (!p2dLiveRes.data.includes('Common Miles-to-Dollars Conversion Examples') || !p2dLiveRes.data.includes('$1,200')) {
-    console.error('ERROR: Live English Points to Dollars table missing conversion examples');
+  // 5. Valuation Wording & Assumptions
+  console.log('\n5. Verifying Points to Dollars Valuation Assumptions & Disclaimers on Live Production...');
+  const enP2DRes = await fetch(`${prodBase}/en/calculators/points-to-dollars/?audit=${ts}`);
+  const enP2DDoc = new JSDOM(enP2DRes.data).window.document;
+  const enLabel = enP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
+  if (!enLabel.includes('Valuation assumption (CPP)')) {
+    console.error(`ERROR: Live English Points to Dollars label is "${enLabel}"`);
     failures++;
-  } else {
-    console.log('Live Points to Dollars table verified.');
+  }
+  const enUnit = enP2DDoc.getElementById('unitValuation')?.textContent || '';
+  if (!enUnit.includes('Preset values are calculation examples, not live valuations.')) {
+    console.error(`ERROR: Live English Points to Dollars disclaimer missing standard text`);
+    failures++;
   }
 
+  const cnP2DRes = await fetch(`${prodBase}/calculators/points-to-dollars/?audit=${ts}`);
+  const cnP2DDoc = new JSDOM(cnP2DRes.data).window.document;
+  const cnLabel = cnP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
+  if (!cnLabel.includes('估值假设（CPP）')) {
+    console.error(`ERROR: Live Chinese Points to Dollars label is "${cnLabel}"`);
+    failures++;
+  }
+  const cnUnit = cnP2DDoc.getElementById('unitValuation')?.textContent || '';
+  if (!cnUnit.includes('预设数值仅为计算示例，并非实时估值。')) {
+    console.error(`ERROR: Live Chinese Points to Dollars disclaimer missing standard text`);
+    failures++;
+  }
+  console.log('Live valuation wording and disclaimers verified.');
+
+  // 6. Interactive Script Execution on Live Production
+  console.log('\n6. Verifying Live Interactive Calculations...');
   const p2dEnUrl = `${prodBase}/en/calculators/points-to-dollars/?totalPoints=50000&cppValue=1.5&audit=${ts}`;
   const p2dEnHtml = (await fetch(p2dEnUrl)).data;
   const p2dEnDom = new JSDOM(p2dEnHtml, { runScripts: "dangerously", url: p2dEnUrl });
@@ -177,8 +206,6 @@ async function verifyLiveProduction() {
     console.log('Live Points to Dollars auto-calculation: $750 (Passed)');
   }
 
-  // 6. Transfer Bonus Live Param Calculations
-  console.log('\n6. Verifying Transfer Bonus Standard & Legacy Params on Live Production...');
   const transUrl = `${prodBase}/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000&audit=${ts}`;
   const transHtml = (await fetch(transUrl)).data;
   const transDom = new JSDOM(transHtml, { runScripts: "dangerously", url: transUrl });
