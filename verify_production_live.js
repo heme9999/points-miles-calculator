@@ -155,7 +155,7 @@ async function verifyLiveProduction() {
     console.log(`Verified ${p.path} -> Title: "${doc.title}", H1: "${h1Els[0] ? h1Els[0].textContent.trim() : ''}"`);
   }
 
-  // 5. Points to Dollars Live HTML Table & Script Execution
+  // 5. Points to Dollars Live HTML Table & Interactive Calculations
   console.log('\n5. Verifying Points to Dollars Live HTML Table & Interactive Calculations...');
   const p2dLiveRes = await fetch(`${prodBase}/en/calculators/points-to-dollars/?audit=${ts}`);
   if (!p2dLiveRes.data.includes('Common Miles-to-Dollars Conversion Examples') || !p2dLiveRes.data.includes('$1,200')) {
@@ -191,21 +191,25 @@ async function verifyLiveProduction() {
     console.log('Live Transfer Bonus calculation: 50,000 (Passed)');
   }
 
-  // 7. Full 98 URLs Live Crawl & Canonical/JSON-LD Audit
-  console.log('\n7. Auditing all 98 Live URLs on Production...');
-  for (const u of sitemapUrls) {
-    const res = await fetch(`${u}?audit=${ts}`);
-    if (res.status !== 200) {
-      console.error(`ERROR: Production URL returned ${res.status}: ${u}`);
-      failures++;
-      continue;
-    }
-    const doc = new JSDOM(res.data).window.document;
-    const canonical = doc.querySelector('link[rel="canonical"]')?.getAttribute('href');
-    if (!canonical || canonical.includes('?') || !canonical.startsWith('https://points-miles-calculator.pages.dev')) {
-      console.error(`ERROR: Invalid canonical on ${u}: ${canonical}`);
-      failures++;
-    }
+  // 7. Full 98 URLs Live Crawl & Canonical/JSON-LD Audit (Batched parallel)
+  console.log('\n7. Auditing all 98 Live URLs on Production (Parallel batching)...');
+  const batchSize = 15;
+  for (let i = 0; i < sitemapUrls.length; i += batchSize) {
+    const batch = sitemapUrls.slice(i, i + batchSize);
+    await Promise.all(batch.map(async (u) => {
+      const res = await fetch(`${u}?audit=${ts}`);
+      if (res.status !== 200) {
+        console.error(`ERROR: Production URL returned ${res.status}: ${u}`);
+        failures++;
+        return;
+      }
+      const doc = new JSDOM(res.data).window.document;
+      const canonical = doc.querySelector('link[rel="canonical"]')?.getAttribute('href');
+      if (!canonical || canonical.includes('?') || !canonical.startsWith('https://points-miles-calculator.pages.dev')) {
+        console.error(`ERROR: Invalid canonical on ${u}: ${canonical}`);
+        failures++;
+      }
+    }));
   }
   console.log('All 98 URLs returned HTTP 200 with valid canonicals.');
 
