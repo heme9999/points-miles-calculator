@@ -1,16 +1,17 @@
 ---
 layout: base.njk
-title: 积分折现计算器 (Points to Dollars) | 算算你的积分净资产
-description: 你的百万信用卡积分或航司里程到底值多少钱？输入数量和估值基准，免费帮你换算出相当于多少现金的“积分净资产”。
+title: 积分换算现金价值计算器 | 里程与信用卡积分值多少钱
+description: 将航空里程和信用卡积分换算为现金价值（美元或人民币）。输入积分数量与估值标准，一键计算隐形资产总值与兑现参考。
 schemaType: WebApplication
 eyebrow: 里程账 · 工具 05
+lastModified: "2026-08-22"
 breadcrumbs:
   - name: 计算器
     url: /calculators/
-  - name: 积分折现计算器
+  - name: 积分换算现金价值计算器
 ---
-<h1>积分折现计算器 (Points to Dollars)</h1>
-<p class="sub">别把积分当欢乐豆，它们是真金白银。输入你账户里的点数和当前市场估值，算算你一共持有多少“无形资产”。</p>
+<h1>积分换算现金价值计算器</h1>
+<p class="sub">别把积分当欢乐豆，它们代表真实的消费力。输入你账户里的积分或里程数量与参考估值，一键测算你的“隐形资产”总值。</p>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
   <button id="btnShare" class="btn-share">分享此计算</button>
@@ -57,32 +58,98 @@ breadcrumbs:
 </div>
 
 <div class="callout" style="margin-top: 24px;">
-  <strong>核心警告：</strong> 积分不像现金能够稳定保值。各大航司和酒店几乎每年都会进行不同程度的“贬值”（调高兑换门槛或改恶兑换图表）。因此我们建议“Earn and Burn”——赚了就用，通常不建议把积分当成理财产品长期囤积。
+  <strong>核心警告：</strong> 积分不像现金能够稳定保值。各大航司和酒店几乎每年都会进行不同程度的“贬值”（调高兑换门槛或改恶兑换图表）。因此我们建议“Earn and Burn”——随赚随花，通常不建议把积分当成理财产品长期囤积。
 </div>
 
 <div class="article-content prose" style="margin-top: 40px;">
+  <h2>常见里程与积分折现参考表 (Common Conversions)</h2>
+  <p>不知道手头的里程或信用卡积分大概相当于多少钱？下表整理了常见里程分段在不同估值标准（从保守基准到甜点兑换）下的参考价值对照：</p>
+  
+  <div style="overflow-x: auto; margin-block: 1.5rem; -webkit-overflow-scrolling: touch;">
+    <table style="width: 100%; border-collapse: collapse; text-align: right; min-width: 540px; font-size: 0.95rem;">
+      <thead>
+        <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1; color: #1e293b;">
+          <th style="text-align: left; padding: 12px 14px; font-weight: 600;">积分/里程数量</th>
+          <th style="padding: 12px 14px; font-weight: 600;">@ 1.0 美分 (约0.07元)</th>
+          <th style="padding: 12px 14px; font-weight: 600;">@ 1.2 美分 (约0.084元)</th>
+          <th style="padding: 12px 14px; font-weight: 600;">@ 1.5 美分 (约0.105元)</th>
+          <th style="padding: 12px 14px; font-weight: 600;">@ 2.0 美分 (约0.14元)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">2,000 里程</td>
+          <td style="padding: 10px 14px; color: #334155;">$20 (约¥140)</td>
+          <td style="padding: 10px 14px; color: #334155;">$24 (约¥168)</td>
+          <td style="padding: 10px 14px; color: #334155;">$30 (约¥210)</td>
+          <td style="padding: 10px 14px; color: #334155;">$40 (约¥280)</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">5,000 里程</td>
+          <td style="padding: 10px 14px; color: #334155;">$50 (约¥350)</td>
+          <td style="padding: 10px 14px; color: #334155;">$60 (约¥420)</td>
+          <td style="padding: 10px 14px; color: #334155;">$75 (约¥525)</td>
+          <td style="padding: 10px 14px; color: #334155;">$100 (约¥700)</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">8,000 里程</td>
+          <td style="padding: 10px 14px; color: #334155;">$80 (约¥560)</td>
+          <td style="padding: 10px 14px; color: #334155;">$96 (约¥672)</td>
+          <td style="padding: 10px 14px; color: #334155;">$120 (约¥840)</td>
+          <td style="padding: 10px 14px; color: #334155;">$160 (约¥1,120)</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">17,000 里程</td>
+          <td style="padding: 10px 14px; color: #334155;">$170 (约¥1,190)</td>
+          <td style="padding: 10px 14px; color: #334155;">$204 (约¥1,428)</td>
+          <td style="padding: 10px 14px; color: #334155;">$255 (约¥1,785)</td>
+          <td style="padding: 10px 14px; color: #334155;">$340 (约¥2,380)</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">50,000 里程</td>
+          <td style="padding: 10px 14px; color: #334155;">$500 (约¥3,500)</td>
+          <td style="padding: 10px 14px; color: #334155;">$600 (约¥4,200)</td>
+          <td style="padding: 10px 14px; color: #334155;">$750 (约¥5,250)</td>
+          <td style="padding: 10px 14px; color: #334155;">$1,000 (约¥7,000)</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">60,000 里程</td>
+          <td style="padding: 10px 14px; color: #334155;">$600 (约¥4,200)</td>
+          <td style="padding: 10px 14px; color: #334155;">$720 (约¥5,040)</td>
+          <td style="padding: 10px 14px; color: #334155;">$900 (约¥6,300)</td>
+          <td style="padding: 10px 14px; color: #334155;">$1,200 (约¥8,400)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <p style="font-size: 0.9em; color: #475569; line-height: 1.5;"><em>注：上述表格为行业通用估值基准换算，不代表航司官方保底回收价格。实际兑换价值取决于具体航班的票价水平、税费支出、转点比例及常客计划兑换表。详细估值方法可参阅我们的 <a href="/guides/airline-miles-value/">航空里程价值指南</a> 与 <a href="/methodology/">估值方法论</a>。</em></p>
+
   <h2>为什么要计算“积分折现价值”？</h2>
-  <p>很多常旅客玩家会沉迷于开卡奖励，看着账户里高达几十上百万的积分余额感到满足。然而，这些数字并非银行存款。计算“积分折现价值”（Points to Dollars）主要有两个实际意义：</p>
+  <p>计算“积分折现价值”（Points to Dollars）主要有两个实际意义：</p>
   <ul>
     <li><strong>清算个人资产</strong>：了解自己手头的“非现金资产”总盘子有多大。很多时候，我们持有的航空里程和酒店积分加起来，价值高达几万甚至十几万人民币。</li>
-    <li><strong>衡量持卡成本</strong>：许多高端信用卡（如 Amex Platinum, Chase Sapphire Reserve）每年会收取几千元的高昂年费。如果你账户里的积分折现价值连年费都无法覆盖，或者你根本花不出去，那你其实是在被银行“反薅”。</li>
+    <li><strong>衡量持卡成本</strong>：许多高端信用卡每年会收取高昂年费。如果你账户里的积分折现价值连年费都无法覆盖，或者你根本花不出去，那你其实是在被银行“反薅”。</li>
   </ul>
 
-  <h3>估值是怎么确定的？</h3>
-  <p>这个计算器依赖你输入的 **CPP（每点价值）** 参数。你可以随时前往我们的 <a href="/values/">积分估值目录页</a> 查阅各大银行和常客计划的最新市场参考均价。</p>
-  <p>如果你已经看中了一张机票，并想知道这次兑换的具体价值，请使用更针对单次出行的 <a href="/calculators/cents-per-point/">CPP 计算器</a>。</p>
+  <h3>更多常旅客决策计算器</h3>
+  <p>针对具体的换票和出行场景，建议搭配使用以下核心工具：</p>
+  <ul>
+    <li><a href="/calculators/cents-per-point/">单点价值 (CPP) 计算器</a>：精准计算单次机票或酒店兑换扣除税费后的每点实际价值。</li>
+    <li><a href="/calculators/points-vs-cash/">积分与现金决策计算器</a>：综合税费与放弃累积的刷卡返利，对比直接买票还是里程换票。</li>
+    <li><a href="/calculators/transfer-bonus/">信用卡转点加赠计算器</a>：计算银行加赠活动期间凑齐目标航司里程所需转出的最低积分。</li>
+  </ul>
 
   <h2>积分/里程管理的三大铁律</h2>
   <ol>
     <li><strong>Earn and Burn (随赚随花)</strong><br>
     正如上面提示中所说，积分只有在花出去那一刻才真正属于你。银行和航司拥有积分系统的最终解释权，他们可以随时无预警地贬值。把积分留在账户里，购买力只会随着时间流逝而不断缩水。</li>
     <li><strong>灵活性大于一切</strong><br>
-    像 <a href="/values/chase-ultimate-rewards/">Chase UR</a> 或 <a href="/values/amex-membership-rewards/">Amex MR</a> 这样可以转给多家不同航空公司的“灵活银行积分”，其价值远高于被锁定在单一航司的里程（如单一的达美航空里程）。在没有明确出行计划前，永远要把积分留在银行端，切忌提前转入航司。</li>
+    像 <a href="/values/chase-ultimate-rewards/">Chase UR</a> 或 <a href="/values/amex-membership-rewards/">Amex MR</a> 这样可以转给多家不同航空公司的“灵活银行积分”，其价值远高于被锁定在单一航司的里程。在没有明确出行计划前，永远要把积分留在银行端，切忌提前转入航司。</li>
     <li><strong>了解保级与过期规则</strong><br>
-    各计划过期规则不同。ANA 和普通 KrisFlyer 里程通常按赚取时间计算有效期（最长36个月）；2020年起赚取的亚洲万里通 (Asia Miles) 则可通过符合条件的赚取或兑换活动自动顺延 18 个月。请务必以各家航司最新官方规则为准，避免积分失效。</li>
+    各计划过期规则不同。请务必以各家航司最新官方规则为准，避免积分失效。</li>
   </ol>
 
-  <h3>常见问题 (FAQ)</h3>
   <h3>常见问题 (FAQ)</h3>
   <div class="faq">
     <details>
@@ -106,8 +173,7 @@ breadcrumbs:
       </div>
     </details>
   </div>
-
-  </div>
+</div>
 
 <script>
   const $ = id => document.getElementById(id);
@@ -171,7 +237,9 @@ breadcrumbs:
     }
   };
   parseParam('points', 'totalPoints');
+  parseParam('totalPoints', 'totalPoints');
   parseParam('valuation', 'cppValue', 1000);
+  parseParam('cppValue', 'cppValue', 1000);
 
   function calcDollars(){
     let P = parseFloat($('totalPoints').value) || 0;
@@ -212,6 +280,25 @@ breadcrumbs:
     if($(id)) $(id).addEventListener('input', calcDollars);
   });
   
+  if ($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const url = new URL('{{ site.url }}/calculators/points-to-dollars/');
+      const p = parseFloat($('totalPoints').value) || 0;
+      const v = parseFloat($('cppValue').value) || 0;
+      if (p > 0) url.searchParams.set('points', p);
+      if (v > 0) url.searchParams.set('valuation', v);
+      if (currentCurrency) url.searchParams.set('currency', currentCurrency);
+
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const toast = $('toast');
+        if (toast) {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+      });
+    });
+  }
+
   updateUnits();
   if($('cppValue').value) calcDollars();
 </script>

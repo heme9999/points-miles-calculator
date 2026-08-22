@@ -36,4 +36,4 @@ breadcrumbs:
 
 ## 估值页面与计算器
 
-想了解各大航空公司的估值基准，请访问我们的 [估值页面](/values/)。当你准备好为某趟具体航班算一笔账时，请使用我们的 [CPP 计算器](/calculators/)。
+想了解各大航空公司的估值基准，请访问我们的 [估值页面](/values/)。如果你想估算手头里程折合多少现金，可以使用 [积分换算现金价值计算器](/calculators/points-to-dollars/)。当你准备好为某趟具体航班算一笔账时，请使用我们的 [单点价值 (CPP) 计算器](/calculators/cents-per-point/) 或 [积分与现金决策计算器](/calculators/points-vs-cash/)。

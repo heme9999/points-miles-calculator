@@ -1,16 +1,17 @@
 ---
 layout: base.njk
-title: Points to Dollars Calculator | Net Worth of Your Points
-description: Find out how much your credit card points or airline miles are really worth in cash. Enter your balance and valuation to calculate your "points net worth."
+title: Points to Dollars Calculator | Convert Airline Miles to Cash
+description: Convert airline miles and credit card points to dollar value. See how much 5,000, 50,000, or 60,000 miles are worth across common valuation benchmarks.
 schemaType: WebApplication
 eyebrow: Tools · 05
+lastModified: "2026-08-22"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
   - name: Points to Dollars Calculator
 ---
 <h1>Points to Dollars Calculator</h1>
-<p class="sub">Stop treating points like monopoly money—they represent real purchasing power. Enter your points balance and current market valuations to see your total "invisible asset" value.</p>
+<p class="sub">Convert airline miles and credit card rewards into cash value. Enter your points balance and valuation benchmark to determine the estimated purchasing power of your rewards.</p>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
 <div id="toast" class="toast">Link copied to clipboard!</div>
@@ -27,6 +28,8 @@ breadcrumbs:
       <option value="2.0">2.0¢ (Chase Ultimate Rewards estimate)</option>
       <option value="2.0">2.0¢ (Amex Membership Rewards estimate)</option>
       <option value="1.85">1.85¢ (Capital One Miles estimate)</option>
+      <option value="1.5">1.5¢ (Average Airline Mile benchmark)</option>
+      <option value="1.2">1.2¢ (Conservative / Economy benchmark)</option>
       <option value="0.6">0.6¢ (Hilton Honors estimate)</option>
     </select>
     <input type="number" id="cppValue" value="2.0" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
@@ -47,56 +50,122 @@ breadcrumbs:
 </div>
 
 <div class="callout" style="margin-top: 24px;">
-  <strong>Core Warning:</strong> Points are not immune to inflation. Airlines and hotels devalue their loyalty programs almost every year. We strongly recommend "Earn and Burn"—use your points as you earn them. Never treat points as a long-term investment.
+  <strong>Core Warning:</strong> Points are not immune to inflation. Airlines and hotels devalue their loyalty programs regularly. We strongly recommend "Earn and Burn"—use your points as you earn them rather than holding them indefinitely.
 </div>
 
 <div class="article-content prose" style="margin-top: 40px;">
+  <h2>Common Miles-to-Dollars Conversion Examples</h2>
+  <p>Wondering how much a specific miles balance is worth in cash? Below is an accessible conversion benchmark table across common balances (from short-haul awards to international business class tickets) and valuation tiers:</p>
+  
+  <div style="overflow-x: auto; margin-block: 1.5rem; -webkit-overflow-scrolling: touch;">
+    <table style="width: 100%; border-collapse: collapse; text-align: right; min-width: 540px; font-size: 0.95rem;">
+      <thead>
+        <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1; color: #1e293b;">
+          <th style="text-align: left; padding: 12px 14px; font-weight: 600;">Miles / Points Balance</th>
+          <th style="padding: 12px 14px; font-weight: 600;">@ 1.0¢ / point</th>
+          <th style="padding: 12px 14px; font-weight: 600;">@ 1.2¢ / point</th>
+          <th style="padding: 12px 14px; font-weight: 600;">@ 1.5¢ / point</th>
+          <th style="padding: 12px 14px; font-weight: 600;">@ 2.0¢ / point</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">2,000 miles</td>
+          <td style="padding: 10px 14px; color: #334155;">$20</td>
+          <td style="padding: 10px 14px; color: #334155;">$24</td>
+          <td style="padding: 10px 14px; color: #334155;">$30</td>
+          <td style="padding: 10px 14px; color: #334155;">$40</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">5,000 miles</td>
+          <td style="padding: 10px 14px; color: #334155;">$50</td>
+          <td style="padding: 10px 14px; color: #334155;">$60</td>
+          <td style="padding: 10px 14px; color: #334155;">$75</td>
+          <td style="padding: 10px 14px; color: #334155;">$100</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">8,000 miles</td>
+          <td style="padding: 10px 14px; color: #334155;">$80</td>
+          <td style="padding: 10px 14px; color: #334155;">$96</td>
+          <td style="padding: 10px 14px; color: #334155;">$120</td>
+          <td style="padding: 10px 14px; color: #334155;">$160</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">17,000 miles</td>
+          <td style="padding: 10px 14px; color: #334155;">$170</td>
+          <td style="padding: 10px 14px; color: #334155;">$204</td>
+          <td style="padding: 10px 14px; color: #334155;">$255</td>
+          <td style="padding: 10px 14px; color: #334155;">$340</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">50,000 miles</td>
+          <td style="padding: 10px 14px; color: #334155;">$500</td>
+          <td style="padding: 10px 14px; color: #334155;">$600</td>
+          <td style="padding: 10px 14px; color: #334155;">$750</td>
+          <td style="padding: 10px 14px; color: #334155;">$1,000</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">60,000 miles</td>
+          <td style="padding: 10px 14px; color: #334155;">$600</td>
+          <td style="padding: 10px 14px; color: #334155;">$720</td>
+          <td style="padding: 10px 14px; color: #334155;">$900</td>
+          <td style="padding: 10px 14px; color: #334155;">$1,200</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <p style="font-size: 0.9em; color: #475569; line-height: 1.5;"><em>Note: The table above illustrates valuation benchmarks for educational comparison and does not represent fixed buyback or redemption cash guarantees. Actual realized value is influenced by award availability, flight taxes and fuel surcharges, transfer ratios, and individual airline award charts. For program-specific details, explore our valuation guides for <a href="/en/values/chase-ultimate-rewards/">Chase Ultimate Rewards</a>, <a href="/en/values/amex-membership-rewards/">Amex Membership Rewards</a>, <a href="/en/values/aeroplan-points/">Air Canada Aeroplan</a>, or read our in-depth <a href="/en/guides/airline-miles-value/">Airline Miles Value Guide</a> and <a href="/en/methodology/">Valuation Methodology</a>.</em></p>
+
   <h2>Why Calculate "Points to Dollars"?</h2>
-  <p>Many frequent flyers love seeing a massive points balance grow in their accounts. However, these numbers aren't bank deposits. Calculating the cash equivalent of your points has two practical benefits:</p>
+  <p>Calculating the cash equivalent of your points offers two key benefits:</p>
   <ul>
-    <li><strong>Asset Tracking</strong>: Understand the size of your "invisible assets." For many travelers, airline miles and hotel points combined can represent thousands of dollars in purchasing power.</li>
-    <li><strong>Evaluating Card Costs</strong>: Many premium credit cards (like the Amex Platinum or Chase Sapphire Reserve) charge hundreds of dollars in annual fees. If the cash value of your points isn't covering your annual fee—or if you simply can't find a way to spend them—the bank is winning, not you.</li>
+    <li><strong>Asset Tracking</strong>: Understand the size of your rewards portfolio. For frequent travelers, airline miles and hotel points combined can represent thousands of dollars in travel purchasing power.</li>
+    <li><strong>Evaluating Annual Fees</strong>: Premium travel cards carry annual fees. If the cash value of points earned doesn't exceed the card's cost, you may want to rethink your card strategy.</li>
   </ul>
 
-  <h3>How is the valuation determined?</h3>
-  <p>This calculator relies on the **CPP (Cents Per Point)** parameter you enter. You can visit our <a href="/en/values/">Points Valuations Directory</a> to check the latest market reference averages for major banks and loyalty programs.</p>
-  <p>If you've already found an award flight and want to know the specific value of that redemption, use our more targeted <a href="/en/calculators/cents-per-point/">CPP Calculator</a>.</p>
+  <h3>Related Calculators for Award Travel</h3>
+  <p>If you're evaluating a specific flight or hotel redemption rather than your overall balance, use these dedicated tools:</p>
+  <ul>
+    <li><a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>: Calculate the exact CPP value of a specific flight or hotel ticket after taxes.</li>
+    <li><a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>: Compare paying cash vs redeeming miles, factoring in taxes and forgone credit card rewards.</li>
+    <li><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a>: Calculate how many flexible bank points you need to transfer to hit a target mileage requirement during bonus promotions.</li>
+  </ul>
 
   <h2>Three Rules of Points Management</h2>
   <ol>
     <li><strong>Earn and Burn</strong><br>
-    As mentioned in the warning above, points only truly belong to you once you spend them. Banks and airlines have the final say over their systems and can devalue them at any time without warning. Leaving points in your account guarantees their purchasing power will shrink over time.</li>
+    Points only deliver value once redeemed. Loyalty programs adjust pricing dynamically and change award charts over time. Keeping points indefinitely guarantees loss of purchasing power.</li>
     <li><strong>Flexibility is King</strong><br>
-    Transferable points like <a href="/en/values/chase-ultimate-rewards/">Chase UR</a> or <a href="/en/values/amex-membership-rewards/">Amex MR</a> are vastly more valuable than miles locked into a single airline (like Delta SkyMiles). Always keep your points on the bank side until you have a confirmed travel plan. Never transfer speculatively.</li>
+    Transferable points like <a href="/en/values/chase-ultimate-rewards/">Chase UR</a> or <a href="/en/values/amex-membership-rewards/">Amex MR</a> are more valuable than points locked into a single airline. Keep points in your bank account until you have verified award availability.</li>
     <li><strong>Understand Expiration Policies</strong><br>
-    Expiration rules vary by program. ANA and standard KrisFlyer miles expire exactly 36 months after they are earned, regardless of activity. Other programs (like Marriott or British Airways) extend the life of your points as long as you have qualifying earning or redeeming activity every 18-24 months. Always check the official rules to avoid losing your hard-earned points.</li>
+    Expiration rules vary. Some programs expire miles after 24–36 months of inactivity, while others allow extensions through qualifying card spending or shopping portal activity.</li>
   </ol>
 
   <h3>Frequently Asked Questions</h3>
-  <div>
+  <div class="faq">
     <details>
       <summary>What should I do if my points are about to expire?</summary>
       <div>
-        <p>For programs that extend expiration with any activity, you can reset the clock by making a small purchase on a co-branded credit card, buying a few points, or using a shopping portal to earn a tiny amount of miles.</p>
+        <p>For programs that extend expiration with activity, you can reset the clock with a small purchase on a co-branded card, transferring a small number of points, or earning miles through an online shopping portal.</p>
       </div>
     </details>
     
     <details>
-      <summary>Can I sell my points for cash?</summary>
+      <summary>Can I sell my airline miles for cash?</summary>
       <div>
-        <p>No. Almost all loyalty programs strictly forbid selling or bartering points. If you are caught, your account will be shut down, all points will be forfeited, and any booked tickets will be canceled. You can legally book tickets for friends or family, but you cannot sell the points.</p>
+        <p>No. Airline and hotel loyalty program terms strictly prohibit the commercial sale or barter of points. Doing so can lead to account closure and forfeiture of rewards. You can, however, legally book award travel for friends or family.</p>
       </div>
     </details>
 
     <details>
       <summary>Does this calculator cash out my points?</summary>
       <div>
-        <p>No. This calculator is strictly an educational tool to help you estimate the equivalent purchasing power of your points. We do not buy, sell, or manage points.</p>
+        <p>No. This calculator is strictly an informational tool to estimate purchasing power. We do not buy, sell, or process points redemptions.</p>
       </div>
     </details>
   </div>
-
-  </div>
+</div>
 
 <script>
   const $ = id => document.getElementById(id);
@@ -110,9 +179,10 @@ breadcrumbs:
     }
   };
   parseParam('totalPoints', 'totalPoints');
+  parseParam('points', 'totalPoints');
   parseParam('presetValuation', 'presetValuation');
   parseParam('cppValue', 'cppValue');
-  parseParam('dollarValue', 'dollarValue');
+  parseParam('valuation', 'cppValue');
 
   function calcDollars(){
     let P = parseFloat($('totalPoints').value) || 0;
@@ -133,7 +203,7 @@ breadcrumbs:
     
     $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
     $('dollarValue').classList.add('win');
-    $('explain').textContent = `At a valuation of ${V}¢ / point, your ${P.toLocaleString('en-US', {maximumFractionDigits:0})} points hold roughly $${total.toLocaleString('en-US', {maximumFractionDigits:0})} in purchasing power. If left unused, this asset is at high risk of devaluation.`;
+    $('explain').textContent = `At a valuation of ${V}¢ / point, your ${P.toLocaleString('en-US', {maximumFractionDigits:0})} points hold roughly $${total.toLocaleString('en-US', {maximumFractionDigits:0})} in purchasing power. If left unused, this asset is at risk of future program devaluation.`;
   }
 
   $('presetValuation').addEventListener('change', e => {
@@ -145,4 +215,24 @@ breadcrumbs:
   ['totalPoints','cppValue'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcDollars);
   });
+
+  if ($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const url = new URL('{{ site.url }}/en/calculators/points-to-dollars/');
+      const p = parseFloat($('totalPoints').value) || 0;
+      const v = parseFloat($('cppValue').value) || 0;
+      if (p > 0) url.searchParams.set('totalPoints', p);
+      if (v > 0) url.searchParams.set('cppValue', v);
+
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const toast = $('toast');
+        if (toast) {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+      });
+    });
+  }
+
+  calcDollars();
 </script>

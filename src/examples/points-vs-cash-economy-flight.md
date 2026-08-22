@@ -41,7 +41,8 @@ CPP = ($344.40 / 15,000) × 100
 
 想自己动手算算看吗？请选择货币参数打开计算器：
 
-<div style="margin-top: 20px; display: flex; gap: 10px;">
+<div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
   <a href="/calculators/points-vs-cash/?cash=2500&points=15000&taxes=40&currency=CNY" class="btn" style="padding: 10px 15px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px;">用人民币参数打开计算器 (¥)</a>
   <a href="/calculators/points-vs-cash/?cash=350&points=15000&taxes=5.6&currency=USD" class="btn" style="padding: 10px 15px; background-color: #16a34a; color: white; text-decoration: none; border-radius: 5px;">用美元参数打开计算器 ($)</a>
+  <a href="/calculators/points-to-dollars/" class="btn" style="padding: 10px 15px; background-color: #475569; color: white; text-decoration: none; border-radius: 5px;">计算积分总现金价值</a>
 </div>

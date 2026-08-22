@@ -37,6 +37,4 @@ CPP = ($344.40 / 15,000) × 100
 
 ## The Result
 
-In this demonstration, redeeming points yields a value of **2.30 cents per point**. Depending on the point currency (like Chase Ultimate Rewards or Amex Membership Rewards), this is generally considered an excellent redemption for economy class.
-
-Want to try it yourself? [Calculate this scenario in our Points vs Cash Calculator](/en/calculators/points-vs-cash/?cash=350&points=15000&taxes=5.6).
+Want to try it yourself? [Calculate this scenario in our Points vs Cash Calculator](/en/calculators/points-vs-cash/?cash=350&points=15000&taxes=5.6), or use our [Points to Dollars Calculator](/en/calculators/points-to-dollars/) to see what your entire points balance is worth.

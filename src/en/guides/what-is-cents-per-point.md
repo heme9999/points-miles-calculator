@@ -45,6 +45,6 @@ When booking award flights, you often still have to pay taxes and fees. To get a
 
 A common mistake is using inflated, unrealistic cash prices to calculate CPP. If a First Class flight costs $15,000 in cash, but you would *never* actually pay $15,000 in cash for that flight, using that number gives you a false CPP. Always calculate CPP based on the cash price you would have reasonably been willing to pay.
 
-## Use Our CPP Calculator
+## Use Our Free Calculators
 
-Skip the manual math! Use our [CPP Calculator](/en/calculators/) to instantly figure out the value of your next redemption.
+Skip the manual math! Use our [CPP Calculator](/en/calculators/cents-per-point/) to instantly figure out the value of your next flight or hotel redemption, or check your total portfolio value with our [Points to Dollars Calculator](/en/calculators/points-to-dollars/).

@@ -36,4 +36,4 @@ Don't let universal valuations dictate your bookings. If a blog says a mile is w
 
 ## Valuation Pages & Calculator
 
-To see estimated baselines for various airlines, visit our [Valuations Page](/en/values/). And when you are ready to check the math on a specific flight, run the numbers through our [CPP Calculator](/en/calculators/).
+To see estimated baselines for various airlines, visit our [Valuations Page](/en/values/). To calculate the total cash worth of your mileage balance across common benchmarks, use our [Points to Dollars Calculator](/en/calculators/points-to-dollars/). And when you are ready to evaluate the return on a specific flight ticket, run the numbers through our [CPP Calculator](/en/calculators/cents-per-point/) or [Points vs Cash Calculator](/en/calculators/points-vs-cash/).
