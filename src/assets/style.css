@@ -502,3 +502,80 @@ h3 + .faq, h2 + .faq {
   }
 }
 
+/* --- Phase 9.3.1 Help Component & Scenario Guide --- */
+.btn-help-toggle {
+  background: none;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.2s;
+  vertical-align: middle;
+}
+.btn-help-toggle:hover, .btn-help-toggle:focus-visible {
+  background: rgba(212, 167, 60, 0.15);
+  border-color: var(--gold);
+  color: #fff;
+}
+.btn-help-toggle[aria-expanded="true"] {
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.help-scenario-guide {
+  margin-top: 14px;
+  margin-bottom: 18px;
+  padding: 16px 18px;
+  background: #0f1d30;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  font-size: 14px;
+  color: #f8fafc;
+}
+.help-scenario-guide h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: var(--gold);
+  font-size: 15px;
+}
+.help-scenario-guide .guide-step {
+  margin-bottom: 12px;
+}
+.help-scenario-guide .guide-step:last-child {
+  margin-bottom: 0;
+}
+.help-scenario-guide .guide-step strong {
+  color: #ffffff;
+}
+.help-scenario-guide .guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.btn-link-action {
+  display: inline-block;
+  font-size: 12.5px;
+  padding: 4px 10px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  color: #93c5fd;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-link-action:hover, .btn-link-action:focus-visible {
+  background: #334155;
+  border-color: #60a5fa;
+  color: #ffffff;
+  opacity: 1;
+}
+
+

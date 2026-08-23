@@ -1,7 +1,7 @@
 ---
 layout: base.njk
 title: Points to Dollars Calculator | Miles Value
-description: Convert airline miles and credit card points to dollar value. See how much 5,000, 50,000, or 60,000 miles are worth across common valuation benchmarks.
+description: Convert airline miles and credit card points to dollar value across illustrative valuation scenarios (0.6¢, 1.2¢, 1.5¢, 2.0¢ CPP).
 schemaType: WebApplication
 eyebrow: Tools · 05
 datePublished: "2026-08-14"
@@ -13,14 +13,15 @@ breadcrumbs:
   - name: Points to Dollars Calculator
 ---
 <h1>Points to Dollars Calculator</h1>
-<p class="sub">Convert airline miles and credit card rewards into cash value. Enter your points balance and valuation benchmark to determine the estimated purchasing power of your rewards.</p>
+<p class="sub">Convert airline miles and credit card rewards into estimated cash value. Choose an illustrative valuation scenario or input your own custom CPP to model potential purchasing power.</p>
 
 <div class="direct-answer">
-  <strong>Direct Calculation Rule:</strong> To convert points or airline miles into cash value, multiply your balance by your estimated Cents Per Point (CPP) and divide by 100. For example, 50,000 miles at a baseline 1.5¢/mile valuation equals $750 in equivalent travel purchasing power.
+  <strong>Direct Calculation Rule:</strong> Using a 1.5¢-per-mile illustrative airline-mile scenario, 50,000 miles represents roughly $750 in estimated travel value. This is a calculation example, not a live or guaranteed valuation for a specific loyalty program.
 </div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
 <div id="toast" class="toast">Link copied to clipboard!</div>
+
 <div class="panel">
   <div class="field">
     <label for="totalPoints">Total points / miles in your account<span class="hint" id="hintTotal">Points</span></label>
@@ -28,16 +29,40 @@ breadcrumbs:
   </div>
   
   <div class="field">
-    <label for="presetValuation">Valuation assumption (CPP)<span class="hint" id="hintValuation">¢ / Point</span></label>
+    <label for="presetValuation">
+      <span>Choose a valuation scenario (CPP)<button type="button" class="btn-help-toggle" id="btnHelpScenario" aria-expanded="false" aria-controls="helpScenarioGuide">How do I choose?</button></span>
+      <span class="hint" id="hintValuation">¢ / Point</span>
+    </label>
+    
+    <div id="helpScenarioGuide" class="help-scenario-guide" style="display: none;">
+      <h4>How to choose the right valuation scenario (CPP):</h4>
+      <div class="guide-step">
+        <strong>1. If you have a specific upcoming trip:</strong>
+        <p>Calculate your actual CPP rather than using an illustrative preset: <code>Actual CPP = [(Cash Ticket Price - Award Taxes - Forgone Rewards) ÷ Points Required] × 100</code>.</p>
+        <div class="guide-actions">
+          <a href="/en/calculators/cents-per-point/" class="btn-link-action">Use CPP Calculator →</a>
+          <a href="/en/calculators/points-vs-cash/" class="btn-link-action">Compare Points vs Cash →</a>
+        </div>
+      </div>
+      <div class="guide-step">
+        <strong>2. If you have past redemption history:</strong>
+        <p>Use the median CPP across your last 3–5 similar redemptions to avoid skewing your portfolio with a single high-value anomaly.</p>
+      </div>
+      <div class="guide-step">
+        <strong>3. If you have no specific trip or history:</strong>
+        <p>Start with the Conservative scenario (1.2¢), then test other presets to observe the range. Keep in mind: 0.6¢ does not apply to all hotel programs, 1.5¢ is not standard across all airlines, and 2.0¢ is never a guaranteed return.</p>
+      </div>
+    </div>
+
     <select id="presetValuation" aria-describedby="hintValuation unitValuation">
-      <option value="custom">Custom valuation assumption</option>
-      <option value="2.0">Example 2.0¢ per point assumption</option>
-      <option value="1.5">Example 1.5¢ per airline mile assumption</option>
-      <option value="1.2">Example 1.2¢ conservative assumption</option>
-      <option value="0.6">Example 0.6¢ hotel-points assumption</option>
+      <option value="custom">Custom CPP</option>
+      <option value="0.6">Low-value points scenario: 0.6¢ per point</option>
+      <option value="1.2">Conservative scenario: 1.2¢ per point</option>
+      <option value="1.5" selected>Typical airline-mile scenario: 1.5¢ per point</option>
+      <option value="2.0">Higher-value redemption scenario: 2.0¢ per point</option>
     </select>
-    <input type="number" id="cppValue" value="2.0" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
-    <div class="unit" id="unitValuation">Preset values are calculation examples, not live valuations. Actual value depends on the loyalty program, award availability, taxes, transfer ratios, and the specific redemption. Review the program’s current terms before making a decision.</div>
+    <input type="number" id="cppValue" value="1.5" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
+    <div class="unit" id="unitValuation">These CPP values are illustrative scenarios, not official conversion rates, live valuations, or guaranteed redemption values. The most reliable input comes from the cash price, taxes, fees, and points required for the redemption you are considering.</div>
   </div>
 </div>
 
@@ -45,7 +70,7 @@ breadcrumbs:
   <div class="main">
     <div class="compare">
       <div class="item">
-        <div class="k">Equivalent Cash Value</div>
+        <div class="k">Estimated Portfolio Value</div>
         <div class="v" id="dollarValue" style="word-break: break-word; overflow-wrap: anywhere;">$0</div>
       </div>
     </div>
@@ -54,63 +79,105 @@ breadcrumbs:
 </div>
 
 <div class="callout" style="margin-top: 24px;">
-  <strong>Core Consideration:</strong> Points are subject to inflation as airline and hotel loyalty programs adjust award charts. A practical approach is to earn points for planned redemptions and avoid holding unnecessarily large balances for long periods.
+  <strong>Core Consideration:</strong> Loyalty points carry no legal cash guarantee and face ongoing risk of program devaluation. A practical approach is to accumulate rewards for planned trips rather than hoarding large balances indefinitely.
 </div>
 
 <div class="article-content prose" style="margin-top: 40px;">
-  <h2>Common Miles-to-Dollars Conversion Examples</h2>
-  <p>Wondering how much a specific miles balance is worth in cash? Below is an accessible conversion benchmark table across common balances (from short-haul awards to international business class tickets) and valuation tiers:</p>
+  <h2>Understanding Valuation Scenarios</h2>
+  <p>To help you evaluate your portfolio without relying on misleading fixed claims, the table below outlines the purpose and boundaries of each illustrative scenario:</p>
+  
+  <div class="responsive-table-wrapper">
+    <table class="responsive-table" style="text-align: left;">
+      <thead>
+        <tr>
+          <th style="padding: 12px 14px; font-weight: 600;">Scenario</th>
+          <th style="padding: 12px 14px; font-weight: 600;">Illustrative CPP</th>
+          <th style="padding: 12px 14px; font-weight: 600;">Typical Purpose</th>
+          <th style="padding: 12px 14px; font-weight: 600;">What It Does Not Mean</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight: 600; color: #0f172a;">Low-value points</td>
+          <td>0.6¢ / point</td>
+          <td>Modeling lower-tier point values</td>
+          <td>Not all hotel programs share this valuation</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #0f172a;">Conservative scenario</td>
+          <td>1.2¢ / point</td>
+          <td>Baseline when no historical data exists</td>
+          <td>Not an official guaranteed cashout price</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #0f172a;">Typical airline-mile</td>
+          <td>1.5¢ / point</td>
+          <td>General airline award calculation example</td>
+          <td>Not a fixed standard across all carriers</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #0f172a;">Higher-value redemption</td>
+          <td>2.0¢ / point</td>
+          <td>Modeling favorable flight sweet spots</td>
+          <td>No guarantee of award availability or value</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Common Illustrative Balance Conversions</h2>
+  <p>Below is an illustrative conversion reference table across common mileage balances and scenario tiers:</p>
   
   <div class="responsive-table-wrapper">
     <table class="responsive-table">
       <thead>
         <tr>
           <th style="text-align: left;">Miles / Points Balance</th>
-          <th>@ 1.0¢ / point</th>
-          <th>@ 1.2¢ / point</th>
-          <th>@ 1.5¢ / point</th>
-          <th>@ 2.0¢ / point</th>
+          <th>@ 0.6¢ (Low-Value)</th>
+          <th>@ 1.2¢ (Conservative)</th>
+          <th>@ 1.5¢ (Typical Mile)</th>
+          <th>@ 2.0¢ (Higher-Value)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">2,000 miles</td>
-          <td>$20</td>
+          <td>$12</td>
           <td>$24</td>
           <td>$30</td>
           <td>$40</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">5,000 miles</td>
-          <td>$50</td>
+          <td>$30</td>
           <td>$60</td>
           <td>$75</td>
           <td>$100</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">8,000 miles</td>
-          <td>$80</td>
+          <td>$48</td>
           <td>$96</td>
           <td>$120</td>
           <td>$160</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">17,000 miles</td>
-          <td>$170</td>
+          <td>$102</td>
           <td>$204</td>
           <td>$255</td>
           <td>$340</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">50,000 miles</td>
-          <td>$500</td>
+          <td>$300</td>
           <td>$600</td>
           <td>$750</td>
           <td>$1,000</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">60,000 miles</td>
-          <td>$600</td>
+          <td>$360</td>
           <td>$720</td>
           <td>$900</td>
           <td>$1,200</td>
@@ -119,34 +186,17 @@ breadcrumbs:
     </table>
   </div>
   
-  <p style="font-size: 0.9em; color: #475569; line-height: 1.5;"><em>Note: The table above illustrates valuation benchmarks for educational comparison and does not represent fixed buyback or redemption cash guarantees. Actual realized value is influenced by award availability, flight taxes and fuel surcharges, transfer ratios, and individual airline award charts. For program-specific details, explore our valuation guides for <a href="/en/values/chase-ultimate-rewards/">Chase Ultimate Rewards</a>, <a href="/en/values/amex-membership-rewards/">Amex Membership Rewards</a>, <a href="/en/values/aeroplan-points/">Air Canada Aeroplan</a>, or read our in-depth <a href="/en/guides/airline-miles-value/">Airline Miles Value Guide</a> and <a href="/en/methodology/">Valuation Methodology</a>.</em></p>
-
-  <h2>Why Calculate "Points to Dollars"?</h2>
-  <p>Calculating the cash equivalent of your points offers two key benefits:</p>
-  <ul>
-    <li><strong>Asset Tracking</strong>: Understand the size of your rewards portfolio. For frequent travelers, airline miles and hotel points combined can represent thousands of dollars in travel purchasing power.</li>
-    <li><strong>Evaluating Annual Fees</strong>: Premium travel cards carry annual fees. If the cash value of points earned doesn't exceed the card's cost, you may want to rethink your card strategy.</li>
-  </ul>
+  <p style="font-size: 0.9em; color: #475569; line-height: 1.5;"><em>Note: The table above illustrates valuation scenarios for educational modeling and does not represent fixed buyback or redemption cash guarantees. Actual realized value is determined by award inventory, flight taxes, fuel surcharges, transfer ratios, and individual airline award charts. For program-specific details, explore our valuation guides for <a href="/en/values/chase-ultimate-rewards/">Chase Ultimate Rewards</a>, <a href="/en/values/amex-membership-rewards/">Amex Membership Rewards</a>, <a href="/en/values/aeroplan-points/">Air Canada Aeroplan</a>, or read our in-depth <a href="/en/guides/airline-miles-value/">Airline Miles Value Guide</a> and <a href="/en/methodology/">Valuation Methodology</a>.</em></p>
 
   <div class="related-tools">
     <h3>Related Calculators for Award Travel</h3>
     <ul>
       <li><a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>: Calculate the exact CPP value of a specific flight or hotel ticket after taxes.</li>
       <li><a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>: Compare paying cash vs redeeming miles, factoring in taxes and forgone credit card rewards.</li>
-      <li><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a>: Calculate how many flexible bank points you need to transfer to hit a target mileage requirement during bonus promotions.</li>
+      <li><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a>: Calculate how many flexible bank points you need to transfer during bonus promotions.</li>
       <li><a href="/en/calculators/hotel-points-vs-cash/">Hotel Points vs Cash Calculator</a>: Evaluate hotel redemptions taking into account 5th-night-free benefits.</li>
     </ul>
   </div>
-
-  <h2>Three Practical Principles of Points Management</h2>
-  <ol>
-    <li><strong>Earn for Specific Goals</strong><br>
-    Points only deliver value once redeemed. Holding points for long periods can reduce their purchasing power when loyalty programs devalue.</li>
-    <li><strong>Flexibility is King</strong><br>
-    Transferable points like <a href="/en/values/chase-ultimate-rewards/">Chase UR</a> or <a href="/en/values/amex-membership-rewards/">Amex MR</a> are more versatile than points locked into a single airline. Keep points in your bank account until you have verified award availability.</li>
-    <li><strong>Understand Expiration Policies</strong><br>
-    Expiration rules vary. Some programs expire miles after 24–36 months of inactivity, while others allow extensions through qualifying card spending or shopping portal activity.</li>
-  </ol>
 
   <h3>Frequently Asked Questions</h3>
   <div class="faq">
@@ -176,6 +226,17 @@ breadcrumbs:
 <script>
   const $ = id => document.getElementById(id);
 
+  // Help toggle accessible interaction
+  const btnHelp = $('btnHelpScenario');
+  const guideBox = $('helpScenarioGuide');
+  if (btnHelp && guideBox) {
+    btnHelp.addEventListener('click', () => {
+      const isExpanded = btnHelp.getAttribute('aria-expanded') === 'true';
+      btnHelp.setAttribute('aria-expanded', !isExpanded);
+      guideBox.style.display = isExpanded ? 'none' : 'block';
+    });
+  }
+
   const parseParam = (key, elId, maxVal = 1000000000) => {
     const params = new URLSearchParams(window.location.search);
     let val = parseFloat(params.get(key));
@@ -186,9 +247,23 @@ breadcrumbs:
   };
   parseParam('totalPoints', 'totalPoints');
   parseParam('points', 'totalPoints');
-  parseParam('presetValuation', 'presetValuation');
   parseParam('cppValue', 'cppValue');
   parseParam('valuation', 'cppValue');
+
+  const parseScenarioParam = () => {
+    const params = new URLSearchParams(window.location.search);
+    const scen = params.get('presetValuation') || params.get('scenario');
+    if (scen && $('presetValuation')) {
+      const validOptions = ['custom', '0.6', '1.2', '1.5', '2.0'];
+      if (validOptions.includes(scen)) {
+        $('presetValuation').value = scen;
+        if (scen !== 'custom') {
+          $('cppValue').value = scen;
+        }
+      }
+    }
+  };
+  parseScenarioParam();
 
   function calcDollars(){
     let P = parseFloat($('totalPoints').value) || 0;
@@ -200,7 +275,7 @@ breadcrumbs:
       $('dollarValue').classList.remove('win');
     };
 
-    if (P <= 0 || V <= 0) {
+    if (P <= 0 || V <= 0 || !$('cppValue').value) {
       resetState(P < 0 || V < 0 ? 'Inputs cannot be negative.' : 'Please enter your points balance and valuation.');
       return;
     }
@@ -209,7 +284,7 @@ breadcrumbs:
     
     $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
     $('dollarValue').classList.add('win');
-    $('explain').textContent = `At a valuation of ${V}¢ / point, your ${P.toLocaleString('en-US', {maximumFractionDigits:0})} points hold roughly $${total.toLocaleString('en-US', {maximumFractionDigits:0})} in purchasing power. If left unused, this asset is at risk of future program devaluation.`;
+    $('explain').textContent = `At an illustrative valuation of ${V}¢ / point, your ${P.toLocaleString('en-US', {maximumFractionDigits:0})} points hold roughly $${total.toLocaleString('en-US', {maximumFractionDigits:0})} in modeled purchasing power. This is an illustrative scenario, not a guaranteed cashout.`;
   }
 
   $('presetValuation').addEventListener('change', e => {
@@ -218,23 +293,35 @@ breadcrumbs:
       calcDollars();
     }
   });
-  ['totalPoints','cppValue'].forEach(id => {
-    if($(id)) $(id).addEventListener('input', calcDollars);
+
+  $('cppValue').addEventListener('input', () => {
+    const val = $('cppValue').value;
+    const matched = ['0.6', '1.2', '1.5', '2.0'].includes(val);
+    if (!matched) {
+      $('presetValuation').value = 'custom';
+    } else {
+      $('presetValuation').value = val;
+    }
+    calcDollars();
   });
+
+  $('totalPoints').addEventListener('input', calcDollars);
 
   if ($('btnShare')) {
     $('btnShare').addEventListener('click', () => {
       const url = new URL('{{ site.url }}/en/calculators/points-to-dollars/');
       const p = parseFloat($('totalPoints').value) || 0;
       const v = parseFloat($('cppValue').value) || 0;
+      const scen = $('presetValuation').value;
       if (p > 0) url.searchParams.set('totalPoints', p);
       if (v > 0) url.searchParams.set('cppValue', v);
+      if (scen && scen !== 'custom') url.searchParams.set('scenario', scen);
 
       navigator.clipboard.writeText(url.toString()).then(() => {
         const toast = $('toast');
         if (toast) {
-          toast.classList.add('show');
-          setTimeout(() => toast.classList.remove('show'), 2000);
+          toast.style.display = 'block';
+          setTimeout(() => { toast.style.display = 'none'; }, 2000);
         }
       });
     });

@@ -203,69 +203,97 @@ async function runTests() {
   const enP2DDoc = new JSDOM(enP2D.data).window.document;
   
   const enLabel = enP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
-  if (!enLabel.includes('Valuation assumption (CPP)')) {
-    console.error(`ERROR: English Points to Dollars label is "${enLabel}", expected to include "Valuation assumption (CPP)"`);
+  if (!enLabel.includes('Choose a valuation scenario (CPP)')) {
+    console.error(`ERROR: English Points to Dollars label is "${enLabel}", expected to include "Choose a valuation scenario (CPP)"`);
     failures++;
   }
 
   const enUnit = enP2DDoc.getElementById('unitValuation')?.textContent || '';
-  if (!enUnit.includes('Preset values are calculation examples, not live valuations.')) {
+  if (!enUnit.includes('These CPP values are illustrative scenarios, not official conversion rates, live valuations, or guaranteed redemption values.')) {
     console.error(`ERROR: English Points to Dollars disclaimer missing standard text. Found: "${enUnit}"`);
     failures++;
   }
 
-  if (enP2D.data.includes('Current market valuation') || enP2D.data.includes('guarantees loss') || enP2D.data.includes('strictly prohibit')) {
-    console.error('ERROR: English Points to Dollars contains prohibited legacy wording (Current market valuation / guarantees loss / strictly prohibit)');
-    failures++;
+  // Check prohibited terms in English
+  const prohibitedEn = [
+    'Current market valuation',
+    'Industry standard'
+  ];
+  for (const term of prohibitedEn) {
+    if (enP2D.data.toLowerCase().includes(term.toLowerCase())) {
+      console.error(`ERROR: English Points to Dollars contains prohibited legacy wording: "${term}"`);
+      failures++;
+    }
   }
 
   const cnP2D = await fetch(`${baseUrl}/calculators/points-to-dollars/`);
   const cnP2DDoc = new JSDOM(cnP2D.data).window.document;
 
   const cnLabel = cnP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
-  if (!cnLabel.includes('估值假设（CPP）')) {
-    console.error(`ERROR: Chinese Points to Dollars label is "${cnLabel}", expected to include "估值假设（CPP）"`);
+  if (!cnLabel.includes('选择估值情景（CPP）')) {
+    console.error(`ERROR: Chinese Points to Dollars label is "${cnLabel}", expected to include "选择估值情景（CPP）"`);
     failures++;
   }
 
   const cnUnit = cnP2DDoc.getElementById('unitValuation')?.textContent || '';
-  if (!cnUnit.includes('预设数值仅为计算示例，并非实时估值。')) {
+  if (!cnUnit.includes('这些CPP仅用于比较不同估值情景，不是官方兑换比例、实时估值或保证价值。')) {
     console.error(`ERROR: Chinese Points to Dollars disclaimer missing standard text. Found: "${cnUnit}"`);
     failures++;
   }
 
-  if (cnP2D.data.includes('当前市场单点估值') || cnP2D.data.includes('当前市场估值')) {
-    console.error('ERROR: Chinese Points to Dollars contains legacy "当前市场估值"');
-    failures++;
-  }
-  console.log('Valuation wording and disclaimers verified on both EN and CN.');
-
-  // 6. Points to Dollars Conversion Table Verification
-  console.log('\n--- 6. Points to Dollars Example Table Verification ---');
-  const testTiers = [
-    { miles: 2000, rates: { '1.0': '$20', '1.2': '$24', '1.5': '$30', '2.0': '$40' } },
-    { miles: 5000, rates: { '1.0': '$50', '1.2': '$60', '1.5': '$75', '2.0': '$100' } },
-    { miles: 8000, rates: { '1.0': '$80', '1.2': '$96', '1.5': '$120', '2.0': '$160' } },
-    { miles: 17000, rates: { '1.0': '$170', '1.2': '$204', '1.5': '$255', '2.0': '$340' } },
-    { miles: 50000, rates: { '1.0': '$500', '1.2': '$600', '1.5': '$750', '2.0': '$1,000' } },
-    { miles: 60000, rates: { '1.0': '$600', '1.2': '$720', '1.5': '$900', '2.0': '$1,200' } }
+  // Check prohibited terms in Chinese
+  const prohibitedCn = [
+    '行业通用基准',
+    '当前市场估值',
+    '当前市场单点估值',
+    '市场统一估值'
   ];
-
-  for (const tier of testTiers) {
-    for (const [rate, expectedVal] of Object.entries(tier.rates)) {
-      const calculated = tier.miles * (parseFloat(rate) / 100);
-      const formatted = '$' + calculated.toLocaleString('en-US', { maximumFractionDigits: 0 });
-      if (formatted !== expectedVal) {
-        console.error(`ERROR: Math mismatch for ${tier.miles} @ ${rate}¢: expected ${expectedVal}, calculated ${formatted}`);
-        failures++;
-      }
-      if (!enP2D.data.includes(expectedVal)) {
-        console.error(`ERROR: English Points to Dollars table missing ${expectedVal} for ${tier.miles} miles`);
-        failures++;
-      }
+  for (const term of prohibitedCn) {
+    if (cnP2D.data.includes(term)) {
+      console.error(`ERROR: Chinese Points to Dollars contains prohibited wording: "${term}"`);
+      failures++;
     }
   }
-  console.log('Points to Dollars example table math verified successfully.');
+  console.log('Valuation wording, options, and disclaimers verified on both EN and CN.');
+
+  // 6. Points to Dollars Scenario Tables & Help Component Verification
+  console.log('\n--- 6. Scenario Tables & Help Component Verification ---');
+  // EN Help Component
+  const enBtnHelp = enP2DDoc.getElementById('btnHelpScenario');
+  if (!enBtnHelp || enBtnHelp.getAttribute('aria-expanded') !== 'false' || enBtnHelp.getAttribute('aria-controls') !== 'helpScenarioGuide') {
+    console.error('ERROR: English help button missing or incorrect aria attributes');
+    failures++;
+  }
+  if (!enP2D.data.includes('How to choose the right valuation scenario')) {
+    console.error('ERROR: English help scenario guide content missing');
+    failures++;
+  }
+
+  // CN Help Component & FX Field
+  const cnBtnHelp = cnP2DDoc.getElementById('btnHelpScenario');
+  if (!cnBtnHelp || cnBtnHelp.getAttribute('aria-expanded') !== 'false' || cnBtnHelp.getAttribute('aria-controls') !== 'helpScenarioGuide') {
+    console.error('ERROR: Chinese help button missing or incorrect aria attributes');
+    failures++;
+  }
+  if (!cnP2D.data.includes('如何选择合适的估值情景')) {
+    console.error('ERROR: Chinese help scenario guide content missing');
+    failures++;
+  }
+  if (!cnP2DDoc.getElementById('fieldFx')) {
+    console.error('ERROR: Chinese exchange rate assumption field (fieldFx) missing');
+    failures++;
+  }
+
+  // Scenario Table Checks
+  if (!enP2D.data.includes('Understanding Valuation Scenarios') || !enP2D.data.includes('Low-value points') || !enP2D.data.includes('Conservative scenario')) {
+    console.error('ERROR: English valuation scenarios table missing');
+    failures++;
+  }
+  if (!cnP2D.data.includes('估值情景说明表') || !cnP2D.data.includes('低面值积分情景') || !cnP2D.data.includes('保守估值情景')) {
+    console.error('ERROR: Chinese valuation scenarios table missing');
+    failures++;
+  }
+  console.log('Scenario tables, help components, and accessibility attributes verified.');
 
   // 7. Comprehensive Sitemap Audit
   console.log('\n--- 7. Comprehensive Sitemap Audit ---');
@@ -314,10 +342,10 @@ async function runTests() {
   }
   console.log('Comprehensive Sitemap audit completed.');
 
-  // 8. Interactive JS Execution Tests
+  // 8. Interactive JS Execution & FX Tests
   console.log('\n--- 8. Interactive Execution & Param Tests ---');
   
-  // Points to Dollars Auto-Calculation
+  // Points to Dollars Auto-Calculation (EN)
   const p2dTestUrl = `${baseUrl}/en/calculators/points-to-dollars/?totalPoints=50000&cppValue=1.5`;
   const p2dHtml = (await fetch(p2dTestUrl)).data;
   const p2dDom = new JSDOM(p2dHtml, { runScripts: "dangerously", url: p2dTestUrl });
@@ -327,7 +355,33 @@ async function runTests() {
     console.error(`ERROR: Points to Dollars auto-calculation failed. Expected $750, got ${dollarVal}`);
     failures++;
   } else {
-    console.log(`Points to Dollars auto-calculation on load: ${dollarVal} (Passed)`);
+    console.log(`EN Points to Dollars auto-calculation on load: ${dollarVal} (Passed)`);
+  }
+
+  // Points to Dollars Auto-Calculation (CN - Default FX 7.0)
+  const p2dCnUrl = `${baseUrl}/calculators/points-to-dollars/?points=50000&valuation=0.105`;
+  const p2dCpHtml = (await fetch(p2dCnUrl)).data;
+  const p2dCnDom = new JSDOM(p2dCpHtml, { runScripts: "dangerously", url: p2dCnUrl });
+  await new Promise(r => setTimeout(r, 100));
+  const cnDollarVal = p2dCnDom.window.document.getElementById('dollarValue')?.textContent;
+  if (cnDollarVal !== '¥5,250') {
+    console.error(`ERROR: CN Points to Dollars default FX calculation failed. Expected ¥5,250, got ${cnDollarVal}`);
+    failures++;
+  } else {
+    console.log(`CN Points to Dollars (FX 7.0) calculation on load: ${cnDollarVal} (Passed)`);
+  }
+
+  // Points to Dollars FX 7.2 Custom URL Parameter Recovery
+  const p2dFxUrl = `${baseUrl}/calculators/points-to-dollars/?points=50000&fx=7.2&scenario=1.5`;
+  const p2dFxHtml = (await fetch(p2dFxUrl)).data;
+  const p2dFxDom = new JSDOM(p2dFxHtml, { runScripts: "dangerously", url: p2dFxUrl });
+  await new Promise(r => setTimeout(r, 100));
+  const fxVal = p2dFxDom.window.document.getElementById('dollarValue')?.textContent;
+  if (fxVal !== '¥5,400') {
+    console.error(`ERROR: CN Points to Dollars FX 7.2 calculation failed. Expected ¥5,400, got ${fxVal}`);
+    failures++;
+  } else {
+    console.log(`CN Points to Dollars (FX 7.2 parameter recovery): ${fxVal} (Passed)`);
   }
 
   // Points vs Cash Auto-Calculation (EN)
@@ -345,8 +399,8 @@ async function runTests() {
 
   // Points vs Cash Auto-Calculation (CN)
   const pvcCnUrl = `${baseUrl}/calculators/points-vs-cash/?cash=800&points=12000&taxes=50&forgone=30&valuation=0.08`;
-  const pvcCpHtml = (await fetch(pvcCnUrl)).data;
-  const pvcCnDom = new JSDOM(pvcCpHtml, { runScripts: "dangerously", url: pvcCnUrl });
+  const pvcCnTestHtml = (await fetch(pvcCnUrl)).data;
+  const pvcCnDom = new JSDOM(pvcCnTestHtml, { runScripts: "dangerously", url: pvcCnUrl });
   await new Promise(r => setTimeout(r, 100));
   const pvcCnCpp = pvcCnDom.window.document.getElementById('cppResult')?.textContent;
   if (!pvcCnCpp || !pvcCnCpp.includes('0.0600')) {

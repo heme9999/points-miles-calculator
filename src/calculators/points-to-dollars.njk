@@ -1,7 +1,7 @@
 ---
 layout: base.njk
 title: 积分换算现金价值计算器 | 里程与信用卡积分值多少钱
-description: 将航空里程和信用卡积分换算为现金价值（美元或人民币）。输入积分数量与估值标准，一键计算隐形资产总值与兑现参考。
+description: 将航空里程和信用卡积分换算为现金价值（美元或人民币）。基于0.6、1.2、1.5、2.0 CPP估值情景测算资产规模与兑现参考。
 schemaType: WebApplication
 eyebrow: 里程账 · 工具 05
 datePublished: "2026-08-14"
@@ -13,20 +13,20 @@ breadcrumbs:
   - name: 积分换算现金价值计算器
 ---
 <h1>积分换算现金价值计算器</h1>
-<p class="sub">别把积分当欢乐豆，它们代表真实的消费力。输入你账户里的积分或里程数量与参考估值，一键测算你的“隐形资产”总值。</p>
+<p class="sub">别把积分当欢乐豆，它们代表真实的消费力。选择估值情景或输入自定义单点价值（CPP），测算手头积分与里程的等价现金估值。</p>
 
-<div class="direct-answer">
-  <strong>直接折现规则：</strong> 将手头的积分或航空里程乘以你的预估每点单价 (CPP)。例如：持有 50,000 里程，按行业通用基准 0.105 元/点（约 1.5 美分）测算，相当于拥有约 ¥5,250（或 $750）的等价旅行消费力。
+<div class="direct-answer" id="directAnswerBox">
+  <strong>直接折现规则：</strong> 按中性航空里程情景 1.5 美分/点测算；人民币金额采用页面显示的汇率假设（1.5美分 = 0.015美元；0.015美元 × <span id="spanFxEcho">7.0</span> = <span id="spanCnyCppEcho">0.105</span>元/点）。例如：持有 50,000 里程约折合 <span id="spanEgCny">¥5,250</span>（或 $750）。该数值仅用于演示，不代表具体积分计划的实时价值。
 </div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
   <button id="btnShare" class="btn-share">分享此计算</button>
   <div>
     <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
-  <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
-    <option value="CNY">人民币（CNY ¥）</option>
-    <option value="USD">美元（USD $）</option>
-  </select>
+    <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <option value="CNY" selected>人民币（CNY ¥）</option>
+      <option value="USD">美元（USD $）</option>
+    </select>
   </div>
 </div>
 <div id="toast" class="toast">已复制分享链接！</div>
@@ -36,18 +36,48 @@ breadcrumbs:
     <label for="totalPoints">你账户里的总积分/里程<span class="hint" id="hintTotal">点</span></label>
     <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal">
   </div>
+
+  <div class="field" id="fieldFx">
+    <label for="fxRate">美元兑人民币汇率假设<span class="hint" id="hintFx">1 USD = ? CNY</span></label>
+    <input type="number" id="fxRate" value="7.0" min="0.1" max="20" step="0.01" inputmode="decimal" aria-describedby="hintFx unitFx">
+    <div class="unit" id="unitFx">默认汇率仅用于计算演示，请按当日实际汇率调整</div>
+  </div>
   
   <div class="field">
-    <label for="presetValuation">估值假设（CPP）<span class="hint" id="hintValuation">价值 / 点</span></label>
+    <label for="presetValuation">
+      <span>选择估值情景（CPP）<button type="button" class="btn-help-toggle" id="btnHelpScenario" aria-expanded="false" aria-controls="helpScenarioGuide">我该选哪个？</button></span>
+      <span class="hint" id="hintValuation">元/点</span>
+    </label>
+
+    <div id="helpScenarioGuide" class="help-scenario-guide" style="display: none;">
+      <h4>如何选择合适的估值情景（CPP）：</h4>
+      <div class="guide-step">
+        <strong>1. 有具体兑换计划：</strong>
+        <p>优先使用实际兑换项目的真实CPP：<code>实际CPP =（同一行程现金价 − 奖励票税费 − 放弃的现金回馈价值）÷ 所需积分</code>。</p>
+        <div class="guide-actions">
+          <a href="/calculators/cents-per-point/" class="btn-link-action">使用CPP计算器计算 →</a>
+          <a href="/calculators/points-vs-cash/" class="btn-link-action">比较现金与积分 →</a>
+        </div>
+      </div>
+      <div class="guide-step">
+        <strong>2. 有历史兑换记录：</strong>
+        <p>建议使用最近 3–5 次类似兑换 CPP 的中位数，避免只采用单次极高价值两舱兑换拉高整体预期。</p>
+      </div>
+      <div class="guide-step">
+        <strong>3. 没有具体兑换或历史记录：</strong>
+        <p>先使用保守估值情景测算底线，再切换其他情景观察区间。请注意：0.6 不是所有酒店积分的价值；1.5 不是所有航空里程的价值；2.0 也非保证可实现的收益；各计划的航线、舱位、税费与库存都会显著影响实际结果。</p>
+      </div>
+    </div>
+
     <select id="presetValuation" aria-describedby="hintValuation unitValuation">
-      <option value="custom">自定义估值假设</option>
-      <option value="0.14">每积分 2.0 美分示例 (约0.14元)</option>
-      <option value="0.105">航空里程每点 1.5 美分示例 (约0.105元)</option>
-      <option value="0.084">保守估值每点 1.2 美分示例 (约0.084元)</option>
-      <option value="0.042">酒店积分每点 0.6 美分示例 (约0.042元)</option>
+      <option value="custom">自定义CPP</option>
+      <option value="0.6">低面值积分情景：0.6美分/点 (约0.042元/点)</option>
+      <option value="1.2">保守估值情景：1.2美分/点 (约0.084元/点)</option>
+      <option value="1.5" selected>中性航空里程情景：1.5美分/点 (约0.105元/点)</option>
+      <option value="2.0">较高价值兑换情景：2.0美分/点 (约0.140元/点)</option>
     </select>
     <input type="number" id="cppValue" value="0.105" min="0.001" step="0.001" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
-    <div class="unit" id="unitValuation">预设数值仅为计算示例，并非实时估值。实际价值取决于具体积分计划、奖励可用性、税费、转点比例和兑换方式。作出决定前请查阅对应计划的最新规则。</div>
+    <div class="unit" id="unitValuation">这些CPP仅用于比较不同估值情景，不是官方兑换比例、实时估值或保证价值。最可靠的输入来自您计划兑换项目的实际现金价格、税费和所需积分。</div>
   </div>
 </div>
 
@@ -68,79 +98,113 @@ breadcrumbs:
 </div>
 
 <div class="article-content prose" style="margin-top: 40px;">
-  <h2>常见里程与积分折现参考表 (Common Conversions)</h2>
-  <p>不知道手头的里程或信用卡积分大概相当于多少钱？下表整理了常见里程分段在不同估值标准（从保守基准到甜点兑换）下的参考价值对照：</p>
+  <h2>估值情景说明表 (Valuation Scenarios)</h2>
+  <p>为了帮助您更理性地进行资产模型测算，下表说明了常见预设情景的适用范围与边界：</p>
+  
+  <div class="responsive-table-wrapper">
+    <table class="responsive-table" style="text-align: left;">
+      <thead>
+        <tr>
+          <th style="padding: 12px 14px; font-weight: 600;">估值情景</th>
+          <th style="padding: 12px 14px; font-weight: 600;">对应 CPP</th>
+          <th style="padding: 12px 14px; font-weight: 600;">典型用途</th>
+          <th style="padding: 12px 14px; font-weight: 600;">不代表什么</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight: 600; color: #0f172a;">低面值积分情景</td>
+          <td>0.6¢ / 点</td>
+          <td>测试低面值常客积分结果</td>
+          <td>不代表所有酒店积分均为此价值</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #0f172a;">保守估值情景</td>
+          <td>1.2¢ / 点</td>
+          <td>无历史数据时的保守底线测算</td>
+          <td>不代表官方保底回收价格</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #0f172a;">中性航空里程情景</td>
+          <td>1.5¢ / 点</td>
+          <td>普通航空里程兑换的演示情景</td>
+          <td>不代表所有航司统一固定比例</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #0f172a;">较高价值兑换情景</td>
+          <td>2.0¢ / 点</td>
+          <td>测试两舱或甜点航线兑换潜力</td>
+          <td>不保证实际必定可以兑出此价值</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>常见里程与积分折现参考表</h2>
+  <p>下表整理了常见里程数量在不同情景下的参考对照金额（人民币金额按 7.0 演示汇率换算）：</p>
   
   <div class="responsive-table-wrapper">
     <table class="responsive-table">
       <thead>
         <tr>
           <th style="text-align: left;">积分/里程数量</th>
-          <th>@ 1.0 美分 (约0.07元)</th>
-          <th>@ 1.2 美分 (约0.084元)</th>
-          <th>@ 1.5 美分 (约0.105元)</th>
-          <th>@ 2.0 美分 (约0.14元)</th>
+          <th>@ 0.6¢ (约0.042元)</th>
+          <th>@ 1.2¢ (约0.084元)</th>
+          <th>@ 1.5¢ (约0.105元)</th>
+          <th>@ 2.0¢ (约0.140元)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">2,000 里程</td>
-          <td>$20 (约¥140)</td>
-          <td>$24 (约¥168)</td>
-          <td>$30 (约¥210)</td>
-          <td>$40 (约¥280)</td>
+          <td>¥84 ($12)</td>
+          <td>¥168 ($24)</td>
+          <td>¥210 ($30)</td>
+          <td>¥280 ($40)</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">5,000 里程</td>
-          <td>$50 (约¥350)</td>
-          <td>$60 (约¥420)</td>
-          <td>$75 (约¥525)</td>
-          <td>$100 (约¥700)</td>
+          <td>¥210 ($30)</td>
+          <td>¥420 ($60)</td>
+          <td>¥525 ($75)</td>
+          <td>¥700 ($100)</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">8,000 里程</td>
-          <td>$80 (约¥560)</td>
-          <td>$96 (约¥672)</td>
-          <td>$120 (约¥840)</td>
-          <td>$160 (约¥1,120)</td>
+          <td>¥336 ($48)</td>
+          <td>¥672 ($96)</td>
+          <td>¥840 ($120)</td>
+          <td>¥1,120 ($160)</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">17,000 里程</td>
-          <td>$170 (约¥1,190)</td>
-          <td>$204 (约¥1,428)</td>
-          <td>$255 (约¥1,785)</td>
-          <td>$340 (约¥2,380)</td>
+          <td>¥714 ($102)</td>
+          <td>¥1,428 ($204)</td>
+          <td>¥1,785 ($255)</td>
+          <td>¥2,380 ($340)</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">50,000 里程</td>
-          <td>$500 (约¥3,500)</td>
-          <td>$600 (约¥4,200)</td>
-          <td>$750 (约¥5,250)</td>
-          <td>$1,000 (约¥7,000)</td>
+          <td>¥2,100 ($300)</td>
+          <td>¥4,200 ($600)</td>
+          <td>¥5,250 ($750)</td>
+          <td>¥7,000 ($1,000)</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">60,000 里程</td>
-          <td>$600 (约¥4,200)</td>
-          <td>$720 (约¥5,040)</td>
-          <td>$900 (约¥6,300)</td>
-          <td>$1,200 (约¥8,400)</td>
+          <td>¥2,520 ($360)</td>
+          <td>¥5,040 ($720)</td>
+          <td>¥6,300 ($900)</td>
+          <td>¥8,400 ($1,200)</td>
         </tr>
       </tbody>
     </table>
   </div>
   
-  <p style="font-size: 0.9em; color: #475569; line-height: 1.5;"><em>注：上述表格为行业通用估值基准换算示例，不代表航司官方保底回收价格。实际兑换价值取决于具体航班的票价水平、税费支出、转点比例及常客计划兑换表。详细估值方法可参阅我们的 <a href="/guides/airline-miles-value/">航空里程价值指南</a> 与 <a href="/methodology/">估值方法论</a>。</em></p>
-
-  <h2>为什么要计算“积分折现价值”？</h2>
-  <p>计算“积分折现价值”（Points to Dollars）主要有两个实际意义：</p>
-  <ul>
-    <li><strong>清算个人资产</strong>：了解自己手头的“非现金资产”总盘子有多大。很多时候，我们持有的航空里程和酒店积分加起来，代表了一定规模的旅行消费力。</li>
-    <li><strong>衡量持卡成本</strong>：许多高端信用卡每年会收取年费。通过折算积分价值，可以更理性地评估持卡收益是否符合预期。</li>
-  </ul>
+  <p style="font-size: 0.9em; color: #475569; line-height: 1.5;"><em>注：上述表格为估值情景演示，不代表航司官方保底回收价格。实际兑换价值取决于具体航班的票价水平、税费支出、转点比例及常客计划兑换表。详细估值方法可参阅我们的 <a href="/guides/airline-miles-value/">航空里程价值指南</a> 与 <a href="/methodology/">估值方法论</a>。</em></p>
 
   <div class="related-tools">
     <h3>更多常旅客决策计算器</h3>
-    <p>针对具体的换票和出行场景，建议搭配使用以下核心工具：</p>
     <ul>
       <li><a href="/calculators/cents-per-point/">单点价值 (CPP) 计算器</a>：精准计算单次机票或酒店兑换扣除税费后的每点实际价值。</li>
       <li><a href="/calculators/points-vs-cash/">积分与现金决策计算器</a>：综合税费与放弃累积的刷卡返利，对比直接买票还是里程换票。</li>
@@ -148,16 +212,6 @@ breadcrumbs:
       <li><a href="/calculators/hotel-points-vs-cash/">酒店积分与现金决策计算器</a>：综合住五付四与免度假村费权益评估酒店积分房价值。</li>
     </ul>
   </div>
-
-  <h2>积分/里程管理的三大实用原则</h2>
-  <ol>
-    <li><strong>计划性积累</strong><br>
-    长期持有积分可能因计划贬值而降低购买力。围绕明确的出行或兑换目标使用积分，有助于锁住真实价值。</li>
-    <li><strong>灵活性优于单一锁定</strong><br>
-    像 <a href="/values/chase-ultimate-rewards/">Chase UR</a> 或 <a href="/values/amex-membership-rewards/">Amex MR</a> 这样可以转给多家不同航空公司的“灵活银行积分”，其适应力远高于被锁定在单一航司的里程。在没有明确出行计划前，建议将积分留在银行端，避免提前转入航司。</li>
-    <li><strong>了解保级与过期规则</strong><br>
-    各计划过期规则不同。请务必以各家航司最新官方规则为准，避免积分失效。</li>
-  </ol>
 
   <h3>常见问题 (FAQ)</h3>
   <div class="faq">
@@ -187,6 +241,17 @@ breadcrumbs:
 <script>
   const $ = id => document.getElementById(id);
   
+  // Accessible help drawer toggle
+  const btnHelp = $('btnHelpScenario');
+  const guideBox = $('helpScenarioGuide');
+  if (btnHelp && guideBox) {
+    btnHelp.addEventListener('click', () => {
+      const isExpanded = btnHelp.getAttribute('aria-expanded') === 'true';
+      btnHelp.setAttribute('aria-expanded', !isExpanded);
+      guideBox.style.display = isExpanded ? 'none' : 'block';
+    });
+  }
+
   const params = new URLSearchParams(window.location.search);
   let currentCurrency = 'CNY';
   const validCurrencies = ['CNY', 'USD'];
@@ -201,41 +266,93 @@ breadcrumbs:
       }
     } catch(e) {}
   }
-  
-  const updateUnits = () => {
-    if (currentCurrency === 'USD') {
-      if($('hintValuation')) $('hintValuation').textContent = '美分/点';
-    } else {
-      if($('hintValuation')) $('hintValuation').textContent = '元/点';
+
+  // FX Rate setup
+  let defaultFx = 7.0;
+  const rawFx = parseFloat(params.get('fx'));
+  if (!isNaN(rawFx) && isFinite(rawFx) && rawFx >= 0.1 && rawFx <= 20) {
+    defaultFx = rawFx;
+  }
+  if ($('fxRate')) $('fxRate').value = defaultFx;
+
+  const getActiveFx = () => {
+    if (!$('fxRate')) return 7.0;
+    const v = parseFloat($('fxRate').value);
+    if (!isNaN(v) && isFinite(v) && v >= 0.1 && v <= 20) {
+      return v;
+    }
+    return 7.0;
+  };
+
+  const getScenarioUsdCpp = (scenarioKey) => {
+    switch(scenarioKey) {
+      case '0.6': return 0.6;
+      case '1.2': return 1.2;
+      case '1.5': return 1.5;
+      case '2.0': return 2.0;
+      default: return null;
     }
   };
 
-  if ($('currency')) {
-    $('currency').value = currentCurrency;
-    $('currency').addEventListener('change', (e) => {
-      const oldCurrency = currentCurrency;
-      currentCurrency = e.target.value;
-      if (oldCurrency !== currentCurrency) {
-        $('cppValue').value = '';
-        
-        const warningMsg = currentCurrency === 'USD' 
-          ? '货币已切换。为避免人民币和美元金额混淆，请重新填写个人估值。' 
-          : '货币已切换。为避免人民币和美元金额混淆，请重新填写个人估值。';
-          
-        function clearCalculatorResults() {
-          $('dollarValue').textContent = '-';
-          $('dollarValue').classList.remove('win');
-          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
-        }
-        clearCalculatorResults();
-      }
-      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
-      updateUnits();
-      if ($('cppValue').value) {
-        calcDollars();
-      }
-    });
-  }
+  const updateSelectOptions = () => {
+    const fx = getActiveFx();
+    const select = $('presetValuation');
+    if (!select) return;
+
+    const currentSelected = select.value;
+
+    if (currentCurrency === 'USD') {
+      select.options[0].text = 'Custom CPP';
+      select.options[1].text = 'Low-value points scenario: 0.6¢ per point';
+      select.options[2].text = 'Conservative scenario: 1.2¢ per point';
+      select.options[3].text = 'Typical airline-mile scenario: 1.5¢ per point';
+      select.options[4].text = 'Higher-value redemption scenario: 2.0¢ per point';
+      
+      select.options[1].value = '0.6';
+      select.options[2].value = '1.2';
+      select.options[3].value = '1.5';
+      select.options[4].value = '2.0';
+    } else {
+      const cny06 = (0.6 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
+      const cny12 = (1.2 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
+      const cny15 = (1.5 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
+      const cny20 = (2.0 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
+
+      select.options[0].text = '自定义CPP';
+      select.options[1].text = `低面值积分情景：0.6美分/点 (约${cny06}元/点)`;
+      select.options[2].text = `保守估值情景：1.2美分/点 (约${cny12}元/点)`;
+      select.options[3].text = `中性航空里程情景：1.5美分/点 (约${cny15}元/点)`;
+      select.options[4].text = `较高价值兑换情景：2.0美分/点 (约${cny20}元/点)`;
+
+      select.options[1].value = '0.6';
+      select.options[2].value = '1.2';
+      select.options[3].value = '1.5';
+      select.options[4].value = '2.0';
+    }
+
+    if (currentSelected) {
+      select.value = currentSelected;
+    }
+  };
+
+  const updateUnitsAndVisibility = () => {
+    const fx = getActiveFx();
+    if (currentCurrency === 'USD') {
+      if($('hintValuation')) $('hintValuation').textContent = '¢ / 点';
+      if($('fieldFx')) $('fieldFx').style.display = 'none';
+      if($('spanFxEcho')) $('spanFxEcho').textContent = fx.toString();
+      if($('spanCnyCppEcho')) $('spanCnyCppEcho').textContent = (1.5 / 100 * fx).toFixed(3);
+      if($('spanEgCny')) $('spanEgCny').textContent = '¥' + (50000 * (1.5 / 100 * fx)).toLocaleString('zh-CN', {maximumFractionDigits:0});
+    } else {
+      if($('hintValuation')) $('hintValuation').textContent = '元/点';
+      if($('fieldFx')) $('fieldFx').style.display = 'block';
+      if($('spanFxEcho')) $('spanFxEcho').textContent = fx.toString();
+      const cnyRate = (1.5 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
+      if($('spanCnyCppEcho')) $('spanCnyCppEcho').textContent = cnyRate;
+      if($('spanEgCny')) $('spanEgCny').textContent = '¥' + (50000 * (1.5 / 100 * fx)).toLocaleString('zh-CN', {maximumFractionDigits:0});
+    }
+    updateSelectOptions();
+  };
 
   const parseParam = (key, elId, maxVal = 1000000000) => {
     let val = parseFloat(params.get(key));
@@ -247,8 +364,78 @@ breadcrumbs:
   };
   parseParam('points', 'totalPoints');
   parseParam('totalPoints', 'totalPoints');
-  parseParam('valuation', 'cppValue', 1000);
-  parseParam('cppValue', 'cppValue', 1000);
+
+  // Scenario parse
+  const scenParam = params.get('presetValuation') || params.get('scenario');
+  if (scenParam && ['custom', '0.6', '1.2', '1.5', '2.0'].includes(scenParam)) {
+    if ($('presetValuation')) $('presetValuation').value = scenParam;
+  }
+
+  // Parse valuation parameter
+  const rawVal = parseFloat(params.get('valuation') || params.get('cppValue'));
+  if (!isNaN(rawVal) && isFinite(rawVal) && rawVal > 0) {
+    if ($('cppValue')) $('cppValue').value = rawVal;
+  } else {
+    // Set default value according to currency
+    const activeScen = $('presetValuation') ? $('presetValuation').value : '1.5';
+    const fx = getActiveFx();
+    if (activeScen !== 'custom') {
+      const usdCpp = getScenarioUsdCpp(activeScen) || 1.5;
+      if (currentCurrency === 'USD') {
+        if ($('cppValue')) $('cppValue').value = usdCpp;
+      } else {
+        if ($('cppValue')) $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
+      }
+    }
+  }
+
+  if ($('currency')) {
+    $('currency').value = currentCurrency;
+    $('currency').addEventListener('change', (e) => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      const fx = getActiveFx();
+      const select = $('presetValuation');
+      const curScen = select ? select.value : 'custom';
+
+      if (curScen !== 'custom') {
+        const usdCpp = getScenarioUsdCpp(curScen);
+        if (currentCurrency === 'USD') {
+          $('cppValue').value = usdCpp;
+        } else {
+          $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
+        }
+      } else {
+        // Converting custom input accurately without drift
+        const oldVal = parseFloat($('cppValue').value) || 0;
+        if (oldVal > 0) {
+          if (currentCurrency === 'USD' && oldCurrency === 'CNY') {
+            $('cppValue').value = parseFloat((oldVal / fx * 100).toFixed(2));
+          } else if (currentCurrency === 'CNY' && oldCurrency === 'USD') {
+            $('cppValue').value = parseFloat((oldVal / 100 * fx).toFixed(4));
+          }
+        }
+      }
+
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateUnitsAndVisibility();
+      calcDollars();
+    });
+  }
+
+  if ($('fxRate')) {
+    $('fxRate').addEventListener('input', () => {
+      updateUnitsAndVisibility();
+      const select = $('presetValuation');
+      const curScen = select ? select.value : 'custom';
+      const fx = getActiveFx();
+      if (curScen !== 'custom' && currentCurrency === 'CNY') {
+        const usdCpp = getScenarioUsdCpp(curScen);
+        $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
+      }
+      calcDollars();
+    });
+  }
 
   function calcDollars(){
     let P = parseFloat($('totalPoints').value) || 0;
@@ -265,49 +452,74 @@ breadcrumbs:
       return;
     }
     
-    // If USD, V is in Cents, we divide by 100 to get dollar amount
     let total = 0;
     if (currentCurrency === 'USD') {
       total = P * (V / 100);
       $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:2});
-      $('explain').textContent = `按 ${V} 美分/点的估值计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 $${total.toLocaleString('en-US', {maximumFractionDigits:2})} 的购买力。如果一直闲置不用，这笔无形资产将面临缩水风险。`;
+      $('explain').textContent = `按 ${V} 美分/点的估值情景计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 $${total.toLocaleString('en-US', {maximumFractionDigits:2})} 的测算购买力。该数值为情景演示，非官方保底兑现。`;
     } else {
       total = P * V;
       $('dollarValue').textContent = '¥' + total.toLocaleString('zh-CN', {maximumFractionDigits:0});
-      $('explain').textContent = `按 ${V} 元/点的估值计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 ${total.toLocaleString('zh-CN', {maximumFractionDigits:0})} 元的购买力。如果一直闲置不用，这笔无形资产将面临缩水风险。`;
+      $('explain').textContent = `按 ${V} 元/点的估值情景计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 ¥${total.toLocaleString('zh-CN', {maximumFractionDigits:0})} 的测算购买力。该数值为情景演示，非官方保底兑现。`;
     }
     $('dollarValue').classList.add('win');
   }
 
   $('presetValuation').addEventListener('change', e => {
-    if(e.target.value !== 'custom'){
-      $('cppValue').value = e.target.value;
+    const scen = e.target.value;
+    const fx = getActiveFx();
+    if(scen !== 'custom'){
+      const usdCpp = getScenarioUsdCpp(scen);
+      if (currentCurrency === 'USD') {
+        $('cppValue').value = usdCpp;
+      } else {
+        $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
+      }
       calcDollars();
     }
   });
-  ['totalPoints','cppValue'].forEach(id => {
-    if($(id)) $(id).addEventListener('input', calcDollars);
+
+  $('cppValue').addEventListener('input', () => {
+    const val = parseFloat($('cppValue').value) || 0;
+    const fx = getActiveFx();
+    let matched = 'custom';
+    ['0.6', '1.2', '1.5', '2.0'].forEach(s => {
+      const usdCpp = getScenarioUsdCpp(s);
+      const targetVal = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * fx).toFixed(4));
+      if (Math.abs(val - targetVal) < 0.0001) {
+        matched = s;
+      }
+    });
+    $('presetValuation').value = matched;
+    calcDollars();
   });
+
+  $('totalPoints').addEventListener('input', calcDollars);
   
   if ($('btnShare')) {
     $('btnShare').addEventListener('click', () => {
       const url = new URL('{{ site.url }}/calculators/points-to-dollars/');
       const p = parseFloat($('totalPoints').value) || 0;
       const v = parseFloat($('cppValue').value) || 0;
+      const scen = $('presetValuation').value;
+      const fx = getActiveFx();
+
       if (p > 0) url.searchParams.set('points', p);
       if (v > 0) url.searchParams.set('valuation', v);
+      if (scen && scen !== 'custom') url.searchParams.set('scenario', scen);
       if (currentCurrency) url.searchParams.set('currency', currentCurrency);
+      if (currentCurrency === 'CNY' && fx !== 7.0) url.searchParams.set('fx', fx);
 
       navigator.clipboard.writeText(url.toString()).then(() => {
         const toast = $('toast');
         if (toast) {
-          toast.classList.add('show');
-          setTimeout(() => toast.classList.remove('show'), 2000);
+          toast.style.display = 'block';
+          setTimeout(() => { toast.style.display = 'none'; }, 2000);
         }
       });
     });
   }
 
-  updateUnits();
+  updateUnitsAndVisibility();
   if($('cppValue').value) calcDollars();
 </script>
