@@ -168,12 +168,12 @@ async function verifyLiveProduction() {
   const enP2DRes = await fetch(`${prodBase}/en/calculators/points-to-dollars/?audit=${ts}`);
   const enP2DDoc = new JSDOM(enP2DRes.data).window.document;
   const enLabel = enP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
-  if (!enLabel.includes('Valuation assumption (CPP)')) {
+  if (!enLabel.includes('Choose a valuation scenario (CPP)')) {
     console.error(`ERROR: Live English Points to Dollars label is "${enLabel}"`);
     failures++;
   }
   const enUnit = enP2DDoc.getElementById('unitValuation')?.textContent || '';
-  if (!enUnit.includes('Preset values are calculation examples, not live valuations.')) {
+  if (!enUnit.includes('These CPP values are illustrative scenarios, not official conversion rates, live valuations, or guaranteed redemption values.')) {
     console.error(`ERROR: Live English Points to Dollars disclaimer missing standard text`);
     failures++;
   }
@@ -181,19 +181,34 @@ async function verifyLiveProduction() {
   const cnP2DRes = await fetch(`${prodBase}/calculators/points-to-dollars/?audit=${ts}`);
   const cnP2DDoc = new JSDOM(cnP2DRes.data).window.document;
   const cnLabel = cnP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
-  if (!cnLabel.includes('估值假设（CPP）')) {
+  if (!cnLabel.includes('选择估值情景（CPP）')) {
     console.error(`ERROR: Live Chinese Points to Dollars label is "${cnLabel}"`);
     failures++;
   }
   const cnUnit = cnP2DDoc.getElementById('unitValuation')?.textContent || '';
-  if (!cnUnit.includes('预设数值仅为计算示例，并非实时估值。')) {
+  if (!cnUnit.includes('这些CPP仅用于比较不同估值情景，不是官方兑换比例、实时估值或保证价值。')) {
     console.error(`ERROR: Live Chinese Points to Dollars disclaimer missing standard text`);
     failures++;
   }
-  console.log('Live valuation wording and disclaimers verified.');
+
+  // Help buttons and scenario table
+  if (!enP2DDoc.getElementById('btnHelpScenario') || !enP2DDoc.getElementById('helpScenarioGuide')) {
+    console.error('ERROR: Live English Help toggle component missing');
+    failures++;
+  }
+  if (!cnP2DDoc.getElementById('btnHelpScenario') || !cnP2DDoc.getElementById('helpScenarioGuide')) {
+    console.error('ERROR: Live Chinese Help toggle component missing');
+    failures++;
+  }
+  if (!cnP2DDoc.getElementById('fieldFx')) {
+    console.error('ERROR: Live Chinese FX field missing');
+    failures++;
+  }
+
+  console.log('Live valuation wording, scenario tables, and disclaimers verified.');
 
   // 6. Interactive Script Execution on Live Production
-  console.log('\n6. Verifying Live Interactive Calculations...');
+  console.log('\n6. Verifying Live Interactive Calculations & FX...');
   const p2dEnUrl = `${prodBase}/en/calculators/points-to-dollars/?totalPoints=50000&cppValue=1.5&audit=${ts}`;
   const p2dEnHtml = (await fetch(p2dEnUrl)).data;
   const p2dEnDom = new JSDOM(p2dEnHtml, { runScripts: "dangerously", url: p2dEnUrl });
@@ -203,7 +218,31 @@ async function verifyLiveProduction() {
     console.error(`ERROR: Live Points to Dollars calculation failed. Expected $750, got ${p2dDollarVal}`);
     failures++;
   } else {
-    console.log('Live Points to Dollars auto-calculation: $750 (Passed)');
+    console.log('Live EN Points to Dollars calculation: $750 (Passed)');
+  }
+
+  const p2dCnUrl = `${prodBase}/calculators/points-to-dollars/?points=50000&valuation=0.105&audit=${ts}`;
+  const p2dCpHtml = (await fetch(p2dCnUrl)).data;
+  const p2dCnDom = new JSDOM(p2dCpHtml, { runScripts: "dangerously", url: p2dCnUrl });
+  await new Promise(r => setTimeout(r, 150));
+  const p2dCnVal = p2dCnDom.window.document.getElementById('dollarValue')?.textContent;
+  if (p2dCnVal !== '¥5,250') {
+    console.error(`ERROR: Live CN Points to Dollars (FX 7.0) failed. Expected ¥5,250, got ${p2dCnVal}`);
+    failures++;
+  } else {
+    console.log('Live CN Points to Dollars calculation (FX 7.0): ¥5,250 (Passed)');
+  }
+
+  const p2dFxUrl = `${prodBase}/calculators/points-to-dollars/?points=50000&fx=7.2&scenario=1.5&audit=${ts}`;
+  const p2dFxHtml = (await fetch(p2dFxUrl)).data;
+  const p2dFxDom = new JSDOM(p2dFxHtml, { runScripts: "dangerously", url: p2dFxUrl });
+  await new Promise(r => setTimeout(r, 150));
+  const p2dFxVal = p2dFxDom.window.document.getElementById('dollarValue')?.textContent;
+  if (p2dFxVal !== '¥5,400') {
+    console.error(`ERROR: Live CN Points to Dollars (FX 7.2) failed. Expected ¥5,400, got ${p2dFxVal}`);
+    failures++;
+  } else {
+    console.log('Live CN Points to Dollars calculation (FX 7.2 recovery): ¥5,400 (Passed)');
   }
 
   const transUrl = `${prodBase}/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000&audit=${ts}`;
