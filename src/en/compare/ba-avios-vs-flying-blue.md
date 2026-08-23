@@ -9,6 +9,8 @@ breadcrumbs:
   - name: Avios vs Flying Blue
 ---
 
+# British Airways Avios vs Air France/KLM Flying Blue
+
 ## Overview
 
 When planning a trip to Europe (or within the Americas), British Airways Executive Club (Avios) and Air France/KLM Flying Blue are two of the most accessible frequent flyer programs, as they partner with nearly every major credit card rewards system.

@@ -4,7 +4,9 @@ title: Transfer Bonus Calculator | Points to Miles
 description: Calculate the exact number of credit card points needed to reach your target airline miles during 15%, 20%, or 30% transfer bonus promotions.
 schemaType: WebApplication
 eyebrow: Tools · 04
-lastModified: "2026-08-22"
+datePublished: "2026-08-14"
+dateModified: "2026-08-23"
+lastModified: "2026-08-23"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
@@ -12,6 +14,10 @@ breadcrumbs:
 ---
 <h1>Points Transfer Bonus Calculator</h1>
 <p class="sub">Calculate the exact number of credit card points needed to hit your target airline miles during promotional transfer bonus campaigns, avoiding stranded leftover points.</p>
+
+<div class="direct-answer">
+  <strong>Direct Calculation Rule:</strong> During a transfer bonus promotion, calculate required bank points by taking: <code>Target Miles ÷ [Base Ratio × (1 + Bonus %)]</code>, then rounding UP to the nearest transfer increment (typically 1,000 points). For instance, needing 50,000 miles with a 30% bonus requires transferring 39,000 points, yielding 50,700 miles.
+</div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
 <div id="toast" class="toast">Link copied to clipboard!</div>
@@ -48,7 +54,7 @@ breadcrumbs:
         <div class="v" id="rawPoints" style="word-break: break-word; overflow-wrap: anywhere;">0</div>
       </div>
       <div class="item">
-        <div class="k">Actual points to transfer</div>
+        <div class="k">Actual points to transfer (Rounded)</div>
         <div class="v" id="actualPoints" style="word-break: break-word; overflow-wrap: anywhere;">0</div>
       </div>
     </div>
@@ -79,8 +85,18 @@ breadcrumbs:
     Transfers to some programs (like ANA or Singapore Airlines) can take 24-48 hours. During this time, the award seat you wanted might disappear. You can use our <a href="/en/calculators/cents-per-point/">CPP Calculator</a> to quickly check if a backup flight is still worth booking.</li>
   </ol>
 
+  <div class="related-tools">
+    <h3>Related Points & Miles Calculators</h3>
+    <ul>
+      <li><a href="/en/calculators/points-to-dollars/">Points to Dollars Calculator</a>: Estimate dollar values for airline and bank point balances.</li>
+      <li><a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>: Evaluate whether to redeem transferred miles or pay cash.</li>
+      <li><a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>: Compute the precise redemption value of the flight you plan to book.</li>
+      <li><a href="/en/calculators/hotel-points-vs-cash/">Hotel Points vs Cash Calculator</a>: Analyze hotel points valuations and 5th-night-free benefits.</li>
+    </ul>
+  </div>
+
   <h3>Frequently Asked Questions</h3>
-  <div>
+  <div class="faq">
     <details>
       <summary>Can I reverse a points transfer?</summary>
       <div>
@@ -102,8 +118,7 @@ breadcrumbs:
       </div>
     </details>
   </div>
-
-  </div>
+</div>
 
 <script>
   const $ = id => document.getElementById(id);

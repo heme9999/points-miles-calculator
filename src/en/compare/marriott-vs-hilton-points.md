@@ -9,6 +9,8 @@ breadcrumbs:
   - name: Marriott vs Hilton Points
 ---
 
+# Marriott Bonvoy vs Hilton Honors Points Value: The Ultimate Guide
+
 ## Introduction
 
 Choosing between Marriott Bonvoy and Hilton Honors often comes down to footprint and how you prefer to travel. But when comparing the actual *points*, which program offers the best value?

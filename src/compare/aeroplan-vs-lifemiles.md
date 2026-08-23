@@ -9,6 +9,8 @@ breadcrumbs:
   - name: Aeroplan vs LifeMiles
 ---
 
+# 加航 Aeroplan vs 哥伦比亚航空 LifeMiles：星空联盟兑换对决
+
 ## 简介
 
 如果你想用信用卡灵活积分兑换星空联盟 (Star Alliance) 航班（如美联航、汉莎航空、全日空、长荣航空等），加拿大航空 Aeroplan 和哥伦比亚航空 LifeMiles 是你最好的两个选择。它们都能看到相同的联盟里程票池，但定价规则和各项附加费却大相径庭。

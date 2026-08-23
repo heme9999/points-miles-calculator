@@ -9,6 +9,8 @@ breadcrumbs:
   - name: Aeroplan vs LifeMiles
 ---
 
+# Air Canada Aeroplan vs Avianca LifeMiles: Star Alliance Showdown
+
 ## Introduction
 
 If you want to fly Star Alliance airlines (United, Lufthansa, ANA, EVA Air) using transferable points, Air Canada Aeroplan and Avianca LifeMiles are your two best friends. Both have access to the same alliance availability, but their pricing rules and fees differ wildly.

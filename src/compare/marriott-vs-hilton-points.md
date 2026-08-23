@@ -1,15 +1,17 @@
 ---
 layout: base.njk
-title: "万豪 Bonvoy 与希尔顿 Honors 积分价值对比：终极指南"
-description: "深度对比万豪 Bonvoy 和希尔顿 Honors 积分。解析动态定价、住五付四规则以及精英会籍对积分价值的影响。"
+title: "万豪旅享家 vs 希尔顿荣誉客会：积分价值与常客权益深度对比"
+description: "万豪 Bonvoy 与 希尔顿 Honors 积分价值对比。深度剖析动态定价、住五免一政策、会籍权益对积分实际价值的影响。"
 schemaType: Article
 breadcrumbs:
   - name: 对比
     url: /compare/
-  - name: 万豪 vs 希尔顿积分
+  - name: 万豪 vs 希尔顿
 ---
 
-## 简介
+# 万豪旅享家 vs 希尔顿荣誉客会：积分价值与常客权益深度对比
+
+## 概述
 
 在万豪 (Marriott Bonvoy) 和希尔顿 (Hilton Honors) 之间做选择，往往取决于酒店分布和你喜欢的旅行方式。但如果单从**积分**的角度来看，哪家的积分更有价值？
 

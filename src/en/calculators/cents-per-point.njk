@@ -4,7 +4,9 @@ title: Cents Per Point Calculator | Calculate CPP
 description: Calculate your cents per point (CPP) value for airline and hotel redemptions. Find out exactly how much value you get from each point.
 schemaType: WebApplication
 eyebrow: Tools · 03
-lastModified: "2026-08-22"
+datePublished: "2026-08-14"
+dateModified: "2026-08-23"
+lastModified: "2026-08-23"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
@@ -12,6 +14,10 @@ breadcrumbs:
 ---
 <h1>Cents Per Point (CPP) Calculator</h1>
 <p class="sub">CPP (Cents Per Point) is the standard metric used to evaluate award flight and hotel redemptions. Enter your cash price, taxes, and points to calculate your exact return per point.</p>
+
+<div class="direct-answer">
+  <strong>Direct Calculation Rule:</strong> Cents Per Point (CPP) measures the net cash savings achieved per point redeemed. Calculate it by taking: <code>((Cash Ticket Price - Award Taxes) ÷ Points Required) × 100</code>. A redemption yielding above 1.5¢/mile for airline programs or 0.7¢/point for hotel programs generally exceeds baseline benchmarks.
+</div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
 <div id="toast" class="toast">Link copied to clipboard!</div>
@@ -76,8 +82,18 @@ breadcrumbs:
     <li><strong>Ignoring Hidden Costs</strong>: A basic CPP calculation only subtracts taxes. To perform a rigorous analysis that includes the value of points you "give up" by not paying cash, use our <a href="/en/calculators/points-vs-cash/">Advanced Points vs Cash Calculator</a>.</li>
   </ol>
 
+  <div class="related-tools">
+    <h3>Related Points & Miles Calculators</h3>
+    <ul>
+      <li><a href="/en/calculators/points-to-dollars/">Points to Dollars Calculator</a>: Calculate total portfolio cash value from mileage balances.</li>
+      <li><a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>: Comprehensive comparison including forgone rewards and transfer bonuses.</li>
+      <li><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a>: Calculate bank points required during 15%–40% transfer promotion periods.</li>
+      <li><a href="/en/calculators/hotel-points-vs-cash/">Hotel Points vs Cash Calculator</a>: Compare hotel award nights against cash rates.</li>
+    </ul>
+  </div>
+
   <h3>Frequently Asked Questions</h3>
-  <div>
+  <div class="faq">
     <details>
       <summary>Is a higher CPP always better?</summary>
       <div>
@@ -99,8 +115,7 @@ breadcrumbs:
       </div>
     </details>
   </div>
-
-  </div>
+</div>
 
 <script>
   const $ = id => document.getElementById(id);

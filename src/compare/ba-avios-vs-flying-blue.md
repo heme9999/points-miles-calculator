@@ -9,6 +9,8 @@ breadcrumbs:
   - name: Avios vs Flying Blue
 ---
 
+# 英航 BA Avios 与法荷航 Flying Blue 全面对比
+
 ## 概述
 
 当计划前往欧洲（或在美洲内部飞行）时，英国航空的 Executive Club (Avios) 和法荷航的 Flying Blue 是两个最容易获取的常旅客计划，因为它们几乎与美国所有主流信用卡奖励系统都有合作关系。

@@ -9,6 +9,8 @@ breadcrumbs:
   - name: Capital One vs Chase
 ---
 
+# Capital One Miles vs Chase Ultimate Rewards
+
 ## Overview
 
 Capital One Miles and Chase Ultimate Rewards represent two distinct approaches to travel rewards. Chase focuses on category bonuses and domestic sweet spots, while Capital One champions simplicity and flat-rate earning.

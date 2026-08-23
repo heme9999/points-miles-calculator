@@ -8,7 +8,7 @@ eleventyExcludeFromCollections: true
   {%- if not page.data.excludeFromSitemap and not page.data.noindex and page.url and page.url != "/404.html" and page.url != "/en/404.html" and page.url != "/sitemap.xml" %}
   <url>
     <loc>{{ site.url }}{{ page.url | url }}</loc>
-    {%- set pageLastMod = (page.data.lastModified or page.data.lastmod) | formatLastmod -%}
+    {%- set pageLastMod = (page.data.lastModified or page.data.dateModified or page.data.lastmod) | formatLastmod -%}
     {%- if pageLastMod %}
     <lastmod>{{ pageLastMod }}</lastmod>
     {%- endif %}

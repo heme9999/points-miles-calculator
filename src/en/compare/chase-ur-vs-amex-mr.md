@@ -9,6 +9,8 @@ breadcrumbs:
   - name: Chase UR vs Amex MR
 ---
 
+# Chase Ultimate Rewards vs Amex Membership Rewards: Which is Better in 2026?
+
 ## Overview
 
 When diving into the world of points and miles, the debate between **Chase Ultimate Rewards (UR)** and **American Express Membership Rewards (MR)** is often the first hurdle. Both are powerful, flexible currencies, but they cater to different travel styles and spending habits. 

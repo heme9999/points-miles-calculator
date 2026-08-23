@@ -4,7 +4,9 @@ title: 转点加赠计算器 | 信用卡积分转航空里程凑整与盈亏平�
 description: 自动计算信用卡转点加赠（如 15%、20%、30%）活动下，凑齐目标航司里程所需转出的最低整数信用卡积分。
 schemaType: WebApplication
 eyebrow: 里程账 · 工具 04
-lastModified: "2026-08-22"
+datePublished: "2026-08-14"
+dateModified: "2026-08-23"
+lastModified: "2026-08-23"
 breadcrumbs:
   - name: 计算器
     url: /calculators/
@@ -12,6 +14,10 @@ breadcrumbs:
 ---
 <h1>信用卡转点加赠计算器</h1>
 <p class="sub">遇到信用卡转点加赠（如 Amex / Chase 转航司额外加赠 30%）活动时，自动计算出为了凑齐目标里程所需转出的最低整数积分，避免滞留零头。</p>
+
+<div class="direct-answer">
+  <strong>直接计算规则：</strong> 遇到转点加赠时，理论所需银行银行为：<code>目标里程 ÷ [基础比例 × (1 + 加赠比例%)]</code>，并结合银行最低转点单位（通常为 1,000 点）向上取整。例如：需要 50,000 里程，在 30% 加赠活动下只需转出 39,000 积分，即可获得 50,700 里程。
+</div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">分享此计算</button></div>
 <div id="toast" class="toast">已复制分享链接！</div>
@@ -79,7 +85,16 @@ breadcrumbs:
     部分航司（如 ANA、Singapore Airlines）的转点可能需要 24-48 小时才能到账。在转点期间，你看好的里程票可能被别人抢走。你可以使用我们的 <a href="/calculators/cents-per-point/">CPP 计算器</a> 快速判断备选航班是否依然值得。</li>
   </ol>
 
-  <h3>常见问题 (FAQ)</h3>
+  <div class="related-tools">
+    <h3>相关常旅客决策工具</h3>
+    <ul>
+      <li><a href="/calculators/points-to-dollars/">积分换算现金价值计算器</a>：将持有的总积分换算为等价现金资产。</li>
+      <li><a href="/calculators/points-vs-cash/">积分与现金决策计算器</a>：评估转点后换票是否比直接购买现金票更划算。</li>
+      <li><a href="/calculators/cents-per-point/">单点价值 (CPP) 计算器</a>：计算该航线兑换实际能用出多少单点收益。</li>
+      <li><a href="/calculators/hotel-points-vs-cash/">酒店积分与现金决策计算器</a>：评估酒店免税房与住五免一权益。</li>
+    </ul>
+  </div>
+
   <h3>常见问题 (FAQ)</h3>
   <div class="faq">
     <details>
@@ -103,8 +118,7 @@ breadcrumbs:
       </div>
     </details>
   </div>
-
-  </div>
+</div>
 
 <script>
   const $ = id => document.getElementById(id);

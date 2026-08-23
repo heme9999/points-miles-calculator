@@ -330,6 +330,32 @@ async function runTests() {
     console.log(`Points to Dollars auto-calculation on load: ${dollarVal} (Passed)`);
   }
 
+  // Points vs Cash Auto-Calculation (EN)
+  const pvcTestUrl = `${baseUrl}/en/calculators/points-vs-cash/?cash=350&points=25000&taxes=30&forgone=15&valuation=1.2`;
+  const pvcHtml = (await fetch(pvcTestUrl)).data;
+  const pvcDom = new JSDOM(pvcHtml, { runScripts: "dangerously", url: pvcTestUrl });
+  await new Promise(r => setTimeout(r, 100));
+  const pvcCpp = pvcDom.window.document.getElementById('cppResult')?.textContent;
+  if (!pvcCpp || !pvcCpp.includes('1.22')) {
+    console.error(`ERROR: EN Points vs Cash calculation failed. Expected ~1.22¢ / point, got ${pvcCpp}`);
+    failures++;
+  } else {
+    console.log(`EN Points vs Cash calculation on load: ${pvcCpp} (Passed)`);
+  }
+
+  // Points vs Cash Auto-Calculation (CN)
+  const pvcCnUrl = `${baseUrl}/calculators/points-vs-cash/?cash=800&points=12000&taxes=50&forgone=30&valuation=0.08`;
+  const pvcCpHtml = (await fetch(pvcCnUrl)).data;
+  const pvcCnDom = new JSDOM(pvcCpHtml, { runScripts: "dangerously", url: pvcCnUrl });
+  await new Promise(r => setTimeout(r, 100));
+  const pvcCnCpp = pvcCnDom.window.document.getElementById('cppResult')?.textContent;
+  if (!pvcCnCpp || !pvcCnCpp.includes('0.0600')) {
+    console.error(`ERROR: CN Points vs Cash calculation failed. Expected ¥0.0600 / 点, got ${pvcCnCpp}`);
+    failures++;
+  } else {
+    console.log(`CN Points vs Cash calculation on load: ${pvcCnCpp} (Passed)`);
+  }
+
   // Transfer Bonus Standard & Legacy Param Auto-Calculations
   const tbStdUrl = `${baseUrl}/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000`;
   const tbStdHtml = (await fetch(tbStdUrl)).data;

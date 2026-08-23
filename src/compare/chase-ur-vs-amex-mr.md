@@ -9,6 +9,8 @@ breadcrumbs:
   - name: Chase UR vs Amex MR
 ---
 
+# Chase UR 积分与 Amex MR 积分对比：2026年谁更胜一筹？
+
 ## 概述
 
 在信用卡积分和常旅客的世界里，关于 **Chase Ultimate Rewards (UR)** 与 **American Express Membership Rewards (MR)** 谁更好的争论从未停止。这两种积分都非常灵活且强大，但它们适合不同的旅行偏好和消费习惯。

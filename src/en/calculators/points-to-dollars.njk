@@ -4,7 +4,9 @@ title: Points to Dollars Calculator | Miles Value
 description: Convert airline miles and credit card points to dollar value. See how much 5,000, 50,000, or 60,000 miles are worth across common valuation benchmarks.
 schemaType: WebApplication
 eyebrow: Tools · 05
-lastModified: "2026-08-22"
+datePublished: "2026-08-14"
+dateModified: "2026-08-23"
+lastModified: "2026-08-23"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
@@ -12,6 +14,10 @@ breadcrumbs:
 ---
 <h1>Points to Dollars Calculator</h1>
 <p class="sub">Convert airline miles and credit card rewards into cash value. Enter your points balance and valuation benchmark to determine the estimated purchasing power of your rewards.</p>
+
+<div class="direct-answer">
+  <strong>Direct Calculation Rule:</strong> To convert points or airline miles into cash value, multiply your balance by your estimated Cents Per Point (CPP) and divide by 100. For example, 50,000 miles at a baseline 1.5¢/mile valuation equals $750 in equivalent travel purchasing power.
+</div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
 <div id="toast" class="toast">Link copied to clipboard!</div>
@@ -55,59 +61,59 @@ breadcrumbs:
   <h2>Common Miles-to-Dollars Conversion Examples</h2>
   <p>Wondering how much a specific miles balance is worth in cash? Below is an accessible conversion benchmark table across common balances (from short-haul awards to international business class tickets) and valuation tiers:</p>
   
-  <div style="overflow-x: auto; margin-block: 1.5rem; -webkit-overflow-scrolling: touch;">
-    <table style="width: 100%; border-collapse: collapse; text-align: right; min-width: 540px; font-size: 0.95rem;">
+  <div class="responsive-table-wrapper">
+    <table class="responsive-table">
       <thead>
-        <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1; color: #1e293b;">
-          <th style="text-align: left; padding: 12px 14px; font-weight: 600;">Miles / Points Balance</th>
-          <th style="padding: 12px 14px; font-weight: 600;">@ 1.0¢ / point</th>
-          <th style="padding: 12px 14px; font-weight: 600;">@ 1.2¢ / point</th>
-          <th style="padding: 12px 14px; font-weight: 600;">@ 1.5¢ / point</th>
-          <th style="padding: 12px 14px; font-weight: 600;">@ 2.0¢ / point</th>
+        <tr>
+          <th style="text-align: left;">Miles / Points Balance</th>
+          <th>@ 1.0¢ / point</th>
+          <th>@ 1.2¢ / point</th>
+          <th>@ 1.5¢ / point</th>
+          <th>@ 2.0¢ / point</th>
         </tr>
       </thead>
       <tbody>
-        <tr style="border-bottom: 1px solid #e2e8f0;">
-          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">2,000 miles</td>
-          <td style="padding: 10px 14px; color: #334155;">$20</td>
-          <td style="padding: 10px 14px; color: #334155;">$24</td>
-          <td style="padding: 10px 14px; color: #334155;">$30</td>
-          <td style="padding: 10px 14px; color: #334155;">$40</td>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">2,000 miles</td>
+          <td>$20</td>
+          <td>$24</td>
+          <td>$30</td>
+          <td>$40</td>
         </tr>
-        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
-          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">5,000 miles</td>
-          <td style="padding: 10px 14px; color: #334155;">$50</td>
-          <td style="padding: 10px 14px; color: #334155;">$60</td>
-          <td style="padding: 10px 14px; color: #334155;">$75</td>
-          <td style="padding: 10px 14px; color: #334155;">$100</td>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">5,000 miles</td>
+          <td>$50</td>
+          <td>$60</td>
+          <td>$75</td>
+          <td>$100</td>
         </tr>
-        <tr style="border-bottom: 1px solid #e2e8f0;">
-          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">8,000 miles</td>
-          <td style="padding: 10px 14px; color: #334155;">$80</td>
-          <td style="padding: 10px 14px; color: #334155;">$96</td>
-          <td style="padding: 10px 14px; color: #334155;">$120</td>
-          <td style="padding: 10px 14px; color: #334155;">$160</td>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">8,000 miles</td>
+          <td>$80</td>
+          <td>$96</td>
+          <td>$120</td>
+          <td>$160</td>
         </tr>
-        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
-          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">17,000 miles</td>
-          <td style="padding: 10px 14px; color: #334155;">$170</td>
-          <td style="padding: 10px 14px; color: #334155;">$204</td>
-          <td style="padding: 10px 14px; color: #334155;">$255</td>
-          <td style="padding: 10px 14px; color: #334155;">$340</td>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">17,000 miles</td>
+          <td>$170</td>
+          <td>$204</td>
+          <td>$255</td>
+          <td>$340</td>
         </tr>
-        <tr style="border-bottom: 1px solid #e2e8f0;">
-          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">50,000 miles</td>
-          <td style="padding: 10px 14px; color: #334155;">$500</td>
-          <td style="padding: 10px 14px; color: #334155;">$600</td>
-          <td style="padding: 10px 14px; color: #334155;">$750</td>
-          <td style="padding: 10px 14px; color: #334155;">$1,000</td>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">50,000 miles</td>
+          <td>$500</td>
+          <td>$600</td>
+          <td>$750</td>
+          <td>$1,000</td>
         </tr>
-        <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
-          <td style="text-align: left; padding: 10px 14px; font-weight: 600; color: #0f172a;">60,000 miles</td>
-          <td style="padding: 10px 14px; color: #334155;">$600</td>
-          <td style="padding: 10px 14px; color: #334155;">$720</td>
-          <td style="padding: 10px 14px; color: #334155;">$900</td>
-          <td style="padding: 10px 14px; color: #334155;">$1,200</td>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">60,000 miles</td>
+          <td>$600</td>
+          <td>$720</td>
+          <td>$900</td>
+          <td>$1,200</td>
         </tr>
       </tbody>
     </table>
@@ -122,13 +128,15 @@ breadcrumbs:
     <li><strong>Evaluating Annual Fees</strong>: Premium travel cards carry annual fees. If the cash value of points earned doesn't exceed the card's cost, you may want to rethink your card strategy.</li>
   </ul>
 
-  <h3>Related Calculators for Award Travel</h3>
-  <p>If you're evaluating a specific flight or hotel redemption rather than your overall balance, use these dedicated tools:</p>
-  <ul>
-    <li><a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>: Calculate the exact CPP value of a specific flight or hotel ticket after taxes.</li>
-    <li><a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>: Compare paying cash vs redeeming miles, factoring in taxes and forgone credit card rewards.</li>
-    <li><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a>: Calculate how many flexible bank points you need to transfer to hit a target mileage requirement during bonus promotions.</li>
-  </ul>
+  <div class="related-tools">
+    <h3>Related Calculators for Award Travel</h3>
+    <ul>
+      <li><a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>: Calculate the exact CPP value of a specific flight or hotel ticket after taxes.</li>
+      <li><a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>: Compare paying cash vs redeeming miles, factoring in taxes and forgone credit card rewards.</li>
+      <li><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a>: Calculate how many flexible bank points you need to transfer to hit a target mileage requirement during bonus promotions.</li>
+      <li><a href="/en/calculators/hotel-points-vs-cash/">Hotel Points vs Cash Calculator</a>: Evaluate hotel redemptions taking into account 5th-night-free benefits.</li>
+    </ul>
+  </div>
 
   <h2>Three Practical Principles of Points Management</h2>
   <ol>
