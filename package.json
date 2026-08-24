@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "eleventy",
-    "test:unit": "node --test test/calculator.test.js test/trip-cost-engine.test.js",
+    "test:unit": "node --test test/calculator.test.js test/trip-cost-engine.test.js test/table-contrast.test.js",
     "test:production": "node test_production.js",
     "test": "npm run build && npm run test:unit && node run_tests.js",
     "audit:seo": "node scripts/audit_production_seo.js"

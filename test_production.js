@@ -579,6 +579,27 @@ async function runTests() {
     }
   }
 
+  // Waterfall Table Header Checks (CN & EN)
+  const cnThead = tcCnDom.window.document.querySelector('.ticket .main .waterfall-table thead');
+  const cnThs = Array.from(cnThead ? cnThead.querySelectorAll('th') : []).map(th => th.textContent.trim());
+  const expectedCnThs = ['预算类别', '全现金基准', '积分抵扣扣减', '必须自付税费/附加费', '最终实际自付现金'];
+  if (JSON.stringify(cnThs) !== JSON.stringify(expectedCnThs)) {
+    console.error(`ERROR: CN Waterfall Table headers mismatch. Expected ${JSON.stringify(expectedCnThs)}, got ${JSON.stringify(cnThs)}`);
+    failures++;
+  } else {
+    console.log('CN Waterfall Table 5-column headers verified (Passed)');
+  }
+
+  const enThead = tcEnDom.window.document.querySelector('.ticket .main .waterfall-table thead');
+  const enThs = Array.from(enThead ? enThead.querySelectorAll('th') : []).map(th => th.textContent.trim());
+  const expectedEnThs = ['Budget Category', 'All-Cash Baseline', 'Points Deduction', 'Mandatory Taxes / Fees', 'Final Out-of-Pocket Cash'];
+  if (JSON.stringify(enThs) !== JSON.stringify(expectedEnThs)) {
+    console.error(`ERROR: EN Waterfall Table headers mismatch. Expected ${JSON.stringify(expectedEnThs)}, got ${JSON.stringify(enThs)}`);
+    failures++;
+  } else {
+    console.log('EN Waterfall Table 5-column headers verified (Passed)');
+  }
+
   // Check EN Label: ensure NO "Transfer Bonus Bonus" typo
   if (tcEnHtml.includes('Transfer Bonus Bonus')) {
     console.error('ERROR: EN Trip Cost contains typo "Transfer Bonus Bonus"');

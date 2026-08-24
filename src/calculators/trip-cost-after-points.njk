@@ -276,33 +276,33 @@ faqItems:
       <div class="expense-grid" style="margin-top: 24px;">
         <div class="field">
           <label>积分覆盖比例 (Coverage)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #38bdf8; font-family: var(--font-mono);" id="valCoverageRate">66.2%</div>
+          <div style="font-size: 20px; font-weight: 700; color: #0284c7; font-family: var(--font-mono);" id="valCoverageRate">66.2%</div>
           <div class="unit">积分抵扣额占全现金总预算的比例</div>
         </div>
         <div class="field">
           <label>人均最终自付现金</label>
-          <div style="font-size: 20px; font-weight: 700; color: var(--gold); font-family: var(--font-mono);" id="valPerPersonCash">¥5,200</div>
+          <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valPerPersonCash">¥5,200</div>
           <div class="unit" id="unitPerPerson">按 2 位旅客平摊</div>
         </div>
         <div class="field">
           <label>日均最终自付现金</label>
-          <div style="font-size: 20px; font-weight: 700; color: var(--gold); font-family: var(--font-mono);" id="valDailyCash">¥1,486</div>
+          <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valDailyCash">¥1,486</div>
           <div class="unit" id="unitDaily">按 7 天行程平摊</div>
         </div>
         <div class="field">
           <label>机票实际兑出价值 (CPP)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #4ade80; font-family: var(--font-mono);" id="valFlightCpp">2.67 ¢/点</div>
+          <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valFlightCpp">2.67 ¢/点</div>
           <div class="unit" id="valFlightLocal">折合 ¥0.1867 / 里</div>
         </div>
         <div class="field">
           <label>酒店实际兑出价值 (CPP)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #4ade80; font-family: var(--font-mono);" id="valHotelCpp">2.86 ¢/点</div>
+          <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valHotelCpp">2.86 ¢/点</div>
           <div class="unit" id="valHotelLocal">折合 ¥0.2000 / 点</div>
         </div>
       </div>
 
       <!-- 结构化费用瀑布逻辑表 -->
-      <h3 style="margin: 28px 0 12px 0; font-size: 15px; color: var(--text);">📊 旅行自付现金流水瀑布表 (Waterfall Breakdown)</h3>
+      <h3 style="margin: 28px 0 12px 0; font-size: 15px; color: #0e1a2b;">📊 旅行自付现金流水瀑布表 (Waterfall Breakdown)</h3>
       <div class="responsive-table-wrapper">
         <table class="waterfall-table">
           <thead>
@@ -714,20 +714,22 @@ faqItems:
       let html = '';
       rows.forEach(r => {
         if (r.cash === 0 && r.final === 0) return;
-        html += `<tr>
+        const dedClass = r.deduction < 0 ? 'col-deduction' : 'col-muted';
+        const taxClass = r.taxes > 0 ? 'col-taxes' : 'col-muted';
+        html += `<tr class="waterfall-row">
           <td><strong>${r.name}</strong></td>
           <td>${core.formatCurrency(r.cash, curr, 'zh')}</td>
-          <td style="color:${r.deduction < 0 ? '#4ade80' : 'var(--muted)'};">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'zh') : '—'}</td>
-          <td style="color:${r.taxes > 0 ? '#f87171' : 'var(--muted)'};">${r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'zh') : '—'}</td>
+          <td class="${dedClass}">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'zh') : '—'}</td>
+          <td class="${taxClass}">${r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'zh') : '—'}</td>
           <td><strong>${core.formatCurrency(r.final, curr, 'zh')}</strong></td>
         </tr>`;
       });
-      html += `<tr style="font-weight:700; background:rgba(255,255,255,0.04); border-top: 2px solid var(--line);">
+      html += `<tr class="waterfall-row-total">
         <td>全行程总计</td>
         <td>${core.formatCurrency(res.cashTripCost, curr, 'zh')}</td>
-        <td style="color:#4ade80;">-${core.formatCurrency(res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
-        <td style="color:#f87171;">+${core.formatCurrency((res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
-        <td style="color:var(--gold); font-size:16px;">${core.formatCurrency(res.finalOutOfPocket, curr, 'zh')}</td>
+        <td class="col-deduction">-${core.formatCurrency(res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
+        <td class="col-taxes">+${core.formatCurrency((res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
+        <td class="col-final">${core.formatCurrency(res.finalOutOfPocket, curr, 'zh')}</td>
       </tr>`;
       wb.innerHTML = html;
 

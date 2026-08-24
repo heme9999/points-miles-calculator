@@ -275,33 +275,33 @@ faqItems:
       <div class="expense-grid" style="margin-top: 24px;">
         <div class="field">
           <label>Points Budget Coverage</label>
-          <div style="font-size: 20px; font-weight: 700; color: #38bdf8; font-family: var(--font-mono);" id="valCoverageRate">56.5%</div>
+          <div style="font-size: 20px; font-weight: 700; color: #0284c7; font-family: var(--font-mono);" id="valCoverageRate">56.5%</div>
           <div class="unit">Percentage of total trip budget covered by points</div>
         </div>
         <div class="field">
           <label>Per-Person Final Cash Cost</label>
-          <div style="font-size: 20px; font-weight: 700; color: var(--gold); font-family: var(--font-mono);" id="valPerPersonCash">$1,523</div>
+          <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valPerPersonCash">$1,523</div>
           <div class="unit" id="unitPerPerson">Split across 3 travelers (was $3,503/person)</div>
         </div>
         <div class="field">
           <label>Daily Final Cash Cost</label>
-          <div style="font-size: 20px; font-weight: 700; color: var(--gold); font-family: var(--font-mono);" id="valDailyCash">$457</div>
+          <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valDailyCash">$457</div>
           <div class="unit" id="unitDaily">Split across 10 days (was $1,051/day)</div>
         </div>
         <div class="field">
           <label>Flight Redemption Value (CPP)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #4ade80; font-family: var(--font-mono);" id="valFlightCpp">1.80 ¢/pt</div>
+          <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valFlightCpp">1.80 ¢/pt</div>
           <div class="unit" id="valFlightLocal">Net value per airline mile</div>
         </div>
         <div class="field">
           <label>Hotel Redemption Value (CPP)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #4ade80; font-family: var(--font-mono);" id="valHotelCpp">2.25 ¢/pt</div>
+          <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valHotelCpp">2.25 ¢/pt</div>
           <div class="unit" id="valHotelLocal">Net value per hotel point</div>
         </div>
       </div>
 
       <!-- Structured Waterfall Table -->
-      <h3 style="margin: 28px 0 12px 0; font-size: 15px; color: var(--text);">📊 Out-of-Pocket Cash Flow Waterfall Table</h3>
+      <h3 style="margin: 28px 0 12px 0; font-size: 15px; color: #0e1a2b;">📊 Out-of-Pocket Cash Flow Waterfall Table</h3>
       <div class="responsive-table-wrapper">
         <table class="waterfall-table">
           <thead>
@@ -707,20 +707,22 @@ faqItems:
       let html = '';
       rows.forEach(r => {
         if (r.cash === 0 && r.final === 0) return;
-        html += `<tr>
+        const dedClass = r.deduction < 0 ? 'col-deduction' : 'col-muted';
+        const taxClass = r.taxes > 0 ? 'col-taxes' : 'col-muted';
+        html += `<tr class="waterfall-row">
           <td><strong>${r.name}</strong></td>
           <td>${core.formatCurrency(r.cash, curr, 'en')}</td>
-          <td style="color:${r.deduction < 0 ? '#4ade80' : 'var(--muted)'};">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'en') : '—'}</td>
-          <td style="color:${r.taxes > 0 ? '#f87171' : 'var(--muted)'};">${r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'en') : '—'}</td>
+          <td class="${dedClass}">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'en') : '—'}</td>
+          <td class="${taxClass}">${r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'en') : '—'}</td>
           <td><strong>${core.formatCurrency(r.final, curr, 'en')}</strong></td>
         </tr>`;
       });
-      html += `<tr style="font-weight:700; background:rgba(255,255,255,0.04); border-top: 2px solid var(--line);">
+      html += `<tr class="waterfall-row-total">
         <td>Total Trip Budget</td>
         <td>${core.formatCurrency(res.cashTripCost, curr, 'en')}</td>
-        <td style="color:#4ade80;">-${core.formatCurrency(res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'en')}</td>
-        <td style="color:#f87171;">+${core.formatCurrency((res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'en')}</td>
-        <td style="color:var(--gold); font-size:16px;">${core.formatCurrency(res.finalOutOfPocket, curr, 'en')}</td>
+        <td class="col-deduction">-${core.formatCurrency(res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'en')}</td>
+        <td class="col-taxes">+${core.formatCurrency((res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'en')}</td>
+        <td class="col-final">${core.formatCurrency(res.finalOutOfPocket, curr, 'en')}</td>
       </tr>`;
       wb.innerHTML = html;
 
