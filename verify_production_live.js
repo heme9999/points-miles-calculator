@@ -272,10 +272,17 @@ async function verifyLiveProduction() {
 
   // Trip Cost After Points Live Calculation (CN)
   console.log('\n--- Trip Cost After Points Live Calculation (CN & EN) ---');
-  const tcCnUrl = `${prodBase}/calculators/trip-cost-after-points/?currency=CNY&days=7&adults=2&children=1&fCash=12000&hCash=15000&dCash=7000&tCash=3500&actCash=3000&visaCash=1200&simCash=300&othCash=2000&fMiles=75000&fTaxes=2100&hPoints=90000&hTaxes=300&hResort=0&fBonus=20&fRatio=1&fInc=1000&audit=${ts}`;
+  const tcCnUrl = `${prodBase}/calculators/trip-cost-after-points/?currency=CNY&days=7&adults=2&children=1&fCash=12000&hCash=15000&dCash=7000&tCash=3500&actCash=3000&visaCash=1200&simCash=300&othCash=2000&fMiles=75000&fTaxes=2100&hPoints=90000&hTaxes=300&hResort=0&fBonus=20&fRatio=1&fInc=1000`;
   const tcCpHtml = (await fetch(tcCnUrl)).data;
   const tcCnDom = new JSDOM(tcCpHtml, { runScripts: "dangerously", resources: "usable", url: tcCnUrl });
-  await new Promise(r => setTimeout(r, 400));
+  
+  // Wait up to 3s for clientside scripts to load and calculate
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    const fp = tcCnDom.window.document.getElementById('cardFinalPrice')?.textContent;
+    if (fp === '¥19,400') break;
+  }
+
   const tcCnFinal = tcCnDom.window.document.getElementById('cardFinalPrice')?.textContent;
   const tcCnSavings = tcCnDom.window.document.getElementById('badgeTotalSavings')?.textContent;
   if (tcCnFinal !== '¥19,400' || tcCnSavings !== '省 ¥24,600') {
@@ -295,10 +302,16 @@ async function verifyLiveProduction() {
   }
 
   // Trip Cost After Points Live Calculation (EN)
-  const tcEnUrl = `${prodBase}/en/calculators/trip-cost-after-points/?currency=USD&days=10&adults=2&children=1&fCash=3600&hCash=2700&dCash=1500&carCash=700&gasCash=450&actCash=900&visaCash=300&simCash=60&othCash=300&fMiles=180000&fTaxes=360&hPoints=120000&hTaxes=0&hResort=0&audit=${ts}`;
+  const tcEnUrl = `${prodBase}/en/calculators/trip-cost-after-points/?currency=USD&days=10&adults=2&children=1&fCash=3600&hCash=2700&dCash=1500&carCash=700&gasCash=450&actCash=900&visaCash=300&simCash=60&othCash=300&fMiles=180000&fTaxes=360&hPoints=120000&hTaxes=0&hResort=0`;
   const tcEnHtml = (await fetch(tcEnUrl)).data;
   const tcEnDom = new JSDOM(tcEnHtml, { runScripts: "dangerously", resources: "usable", url: tcEnUrl });
-  await new Promise(r => setTimeout(r, 400));
+  
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    const fp = tcEnDom.window.document.getElementById('cardFinalPrice')?.textContent;
+    if (fp === '$4,570') break;
+  }
+
   const tcEnFinal = tcEnDom.window.document.getElementById('cardFinalPrice')?.textContent;
   const tcEnSavings = tcEnDom.window.document.getElementById('badgeTotalSavings')?.textContent;
   if (tcEnFinal !== '$4,570' || tcEnSavings !== 'Saved $5,940') {
