@@ -446,6 +446,15 @@ async function verifyLiveProduction() {
     console.log('Live EN Trip Cost label check: 0 instances of "Transfer Bonus Bonus" (Passed)');
   }
 
+  // Live CSS Responsive Rules Verification (Phase 9.4.4)
+  const liveCssRes = await fetch(`${prodBase}/assets/style.css?v=${ts}`, { headers: { 'Cache-Control': 'no-cache' } });
+  if (liveCssRes.status !== 200 || !liveCssRes.data.includes('.ticket .main > *') || !liveCssRes.data.includes('repeat(2, minmax(0, 1fr))')) {
+    console.error('ERROR: Live style.css missing Phase 9.4.4 responsive containment rules');
+    failures++;
+  } else {
+    console.log('Live style.css responsive containment rules verified (Passed)');
+  }
+
   // Case Studies Page Live Verification
   const caseUrls = [
     '/examples/usa-west-coast-family-trip-with-points/',

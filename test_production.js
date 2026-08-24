@@ -1,5 +1,7 @@
 const { JSDOM } = require('jsdom');
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 
 function fetch(url, customHeaders = {}) {
   return new Promise((resolve, reject) => {
@@ -606,6 +608,27 @@ async function runTests() {
     failures++;
   } else {
     console.log('EN Trip Cost label typo check: 0 instances of "Transfer Bonus Bonus" (Passed)');
+  }
+
+  // Responsive Containment CSS Assertions (Phase 9.4.4)
+  const cssFile = fs.readFileSync(path.join(__dirname, 'src/assets/style.css'), 'utf8');
+  if (!cssFile.includes('.ticket .main > *') || !cssFile.includes('min-width: 0')) {
+    console.error('ERROR: CSS missing .ticket .main > * { min-width: 0; }');
+    failures++;
+  } else {
+    console.log('CSS .ticket .main child min-width: 0 containment verified (Passed)');
+  }
+  if (!cssFile.includes('.plan-comparison-grid') || !cssFile.includes('repeat(2, minmax(0, 1fr))')) {
+    console.error('ERROR: CSS plan-comparison-grid missing minmax(0, 1fr)');
+    failures++;
+  } else {
+    console.log('CSS plan-comparison-grid minmax(0, 1fr) verified (Passed)');
+  }
+  if (!cssFile.includes('repeat(auto-fit, minmax(min(220px, 100%), 1fr))')) {
+    console.error('ERROR: CSS expense-grid missing minmax(min(220px, 100%), 1fr)');
+    failures++;
+  } else {
+    console.log('CSS expense-grid auto-fit responsive columns verified (Passed)');
   }
 
   // Case Studies Page Verification
