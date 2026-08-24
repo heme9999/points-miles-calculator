@@ -335,15 +335,6 @@ async function verifyLiveProduction() {
     console.log('Live Chinese homepage valuation check: 0 instances of 1.5 元/里 or 15,000 元 (Passed)');
   }
 
-  // Verify no erroneous "1.5 元/里" or "15,000 元" on Live Chinese homepage
-  const cnHomeHtml = cnHome.data;
-  if (cnHomeHtml.includes('1.5 元/里') || cnHomeHtml.includes('15,000 元')) {
-    console.error('ERROR: Live Chinese homepage contains erroneous 1.5 元/里 or 15,000 元');
-    failures++;
-  } else {
-    console.log('Live Chinese homepage valuation check: 0 instances of 1.5 元/里 or 15,000 元 (Passed)');
-  }
-
   // Trip Cost After Points Live Calculation (CN)
   console.log('\n--- Trip Cost After Points Live Calculation (CN & EN) ---');
   const tcCnUrl = `${prodBase}/calculators/trip-cost-after-points/?currency=CNY&days=7&adults=2&children=1&fCash=12000&hCash=15000&dCash=7000&tCash=3500&actCash=3000&visaCash=1200&simCash=300&othCash=2000&fMiles=60000&fBal=10000&fTaxes=800&hPoints=50000&hTaxes=0&hResort=0&fBonus=20&fRatio=1&fInc=1000&fTransBal=42000&audit=${ts}`;
