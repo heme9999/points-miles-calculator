@@ -120,8 +120,19 @@ breadcrumbs:
   </div>
 </div>
 
+<script src="/assets/calculator-core.js?v=9.4.2"></script>
 <script>
   const $ = id => document.getElementById(id);
+  const core = window.CalculatorCore;
+
+  if (!core) {
+    console.error('CalculatorCore failed to load.');
+    const explainEl = $('explain');
+    if (explainEl) {
+      explainEl.textContent = '计算引擎加载失败，请刷新页面重试。';
+      explainEl.style.color = '#f87171';
+    }
+  }
 
   const parseParam = (key, elId, maxVal = 1000000000) => {
     const params = new URLSearchParams(window.location.search);
@@ -151,6 +162,9 @@ breadcrumbs:
   parseParamWithFallback('increment', 'inc', 'increment');
 
   function calcBonus(){
+    if (!core) {
+      return;
+    }
     let target = parseFloat($('targetMiles').value) || 0;
     let baseRatio = parseFloat($('baseRatio').value) || 0;
     let bonus = parseFloat($('bonusPercent').value) || 0;
@@ -168,20 +182,19 @@ breadcrumbs:
       return;
     }
     
-    const multiplier = baseRatio * (1 + bonus/100);
-    const rawPoints = target / multiplier;
-    
-    // Round up to nearest increment
-    let actualPoints = Math.ceil(rawPoints / increment) * increment;
-    
-    $('rawPoints').textContent = rawPoints.toLocaleString('zh-CN', {maximumFractionDigits:1});
-    $('actualPoints').textContent = actualPoints.toLocaleString('zh-CN', {maximumFractionDigits:0});
+    const result = core.calculateTransferRequirement({
+      awardMilesRequired: target,
+      baseTransferRatio: baseRatio,
+      transferBonusPercent: bonus,
+      transferIncrement: increment,
+      airlineMilesBalance: 0
+    });
+
+    $('rawPoints').textContent = result.rawBankPointsNeeded.toLocaleString('zh-CN', {maximumFractionDigits:1});
+    $('actualPoints').textContent = result.bankPointsNeeded.toLocaleString('zh-CN', {maximumFractionDigits:0});
     $('actualPoints').classList.add('win');
     
-    const finalMiles = actualPoints * multiplier;
-    const leftover = finalMiles - target;
-    
-    $('explain').textContent = `你需要从银行转出 ${actualPoints.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分，加上 ${bonus}% 加赠后，将得到 ${finalMiles.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里程，比你目标所需的刚好超出了 ${leftover.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里程。`;
+    $('explain').textContent = `你需要从银行转出 ${result.bankPointsNeeded.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分，加上 ${bonus}% 加赠后，将得到 ${result.milesReceived.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里程，比你目标所需的刚好超出了 ${result.excessMilesAfterTransfer.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里程。`;
   }
 
   ['targetMiles','baseRatio','bonusPercent','increment'].forEach(id => {

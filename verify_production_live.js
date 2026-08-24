@@ -131,7 +131,7 @@ async function verifyLiveProduction() {
     { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points and Miles Calculators | Points & Miles Calculator' },
     { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Points to Dollars Calculator | Miles Value | Points & Miles Calculator' },
     { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Award Travel | Points & Miles Calculator' },
-    { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles | Points & Miles Calculator' },
+    { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
     { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
@@ -143,7 +143,7 @@ async function verifyLiveProduction() {
   ];
 
   for (const p of pagesToCheck) {
-    const pageRes = await fetch(`${prodBase}${p.path}?audit=${ts}`);
+    const pageRes = await fetch(`${prodBase}${p.path}?audit=${ts}`, { headers: { 'Cache-Control': 'no-cache' } });
     const doc = new JSDOM(pageRes.data).window.document;
     const h1Els = doc.querySelectorAll('h1');
     if (h1Els.length !== 1) {
@@ -160,8 +160,15 @@ async function verifyLiveProduction() {
       console.error(`ERROR: ${p.path} Title mismatch. Expected "${p.expectedTitle}", got "${doc.title}"`);
       failures++;
     }
-    if (doc.title.includes('||') || (doc.title.match(/Points & Miles Calculator/g) || []).length > 1) {
+    if (doc.title.includes('||')) {
       console.error(`ERROR: Bad title formatting at ${p.path}: ${doc.title}`);
+      failures++;
+    }
+    if (doc.title.includes('Points & Miles | Points & Miles Calculator') ||
+        doc.title.includes('Points & Miles Calculator | Points & Miles Calculator') ||
+        (doc.title.match(/Points & Miles Calculator/g) || []).length > 1 ||
+        (doc.title.match(/里程账/g) || []).length > 1) {
+      console.error(`ERROR: Duplicate brand in title at ${p.path}: ${doc.title}`);
       failures++;
     }
     console.log(`Verified ${p.path} -> Title (${doc.title.length} chars): "${doc.title}", H1: "${h1Els[0] ? h1Els[0].textContent.trim() : ''}"`);
@@ -169,7 +176,7 @@ async function verifyLiveProduction() {
 
   // 5. Valuation Wording & Assumptions
   console.log('\n5. Verifying Points to Dollars Valuation Assumptions & Disclaimers on Live Production...');
-  const enP2DRes = await fetch(`${prodBase}/en/calculators/points-to-dollars/?audit=${ts}`);
+  const enP2DRes = await fetch(`${prodBase}/en/calculators/points-to-dollars/?audit=${ts}`, { headers: { 'Cache-Control': 'no-cache' } });
   const enP2DDoc = new JSDOM(enP2DRes.data).window.document;
   const enLabel = enP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
   if (!enLabel.includes('Choose a valuation scenario (CPP)')) {
@@ -182,7 +189,7 @@ async function verifyLiveProduction() {
     failures++;
   }
 
-  const cnP2DRes = await fetch(`${prodBase}/calculators/points-to-dollars/?audit=${ts}`);
+  const cnP2DRes = await fetch(`${prodBase}/calculators/points-to-dollars/?audit=${ts}`, { headers: { 'Cache-Control': 'no-cache' } });
   const cnP2DDoc = new JSDOM(cnP2DRes.data).window.document;
   const cnLabel = cnP2DDoc.querySelector('label[for="presetValuation"]')?.textContent || '';
   if (!cnLabel.includes('选择估值情景（CPP）')) {
@@ -214,7 +221,7 @@ async function verifyLiveProduction() {
   // 6. Interactive Script Execution on Live Production
   console.log('\n6. Verifying Live Interactive Calculations & FX...');
   const p2dEnUrl = `${prodBase}/en/calculators/points-to-dollars/?totalPoints=50000&cppValue=1.5&audit=${ts}`;
-  const p2dEnHtml = (await fetch(p2dEnUrl)).data;
+  const p2dEnHtml = (await fetch(p2dEnUrl, { headers: { 'Cache-Control': 'no-cache' } })).data;
   const p2dEnDom = new JSDOM(p2dEnHtml, { runScripts: "dangerously", url: p2dEnUrl });
   await new Promise(r => setTimeout(r, 150));
   const p2dDollarVal = p2dEnDom.window.document.getElementById('dollarValue')?.textContent;
@@ -226,7 +233,7 @@ async function verifyLiveProduction() {
   }
 
   const p2dCnUrl = `${prodBase}/calculators/points-to-dollars/?points=50000&valuation=0.105&audit=${ts}`;
-  const p2dCpHtml = (await fetch(p2dCnUrl)).data;
+  const p2dCpHtml = (await fetch(p2dCnUrl, { headers: { 'Cache-Control': 'no-cache' } })).data;
   const p2dCnDom = new JSDOM(p2dCpHtml, { runScripts: "dangerously", url: p2dCnUrl });
   await new Promise(r => setTimeout(r, 150));
   const p2dCnVal = p2dCnDom.window.document.getElementById('dollarValue')?.textContent;
@@ -238,7 +245,7 @@ async function verifyLiveProduction() {
   }
 
   const p2dFxUrl = `${prodBase}/calculators/points-to-dollars/?points=50000&fx=7.2&scenario=1.5&audit=${ts}`;
-  const p2dFxHtml = (await fetch(p2dFxUrl)).data;
+  const p2dFxHtml = (await fetch(p2dFxUrl, { headers: { 'Cache-Control': 'no-cache' } })).data;
   const p2dFxDom = new JSDOM(p2dFxHtml, { runScripts: "dangerously", url: p2dFxUrl });
   await new Promise(r => setTimeout(r, 150));
   const p2dFxVal = p2dFxDom.window.document.getElementById('dollarValue')?.textContent;
@@ -249,16 +256,83 @@ async function verifyLiveProduction() {
     console.log('Live CN Points to Dollars calculation (FX 7.2 recovery): ¥5,400 (Passed)');
   }
 
-  const transUrl = `${prodBase}/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000&audit=${ts}`;
-  const transHtml = (await fetch(transUrl)).data;
-  const transDom = new JSDOM(transHtml, { runScripts: "dangerously", url: transUrl });
-  await new Promise(r => setTimeout(r, 150));
-  const transRaw = transDom.window.document.getElementById('rawPoints')?.textContent;
-  if (transRaw !== '50,000') {
-    console.error(`ERROR: Live Transfer Bonus calculation failed. Expected 50,000, got ${transRaw}`);
+  // Live Transfer Bonus Verification (ZH Standard, ZH Legacy, EN Standard, EN Legacy)
+  const tbZhStdUrl = `${prodBase}/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000&audit=${ts}`;
+  const tbZhStdHtml = (await fetch(tbZhStdUrl, { headers: { 'Cache-Control': 'no-cache' } })).data;
+  const tbZhStdDom = new JSDOM(tbZhStdHtml, { runScripts: "dangerously", resources: "usable", url: tbZhStdUrl });
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (tbZhStdDom.window.document.getElementById('actualPoints')?.textContent === '50,000') break;
+  }
+  const tbZhStdActual = tbZhStdDom.window.document.getElementById('actualPoints')?.textContent;
+  if (tbZhStdActual !== '50,000') {
+    console.error(`ERROR: Live ZH Transfer Bonus standard params failed. Expected 50,000, got ${tbZhStdActual}`);
     failures++;
   } else {
-    console.log('Live Transfer Bonus calculation: 50,000 (Passed)');
+    console.log('Live ZH Transfer Bonus standard params calculation: 50,000 (Passed)');
+  }
+
+  const tbZhLegacyUrl = `${prodBase}/calculators/transfer-bonus/?req=60000&ratio=1&bonus=20&inc=1000&audit=${ts}`;
+  const tbZhLegacyHtml = (await fetch(tbZhLegacyUrl, { headers: { 'Cache-Control': 'no-cache' } })).data;
+  const tbZhLegacyDom = new JSDOM(tbZhLegacyHtml, { runScripts: "dangerously", resources: "usable", url: tbZhLegacyUrl });
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (tbZhLegacyDom.window.document.getElementById('actualPoints')?.textContent === '50,000') break;
+  }
+  const tbZhLegacyActual = tbZhLegacyDom.window.document.getElementById('actualPoints')?.textContent;
+  if (tbZhLegacyActual !== '50,000') {
+    console.error(`ERROR: Live ZH Transfer Bonus legacy alias params failed. Expected 50,000, got ${tbZhLegacyActual}`);
+    failures++;
+  } else {
+    console.log('Live ZH Transfer Bonus legacy alias params calculation: 50,000 (Passed)');
+  }
+
+  const tbEnStdUrl = `${prodBase}/en/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000&audit=${ts}`;
+  const tbEnStdHtml = (await fetch(tbEnStdUrl, { headers: { 'Cache-Control': 'no-cache' } })).data;
+  const tbEnStdDom = new JSDOM(tbEnStdHtml, { runScripts: "dangerously", resources: "usable", url: tbEnStdUrl });
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (tbEnStdDom.window.document.getElementById('actualPoints')?.textContent === '50,000') break;
+  }
+  const tbEnStdActual = tbEnStdDom.window.document.getElementById('actualPoints')?.textContent;
+  if (tbEnStdActual !== '50,000') {
+    console.error(`ERROR: Live EN Transfer Bonus standard params failed. Expected 50,000, got ${tbEnStdActual}`);
+    failures++;
+  } else {
+    console.log('Live EN Transfer Bonus standard params calculation: 50,000 (Passed)');
+  }
+
+  const tbEnLegacyUrl = `${prodBase}/en/calculators/transfer-bonus/?req=60000&ratio=1&bonus=20&inc=1000&audit=${ts}`;
+  const tbEnLegacyHtml = (await fetch(tbEnLegacyUrl, { headers: { 'Cache-Control': 'no-cache' } })).data;
+  const tbEnLegacyDom = new JSDOM(tbEnLegacyHtml, { runScripts: "dangerously", resources: "usable", url: tbEnLegacyUrl });
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (tbEnLegacyDom.window.document.getElementById('actualPoints')?.textContent === '50,000') break;
+  }
+  const tbEnLegacyActual = tbEnLegacyDom.window.document.getElementById('actualPoints')?.textContent;
+  if (tbEnLegacyActual !== '50,000') {
+    console.error(`ERROR: Live EN Transfer Bonus legacy alias params failed. Expected 50,000, got ${tbEnLegacyActual}`);
+    failures++;
+  } else {
+    console.log('Live EN Transfer Bonus legacy alias params calculation: 50,000 (Passed)');
+  }
+
+  // Live calculator-core.js HTTP 200 check
+  const coreRes = await fetch(`${prodBase}/assets/calculator-core.js?audit=${ts}`, { headers: { 'Cache-Control': 'no-cache' } });
+  if (coreRes.status !== 200) {
+    console.error(`ERROR: Live /assets/calculator-core.js returned HTTP ${coreRes.status}`);
+    failures++;
+  } else {
+    console.log('Live /assets/calculator-core.js returned HTTP 200 (Passed)');
+  }
+
+  // Verify no erroneous "1.5 元/里" or "15,000 元" on Live Chinese homepage
+  const cnHomeHtml = cnHome.data;
+  if (cnHomeHtml.includes('1.5 元/里') || cnHomeHtml.includes('15,000 元')) {
+    console.error('ERROR: Live Chinese homepage contains erroneous 1.5 元/里 or 15,000 元');
+    failures++;
+  } else {
+    console.log('Live Chinese homepage valuation check: 0 instances of 1.5 元/里 or 15,000 元 (Passed)');
   }
 
   // Verify no erroneous "1.5 元/里" or "15,000 元" on Live Chinese homepage

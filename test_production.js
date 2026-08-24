@@ -134,11 +134,13 @@ async function runTests() {
     { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points and Miles Calculators | Points & Miles Calculator' },
     { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Points to Dollars Calculator | Miles Value | Points & Miles Calculator' },
     { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Award Travel | Points & Miles Calculator' },
+    { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
     { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
     { path: '/calculators/points-to-dollars/', expectedH1: '积分换算现金价值计算器' },
     { path: '/calculators/points-vs-cash/', expectedH1: '积分与现金兑换决策计算器' },
+    { path: '/calculators/trip-cost-after-points/', expectedH1: '积分抵扣后的旅行实际成本计算器' },
     { path: '/calculators/cents-per-point/', expectedH1: '单点价值 (CPP) 计算器' },
     { path: '/calculators/transfer-bonus/', expectedH1: '信用卡转点加赠计算器' },
   ];
@@ -174,11 +176,10 @@ async function runTests() {
       console.error(`ERROR: Double pipe detected in title at ${p.path}: ${title}`);
       failures++;
     }
-    if ((title.match(/Points & Miles Calculator/g) || []).length > 1) {
-      console.error(`ERROR: Duplicate brand in title at ${p.path}: ${title}`);
-      failures++;
-    }
-    if ((title.match(/里程账/g) || []).length > 1) {
+    if (title.includes('Points & Miles | Points & Miles Calculator') ||
+        title.includes('Points & Miles Calculator | Points & Miles Calculator') ||
+        (title.match(/Points & Miles Calculator/g) || []).length > 1 ||
+        (title.match(/里程账/g) || []).length > 1) {
       console.error(`ERROR: Duplicate brand in title at ${p.path}: ${title}`);
       failures++;
     }
@@ -413,30 +414,79 @@ async function runTests() {
     console.log(`CN Points vs Cash calculation on load: ${pvcCnCpp} (Passed)`);
   }
 
-  // Transfer Bonus Standard & Legacy Param Auto-Calculations
+  // Transfer Bonus Standard & Legacy Param Auto-Calculations (ZH & EN)
   const tbStdUrl = `${baseUrl}/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000`;
   const tbStdHtml = (await fetch(tbStdUrl)).data;
-  const tbStdDom = new JSDOM(tbStdHtml, { runScripts: "dangerously", url: tbStdUrl });
-  await new Promise(r => setTimeout(r, 100));
+  const tbStdDom = new JSDOM(tbStdHtml, { runScripts: "dangerously", resources: "usable", url: tbStdUrl });
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (tbStdDom.window.document.getElementById('actualPoints')?.textContent === '50,000') break;
+  }
   const rawPoints = tbStdDom.window.document.getElementById('rawPoints')?.textContent;
   const actualPoints = tbStdDom.window.document.getElementById('actualPoints')?.textContent;
-  if (rawPoints !== '50,000' || actualPoints !== '50,000') {
-    console.error(`ERROR: Transfer Bonus standard params failed. Expected 50,000/50,000, got ${rawPoints}/${actualPoints}`);
+  const explain = tbStdDom.window.document.getElementById('explain')?.textContent || '';
+  if (rawPoints !== '50,000' || actualPoints !== '50,000' || !explain.includes('50,000') || !explain.includes('60,000')) {
+    console.error(`ERROR: ZH Transfer Bonus standard params failed. Expected 50,000/50,000, got ${rawPoints}/${actualPoints}, explain: ${explain}`);
     failures++;
   } else {
-    console.log(`Transfer Bonus standard params calculation: ${rawPoints}/${actualPoints} (Passed)`);
+    console.log(`ZH Transfer Bonus standard params calculation: ${rawPoints}/${actualPoints} (Passed)`);
   }
 
   const tbLegacyUrl = `${baseUrl}/calculators/transfer-bonus/?req=60000&ratio=1&bonus=20&inc=1000`;
   const tbLegacyHtml = (await fetch(tbLegacyUrl)).data;
-  const tbLegacyDom = new JSDOM(tbLegacyHtml, { runScripts: "dangerously", url: tbLegacyUrl });
-  await new Promise(r => setTimeout(r, 100));
+  const tbLegacyDom = new JSDOM(tbLegacyHtml, { runScripts: "dangerously", resources: "usable", url: tbLegacyUrl });
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (tbLegacyDom.window.document.getElementById('actualPoints')?.textContent === '50,000') break;
+  }
   const legacyRaw = tbLegacyDom.window.document.getElementById('rawPoints')?.textContent;
-  if (legacyRaw !== '50,000') {
-    console.error(`ERROR: Transfer Bonus legacy alias params failed. Expected 50,000, got ${legacyRaw}`);
+  const legacyActual = tbLegacyDom.window.document.getElementById('actualPoints')?.textContent;
+  if (legacyRaw !== '50,000' || legacyActual !== '50,000') {
+    console.error(`ERROR: ZH Transfer Bonus legacy alias params failed. Expected 50,000/50,000, got ${legacyRaw}/${legacyActual}`);
     failures++;
   } else {
-    console.log(`Transfer Bonus legacy alias params calculation: ${legacyRaw} (Passed)`);
+    console.log(`ZH Transfer Bonus legacy alias params calculation: ${legacyRaw}/${legacyActual} (Passed)`);
+  }
+
+  const tbEnStdUrl = `${baseUrl}/en/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000`;
+  const tbEnStdHtml = (await fetch(tbEnStdUrl)).data;
+  const tbEnStdDom = new JSDOM(tbEnStdHtml, { runScripts: "dangerously", resources: "usable", url: tbEnStdUrl });
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (tbEnStdDom.window.document.getElementById('actualPoints')?.textContent === '50,000') break;
+  }
+  const enRawPoints = tbEnStdDom.window.document.getElementById('rawPoints')?.textContent;
+  const enActualPoints = tbEnStdDom.window.document.getElementById('actualPoints')?.textContent;
+  const enExplain = tbEnStdDom.window.document.getElementById('explain')?.textContent || '';
+  if (enRawPoints !== '50,000' || enActualPoints !== '50,000' || !enExplain.includes('50,000') || !enExplain.includes('60,000')) {
+    console.error(`ERROR: EN Transfer Bonus standard params failed. Expected 50,000/50,000, got ${enRawPoints}/${enActualPoints}, explain: ${enExplain}`);
+    failures++;
+  } else {
+    console.log(`EN Transfer Bonus standard params calculation: ${enRawPoints}/${enActualPoints} (Passed)`);
+  }
+
+  const tbEnLegacyUrl = `${baseUrl}/en/calculators/transfer-bonus/?req=60000&ratio=1&bonus=20&inc=1000`;
+  const tbEnLegacyHtml = (await fetch(tbEnLegacyUrl)).data;
+  const tbEnLegacyDom = new JSDOM(tbEnLegacyHtml, { runScripts: "dangerously", resources: "usable", url: tbEnLegacyUrl });
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (tbEnLegacyDom.window.document.getElementById('actualPoints')?.textContent === '50,000') break;
+  }
+  const enLegacyRaw = tbEnLegacyDom.window.document.getElementById('rawPoints')?.textContent;
+  const enLegacyActual = tbEnLegacyDom.window.document.getElementById('actualPoints')?.textContent;
+  if (enLegacyRaw !== '50,000' || enLegacyActual !== '50,000') {
+    console.error(`ERROR: EN Transfer Bonus legacy alias params failed. Expected 50,000/50,000, got ${enLegacyRaw}/${enLegacyActual}`);
+    failures++;
+  } else {
+    console.log(`EN Transfer Bonus legacy alias params calculation: ${enLegacyRaw}/${enLegacyActual} (Passed)`);
+  }
+
+  // Verify Transfer Bonus Loads calculator-core.js
+  if (!tbStdHtml.includes('calculator-core.js') || !tbEnStdHtml.includes('calculator-core.js')) {
+    console.error('ERROR: Transfer Bonus templates do not load calculator-core.js');
+    failures++;
+  } else {
+    console.log('Transfer Bonus calculator-core.js inclusion verified (Passed)');
   }
 
   // Verify no erroneous "1.5 元/里" or "15,000 元" on Chinese homepage

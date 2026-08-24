@@ -120,8 +120,19 @@ breadcrumbs:
   </div>
 </div>
 
+<script src="/assets/calculator-core.js?v=9.4.2"></script>
 <script>
   const $ = id => document.getElementById(id);
+  const core = window.CalculatorCore;
+
+  if (!core) {
+    console.error('CalculatorCore failed to load.');
+    const explainEl = $('explain');
+    if (explainEl) {
+      explainEl.textContent = 'Calculation engine failed to load. Please refresh the page.';
+      explainEl.style.color = '#f87171';
+    }
+  }
 
   const parseParam = (key, elId, maxVal = 1000000000) => {
     const params = new URLSearchParams(window.location.search);
@@ -151,6 +162,9 @@ breadcrumbs:
   parseParamWithFallback('increment', 'inc', 'increment');
 
   function calcBonus(){
+    if (!core) {
+      return;
+    }
     let target = parseFloat($('targetMiles').value) || 0;
     let baseRatio = parseFloat($('baseRatio').value) || 0;
     let bonus = parseFloat($('bonusPercent').value) || 0;
@@ -168,19 +182,19 @@ breadcrumbs:
       return;
     }
     
-    const multiplier = baseRatio * (1 + bonus/100);
-    const rawPoints = target / multiplier;
-    
-    let actualPoints = Math.ceil(rawPoints / increment) * increment;
-    
-    $('rawPoints').textContent = rawPoints.toLocaleString('en-US', {maximumFractionDigits:1});
-    $('actualPoints').textContent = actualPoints.toLocaleString('en-US', {maximumFractionDigits:0});
+    const result = core.calculateTransferRequirement({
+      awardMilesRequired: target,
+      baseTransferRatio: baseRatio,
+      transferBonusPercent: bonus,
+      transferIncrement: increment,
+      airlineMilesBalance: 0
+    });
+
+    $('rawPoints').textContent = result.rawBankPointsNeeded.toLocaleString('en-US', {maximumFractionDigits:1});
+    $('actualPoints').textContent = result.bankPointsNeeded.toLocaleString('en-US', {maximumFractionDigits:0});
     $('actualPoints').classList.add('win');
     
-    const finalMiles = actualPoints * multiplier;
-    const leftover = finalMiles - target;
-    
-    $('explain').textContent = `You need to transfer ${actualPoints.toLocaleString('en-US', {maximumFractionDigits:0})} bank points. With the ${bonus}% bonus, you will receive ${finalMiles.toLocaleString('en-US', {maximumFractionDigits:0})} miles, leaving you with ${leftover.toLocaleString('en-US', {maximumFractionDigits:0})} extra miles after your redemption.`;
+    $('explain').textContent = `You need to transfer ${result.bankPointsNeeded.toLocaleString('en-US', {maximumFractionDigits:0})} bank points. With the ${bonus}% bonus, you will receive ${result.milesReceived.toLocaleString('en-US', {maximumFractionDigits:0})} miles, leaving you with ${result.excessMilesAfterTransfer.toLocaleString('en-US', {maximumFractionDigits:0})} extra miles after your redemption.`;
   }
 
   ['targetMiles','baseRatio','bonusPercent','increment'].forEach(id => {

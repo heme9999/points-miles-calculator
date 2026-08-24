@@ -294,4 +294,48 @@ test('CalculatorCore Unit Tests - Comprehensive Suite', async (t) => {
     assert.strictEqual(state.flightRedemption.baseTransferRatio, 1.0);
   });
 
+  await t.test('9. Transfer Bonus standalone calculation (airlineMilesBalance: 0)', () => {
+    const res = CalculatorCore.calculateTransferRequirement({
+      awardMilesRequired: 60000,
+      baseTransferRatio: 1.0,
+      transferBonusPercent: 20,
+      transferIncrement: 1000,
+      airlineMilesBalance: 0
+    });
+
+    assert.strictEqual(res.remainingMilesNeeded, 60000);
+    assert.strictEqual(res.bankPointsNeeded, 50000);
+    assert.strictEqual(res.milesReceived, 60000);
+    assert.strictEqual(res.projectedAirlineMiles, 60000);
+    assert.strictEqual(res.excessMilesAfterTransfer, 0);
+  });
+
+  await t.test('10. Transfer Bonus legacy param mapping equivalence', () => {
+    const standardParams = { targetMiles: 60000, baseRatio: 1.0, bonusPercent: 20, increment: 1000 };
+    const legacyParams = { req: 60000, ratio: 1.0, bonus: 20, inc: 1000 };
+
+    const mappedFromLegacy = {
+      awardMilesRequired: legacyParams.req,
+      baseTransferRatio: legacyParams.ratio,
+      transferBonusPercent: legacyParams.bonus,
+      transferIncrement: legacyParams.inc,
+      airlineMilesBalance: 0
+    };
+
+    const mappedFromStandard = {
+      awardMilesRequired: standardParams.targetMiles,
+      baseTransferRatio: standardParams.baseRatio,
+      transferBonusPercent: standardParams.bonusPercent,
+      transferIncrement: standardParams.increment,
+      airlineMilesBalance: 0
+    };
+
+    const resLegacy = CalculatorCore.calculateTransferRequirement(mappedFromLegacy);
+    const resStd = CalculatorCore.calculateTransferRequirement(mappedFromStandard);
+
+    assert.deepStrictEqual(resLegacy, resStd);
+    assert.strictEqual(resLegacy.bankPointsNeeded, 50000);
+    assert.strictEqual(resLegacy.milesReceived, 60000);
+  });
+
 });
