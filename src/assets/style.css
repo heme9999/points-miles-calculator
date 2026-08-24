@@ -1046,6 +1046,8 @@ h3 + .faq, h2 + .faq {
   font-weight: 400;
 }
 
+.waterfall-table tfoot td,
+.waterfall-table tfoot th,
 .waterfall-row-total td,
 .waterfall-row-total th {
   background: #dbeafe !important;
@@ -1055,14 +1057,18 @@ h3 + .faq, h2 + .faq {
   border-bottom: none;
 }
 
+.waterfall-table tfoot td.col-deduction,
 .waterfall-row-total td.col-deduction {
   color: #166534 !important;
 }
 
+.waterfall-table tfoot td.col-taxes,
 .waterfall-row-total td.col-taxes {
   color: #b42318 !important;
 }
 
+.waterfall-table tfoot td:last-child,
+.waterfall-table tfoot td.col-final,
 .waterfall-row-total td:last-child,
 .waterfall-row-total td.col-final {
   color: #1e3a8a !important;

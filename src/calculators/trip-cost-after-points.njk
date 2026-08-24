@@ -333,6 +333,9 @@ faqItems:
           <tbody id="waterfallBody">
             <!-- Dynamic JS generation -->
           </tbody>
+          <tfoot id="waterfallFoot">
+            <!-- Dynamic Total Row generation -->
+          </tfoot>
         </table>
       </div>
 
@@ -714,29 +717,31 @@ faqItems:
 
       // Waterfall Table & Mobile Cards
       const wb = $('waterfallBody');
+      const wf = $('waterfallFoot');
       const cardsListEl = $('waterfallCardsList');
       const cardsTotalEl = $('waterfallCardsTotal');
       const b = res.breakdown;
       const rows = [
-        { name: '✈️ 往返机票', cash: b.flights, deduction: res.flight.enabled ? -b.flights : 0, taxes: res.flight.enabled ? res.flight.outOfPocket : 0, final: res.flight.enabled ? res.flight.outOfPocket : b.flights },
-        { name: '🏨 酒店住宿', cash: b.hotel, deduction: res.hotel.enabled ? -b.hotel : 0, taxes: res.hotel.enabled ? res.hotel.outOfPocket : 0, final: res.hotel.enabled ? res.hotel.outOfPocket : b.hotel },
-        { name: '🍜 餐饮美食', cash: b.dining, deduction: 0, taxes: 0, final: b.dining },
-        { name: '🚇 城市交通', cash: b.transit, deduction: 0, taxes: 0, final: b.transit },
-        { name: '🚗 租车费用', cash: b.carRental, deduction: 0, taxes: 0, final: b.carRental },
-        { name: '⛽ 油费与停车', cash: b.parkingTolls, deduction: 0, taxes: 0, final: b.parkingTolls },
-        { name: '🎟️ 景点与活动', cash: b.activities, deduction: 0, taxes: 0, final: b.activities },
-        { name: '📄 签证与保险', cash: b.visaInsurance, deduction: 0, taxes: 0, final: b.visaInsurance },
-        { name: '📶 电话卡与eSIM', cash: b.connectivity, deduction: 0, taxes: 0, final: b.connectivity },
-        { name: '🛍️ 其他杂费', cash: b.other, deduction: 0, taxes: 0, final: b.other }
+        { id: 'flights', name: '✈️ 往返机票', cash: b.flights, deduction: res.flight.enabled ? -b.flights : 0, taxes: res.flight.enabled ? res.flight.outOfPocket : 0, final: res.flight.enabled ? res.flight.outOfPocket : b.flights },
+        { id: 'hotel', name: '🏨 酒店住宿', cash: b.hotel, deduction: res.hotel.enabled ? -b.hotel : 0, taxes: res.hotel.enabled ? res.hotel.outOfPocket : 0, final: res.hotel.enabled ? res.hotel.outOfPocket : b.hotel },
+        { id: 'dining', name: '🍜 餐饮美食', cash: b.dining, deduction: 0, taxes: 0, final: b.dining },
+        { id: 'transit', name: '🚇 城市交通', cash: b.transit, deduction: 0, taxes: 0, final: b.transit },
+        { id: 'carRental', name: '🚗 租车费用', cash: b.carRental, deduction: 0, taxes: 0, final: b.carRental },
+        { id: 'parkingTolls', name: '⛽ 油费与停车', cash: b.parkingTolls, deduction: 0, taxes: 0, final: b.parkingTolls },
+        { id: 'activities', name: '🎟️ 景点与活动', cash: b.activities, deduction: 0, taxes: 0, final: b.activities },
+        { id: 'visaInsurance', name: '📄 签证与保险', cash: b.visaInsurance, deduction: 0, taxes: 0, final: b.visaInsurance },
+        { id: 'connectivity', name: '📶 电话卡与eSIM', cash: b.connectivity, deduction: 0, taxes: 0, final: b.connectivity },
+        { id: 'other', name: '🛍️ 其他杂费', cash: b.other, deduction: 0, taxes: 0, final: b.other }
       ];
 
-      // 1. Desktop 5-column table rendering
+      const activeRows = rows.filter(r => !(r.cash === 0 && r.deduction === 0 && r.taxes === 0 && r.final === 0));
+
+      // 1. Desktop 5-column table rendering (tbody categories + tfoot total)
       let tableHtml = '';
-      rows.forEach(r => {
-        if (r.cash === 0 && r.final === 0) return;
+      activeRows.forEach(r => {
         const dedClass = r.deduction < 0 ? 'col-deduction' : 'col-muted';
         const taxClass = r.taxes > 0 ? 'col-taxes' : 'col-muted';
-        tableHtml += `<tr class="waterfall-row">
+        tableHtml += `<tr class="waterfall-row" data-category-id="${r.id}" data-row-type="category">
           <th scope="row"><strong>${r.name}</strong></th>
           <td>${core.formatCurrency(r.cash, curr, 'zh')}</td>
           <td class="${dedClass}">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'zh') : '—'}</td>
@@ -744,25 +749,28 @@ faqItems:
           <td><strong>${core.formatCurrency(r.final, curr, 'zh')}</strong></td>
         </tr>`;
       });
-      tableHtml += `<tr class="waterfall-row-total">
+      wb.innerHTML = tableHtml;
+
+      const totalDed = res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0);
+      const totalTax = (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0);
+      const totalFootHtml = `<tr class="waterfall-row-total" data-category-id="total" data-row-type="total">
         <th scope="row">全行程总计</th>
         <td>${core.formatCurrency(res.cashTripCost, curr, 'zh')}</td>
-        <td class="col-deduction">-${core.formatCurrency(res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
-        <td class="col-taxes">+${core.formatCurrency((res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
+        <td class="col-deduction">-${core.formatCurrency(totalDed, curr, 'zh')}</td>
+        <td class="col-taxes">+${core.formatCurrency(totalTax, curr, 'zh')}</td>
         <td class="col-final">${core.formatCurrency(res.finalOutOfPocket, curr, 'zh')}</td>
       </tr>`;
-      wb.innerHTML = tableHtml;
+      if (wf) wf.innerHTML = totalFootHtml;
 
       // 2. Mobile vertical cards rendering
       if (cardsListEl && cardsTotalEl) {
         let cardsHtml = '';
-        rows.forEach(r => {
-          if (r.cash === 0 && r.final === 0) return;
+        activeRows.forEach(r => {
           const dedText = r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'zh') : '—';
           const taxText = r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'zh') : '—';
           const dedClass = r.deduction < 0 ? 'value-deduction' : 'value-muted';
           const taxClass = r.taxes > 0 ? 'value-fees' : 'value-muted';
-          cardsHtml += `<article class="waterfall-mobile-card">
+          cardsHtml += `<article class="waterfall-mobile-card" data-category-id="${r.id}" data-row-type="category">
             <h3>${r.name}</h3>
             <dl>
               <div>
@@ -786,9 +794,7 @@ faqItems:
         });
         cardsListEl.innerHTML = cardsHtml;
 
-        const totalDed = res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0);
-        const totalTax = (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0);
-        cardsTotalEl.innerHTML = `<article class="waterfall-mobile-card waterfall-mobile-card-total">
+        cardsTotalEl.innerHTML = `<article class="waterfall-mobile-card waterfall-mobile-card-total" data-category-id="total" data-row-type="total">
           <h3>📊 全行程总计 (Total Trip Budget)</h3>
           <dl>
             <div>

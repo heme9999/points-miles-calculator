@@ -592,7 +592,7 @@ async function runTests() {
     console.log('CN Waterfall Table 5-column headers verified (Passed)');
   }
 
-  // Check Table Row scope attributes
+  // Check Table Row scope & category attributes
   const cnRowThs = tcCnDom.window.document.querySelectorAll('.waterfall-table tbody th[scope="row"]');
   if (cnRowThs.length === 0) {
     console.error('ERROR: CN Waterfall Table rows missing th[scope="row"]');
@@ -609,7 +609,15 @@ async function runTests() {
     console.log(`CN Mobile cards count (${cnCards.length}) matches table rows exactly (Passed)`);
   }
 
-  // CN Total Card Check
+  // CN Total Row & Card Check
+  const cnTotalRow = tcCnDom.window.document.querySelector('#waterfallFoot .waterfall-row-total, .waterfall-table tfoot .waterfall-row-total');
+  if (!cnTotalRow) {
+    console.error('ERROR: CN Waterfall Table tfoot total row missing');
+    failures++;
+  } else {
+    console.log('CN Waterfall Table tfoot total row verified (Passed)');
+  }
+
   const cnTotalCard = tcCnDom.window.document.querySelector('#waterfallCardsTotal .waterfall-mobile-card-total');
   if (!cnTotalCard) {
     console.error('ERROR: CN Mobile Total Card missing');
@@ -645,7 +653,15 @@ async function runTests() {
     console.log(`EN Mobile cards count (${enCards.length}) matches table rows exactly (Passed)`);
   }
 
-  // EN Total Card Check
+  // EN Total Row & Card Check
+  const enTotalRow = tcEnDom.window.document.querySelector('#waterfallFoot .waterfall-row-total, .waterfall-table tfoot .waterfall-row-total');
+  if (!enTotalRow) {
+    console.error('ERROR: EN Waterfall Table tfoot total row missing');
+    failures++;
+  } else {
+    console.log('EN Waterfall Table tfoot total row verified (Passed)');
+  }
+
   const enTotalCard = tcEnDom.window.document.querySelector('#waterfallCardsTotal .waterfall-mobile-card-total');
   if (!enTotalCard) {
     console.error('ERROR: EN Mobile Total Card missing');

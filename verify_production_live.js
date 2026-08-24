@@ -445,7 +445,15 @@ async function verifyLiveProduction() {
     console.log(`Live CN Mobile cards count (${cnCards.length}) matches table rows exactly (Passed)`);
   }
 
-  // Live CN Total Card Check
+  // Live CN Total Row & Card Check
+  const cnTotalRow = tcCnDom.window.document.querySelector('#waterfallFoot .waterfall-row-total, .waterfall-table tfoot .waterfall-row-total');
+  if (!cnTotalRow) {
+    console.error('ERROR: Live CN Waterfall Table tfoot total row missing');
+    failures++;
+  } else {
+    console.log('Live CN Waterfall Table tfoot total row verified (Passed)');
+  }
+
   const cnTotalCard = tcCnDom.window.document.querySelector('#waterfallCardsTotal .waterfall-mobile-card-total');
   if (!cnTotalCard) {
     console.error('ERROR: Live CN Mobile Total Card missing');
@@ -481,7 +489,15 @@ async function verifyLiveProduction() {
     console.log(`Live EN Mobile cards count (${enCards.length}) matches table rows exactly (Passed)`);
   }
 
-  // Live EN Total Card Check
+  // Live EN Total Row & Card Check
+  const enTotalRow = tcEnDom.window.document.querySelector('#waterfallFoot .waterfall-row-total, .waterfall-table tfoot .waterfall-row-total');
+  if (!enTotalRow) {
+    console.error('ERROR: Live EN Waterfall Table tfoot total row missing');
+    failures++;
+  } else {
+    console.log('Live EN Waterfall Table tfoot total row verified (Passed)');
+  }
+
   const enTotalCard = tcEnDom.window.document.querySelector('#waterfallCardsTotal .waterfall-mobile-card-total');
   if (!enTotalCard) {
     console.error('ERROR: Live EN Mobile Total Card missing');
