@@ -2,305 +2,342 @@
 layout: base.njk
 title: 积分旅行预算计算器｜使用里程后还要花多少钱？
 description: 计算旅行全现金成本，并用航空里程、酒店积分和信用卡积分抵扣，得出实际现金支出、节省金额、积分覆盖比例和兑换CPP。
+canonical: /calculators/trip-cost-after-points/
 schemaType: WebApplication
-eyebrow: 里程账 · 工具 06
-lastModified: "2026-08-24"
 breadcrumbs:
-  - name: 计算器
+  - name: 工具箱
     url: /calculators/
-  - name: 积分旅行实际成本计算器
+  - name: 积分旅行预算计算器
+    url: /calculators/trip-cost-after-points/
+faqItems:
+  - question: 为什么用积分换票后，实际自付现金仍然不是 0？
+    answer: 常客里程通常只能抵扣航空公司运价本身（Base Fare），政府税费（如机场建设费、离境税、海关检验检疫费）以及航空公司收取的燃油附加费（YQ/YR）通常需要旅客自行刷卡支付。国际长途航班的税费从几十美元到数百美元不等，因此必须计入自付现金成本。
+  - question: 积分房是否需要支付度假村费（Resort Fee）？
+    answer: 不同酒店集团政策各异：凯悦（World of Hyatt）和希尔顿（Hilton Honors）对纯积分房免除度假村费/设施费；而万豪（Marriott Bonvoy）和洲际（IHG One Rewards）即使使用积分兑换，通常仍需在前台支付每晚 30–60 美元的度假村费。请根据您选择的酒店集团如实填写。
+  - question: 什么时候应该放弃积分、选择全现金买票？
+    answer: 当满足以下任一条件时，应优先考虑支付现金：1. 奖励票税费过高，导致净节省微乎其微甚至为负；2. 算出的单点价值（CPP）明显低于该积分的保守估值（例如航司里程低于 1.2 美分/点，或万豪积分低于 0.6 美分/点）；3. 现金票价格极便宜，且现金购票能累积大量航段与定级里程。
+  - question: 我的旅行预算数据会被上传到服务器吗？
+    answer: 不会。里程账的所有计算完全在您的浏览器本地（Clientside）运行，我们不收集、不存储、也不向任何服务器传输您的财务数据或行程隐私。
 ---
-<h1>积分抵扣后的旅行实际成本计算器</h1>
-<p class="sub">评估旅行的全现金预算，结合航空里程与酒店积分抵扣，精准计算实际自付现金、净节省金额、积分覆盖率与真实兑换价值 (CPP)。</p>
 
-<div class="currency-selector" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-  <div class="budget-toolbar" style="margin: 0;">
-    <button type="button" class="btn-action btn-action-primary" id="btnShare" aria-label="复制分享链接">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-      分享计算
-    </button>
-    <button type="button" class="btn-action" id="btnSaveLocal" aria-label="保存到本地浏览器">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      暂存数据
-    </button>
-    <button type="button" class="btn-action" id="btnCopySummary" aria-label="复制预算摘要">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      复制预算摘要
-    </button>
-    <button type="button" class="btn-action" id="btnPrint" aria-label="打印或导出PDF">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-      打印/导出
-    </button>
-    <button type="button" class="btn-action" id="btnReset" style="color: #f87171;" aria-label="清空所有输入">
-      重置
-    </button>
-  </div>
+<header class="hero">
+  <h1>积分抵扣后的旅行实际成本计算器</h1>
+  <p>全行程现金开销 vs 积分抵扣综合测算 · 清晰拆解自付税费、燃油附加费与度假村费 · 辅助多点决策</p>
+</header>
 
-  <div style="display: flex; align-items: center; gap: 8px;">
-    <label for="currency" style="font-weight: 600; font-size: 14px;">显示货币</label>
-    <select id="currency" style="padding: 6px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--surface); color: var(--paper); font-size: 14px;">
-      <option value="CNY">人民币（CNY ¥）</option>
-      <option value="USD">美元（USD $）</option>
-    </select>
-  </div>
-</div>
-
-<div id="toast" style="display: none; position: fixed; bottom: 24px; right: 24px; background: #0284c7; color: white; padding: 12px 20px; border-radius: 6px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-size: 14px; font-weight: 500;"></div>
-
-<!-- 1. 旅行基本信息 -->
-<div class="budget-section">
-  <div class="budget-section-header">
-    <h2 class="budget-section-title">
-      <span>1. 旅行基本信息</span>
-    </h2>
-    <span style="font-size: 12px; color: var(--muted);">所有费用项均为【全体旅客整段行程总价】</span>
-  </div>
-  
-  <div class="expense-grid">
-    <div class="field">
-      <label for="origin">出发地<span class="hint">选填</span></label>
-      <input type="text" id="origin" placeholder="例如: 上海 / 北京 / 洛杉矶">
-    </div>
-    <div class="field">
-      <label for="destination">目的地<span class="hint">选填</span></label>
-      <input type="text" id="destination" placeholder="例如: 东京 / 美国西海岸 / 伦敦">
-    </div>
-    <div class="field">
-      <label for="tripDays">旅行天数<span class="hint">天</span></label>
-      <input type="number" id="tripDays" value="7" min="1" max="365" step="1" inputmode="numeric">
-    </div>
-    <div class="field">
-      <label for="adults">成人人数<span class="hint">人</span></label>
-      <input type="number" id="adults" value="2" min="1" max="50" step="1" inputmode="numeric">
-    </div>
-    <div class="field">
-      <label for="children">儿童人数<span class="hint">人</span></label>
-      <input type="number" id="children" value="0" min="0" max="50" step="1" inputmode="numeric">
-    </div>
-    <div class="field">
-      <label for="travelStyle">旅行类型参考<span class="hint">仅供参考标记</span></label>
-      <select id="travelStyle">
-        <option value="custom">自定义预算</option>
-        <option value="budget">经济节约型</option>
-        <option value="comfort" selected>舒适均衡型</option>
-        <option value="luxury">高品质度假型</option>
-      </select>
-    </div>
-  </div>
-</div>
-
-<!-- 2. 全现金旅行费用 -->
-<div class="budget-section">
-  <div class="budget-section-header">
-    <h2 class="budget-section-title">
-      <span>2. 全现金旅行费用预算</span>
-    </h2>
-    <span class="badge-status badge-success" id="cashTripTotalBadge">全现金总额: ¥0</span>
-  </div>
-  <p style="font-size: 13px; color: var(--muted); margin-top: -8px; margin-bottom: 16px;">
-    请输入如果不使用任何积分时，本次旅行计划支出的现金全额（请填入全体成员的总和）。
-  </p>
-
-  <div class="expense-grid">
-    <div class="field">
-      <label for="expFlights">国际/长途机票现金价<span class="hint" id="hintExpFlights">¥ 全体总价</span></label>
-      <input type="number" id="expFlights" value="8000" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expHotel">酒店住宿现金价<span class="hint" id="hintExpHotel">¥ 全体总价</span></label>
-      <input type="number" id="expHotel" value="6000" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expDining">餐饮及日常美食<span class="hint" id="hintExpDining">¥ 全体总价</span></label>
-      <input type="number" id="expDining" value="3500" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expTransit">城际与当地公共交通<span class="hint" id="hintExpTransit">¥ 全体总价</span></label>
-      <input type="number" id="expTransit" value="1000" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expCarRental">租车及车辆租赁<span class="hint" id="hintExpCarRental">¥ 全体总价</span></label>
-      <input type="number" id="expCarRental" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expParkingTolls">燃油、停车及过路费<span class="hint" id="hintExpParkingTolls">¥ 全体总价</span></label>
-      <input type="number" id="expParkingTolls" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expActivities">景点门票、演出与游玩活动<span class="hint" id="hintExpActivities">¥ 全体总价</span></label>
-      <input type="number" id="expActivities" value="1500" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expVisaInsurance">签证办理与境外旅行保险<span class="hint" id="hintExpVisaInsurance">¥ 全体总价</span></label>
-      <input type="number" id="expVisaInsurance" value="600" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expConnectivity">境外电话卡 / 随身WiFi / eSIM<span class="hint" id="hintExpConnectivity">¥ 全体总价</span></label>
-      <input type="number" id="expConnectivity" value="200" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-    <div class="field">
-      <label for="expOther">其他杂费与应急购物预算<span class="hint" id="hintExpOther">¥ 全体总价</span></label>
-      <input type="number" id="expOther" value="500" min="0" step="1" inputmode="decimal" placeholder="0">
-    </div>
-  </div>
-</div>
-
-<!-- 3. 航空里程兑换机票 -->
-<div class="budget-section">
-  <div class="budget-section-header">
-    <h2 class="budget-section-title">
-      <span>3. 航空里程兑换机票抵扣</span>
-    </h2>
-    <label class="toggle-switch-label">
-      <input type="checkbox" id="enableFlightPoints" checked>
-      启用机票里程抵扣
-    </label>
-  </div>
-
-  <div id="flightPointsFields">
-    <div class="expense-grid">
-      <div class="field">
-        <label for="flightMilesNeeded">所需航空里程总量<span class="hint">MILES</span></label>
-        <input type="number" id="flightMilesNeeded" value="60000" min="0" step="1" inputmode="numeric" placeholder="例如: 60000">
-      </div>
-      <div class="field">
-        <label for="flightAwardTaxes">奖励机票税费与燃油附加费<span class="hint" id="hintFlightTaxes">¥ 自付现金</span></label>
-        <input type="number" id="flightAwardTaxes" value="800" min="0" step="1" inputmode="decimal" placeholder="0">
-        <div class="unit">航空公司收取的强制政府税费及燃油费</div>
-      </div>
-      <div class="field">
-        <label for="flightAwardCopay">现金加里程(Copay)现金部分<span class="hint" id="hintFlightCopay">¥ 选填</span></label>
-        <input type="number" id="flightAwardCopay" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
-      </div>
-      <div class="field">
-        <label for="flightMilesBalance">现有里程账户余额<span class="hint">选填</span></label>
-        <input type="number" id="flightMilesBalance" value="70000" min="0" step="1" inputmode="numeric" placeholder="用于校验余额">
-      </div>
-      <div class="field">
-        <label for="flightProgramName">所属常旅客计划<span class="hint">选填</span></label>
-        <input type="text" id="flightProgramName" placeholder="例如: 亚洲万里通 / 美联航 UA / 加航 Aeroplan">
-      </div>
-      <div class="field">
-        <label for="flightTransferBonus">转点加赠比例<span class="hint">% 选填</span></label>
-        <input type="number" id="flightTransferBonus" value="0" min="0" max="200" step="5" inputmode="numeric" placeholder="例如: 20 代表加赠20%">
-      </div>
+<div class="panel">
+  <!-- 1. 行程基本信息 -->
+  <div class="budget-section">
+    <div class="budget-section-header">
+      <h2 class="budget-section-title">
+        <span>1. 旅行基本信息与币种</span>
+      </h2>
     </div>
     
-    <div id="flightRedemptionSummary" style="margin-top: 14px; padding: 12px 16px; background: rgba(2, 132, 199, 0.08); border-left: 3px solid #38bdf8; border-radius: 4px; font-size: 13.5px;">
-      <!-- Dynamic JS content -->
-    </div>
-  </div>
-</div>
-
-<!-- 4. 酒店积分兑换住宿 -->
-<div class="budget-section">
-  <div class="budget-section-header">
-    <h2 class="budget-section-title">
-      <span>4. 酒店积分兑换住宿抵扣</span>
-    </h2>
-    <label class="toggle-switch-label">
-      <input type="checkbox" id="enableHotelPoints" checked>
-      启用酒店积分抵扣
-    </label>
-  </div>
-
-  <div id="hotelPointsFields">
     <div class="expense-grid">
       <div class="field">
-        <label for="hotelPointsNeeded">所需酒店积分总量<span class="hint">POINTS</span></label>
-        <input type="number" id="hotelPointsNeeded" value="50000" min="0" step="1" inputmode="numeric" placeholder="例如: 50000">
+        <label for="origin">出发地<span class="hint">选填</span></label>
+        <input type="text" id="origin" placeholder="例如: 北京 / 上海 / 广州">
       </div>
       <div class="field">
-        <label for="hotelAwardTaxes">积分房税费及服务费<span class="hint" id="hintHotelTaxes">¥ 自付现金</span></label>
-        <input type="number" id="hotelAwardTaxes" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
-        <div class="unit">大部分集团免税，部分地区收地方税</div>
+        <label for="destination">目的地<span class="hint">选填</span></label>
+        <input type="text" id="destination" placeholder="例如: 东京 / 洛杉矶 / 巴黎">
       </div>
       <div class="field">
-        <label for="hotelResortFees">不可减免的度假村/目的地费<span class="hint" id="hintHotelResort">¥ 自付现金</span></label>
-        <input type="number" id="hotelResortFees" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
-        <div class="unit">凯悦/希尔顿积分房通常免收，万豪/IHG需自理</div>
+        <label for="tripDays">行程总天数<span class="hint">必填</span></label>
+        <input type="number" id="tripDays" value="7" min="1" max="365" step="1" inputmode="numeric">
       </div>
       <div class="field">
-        <label for="hotelCashCopay">积分加现金(Points+Cash)现金部分<span class="hint" id="hintHotelCopay">¥ 选填</span></label>
-        <input type="number" id="hotelCashCopay" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+        <label for="adults">同行成人数<span class="hint">必填</span></label>
+        <input type="number" id="adults" value="2" min="1" max="50" step="1" inputmode="numeric">
       </div>
       <div class="field">
-        <label for="hotelPointsBalance">现有酒店积分余额<span class="hint">选填</span></label>
-        <input type="number" id="hotelPointsBalance" value="60000" min="0" step="1" inputmode="numeric" placeholder="用于校验余额">
+        <label for="children">同行儿童数<span class="hint">选填</span></label>
+        <input type="number" id="children" value="0" min="0" max="50" step="1" inputmode="numeric">
       </div>
       <div class="field">
-        <label for="hotelProgramName">酒店常客计划<span class="hint">选填</span></label>
-        <input type="text" id="hotelProgramName" placeholder="例如: 凯悦 Hyatt / 万豪 Bonvoy / 洲际 IHG">
+        <label for="currency">计价货币<span class="hint">CURRENCY</span></label>
+        <select id="currency">
+          <option value="CNY" selected>人民币 (CNY ¥)</option>
+          <option value="USD">美元 (USD $)</option>
+        </select>
       </div>
-    </div>
-
-    <div id="hotelRedemptionSummary" style="margin-top: 14px; padding: 12px 16px; background: rgba(2, 132, 199, 0.08); border-left: 3px solid #38bdf8; border-radius: 4px; font-size: 13.5px;">
-      <!-- Dynamic JS content -->
-    </div>
-  </div>
-</div>
-
-<!-- 5. 结果计算区 -->
-<div class="ticket" aria-live="polite" style="margin-top: 30px;">
-  <div class="main">
-    <h2 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gold);">旅行成本与积分抵扣对比报告</h2>
-
-    <!-- 双方案并排对比 -->
-    <div class="plan-comparison-grid">
-      <div class="plan-card">
-        <div class="plan-card-title">全现金购票与订房方案</div>
-        <div class="plan-card-price" id="cardCashPrice">¥21,300</div>
-        <div style="font-size: 13px; color: var(--muted);">完全不消耗任何里程或积分</div>
-        <ul class="plan-metrics-list">
-          <li><span>人均全现金成本:</span><strong id="metricCashPerPerson">¥10,650</strong></li>
-          <li><span>日均全现金成本:</span><strong id="metricCashDaily">¥3,043</strong></li>
-          <li><span>机票现金占总额:</span><strong id="metricCashFlightPct">37.6%</strong></li>
-          <li><span>酒店现金占总额:</span><strong id="metricCashHotelPct">28.2%</strong></li>
-        </ul>
+      <div class="field" id="fieldFx">
+        <label for="fxRate">美元兑人民币参考汇率<span class="hint">FX RATE</span></label>
+        <input type="number" id="fxRate" value="7.0" min="1" max="20" step="0.05" inputmode="decimal">
+        <div class="unit">用于将美分估值 (CPP) 准确换算为人民币单点价值</div>
       </div>
-
-      <div class="plan-card highlight">
-        <div class="plan-card-title">✨ 积分抵扣后的实际自付方案</div>
-        <div class="plan-card-price" id="cardFinalPrice">¥8,100</div>
-        <div style="font-size: 13px; color: #4ade80;">累计节省 <span id="badgeTotalSavings">¥13,200</span> (覆盖 <span id="badgeCoveragePct">62.0%</span>)</div>
-        <ul class="plan-metrics-list">
-          <li><span>人均实际自付现金:</span><strong id="metricFinalPerPerson">¥4,050</strong></li>
-          <li><span>日均实际自付现金:</span><strong id="metricFinalDaily">¥1,157</strong></li>
-          <li><span>机票实际CPP价值:</span><strong id="metricFlightCpp">1.71 ¢/点</strong></li>
-          <li><span>酒店实际CPP价值:</span><strong id="metricHotelCpp">1.71 ¢/点</strong></li>
-        </ul>
+      <div class="field">
+        <label for="travelStyle">旅行类型<span class="hint">STYLE</span></label>
+        <select id="travelStyle">
+          <option value="balanced" selected>舒适平衡型</option>
+          <option value="luxury">轻奢体验型</option>
+          <option value="budget">经济实用型</option>
+          <option value="family">亲子家庭型</option>
+        </select>
       </div>
-    </div>
-
-    <!-- 费用瀑布逻辑表 -->
-    <h3 style="font-size: 16px; margin: 24px 0 12px 0; color: var(--paper);">费用计算瀑布 (Waterfall Breakdown)</h3>
-    <div class="responsive-table-wrapper">
-      <table class="waterfall-table">
-        <thead>
-          <tr>
-            <th>费用计算步骤</th>
-            <th>说明与明细</th>
-            <th>金额变动</th>
-          </tr>
-        </thead>
-        <tbody id="waterfallBody">
-          <!-- Populated by JS -->
-        </tbody>
-      </table>
-    </div>
-
-    <div class="note" id="verdictSummaryBox" style="margin-top: 20px;">
-      <!-- Comprehensive decision advice generated here -->
     </div>
   </div>
 
-  <div class="perf"></div>
-  <div class="stub">
-    <div>
-      <div class="verdict-label">最终决策</div>
-      <div class="verdict good" id="verdictBadge">推荐使用积分</div>
+  <!-- 2. 全现金旅行预算基准 (10 项细分) -->
+  <div class="budget-section">
+    <div class="budget-section-header">
+      <h2 class="budget-section-title">
+        <span>2. 全现金旅行预算基准 (全部同行人总开销)</span>
+      </h2>
     </div>
-    <div class="code" id="verdictCode">SAVINGS 62%</div>
+    <div class="budget-helper-note" style="margin-bottom: 16px; font-size: 13px; color: var(--gold); background: rgba(217, 119, 6, 0.08); padding: 10px 14px; border-radius: 4px; border-left: 3px solid var(--gold);">
+      💡 <strong>重要填写提示：</strong>所有现金金额请填写<strong>全体旅客整段行程的总价</strong>，不要填写单人单天价格。
+    </div>
+
+    <div class="expense-grid">
+      <div class="field">
+        <label for="expFlights">往返机票现金总价<span class="hint" id="hintExpFlights">¥ 全体总额</span></label>
+        <input type="number" id="expFlights" value="12000" min="0" step="10" inputmode="decimal" placeholder="0">
+        <div class="unit">若买全现金机票的全体旅客总票价（含税）</div>
+      </div>
+      <div class="field">
+        <label for="expHotel">全程酒店现金总价<span class="hint" id="hintExpHotel">¥ 全体总额</span></label>
+        <input type="number" id="expHotel" value="10000" min="0" step="10" inputmode="decimal" placeholder="0">
+        <div class="unit">若全额自费订房的房费总额（含税费）</div>
+      </div>
+      <div class="field">
+        <label for="expDining">餐饮美食预算<span class="hint" id="hintExpDining">¥ 全体总额</span></label>
+        <input type="number" id="expDining" value="5000" min="0" step="10" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="expTransit">城市公共交通/打车<span class="hint" id="hintExpTransit">¥ 全体总额</span></label>
+        <input type="number" id="expTransit" value="1000" min="0" step="10" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="expCarRental">租车费用<span class="hint" id="hintExpCarRental">¥ 全体总额</span></label>
+        <input type="number" id="expCarRental" value="0" min="0" step="10" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="expParkingTolls">停车费/油费/高速费<span class="hint" id="hintExpParkingTolls">¥ 全体总额</span></label>
+        <input type="number" id="expParkingTolls" value="0" min="0" step="10" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="expActivities">景点门票与体验活动<span class="hint" id="hintExpActivities">¥ 全体总额</span></label>
+        <input type="number" id="expActivities" value="1500" min="0" step="10" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="expVisaInsurance">签证与境外旅游险<span class="hint" id="hintExpVisaInsurance">¥ 全体总额</span></label>
+        <input type="number" id="expVisaInsurance" value="600" min="0" step="10" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="expConnectivity">境外电话卡/漫游/eSIM<span class="hint" id="hintExpConnectivity">¥ 全体总额</span></label>
+        <input type="number" id="expConnectivity" value="200" min="0" step="10" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="expOther">其他杂费/购物备用金<span class="hint" id="hintExpOther">¥ 全体总额</span></label>
+        <input type="number" id="expOther" value="500" min="0" step="10" inputmode="decimal" placeholder="0">
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 航空里程兑换机票抵扣 -->
+  <div class="budget-section">
+    <div class="budget-section-header">
+      <h2 class="budget-section-title">
+        <span>3. 航空里程兑换机票抵扣</span>
+      </h2>
+      <label class="toggle-switch-label">
+        <input type="checkbox" id="enableFlightPoints" checked>
+        启用机票里程抵扣
+      </label>
+    </div>
+
+    <div id="flightPointsFields">
+      <div class="expense-grid">
+        <div class="field">
+          <label for="flightMilesNeeded">所需航空里程总量<span class="hint">MILES</span></label>
+          <input type="number" id="flightMilesNeeded" value="60000" min="0" step="1" inputmode="numeric" placeholder="例如: 60000">
+        </div>
+        <div class="field">
+          <label for="flightAwardTaxes">奖励机票税费与燃油附加费<span class="hint" id="hintFlightTaxes">¥ 自付现金</span></label>
+          <input type="number" id="flightAwardTaxes" value="800" min="0" step="1" inputmode="decimal" placeholder="0">
+          <div class="unit">航空公司收取的强制政府税费及燃油费</div>
+        </div>
+        <div class="field">
+          <label for="flightAwardCopay">现金加里程(Copay)现金部分<span class="hint" id="hintFlightCopay">¥ 选填</span></label>
+          <input type="number" id="flightAwardCopay" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="flightProgramName">所属常旅客计划<span class="hint">选填</span></label>
+          <input type="text" id="flightProgramName" placeholder="例如: 亚洲万里通 / 美联航 UA / 加航 Aeroplan">
+        </div>
+        <div class="field">
+          <label for="flightMilesBalance">航司账户现有里程余额<span class="hint">选填</span></label>
+          <input type="number" id="flightMilesBalance" value="70000" min="0" step="1" inputmode="numeric" placeholder="用于校验航司里程余额">
+        </div>
+      </div>
+
+      <!-- 转点加赠与信用卡转点板块 -->
+      <div style="margin-top: 18px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px dashed var(--line); border-radius: 6px;">
+        <h4 style="margin: 0 0 12px 0; font-size: 14px; color: var(--gold);">💳 信用卡转点与加赠参数设置 (选填)</h4>
+        <div class="expense-grid">
+          <div class="field">
+            <label for="flightBaseTransferRatio">基础转点比例 (银行积分:里程)<span class="hint">RATIO</span></label>
+            <input type="number" id="flightBaseTransferRatio" value="1" min="0.1" max="10" step="0.1" inputmode="decimal" placeholder="1 代表 1:1">
+          </div>
+          <div class="field">
+            <label for="flightTransferBonus">转点加赠比例<span class="hint">% 选填</span></label>
+            <input type="number" id="flightTransferBonus" value="0" min="0" max="200" step="5" inputmode="numeric" placeholder="例如: 20 代表加赠20%">
+          </div>
+          <div class="field">
+            <label for="flightTransferIncrement">转点最小整数单位<span class="hint">凑整步长</span></label>
+            <input type="number" id="flightTransferIncrement" value="1000" min="1" max="50000" step="100" inputmode="numeric" placeholder="默认 1000">
+          </div>
+          <div class="field">
+            <label for="flightTransferableBalance">信用卡可转点积分余额<span class="hint">选填</span></label>
+            <input type="number" id="flightTransferableBalance" value="" min="0" step="1" inputmode="numeric" placeholder="用于校验银行积分是否足够">
+          </div>
+        </div>
+      </div>
+      
+      <div id="flightRedemptionSummary" style="margin-top: 14px; padding: 12px 16px; background: rgba(2, 132, 199, 0.08); border-left: 3px solid #38bdf8; border-radius: 4px; font-size: 13.5px;">
+        <!-- Dynamic JS content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 酒店积分兑换住宿 -->
+  <div class="budget-section">
+    <div class="budget-section-header">
+      <h2 class="budget-section-title">
+        <span>4. 酒店积分兑换住宿抵扣</span>
+      </h2>
+      <label class="toggle-switch-label">
+        <input type="checkbox" id="enableHotelPoints" checked>
+        启用酒店积分抵扣
+      </label>
+    </div>
+
+    <div id="hotelPointsFields">
+      <div class="expense-grid">
+        <div class="field">
+          <label for="hotelPointsNeeded">所需酒店积分总量<span class="hint">POINTS</span></label>
+          <input type="number" id="hotelPointsNeeded" value="50000" min="0" step="1" inputmode="numeric" placeholder="例如: 50000">
+        </div>
+        <div class="field">
+          <label for="hotelAwardTaxes">积分房税费及服务费<span class="hint" id="hintHotelTaxes">¥ 自付现金</span></label>
+          <input type="number" id="hotelAwardTaxes" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+          <div class="unit">大部分集团免税，部分地区收地方税</div>
+        </div>
+        <div class="field">
+          <label for="hotelResortFees">不可减免的度假村/目的地费<span class="hint" id="hintHotelResort">¥ 自付现金</span></label>
+          <input type="number" id="hotelResortFees" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+          <div class="unit">凯悦/希尔顿积分房通常免收，万豪/IHG需自理</div>
+        </div>
+        <div class="field">
+          <label for="hotelCashCopay">积分加现金(Points+Cash)现金部分<span class="hint" id="hintHotelCopay">¥ 选填</span></label>
+          <input type="number" id="hotelCashCopay" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="hotelPointsBalance">现有酒店积分余额<span class="hint">选填</span></label>
+          <input type="number" id="hotelPointsBalance" value="60000" min="0" step="1" inputmode="numeric" placeholder="用于校验余额">
+        </div>
+        <div class="field">
+          <label for="hotelProgramName">酒店常客计划<span class="hint">选填</span></label>
+          <input type="text" id="hotelProgramName" placeholder="例如: 凯悦 Hyatt / 万豪 Bonvoy / 洲际 IHG">
+        </div>
+      </div>
+
+      <div id="hotelRedemptionSummary" style="margin-top: 14px; padding: 12px 16px; background: rgba(2, 132, 199, 0.08); border-left: 3px solid #38bdf8; border-radius: 4px; font-size: 13.5px;">
+        <!-- Dynamic JS content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 结果计算区 -->
+  <div class="ticket" aria-live="polite" style="margin-top: 30px;">
+    <div class="main">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gold);">旅行成本与积分抵扣对比报告</h2>
+
+      <!-- 双方案并排对比 -->
+      <div class="plan-comparison-grid">
+        <div class="plan-card">
+          <div class="plan-card-title">全现金基准方案 (All-Cash)</div>
+          <div class="plan-card-price" id="cardOriginalPrice">¥30,800</div>
+          <div class="plan-card-desc">如果不使用任何积分或里程，旅行的预估全自费总现金支出。</div>
+        </div>
+
+        <div class="plan-card highlight">
+          <span class="badge-status badge-success" id="badgeTotalSavings">省 ¥20,400</span>
+          <div class="plan-card-title">✨ 积分抵扣后的实际自付方案</div>
+          <div class="plan-card-price" id="cardFinalPrice">¥10,400</div>
+          <div class="plan-card-desc" id="cardCoverageDesc">通过积分抵扣后，您最终需要从银行卡刷出的实际真金白银。</div>
+        </div>
+      </div>
+
+      <!-- 核心指标摘要网格 -->
+      <div class="expense-grid" style="margin-top: 24px;">
+        <div class="field">
+          <label>积分覆盖比例 (Coverage)</label>
+          <div style="font-size: 20px; font-weight: 700; color: #38bdf8; font-family: var(--font-mono);" id="valCoverageRate">66.2%</div>
+          <div class="unit">积分抵扣额占全现金总预算的比例</div>
+        </div>
+        <div class="field">
+          <label>人均最终自付现金</label>
+          <div style="font-size: 20px; font-weight: 700; color: var(--gold); font-family: var(--font-mono);" id="valPerPersonCash">¥5,200</div>
+          <div class="unit" id="unitPerPerson">按 2 位旅客平摊</div>
+        </div>
+        <div class="field">
+          <label>日均最终自付现金</label>
+          <div style="font-size: 20px; font-weight: 700; color: var(--gold); font-family: var(--font-mono);" id="valDailyCash">¥1,486</div>
+          <div class="unit" id="unitDaily">按 7 天行程平摊</div>
+        </div>
+        <div class="field">
+          <label>机票实际兑出价值 (CPP)</label>
+          <div style="font-size: 20px; font-weight: 700; color: #4ade80; font-family: var(--font-mono);" id="valFlightCpp">2.67 ¢/点</div>
+          <div class="unit" id="valFlightLocal">折合 ¥0.1867 / 里</div>
+        </div>
+        <div class="field">
+          <label>酒店实际兑出价值 (CPP)</label>
+          <div style="font-size: 20px; font-weight: 700; color: #4ade80; font-family: var(--font-mono);" id="valHotelCpp">2.86 ¢/点</div>
+          <div class="unit" id="valHotelLocal">折合 ¥0.2000 / 点</div>
+        </div>
+      </div>
+
+      <!-- 结构化费用瀑布逻辑表 -->
+      <h3 style="margin: 28px 0 12px 0; font-size: 15px; color: var(--text);">📊 旅行自付现金流水瀑布表 (Waterfall Breakdown)</h3>
+      <div class="responsive-table-wrapper">
+        <table class="waterfall-table">
+          <thead>
+            <tr>
+              <th>预算类别</th>
+              <th>全现金基准</th>
+              <th>积分抵扣扣减</th>
+              <th>必须自付税费/附加费</th>
+              <th>最终实际自付现金</th>
+            </tr>
+          </thead>
+          <tbody id="waterfallBody">
+            <!-- Dynamic JS generation -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 操作工具栏 -->
+      <div class="calculator-actions-toolbar" style="margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px;">
+        <button type="button" class="btn-action btn-action-primary" id="btnShare">🔗 分享此计算</button>
+        <button type="button" class="btn-action" id="btnSaveLocal">💾 暂存至本地</button>
+        <button type="button" class="btn-action" id="btnCopySummary">📋 复制预算摘要</button>
+        <button type="button" class="btn-action" id="btnPrint">🖨️ 打印/导出PDF</button>
+        <button type="button" class="btn-action" id="btnReset">🔄 重置表单</button>
+      </div>
+      <div id="toast" class="toast" style="display:none;"></div>
+    </div>
+
+    <!-- 决策侧栏 -->
+    <div class="stub">
+      <div class="decision-box" id="verdictBox">
+        <div class="verdict-label">最终决策</div>
+        <div class="verdict good" id="verdictBadge">推荐使用积分</div>
+      </div>
+      <div class="code" id="verdictCode">SAVINGS 62%</div>
+    </div>
   </div>
 </div>
 
@@ -308,35 +345,20 @@ breadcrumbs:
 <article class="seo-content" style="margin-top: 50px; padding-top: 40px; border-top: 1px solid var(--line);">
   <h2>为什么需要计算“积分抵扣后的实际自付成本”？</h2>
   <p>许多常旅客在规划旅行时容易陷入两个极端：要么以为“手头有10万积分就等于旅行免费”，忽略了高昂的跨洋燃油附加费、机场建设税和酒店度假村费；要么因为各项杂费琐碎，无法直观看出“这趟行程到底为家庭钱包省下了多少真金白银”。</p>
-  <p>本工具正是为了打通**全行程预算**与**单项积分决策**之间的断层，帮助您清晰回答：</p>
+  <p>本工具正是为了打通<strong>全行程预算</strong>与<strong>单项积分决策</strong>之间的断层，帮助您清晰回答：</p>
   <ol>
     <li>如果完全不使用积分，这趟旅行需要准备多少全现金？</li>
     <li>将手里的航空里程和酒店积分抵扣后，最终还需要从银行卡刷出多少现金？</li>
     <li>有限的积分应该优先用于机票还是酒店？哪一项兑换出的单点价值（CPP）更高？</li>
   </ol>
 
-  <h2>如何正确使用本计算器？</h2>
-  <h3>第一步：填写旅行基本信息与全现金基准</h3>
-  <p>在第 1 和第 2 部分输入行程的天数、人数以及各项现金预估。请注意：<strong>所有金额均应填写全体同行人员的整段行程总额</strong>，不要误填为单人单日价格。这样能保证人均与日均统计的严谨性。</p>
-
-  <h3>第二步：输入机票与酒店的积分兑换条件</h3>
-  <p>分别勾选启用机票和酒店积分抵扣：</p>
-  <ul>
-    <li><strong>机票部分</strong>：输入所需里程总量、必须支付的税费及燃油附加费。若使用了“现金+里程”，请填入现金补差额。</li>
-    <li><strong>酒店部分</strong>：输入所需积分总量、不可免除的度假村费（Resort/Destination Fee）或城市税。</li>
-  </ul>
-
-  <h3>第三步：查看费用瀑布与决策建议</h3>
-  <p>计算器会自动生成清晰的费用瀑布，从全现金基准逐项扣减积分抵扣额，并加回必须自理的税费，最终得出实际现金缺口。若某项兑换计算出的 CPP 低于估值基准（或出现税费高于现金票的负节省情况），系统会明确提示您“该项建议直接支付现金”。</p>
-
   <h2>真实旅行预算案例分析</h2>
-  <p>为了帮助您更好地理解多项积分抵扣与实际开销的构成，我们整理了两个典型家庭旅行的完整推演案例：</p>
   <div class="popular-calculators-grid" style="margin: 20px 0;">
     <a href="/examples/usa-west-coast-family-trip-with-points/" class="calculator-link-card">
       🇺🇸 一家三口美国西海岸10天旅行案例 →
       <span>分析里程兑换中美机票+积分换酒店的实际开销</span>
     </a>
-    <a href="/examples/japan-7-day-family-trip-with-points/ " class="calculator-link-card">
+    <a href="/examples/japan-7-day-family-trip-with-points/" class="calculator-link-card">
       🇯🇵 一家三口日本7天旅行案例 →
       <span>短途高频航线与东京/京都酒店积分抵扣实测</span>
     </a>
@@ -389,449 +411,407 @@ breadcrumbs:
 
 <script src="/assets/calculator-core.js"></script>
 <script>
-  const $ = id => document.getElementById(id);
-  const core = window.CalculatorCore || (function() {
-    const DEFAULT_FX_RATE = 7.0;
-    function toNum(val, fallback = 0) { const n = parseFloat(val); return !isNaN(n) && isFinite(n) && n >= 0 ? n : fallback; }
-    function formatCurrency(amount, currency = 'USD', lang = 'en') {
-      const val = toNum(amount);
-      if (currency === 'CNY') return '¥' + val.toLocaleString(lang === 'zh' || lang === 'zh-CN' ? 'zh-CN' : 'en-US', { maximumFractionDigits: 0 });
-      return '$' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
-    }
-    function calculateCPP(netSavingsLocal, pointsUsed, currency = 'USD', fxRate = DEFAULT_FX_RATE) {
-      const net = parseFloat(netSavingsLocal) || 0;
-      const pts = parseFloat(pointsUsed) || 0;
-      if (pts <= 0) return 0;
-      let netUsd = currency === 'CNY' ? (fxRate > 0 ? net / fxRate : 0) : net;
-      return (netUsd / pts) * 100;
-    }
-    function calculateLocalPerPoint(netSavingsLocal, pointsUsed) {
-      const net = parseFloat(netSavingsLocal) || 0;
-      const pts = parseFloat(pointsUsed) || 0;
-      return pts > 0 ? net / pts : 0;
-    }
-    function calculateTripCostAfterPoints(params) {
-      const data = params || {};
-      const currency = data.currency === 'USD' ? 'USD' : 'CNY';
-      const fxRate = toNum(data.fxRate, DEFAULT_FX_RATE);
-      const tripDays = Math.max(1, parseInt(data.tripDays, 10) || 1);
-      const adults = Math.max(1, parseInt(data.adults, 10) || 1);
-      const children = Math.max(0, parseInt(data.children, 10) || 0);
-      const totalTravelers = adults + children;
-      const expenses = data.expenses || {};
-      const flightsCash = toNum(expenses.flights);
-      const hotelCash = toNum(expenses.hotel);
-      const diningCash = toNum(expenses.dining);
-      const transitCash = toNum(expenses.transit);
-      const carRentalCash = toNum(expenses.carRental);
-      const parkingTollsCash = toNum(expenses.parkingTolls);
-      const activitiesCash = toNum(expenses.activities);
-      const visaInsuranceCash = toNum(expenses.visaInsurance);
-      const connectivityCash = toNum(expenses.connectivity);
-      const otherCash = toNum(expenses.other);
-      const cashTripCost = flightsCash + hotelCash + diningCash + transitCash + carRentalCash + parkingTollsCash + activitiesCash + visaInsuranceCash + connectivityCash + otherCash;
-      
-      const flightRedemption = data.flightRedemption || {};
-      const isFlightPointsActive = Boolean(flightRedemption.enabled && flightsCash > 0 && flightRedemption.milesNeeded > 0);
-      let flightRes = { enabled: false, netSavings: 0, outOfPocket: 0, isNegativeSavings: false, cpp: 0, localPerPoint: 0, cashPrice: flightsCash };
-      if (isFlightPointsActive) {
-        const outOfPocket = toNum(flightRedemption.awardTaxes) + toNum(flightRedemption.awardCashCopay);
-        const netSavings = flightsCash - outOfPocket;
-        const miles = toNum(flightRedemption.milesNeeded);
-        flightRes = { enabled: true, cashPrice: flightsCash, milesNeeded: miles, outOfPocket, netSavings, isNegativeSavings: netSavings < 0, cpp: calculateCPP(netSavings, miles, currency, fxRate), localPerPoint: calculateLocalPerPoint(netSavings, miles) };
-      }
+  (function() {
+    const $ = id => document.getElementById(id);
+    const core = window.CalculatorCore;
 
-      const hotelRedemption = data.hotelRedemption || {};
-      const isHotelPointsActive = Boolean(hotelRedemption.enabled && hotelCash > 0 && hotelRedemption.pointsNeeded > 0);
-      let hotelRes = { enabled: false, netSavings: 0, outOfPocket: 0, isNegativeSavings: false, cpp: 0, localPerPoint: 0, cashPrice: hotelCash };
-      if (isHotelPointsActive) {
-        const outOfPocket = toNum(hotelRedemption.awardTaxes) + toNum(hotelRedemption.resortFees) + toNum(hotelRedemption.hotelCashCopay);
-        const netSavings = hotelCash - outOfPocket;
-        const points = toNum(hotelRedemption.pointsNeeded);
-        hotelRes = { enabled: true, cashPrice: hotelCash, pointsNeeded: points, outOfPocket, netSavings, isNegativeSavings: netSavings < 0, cpp: calculateCPP(netSavings, points, currency, fxRate), localPerPoint: calculateLocalPerPoint(netSavings, points) };
-      }
+    if (!core) {
+      console.error('CalculatorCore failed to load.');
+      const errBox = document.createElement('div');
+      errBox.className = 'error-box';
+      errBox.textContent = '计算引擎加载失败，请刷新页面重试。';
+      document.querySelector('.panel').prepend(errBox);
+      return;
+    }
 
-      let finalOutOfPocket = cashTripCost;
-      if (flightRes.enabled) finalOutOfPocket = finalOutOfPocket - flightsCash + flightRes.outOfPocket;
-      if (hotelRes.enabled) finalOutOfPocket = finalOutOfPocket - hotelCash + hotelRes.outOfPocket;
-      finalOutOfPocket = Math.max(0, finalOutOfPocket);
-      const totalSavings = Math.max(0, cashTripCost - finalOutOfPocket);
-      const pointsCoverageRate = cashTripCost > 0 ? (totalSavings / cashTripCost) * 100 : 0;
-      
-      const flightBalance = flightRedemption.milesBalance !== undefined && flightRedemption.milesBalance !== '' ? toNum(flightRedemption.milesBalance) : null;
-      const hotelBalance = hotelRedemption.pointsBalance !== undefined && hotelRedemption.pointsBalance !== '' ? toNum(hotelRedemption.pointsBalance) : null;
+    const STORAGE_KEY = 'tripBudgetState.v2.zh';
+    const LEGACY_KEY = 'savedTripBudget';
 
+    function showToast(msg) {
+      const t = $('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+
+    function collectTripState() {
       return {
-        currency, fxRate, tripDays, adults, children, totalTravelers, cashTripCost, finalOutOfPocket, totalSavings, pointsCoverageRate,
-        perPersonCashOriginal: totalTravelers > 0 ? cashTripCost / totalTravelers : 0,
-        perPersonCashFinal: totalTravelers > 0 ? finalOutOfPocket / totalTravelers : 0,
-        dailyCashOriginal: tripDays > 0 ? cashTripCost / tripDays : 0,
-        dailyCashFinal: tripDays > 0 ? finalOutOfPocket / tripDays : 0,
-        flight: flightRes, hotel: hotelRes,
-        flightBalanceSufficient: flightBalance !== null ? flightBalance >= flightRedemption.milesNeeded : null,
-        hotelBalanceSufficient: hotelBalance !== null ? hotelBalance >= hotelRedemption.pointsNeeded : null,
-        breakdown: { flightsCash, hotelCash, diningCash, transitCash, carRentalCash, parkingTollsCash, activitiesCash, visaInsuranceCash, connectivityCash, otherCash }
+        origin: $('origin') ? $('origin').value.trim() : '',
+        destination: $('destination') ? $('destination').value.trim() : '',
+        tripDays: $('tripDays') ? $('tripDays').value : 7,
+        adults: $('adults') ? $('adults').value : 2,
+        children: $('children') ? $('children').value : 0,
+        currency: $('currency') ? $('currency').value : 'CNY',
+        fxRate: $('fxRate') ? $('fxRate').value : 7.0,
+        travelStyle: $('travelStyle') ? $('travelStyle').value : 'balanced',
+        expenses: {
+          flights: $('expFlights') ? $('expFlights').value : 0,
+          hotel: $('expHotel') ? $('expHotel').value : 0,
+          dining: $('expDining') ? $('expDining').value : 0,
+          transit: $('expTransit') ? $('expTransit').value : 0,
+          carRental: $('expCarRental') ? $('expCarRental').value : 0,
+          parkingTolls: $('expParkingTolls') ? $('expParkingTolls').value : 0,
+          activities: $('expActivities') ? $('expActivities').value : 0,
+          visaInsurance: $('expVisaInsurance') ? $('expVisaInsurance').value : 0,
+          connectivity: $('expConnectivity') ? $('expConnectivity').value : 0,
+          other: $('expOther') ? $('expOther').value : 0
+        },
+        flightRedemption: {
+          enabled: $('enableFlightPoints') ? $('enableFlightPoints').checked : true,
+          programName: $('flightProgramName') ? $('flightProgramName').value.trim() : '',
+          awardMilesRequired: $('flightMilesNeeded') ? $('flightMilesNeeded').value : 0,
+          awardTaxes: $('flightAwardTaxes') ? $('flightAwardTaxes').value : 0,
+          awardCashCopay: $('flightAwardCopay') ? $('flightAwardCopay').value : 0,
+          airlineMilesBalance: $('flightMilesBalance') && $('flightMilesBalance').value !== '' ? $('flightMilesBalance').value : null,
+          baseTransferRatio: $('flightBaseTransferRatio') ? $('flightBaseTransferRatio').value : 1.0,
+          transferBonusPercent: $('flightTransferBonus') ? $('flightTransferBonus').value : 0,
+          transferIncrement: $('flightTransferIncrement') ? $('flightTransferIncrement').value : 1000,
+          transferablePointsBalance: $('flightTransferableBalance') && $('flightTransferableBalance').value !== '' ? $('flightTransferableBalance').value : null
+        },
+        hotelRedemption: {
+          enabled: $('enableHotelPoints') ? $('enableHotelPoints').checked : true,
+          programName: $('hotelProgramName') ? $('hotelProgramName').value.trim() : '',
+          pointsNeeded: $('hotelPointsNeeded') ? $('hotelPointsNeeded').value : 0,
+          awardTaxes: $('hotelAwardTaxes') ? $('hotelAwardTaxes').value : 0,
+          resortFees: $('hotelResortFees') ? $('hotelResortFees').value : 0,
+          hotelCashCopay: $('hotelCashCopay') ? $('hotelCashCopay').value : 0,
+          pointsBalance: $('hotelPointsBalance') && $('hotelPointsBalance').value !== '' ? $('hotelPointsBalance').value : null
+        }
       };
     }
-    return { formatCurrency, calculateTripCostAfterPoints, calculateCPP, calculateLocalPerPoint };
-  })();
 
-  // Currency & State
-  let currentCurrency = 'CNY';
-  let currentFx = 7.0;
+    function restoreTripState(raw) {
+      const s = core.normalizeTripState(raw);
+      if ($('origin')) $('origin').value = s.origin;
+      if ($('destination')) $('destination').value = s.destination;
+      if ($('tripDays')) $('tripDays').value = s.tripDays;
+      if ($('adults')) $('adults').value = s.adults;
+      if ($('children')) $('children').value = s.children;
+      if ($('currency')) $('currency').value = s.currency;
+      if ($('fxRate')) $('fxRate').value = s.fxRate;
+      if ($('travelStyle')) $('travelStyle').value = s.travelStyle;
 
-  const validCurrencies = ['CNY', 'USD'];
-  const params = new URLSearchParams(window.location.search);
+      if ($('expFlights')) $('expFlights').value = s.expenses.flights;
+      if ($('expHotel')) $('expHotel').value = s.expenses.hotel;
+      if ($('expDining')) $('expDining').value = s.expenses.dining;
+      if ($('expTransit')) $('expTransit').value = s.expenses.transit;
+      if ($('expCarRental')) $('expCarRental').value = s.expenses.carRental;
+      if ($('expParkingTolls')) $('expParkingTolls').value = s.expenses.parkingTolls;
+      if ($('expActivities')) $('expActivities').value = s.expenses.activities;
+      if ($('expVisaInsurance')) $('expVisaInsurance').value = s.expenses.visaInsurance;
+      if ($('expConnectivity')) $('expConnectivity').value = s.expenses.connectivity;
+      if ($('expOther')) $('expOther').value = s.expenses.other;
 
-  // Initialize currency
-  const urlCurr = params.get('currency');
-  if (urlCurr && validCurrencies.includes(urlCurr)) {
-    currentCurrency = urlCurr;
-  } else {
-    try {
-      const saved = localStorage.getItem('preferredCurrency');
-      if (saved && validCurrencies.includes(saved)) currentCurrency = saved;
-    } catch(e) {}
-  }
-  if ($('currency')) $('currency').value = currentCurrency;
-
-  function showToast(msg) {
-    const t = $('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
-    setTimeout(() => { t.style.display = 'none'; }, 3000);
-  }
-
-  function getTripInputData() {
-    return {
-      currency: currentCurrency,
-      fxRate: currentFx,
-      tripDays: parseFloat($('tripDays').value) || 1,
-      adults: parseFloat($('adults').value) || 1,
-      children: parseFloat($('children').value) || 0,
-      expenses: {
-        flights: parseFloat($('expFlights').value) || 0,
-        hotel: parseFloat($('expHotel').value) || 0,
-        dining: parseFloat($('expDining').value) || 0,
-        transit: parseFloat($('expTransit').value) || 0,
-        carRental: parseFloat($('expCarRental').value) || 0,
-        parkingTolls: parseFloat($('expParkingTolls').value) || 0,
-        activities: parseFloat($('expActivities').value) || 0,
-        visaInsurance: parseFloat($('expVisaInsurance').value) || 0,
-        connectivity: parseFloat($('expConnectivity').value) || 0,
-        other: parseFloat($('expOther').value) || 0
-      },
-      flightRedemption: {
-        enabled: $('enableFlightPoints').checked,
-        milesNeeded: parseFloat($('flightMilesNeeded').value) || 0,
-        awardTaxes: parseFloat($('flightAwardTaxes').value) || 0,
-        awardCashCopay: parseFloat($('flightAwardCopay').value) || 0,
-        milesBalance: $('flightMilesBalance').value !== '' ? parseFloat($('flightMilesBalance').value) : undefined
-      },
-      hotelRedemption: {
-        enabled: $('enableHotelPoints').checked,
-        pointsNeeded: parseFloat($('hotelPointsNeeded').value) || 0,
-        awardTaxes: parseFloat($('hotelAwardTaxes').value) || 0,
-        resortFees: parseFloat($('hotelResortFees').value) || 0,
-        hotelCashCopay: parseFloat($('hotelCashCopay').value) || 0,
-        pointsBalance: $('hotelPointsBalance').value !== '' ? parseFloat($('hotelPointsBalance').value) : undefined
-      }
-    };
-  }
-
-  function updateCurrencyLabels() {
-    const sym = currentCurrency === 'USD' ? '$' : '¥';
-    ['hintExpFlights','hintExpHotel','hintExpDining','hintExpTransit','hintExpCarRental',
-     'hintExpParkingTolls','hintExpActivities','hintExpVisaInsurance','hintExpConnectivity',
-     'hintExpOther','hintFlightTaxes','hintFlightCopay','hintHotelTaxes','hintHotelResort','hintHotelCopay'].forEach(id => {
-      const el = $(id);
-      if (el) el.textContent = `${sym} 全体总价`;
-    });
-    if ($('hintFlightTaxes')) $('hintFlightTaxes').textContent = `${sym} 自付现金`;
-    if ($('hintFlightCopay')) $('hintFlightCopay').textContent = `${sym} 选填`;
-    if ($('hintHotelTaxes')) $('hintHotelTaxes').textContent = `${sym} 自付现金`;
-    if ($('hintHotelResort')) $('hintHotelResort').textContent = `${sym} 自付现金`;
-    if ($('hintHotelCopay')) $('hintHotelCopay').textContent = `${sym} 选填`;
-  }
-
-  function renderCalculator() {
-    const data = getTripInputData();
-    const res = core.calculateTripCostAfterPoints(data);
-    const sym = currentCurrency === 'USD' ? '$' : '¥';
-
-    // 1. Top Badges & Cards
-    $('cashTripTotalBadge').textContent = `全现金总额: ${core.formatCurrency(res.cashTripCost, currentCurrency, 'zh')}`;
-    $('cardCashPrice').textContent = core.formatCurrency(res.cashTripCost, currentCurrency, 'zh');
-    $('cardFinalPrice').textContent = core.formatCurrency(res.finalOutOfPocket, currentCurrency, 'zh');
-    $('badgeTotalSavings').textContent = core.formatCurrency(res.totalSavings, currentCurrency, 'zh');
-    $('badgeCoveragePct').textContent = `${res.pointsCoverageRate.toFixed(1)}%`;
-
-    // Metrics
-    $('metricCashPerPerson').textContent = core.formatCurrency(res.perPersonCashOriginal, currentCurrency, 'zh');
-    $('metricCashDaily').textContent = core.formatCurrency(res.dailyCashOriginal, currentCurrency, 'zh');
-    $('metricFinalPerPerson').textContent = core.formatCurrency(res.perPersonCashFinal, currentCurrency, 'zh');
-    $('metricFinalDaily').textContent = core.formatCurrency(res.dailyCashFinal, currentCurrency, 'zh');
-
-    const fPct = res.cashTripCost > 0 ? ((res.breakdown.flightsCash / res.cashTripCost) * 100).toFixed(1) : '0.0';
-    const hPct = res.cashTripCost > 0 ? ((res.breakdown.hotelCash / res.cashTripCost) * 100).toFixed(1) : '0.0';
-    $('metricCashFlightPct').textContent = `${fPct}%`;
-    $('metricCashHotelPct').textContent = `${hPct}%`;
-
-    $('metricFlightCpp').textContent = res.flight.enabled 
-      ? `${res.flight.cpp.toFixed(2)} ¢/点 (${res.flight.localPerPoint.toFixed(3)} 元/点)`
-      : '未启用抵扣';
-    $('metricHotelCpp').textContent = res.hotel.enabled 
-      ? `${res.hotel.cpp.toFixed(2)} ¢/点 (${res.hotel.localPerPoint.toFixed(3)} 元/点)`
-      : '未启用抵扣';
-
-    // 2. Flight / Hotel Sub-summaries
-    const fSummary = $('flightRedemptionSummary');
-    if (fSummary) {
-      if (!res.flight.enabled) {
-        fSummary.innerHTML = '<span>ℹ️ 机票里程抵扣未启用或缺少参数。</span>';
-      } else if (res.flight.isNegativeSavings) {
-        fSummary.innerHTML = `<span style="color:#f87171; font-weight:600;">⚠️ 警告：奖励票税费 (${core.formatCurrency(res.flight.outOfPocket, currentCurrency, 'zh')}) 高于机票现金价 (${core.formatCurrency(res.flight.cashPrice, currentCurrency, 'zh')})，使用里程反而增加开销，强烈建议直接支付现金！</span>`;
-      } else {
-        const balNote = res.flightBalanceSufficient === false ? ' <span style="color:#f87171;">(⚠️ 现有余额不足)</span>' : '';
-        fSummary.innerHTML = `<strong>机票净节省：${core.formatCurrency(res.flight.netSavings, currentCurrency, 'zh')}</strong> | 兑出价值：<strong>${res.flight.cpp.toFixed(2)} ¢/里程</strong> (${res.flight.localPerPoint.toFixed(3)} 元/点)${balNote}`;
-      }
-    }
-
-    const hSummary = $('hotelRedemptionSummary');
-    if (hSummary) {
-      if (!res.hotel.enabled) {
-        hSummary.innerHTML = '<span>ℹ️ 酒店积分抵扣未启用或缺少参数。</span>';
-      } else if (res.hotel.isNegativeSavings) {
-        hSummary.innerHTML = `<span style="color:#f87171; font-weight:600;">⚠️ 警告：积分房杂费 (${core.formatCurrency(res.hotel.outOfPocket, currentCurrency, 'zh')}) 高于酒店现金价 (${core.formatCurrency(res.hotel.cashPrice, currentCurrency, 'zh')})，建议直接现金入住！</span>`;
-      } else {
-        const balNote = res.hotelBalanceSufficient === false ? ' <span style="color:#f87171;">(⚠️ 现有余额不足)</span>' : '';
-        hSummary.innerHTML = `<strong>酒店净节省：${core.formatCurrency(res.hotel.netSavings, currentCurrency, 'zh')}</strong> | 兑出价值：<strong>${res.hotel.cpp.toFixed(2)} ¢/积分</strong> (${res.hotel.localPerPoint.toFixed(3)} 元/点)${balNote}`;
-      }
-    }
-
-    // 3. Waterfall Table Construction
-    const tbody = $('waterfallBody');
-    tbody.innerHTML = '';
-
-    const addRow = (step, desc, amount, type = 'normal') => {
-      const tr = document.createElement('tr');
-      if (type === 'negative') tr.className = 'waterfall-row-negative';
-      if (type === 'positive') tr.className = 'waterfall-row-positive';
-      if (type === 'total') tr.className = 'waterfall-row-total';
-      tr.innerHTML = `<td><strong>${step}</strong></td><td>${desc}</td><td>${amount}</td>`;
-      tbody.appendChild(tr);
-    };
-
-    addRow('1. 全现金旅行基准总额', '所有 10 项现金预算支出之和', core.formatCurrency(res.cashTripCost, currentCurrency, 'zh'));
-
-    if (res.flight.enabled) {
-      addRow('2. 扣减机票原现金价', '使用航空里程替代现金机票', `-${core.formatCurrency(res.breakdown.flightsCash, currentCurrency, 'zh')}`, 'negative');
-      addRow('3. 加回机票税费与附加费', '奖励票必须自理的强制税费与Copay', `+${core.formatCurrency(res.flight.outOfPocket, currentCurrency, 'zh')}`, 'positive');
-    }
-
-    if (res.hotel.enabled) {
-      addRow('4. 扣减酒店原现金价', '使用酒店积分替代现金房费', `-${core.formatCurrency(res.breakdown.hotelCash, currentCurrency, 'zh')}`, 'negative');
-      if (res.hotel.outOfPocket > 0) {
-        addRow('5. 加回酒店税费与度假村费', '积分房不可减免的杂费与Copay', `+${core.formatCurrency(res.hotel.outOfPocket, currentCurrency, 'zh')}`, 'positive');
-      }
-    }
-
-    addRow('最终实际自付现金', `全体旅客整段行程需要从钱包/银行卡实际支出的现金总额`, core.formatCurrency(res.finalOutOfPocket, currentCurrency, 'zh'), 'total');
-
-    // 4. Final Verdict Box
-    const vBadge = $('verdictBadge');
-    const vCode = $('verdictCode');
-    const vBox = $('verdictSummaryBox');
-
-    vBadge.className = 'verdict';
-    if (res.totalSavings > 0 && !res.flight.isNegativeSavings && !res.hotel.isNegativeSavings) {
-      vBadge.textContent = '推荐使用积分抵扣';
-      vBadge.className = 'verdict good';
-      vCode.textContent = `省 ${res.pointsCoverageRate.toFixed(0)}%`;
-      vBox.innerHTML = `<strong>💡 综合决策建议：</strong> 本次旅行通过积分抵扣成功减少了 <strong>${core.formatCurrency(res.totalSavings, currentCurrency, 'zh')}</strong> 的现金自付支出，覆盖了全行程 <strong>${res.pointsCoverageRate.toFixed(1)}%</strong> 的预算。` + 
-        (res.flight.enabled && res.hotel.enabled ? ` 其中机票兑出 <strong>${res.flight.cpp.toFixed(2)} ¢/点</strong>，酒店兑出 <strong>${res.hotel.cpp.toFixed(2)} ¢/点</strong>，${res.flight.cpp >= res.hotel.cpp ? '机票兑换价值更具优势。' : '酒店兑换价值更具优势。'}` : '');
-    } else if (res.flight.isNegativeSavings || res.hotel.isNegativeSavings) {
-      vBadge.textContent = '部分项目不建议用分';
-      vBadge.className = 'verdict bad';
-      vCode.textContent = 'AVOID DEFICIT';
-      vBox.innerHTML = `<strong style="color:#f87171;">⚠️ 决策预警：</strong> 存在税费/杂费高于现金原价的项目，继续使用积分会造成亏损，请关闭负收益项目的积分抵扣或改用全现金购票。`;
-    } else {
-      vBadge.textContent = '纯现金出行';
-      vCode.textContent = 'ALL CASH';
-      vBox.innerHTML = '当前未启用积分抵扣，您可勾选上方机票或酒店模块，体验积分如何减少实际自付现金。';
-    }
-  }
-
-  // Event Listeners
-  const allInputIds = [
-    'tripDays','adults','children','travelStyle',
-    'expFlights','expHotel','expDining','expTransit','expCarRental','expParkingTolls',
-    'expActivities','expVisaInsurance','expConnectivity','expOther',
-    'flightMilesNeeded','flightAwardTaxes','flightAwardCopay','flightMilesBalance',
-    'hotelPointsNeeded','hotelAwardTaxes','hotelResortFees','hotelCashCopay','hotelPointsBalance'
-  ];
-
-  allInputIds.forEach(id => {
-    const el = $(id);
-    if (el) el.addEventListener('input', renderCalculator);
-  });
-
-  $('enableFlightPoints').addEventListener('change', (e) => {
-    $('flightPointsFields').style.opacity = e.target.checked ? '1' : '0.5';
-    renderCalculator();
-  });
-
-  $('enableHotelPoints').addEventListener('change', (e) => {
-    $('hotelPointsFields').style.opacity = e.target.checked ? '1' : '0.5';
-    renderCalculator();
-  });
-
-  $('currency').addEventListener('change', (e) => {
-    currentCurrency = e.target.value;
-    try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
-    updateCurrencyLabels();
-    renderCalculator();
-  });
-
-  // Action Buttons
-  $('btnReset').addEventListener('click', () => {
-    allInputIds.forEach(id => {
-      const el = $(id);
-      if (el) {
-        if (id === 'tripDays') el.value = '7';
-        else if (id === 'adults') el.value = '2';
-        else if (id === 'children') el.value = '0';
-        else el.value = '0';
-      }
-    });
-    $('origin').value = '';
-    $('destination').value = '';
-    renderCalculator();
-    showToast('已重置所有输入项');
-  });
-
-  $('btnPrint').addEventListener('click', () => {
-    window.print();
-  });
-
-  $('btnSaveLocal').addEventListener('click', () => {
-    const data = getTripInputData();
-    data.origin = $('origin').value;
-    data.destination = $('destination').value;
-    try {
-      localStorage.setItem('savedTripBudget', JSON.stringify(data));
-      showToast('预算数据已成功暂存至本地浏览器');
-    } catch(e) {
-      showToast('暂存失败，请检查浏览器存储权限');
-    }
-  });
-
-  $('btnCopySummary').addEventListener('click', () => {
-    const data = getTripInputData();
-    const res = core.calculateTripCostAfterPoints(data);
-    const summary = `【里程账 - 旅行预算摘要】\n目的地: ${$('destination').value || '未指定'} (${data.tripDays}天 / ${data.adults}大${data.children}小)\n全现金总成本: ${core.formatCurrency(res.cashTripCost, currentCurrency, 'zh')}\n积分抵扣后实际自付: ${core.formatCurrency(res.finalOutOfPocket, currentCurrency, 'zh')}\n累计节省金额: ${core.formatCurrency(res.totalSavings, currentCurrency, 'zh')} (覆盖率 ${res.pointsCoverageRate.toFixed(1)}%)\n人均自付现金: ${core.formatCurrency(res.perPersonCashFinal, currentCurrency, 'zh')}\n日均自付现金: ${core.formatCurrency(res.dailyCashFinal, currentCurrency, 'zh')}\n计算生成自: ${window.location.href}`;
-    navigator.clipboard.writeText(summary).then(() => {
-      showToast('预算摘要已复制到剪贴板');
-    }).catch(() => {
-      showToast('复制失败，请手动截图或复制');
-    });
-  });
-
-  $('btnShare').addEventListener('click', () => {
-    const p = new URLSearchParams();
-    p.set('currency', currentCurrency);
-    p.set('days', $('tripDays').value);
-    p.set('adults', $('adults').value);
-    p.set('children', $('children').value);
-    if ($('expFlights').value) p.set('fCash', $('expFlights').value);
-    if ($('expHotel').value) p.set('hCash', $('expHotel').value);
-    if ($('expDining').value) p.set('dCash', $('expDining').value);
-    if ($('enableFlightPoints').checked && $('flightMilesNeeded').value) {
-      p.set('fMiles', $('flightMilesNeeded').value);
-      p.set('fTaxes', $('flightAwardTaxes').value);
-    }
-    if ($('enableHotelPoints').checked && $('hotelPointsNeeded').value) {
-      p.set('hPoints', $('hotelPointsNeeded').value);
-      p.set('hTaxes', $('hotelAwardTaxes').value);
-      p.set('hResort', $('hotelResortFees').value);
-    }
-    const shareUrl = `${window.location.origin}${window.location.pathname}?${p.toString()}`;
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      showToast('分享链接已复制到剪贴板！');
-    }).catch(() => {
-      showToast('分享链接生成成功');
-    });
-  });
-
-  // Restore from URL parameters if present
-  function parseUrlParams() {
-    if (!window.location.search) return;
-    // When custom URL parameters are passed, initialize all expenses to 0 first
-    ['expFlights','expHotel','expDining','expTransit','expCarRental','expParkingTolls',
-     'expActivities','expVisaInsurance','expConnectivity','expOther'].forEach(id => {
-      const el = $(id);
-      if (el) el.value = '0';
-    });
-
-    const parse = (key, id) => {
-      const val = params.get(key);
-      if (val !== null && !isNaN(parseFloat(val))) {
-        const el = $(id);
-        if (el) el.value = val;
-      }
-    };
-    parse('days', 'tripDays');
-    parse('adults', 'adults');
-    parse('children', 'children');
-    parse('fCash', 'expFlights');
-    parse('hCash', 'expHotel');
-    parse('dCash', 'expDining');
-    parse('tCash', 'expTransit');
-    parse('carCash', 'expCarRental');
-    parse('gasCash', 'expParkingTolls');
-    parse('actCash', 'expActivities');
-    parse('visaCash', 'expVisaInsurance');
-    parse('simCash', 'expConnectivity');
-    parse('othCash', 'expOther');
-    parse('fMiles', 'flightMilesNeeded');
-    parse('fTaxes', 'flightAwardTaxes');
-    parse('fCopay', 'flightAwardCopay');
-    parse('hPoints', 'hotelPointsNeeded');
-    parse('hTaxes', 'hotelAwardTaxes');
-    parse('hResort', 'hotelResortFees');
-    parse('hCopay', 'hotelCashCopay');
-  }
-
-  // Restore from LocalStorage if no URL params
-  function tryRestoreLocalStorage() {
-    if (window.location.search) return;
-    try {
-      const saved = localStorage.getItem('savedTripBudget');
-      if (saved) {
-        const d = JSON.parse(saved);
-        if (d.origin) $('origin').value = d.origin;
-        if (d.destination) $('destination').value = d.destination;
-        if (d.tripDays) $('tripDays').value = d.tripDays;
-        if (d.adults) $('adults').value = d.adults;
-        if (d.children !== undefined) $('children').value = d.children;
-        if (d.expenses) {
-          if (d.expenses.flights !== undefined) $('expFlights').value = d.expenses.flights;
-          if (d.expenses.hotel !== undefined) $('expHotel').value = d.expenses.hotel;
-          if (d.expenses.dining !== undefined) $('expDining').value = d.expenses.dining;
-          if (d.expenses.transit !== undefined) $('expTransit').value = d.expenses.transit;
-          if (d.expenses.carRental !== undefined) $('expCarRental').value = d.expenses.carRental;
-          if (d.expenses.parkingTolls !== undefined) $('expParkingTolls').value = d.expenses.parkingTolls;
-          if (d.expenses.activities !== undefined) $('expActivities').value = d.expenses.activities;
-          if (d.expenses.visaInsurance !== undefined) $('expVisaInsurance').value = d.expenses.visaInsurance;
-          if (d.expenses.connectivity !== undefined) $('expConnectivity').value = d.expenses.connectivity;
-          if (d.expenses.other !== undefined) $('expOther').value = d.expenses.other;
+      if ($('enableFlightPoints')) {
+        $('enableFlightPoints').checked = s.flightRedemption.enabled;
+        if ($('flightPointsFields')) {
+          $('flightPointsFields').style.opacity = s.flightRedemption.enabled ? '1' : '0.5';
         }
       }
-    } catch(e) {}
-  }
+      if ($('flightProgramName')) $('flightProgramName').value = s.flightRedemption.programName;
+      if ($('flightMilesNeeded')) $('flightMilesNeeded').value = s.flightRedemption.awardMilesRequired;
+      if ($('flightAwardTaxes')) $('flightAwardTaxes').value = s.flightRedemption.awardTaxes;
+      if ($('flightAwardCopay')) $('flightAwardCopay').value = s.flightRedemption.awardCashCopay;
+      if ($('flightMilesBalance')) $('flightMilesBalance').value = s.flightRedemption.airlineMilesBalance !== null ? s.flightRedemption.airlineMilesBalance : '';
+      if ($('flightBaseTransferRatio')) $('flightBaseTransferRatio').value = s.flightRedemption.baseTransferRatio;
+      if ($('flightTransferBonus')) $('flightTransferBonus').value = s.flightRedemption.transferBonusPercent;
+      if ($('flightTransferIncrement')) $('flightTransferIncrement').value = s.flightRedemption.transferIncrement;
+      if ($('flightTransferableBalance')) $('flightTransferableBalance').value = s.flightRedemption.transferablePointsBalance !== null ? s.flightRedemption.transferablePointsBalance : '';
 
-  parseUrlParams();
-  tryRestoreLocalStorage();
-  updateCurrencyLabels();
-  renderCalculator();
+      if ($('enableHotelPoints')) {
+        $('enableHotelPoints').checked = s.hotelRedemption.enabled;
+        if ($('hotelPointsFields')) {
+          $('hotelPointsFields').style.opacity = s.hotelRedemption.enabled ? '1' : '0.5';
+        }
+      }
+      if ($('hotelProgramName')) $('hotelProgramName').value = s.hotelRedemption.programName;
+      if ($('hotelPointsNeeded')) $('hotelPointsNeeded').value = s.hotelRedemption.pointsNeeded;
+      if ($('hotelAwardTaxes')) $('hotelAwardTaxes').value = s.hotelRedemption.awardTaxes;
+      if ($('hotelResortFees')) $('hotelResortFees').value = s.hotelRedemption.resortFees;
+      if ($('hotelCashCopay')) $('hotelCashCopay').value = s.hotelCashCopay;
+      if ($('hotelPointsBalance')) $('hotelPointsBalance').value = s.hotelRedemption.pointsBalance !== null ? s.hotelRedemption.pointsBalance : '';
+
+      updateCurrencyLabels(s.currency);
+    }
+
+    function updateCurrencyLabels(curr) {
+      const sym = curr === 'USD' ? '$' : '¥';
+      const hints = [
+        'hintExpFlights','hintExpHotel','hintExpDining','hintExpTransit',
+        'hintExpCarRental','hintExpParkingTolls','hintExpActivities',
+        'hintExpVisaInsurance','hintExpConnectivity','hintExpOther',
+        'hintFlightTaxes','hintFlightCopay','hintHotelTaxes','hintHotelResort','hintHotelCopay'
+      ];
+      hints.forEach(hId => {
+        const el = $(hId);
+        if (!el) return;
+        if (hId.includes('Exp')) el.textContent = `${sym} 全体总额`;
+        else if (hId.includes('Copay')) el.textContent = `${sym} 选填`;
+        else el.textContent = `${sym} 自付现金`;
+      });
+      if ($('fieldFx')) {
+        $('fieldFx').style.display = curr === 'CNY' ? 'block' : 'none';
+      }
+    }
+
+    function renderCalculator() {
+      const rawState = collectTripState();
+      const state = core.normalizeTripState(rawState);
+      const res = core.calculateTripCostAfterPoints(state);
+      const curr = state.currency;
+
+      // Update Card Prices
+      $('cardOriginalPrice').textContent = core.formatCurrency(res.cashTripCost, curr, 'zh');
+      $('cardFinalPrice').textContent = core.formatCurrency(res.finalOutOfPocket, curr, 'zh');
+      
+      const badge = $('badgeTotalSavings');
+      if (res.totalSavings > 0) {
+        badge.textContent = `省 ${core.formatCurrency(res.totalSavings, curr, 'zh')}`;
+        badge.className = 'badge-status badge-success';
+      } else {
+        badge.textContent = '无节省';
+        badge.className = 'badge-status badge-neutral';
+      }
+
+      $('valCoverageRate').textContent = `${res.pointsCoverageRate.toFixed(1)}%`;
+      $('valPerPersonCash').textContent = core.formatCurrency(res.perPersonCashFinal, curr, 'zh');
+      $('unitPerPerson').textContent = `按 ${res.totalTravelers} 位旅客平摊（原全现金 ${core.formatCurrency(res.perPersonCashOriginal, curr, 'zh')}/人）`;
+
+      $('valDailyCash').textContent = core.formatCurrency(res.dailyCashFinal, curr, 'zh');
+      $('unitDaily').textContent = `按 ${res.tripDays} 天行程平摊（原全现金 ${core.formatCurrency(res.dailyCashOriginal, curr, 'zh')}/天）`;
+
+      // Flight Summary Box
+      const flightBox = $('flightRedemptionSummary');
+      if (res.flight.enabled) {
+        $('valFlightCpp').textContent = `${res.flight.cpp.toFixed(2)} ¢/点`;
+        $('valFlightLocal').textContent = curr === 'CNY' 
+          ? `折合 ¥${res.flight.localPerPoint.toFixed(4)} / 里`
+          : `折合 $${res.flight.localPerPoint.toFixed(4)} / 里`;
+        
+        let transHtml = '';
+        if (res.flight.transferDetails && res.flight.transferDetails.bankPointsNeeded > 0) {
+          const td = res.flight.transferDetails;
+          transHtml = `<br>💳 <strong>转点测算：</strong>需从信用卡转出 <strong>${td.bankPointsNeeded.toLocaleString()}</strong> 积分` +
+            (td.bankPointsSaved > 0 ? ` (加赠节省 <strong>${td.bankPointsSaved.toLocaleString()}</strong> 积分)` : '') +
+            ` ➔ 获得 <strong>${td.milesReceived.toLocaleString()}</strong> 里程` +
+            ` · 信用卡每点有效价值: <strong>${res.flight.effectiveBankCpp.toFixed(2)} ¢/点</strong>`;
+          if (td.bankBalanceSufficient === false) {
+            transHtml += ` · <span style="color:#f87171;">⚠️ 信用卡积分余额不足</span>`;
+          } else if (td.bankBalanceSufficient === true) {
+            transHtml += ` · <span style="color:#4ade80;">✓ 信用卡积分充足</span>`;
+          }
+        }
+
+        let airlineBalHtml = '';
+        if (res.flight.transferDetails && res.flight.transferDetails.airlineBalanceSufficient === false) {
+          airlineBalHtml = ` · <span style="color:#f87171;">⚠️ 航司里程余额不足</span>`;
+        } else if (res.flight.transferDetails && res.flight.transferDetails.airlineBalanceSufficient === true) {
+          airlineBalHtml = ` · <span style="color:#4ade80;">✓ 航司里程充足</span>`;
+        }
+
+        flightBox.innerHTML = `✈️ <strong>机票抵扣详情：</strong> 原现金机票 <strong>${core.formatCurrency(res.flight.cashPrice, curr, 'zh')}</strong> ➔ 用 <strong>${res.flight.milesNeeded.toLocaleString()}</strong> 里程抵扣，自付税杂费 <strong>${core.formatCurrency(res.flight.outOfPocket, curr, 'zh')}</strong>，净省 <strong>${core.formatCurrency(res.flight.netSavings, curr, 'zh')}</strong> (兑出 <strong>${res.flight.cpp.toFixed(2)} ¢/点</strong>)${airlineBalHtml}${transHtml}`;
+      } else {
+        $('valFlightCpp').textContent = '—';
+        $('valFlightLocal').textContent = '未启用里程抵扣';
+        flightBox.innerHTML = '✈️ 机票里程抵扣未启用或机票现金价为 0。';
+      }
+
+      // Hotel Summary Box
+      const hotelBox = $('hotelRedemptionSummary');
+      if (res.hotel.enabled) {
+        $('valHotelCpp').textContent = `${res.hotel.cpp.toFixed(2)} ¢/点`;
+        $('valHotelLocal').textContent = curr === 'CNY' 
+          ? `折合 ¥${res.hotel.localPerPoint.toFixed(4)} / 点`
+          : `折合 $${res.hotel.localPerPoint.toFixed(4)} / 点`;
+        
+        let hotelBalHtml = '';
+        if (res.hotel.hotelBalanceSufficient === false) {
+          hotelBalHtml = ` · <span style="color:#f87171;">⚠️ 酒店积分余额不足</span>`;
+        } else if (res.hotel.hotelBalanceSufficient === true) {
+          hotelBalHtml = ` · <span style="color:#4ade80;">✓ 酒店积分充足</span>`;
+        }
+
+        hotelBox.innerHTML = `🏨 <strong>酒店抵扣详情：</strong> 原现金房费 <strong>${core.formatCurrency(res.hotel.cashPrice, curr, 'zh')}</strong> ➔ 用 <strong>${res.hotel.pointsNeeded.toLocaleString()}</strong> 积分抵扣，自付杂费 <strong>${core.formatCurrency(res.hotel.outOfPocket, curr, 'zh')}</strong>，净省 <strong>${core.formatCurrency(res.hotel.netSavings, curr, 'zh')}</strong> (兑出 <strong>${res.hotel.cpp.toFixed(2)} ¢/点</strong>)${hotelBalHtml}`;
+      } else {
+        $('valHotelCpp').textContent = '—';
+        $('valHotelLocal').textContent = '未启用积分抵扣';
+        hotelBox.innerHTML = '🏨 酒店积分抵扣未启用或酒店现金价为 0。';
+      }
+
+      // Waterfall Table
+      const wb = $('waterfallBody');
+      const b = res.breakdown;
+      const rows = [
+        { name: '✈️ 往返机票', cash: b.flights, deduction: res.flight.enabled ? -b.flights : 0, taxes: res.flight.enabled ? res.flight.outOfPocket : 0, final: res.flight.enabled ? res.flight.outOfPocket : b.flights },
+        { name: '🏨 酒店住宿', cash: b.hotel, deduction: res.hotel.enabled ? -b.hotel : 0, taxes: res.hotel.enabled ? res.hotel.outOfPocket : 0, final: res.hotel.enabled ? res.hotel.outOfPocket : b.hotel },
+        { name: '🍜 餐饮美食', cash: b.dining, deduction: 0, taxes: 0, final: b.dining },
+        { name: '🚇 城市交通', cash: b.transit, deduction: 0, taxes: 0, final: b.transit },
+        { name: '🚗 租车费用', cash: b.carRental, deduction: 0, taxes: 0, final: b.carRental },
+        { name: '⛽ 油费与停车', cash: b.parkingTolls, deduction: 0, taxes: 0, final: b.parkingTolls },
+        { name: '🎟️ 景点与活动', cash: b.activities, deduction: 0, taxes: 0, final: b.activities },
+        { name: '📄 签证与保险', cash: b.visaInsurance, deduction: 0, taxes: 0, final: b.visaInsurance },
+        { name: '📶 电话卡与eSIM', cash: b.connectivity, deduction: 0, taxes: 0, final: b.connectivity },
+        { name: '🛍️ 其他杂费', cash: b.other, deduction: 0, taxes: 0, final: b.other }
+      ];
+
+      let html = '';
+      rows.forEach(r => {
+        if (r.cash === 0 && r.final === 0) return;
+        html += `<tr>
+          <td><strong>${r.name}</strong></td>
+          <td>${core.formatCurrency(r.cash, curr, 'zh')}</td>
+          <td style="color:${r.deduction < 0 ? '#4ade80' : 'var(--muted)'};">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'zh') : '—'}</td>
+          <td style="color:${r.taxes > 0 ? '#f87171' : 'var(--muted)'};">${r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'zh') : '—'}</td>
+          <td><strong>${core.formatCurrency(r.final, curr, 'zh')}</strong></td>
+        </tr>`;
+      });
+      html += `<tr style="font-weight:700; background:rgba(255,255,255,0.04); border-top: 2px solid var(--line);">
+        <td>全行程总计</td>
+        <td>${core.formatCurrency(res.cashTripCost, curr, 'zh')}</td>
+        <td style="color:#4ade80;">-${core.formatCurrency(res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
+        <td style="color:#f87171;">+${core.formatCurrency((res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
+        <td style="color:var(--gold); font-size:16px;">${core.formatCurrency(res.finalOutOfPocket, curr, 'zh')}</td>
+      </tr>`;
+      wb.innerHTML = html;
+
+      // Verdict Box
+      const vBadge = $('verdictBadge');
+      const vCode = $('verdictCode');
+      const vBox = $('verdictBox');
+      if (res.flight.isNegativeSavings || res.hotel.isNegativeSavings) {
+        vBadge.textContent = '部分项目不建议用分';
+        vBadge.className = 'verdict bad';
+        vCode.textContent = 'AVOID DEFICIT';
+        vBox.innerHTML = `<div class="verdict-label">最终决策</div><div class="verdict bad">不建议兑换亏损项</div><p style="font-size:12px; margin-top:8px; color:#f87171;">存在税费高于原现金价的负收益项目，建议改付现金。</p>`;
+      } else if (res.totalSavings > 0) {
+        vBadge.textContent = '推荐使用积分';
+        vBadge.className = 'verdict good';
+        vCode.textContent = `省 ${res.pointsCoverageRate.toFixed(0)}%`;
+        vBox.innerHTML = `<div class="verdict-label">最终决策</div><div class="verdict good">推荐使用积分</div><p style="font-size:12px; margin-top:8px;">本次抵扣净省 <strong>${core.formatCurrency(res.totalSavings, curr, 'zh')}</strong>，覆盖 <strong>${res.pointsCoverageRate.toFixed(1)}%</strong> 预算。` +
+          (res.flight.enabled && res.hotel.enabled ? `<br>机票 CPP (${res.flight.cpp.toFixed(2)}¢) ${res.flight.cpp >= res.hotel.cpp ? '≥' : '<'} 酒店 CPP (${res.hotel.cpp.toFixed(2)}¢)` : '') + `</p>`;
+      } else {
+        vBadge.textContent = '纯现金出行';
+        vBadge.className = 'verdict';
+        vCode.textContent = 'ALL CASH';
+        vBox.innerHTML = `<div class="verdict-label">最终决策</div><div class="verdict">全现金方案</div><p style="font-size:12px; margin-top:8px;">当前未启用积分抵扣或无节省。</p>`;
+      }
+    }
+
+    // Bind event listeners
+    const allInputIds = [
+      'origin','destination','tripDays','adults','children','travelStyle',
+      'currency','fxRate',
+      'expFlights','expHotel','expDining','expTransit','expCarRental','expParkingTolls',
+      'expActivities','expVisaInsurance','expConnectivity','expOther',
+      'flightMilesNeeded','flightAwardTaxes','flightAwardCopay','flightMilesBalance',
+      'flightProgramName','flightBaseTransferRatio','flightTransferBonus','flightTransferIncrement','flightTransferableBalance',
+      'hotelPointsNeeded','hotelAwardTaxes','hotelResortFees','hotelCashCopay','hotelPointsBalance','hotelProgramName'
+    ];
+
+    allInputIds.forEach(id => {
+      const el = $(id);
+      if (el) el.addEventListener('input', renderCalculator);
+    });
+
+    $('enableFlightPoints').addEventListener('change', (e) => {
+      $('flightPointsFields').style.opacity = e.target.checked ? '1' : '0.5';
+      renderCalculator();
+    });
+
+    $('enableHotelPoints').addEventListener('change', (e) => {
+      $('hotelPointsFields').style.opacity = e.target.checked ? '1' : '0.5';
+      renderCalculator();
+    });
+
+    $('currency').addEventListener('change', (e) => {
+      updateCurrencyLabels(e.target.value);
+      renderCalculator();
+    });
+
+    // Toolbar buttons
+    $('btnReset').addEventListener('click', () => {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(LEGACY_KEY);
+      } catch(e) {}
+      restoreTripState({
+        tripDays: 7, adults: 2, children: 0, currency: 'CNY', fxRate: 7.0, travelStyle: 'balanced',
+        expenses: { flights: 0, hotel: 0, dining: 0, transit: 0, carRental: 0, parkingTolls: 0, activities: 0, visaInsurance: 0, connectivity: 0, other: 0 },
+        flightRedemption: { enabled: true, awardMilesRequired: 0, awardTaxes: 0, awardCashCopay: 0, baseTransferRatio: 1.0, transferBonusPercent: 0, transferIncrement: 1000 },
+        hotelRedemption: { enabled: true, pointsNeeded: 0, awardTaxes: 0, resortFees: 0, hotelCashCopay: 0 }
+      });
+      renderCalculator();
+      showToast('已重置表单并清除本地暂存');
+    });
+
+    $('btnPrint').addEventListener('click', () => {
+      window.print();
+    });
+
+    $('btnSaveLocal').addEventListener('click', () => {
+      const s = core.normalizeTripState(collectTripState());
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+        showToast('预算数据已成功暂存至本地浏览器');
+      } catch(e) {
+        showToast('暂存失败，请检查浏览器权限');
+      }
+    });
+
+    $('btnCopySummary').addEventListener('click', () => {
+      const s = core.normalizeTripState(collectTripState());
+      const res = core.calculateTripCostAfterPoints(s);
+      const curr = s.currency;
+      const summary = `【里程账 - 旅行预算摘要】\n目的地: ${s.destination || '未指定'} (${s.tripDays}天 / ${s.adults}大${s.children}小)\n全现金总成本: ${core.formatCurrency(res.cashTripCost, curr, 'zh')}\n积分抵扣后实际自付: ${core.formatCurrency(res.finalOutOfPocket, curr, 'zh')}\n累计节省金额: ${core.formatCurrency(res.totalSavings, curr, 'zh')} (覆盖率 ${res.pointsCoverageRate.toFixed(1)}%)\n人均自付现金: ${core.formatCurrency(res.perPersonCashFinal, curr, 'zh')}\n日均自付现金: ${core.formatCurrency(res.dailyCashFinal, curr, 'zh')}\n计算生成自: ${window.location.href}`;
+      navigator.clipboard.writeText(summary).then(() => {
+        showToast('预算摘要已复制到剪贴板');
+      }).catch(() => {
+        showToast('复制失败，请手动复制');
+      });
+    });
+
+    $('btnShare').addEventListener('click', () => {
+      const s = core.normalizeTripState(collectTripState());
+      const query = core.serializeTripState(s);
+      const shareUrl = `${window.location.origin}${window.location.pathname}?${query}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast('分享链接已复制到剪贴板！');
+      }).catch(() => {
+        showToast('分享链接已生成');
+      });
+    });
+
+    // Initialization logic: URL params > LocalStorage > Default
+    function init() {
+      if (window.location.search) {
+        const urlState = core.parseTripParams(window.location.search);
+        restoreTripState(urlState);
+      } else {
+        let loaded = false;
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            restoreTripState(JSON.parse(saved));
+            loaded = true;
+          } else {
+            const legacy = localStorage.getItem(LEGACY_KEY);
+            if (legacy) {
+              const legData = JSON.parse(legacy);
+              restoreTripState(legData);
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(core.normalizeTripState(legData)));
+              loaded = true;
+            }
+          }
+        } catch(e) {}
+
+        if (!loaded) {
+          updateCurrencyLabels('CNY');
+        }
+      }
+      renderCalculator();
+    }
+
+    init();
+  })();
 </script>

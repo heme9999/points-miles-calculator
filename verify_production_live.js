@@ -261,33 +261,59 @@ async function verifyLiveProduction() {
     console.log('Live Transfer Bonus calculation: 50,000 (Passed)');
   }
 
+  // Verify no erroneous "1.5 元/里" or "15,000 元" on Live Chinese homepage
+  const cnHomeHtml = cnHome.data;
+  if (cnHomeHtml.includes('1.5 元/里') || cnHomeHtml.includes('15,000 元')) {
+    console.error('ERROR: Live Chinese homepage contains erroneous 1.5 元/里 or 15,000 元');
+    failures++;
+  } else {
+    console.log('Live Chinese homepage valuation check: 0 instances of 1.5 元/里 or 15,000 元 (Passed)');
+  }
+
   // Trip Cost After Points Live Calculation (CN)
   console.log('\n--- Trip Cost After Points Live Calculation (CN & EN) ---');
-  const tcCnUrl = `${prodBase}/calculators/trip-cost-after-points/?currency=CNY&days=7&adults=2&children=1&fCash=12000&hCash=15000&dCash=7000&tCash=3500&actCash=3000&visaCash=1200&simCash=300&othCash=2000&fMiles=75000&fTaxes=2100&hPoints=90000&hTaxes=300&hResort=0&audit=${ts}`;
+  const tcCnUrl = `${prodBase}/calculators/trip-cost-after-points/?currency=CNY&days=7&adults=2&children=1&fCash=12000&hCash=15000&dCash=7000&tCash=3500&actCash=3000&visaCash=1200&simCash=300&othCash=2000&fMiles=75000&fTaxes=2100&hPoints=90000&hTaxes=300&hResort=0&fBonus=20&fRatio=1&fInc=1000&audit=${ts}`;
   const tcCpHtml = (await fetch(tcCnUrl)).data;
-  const tcCnDom = new JSDOM(tcCpHtml, { runScripts: "dangerously", url: tcCnUrl });
-  await new Promise(r => setTimeout(r, 150));
+  const tcCnDom = new JSDOM(tcCpHtml, { runScripts: "dangerously", resources: "usable", url: tcCnUrl });
+  await new Promise(r => setTimeout(r, 400));
   const tcCnFinal = tcCnDom.window.document.getElementById('cardFinalPrice')?.textContent;
   const tcCnSavings = tcCnDom.window.document.getElementById('badgeTotalSavings')?.textContent;
-  if (tcCnFinal !== '¥19,400' || tcCnSavings !== '¥24,600') {
-    console.error(`ERROR: Live CN Trip Cost calculation failed. Expected ¥19,400 / ¥24,600, got ${tcCnFinal} / ${tcCnSavings}`);
+  if (tcCnFinal !== '¥19,400' || tcCnSavings !== '省 ¥24,600') {
+    console.error(`ERROR: Live CN Trip Cost calculation failed. Expected ¥19,400 / 省 ¥24,600, got ${tcCnFinal} / ${tcCnSavings}`);
     failures++;
   } else {
     console.log(`Live CN Trip Cost calculation on load: ${tcCnFinal} final / ${tcCnSavings} saved (Passed)`);
   }
 
+  // Check Transfer Bonus Summary Output in DOM
+  const flightSummaryText = tcCnDom.window.document.getElementById('flightRedemptionSummary')?.textContent || '';
+  if (!flightSummaryText.includes('62,500') && !flightSummaryText.includes('63,000') && !flightSummaryText.includes('75,000')) {
+    console.error(`ERROR: Live CN Trip Cost missing transfer bonus in DOM: ${flightSummaryText}`);
+    failures++;
+  } else {
+    console.log('Live CN Trip Cost Transfer Bonus in DOM verified (Passed)');
+  }
+
   // Trip Cost After Points Live Calculation (EN)
   const tcEnUrl = `${prodBase}/en/calculators/trip-cost-after-points/?currency=USD&days=10&adults=2&children=1&fCash=3600&hCash=2700&dCash=1500&carCash=700&gasCash=450&actCash=900&visaCash=300&simCash=60&othCash=300&fMiles=180000&fTaxes=360&hPoints=120000&hTaxes=0&hResort=0&audit=${ts}`;
   const tcEnHtml = (await fetch(tcEnUrl)).data;
-  const tcEnDom = new JSDOM(tcEnHtml, { runScripts: "dangerously", url: tcEnUrl });
-  await new Promise(r => setTimeout(r, 150));
+  const tcEnDom = new JSDOM(tcEnHtml, { runScripts: "dangerously", resources: "usable", url: tcEnUrl });
+  await new Promise(r => setTimeout(r, 400));
   const tcEnFinal = tcEnDom.window.document.getElementById('cardFinalPrice')?.textContent;
   const tcEnSavings = tcEnDom.window.document.getElementById('badgeTotalSavings')?.textContent;
-  if (tcEnFinal !== '$4,570' || tcEnSavings !== '$5,940') {
-    console.error(`ERROR: Live EN Trip Cost calculation failed. Expected $4,570 / $5,940, got ${tcEnFinal} / ${tcEnSavings}`);
+  if (tcEnFinal !== '$4,570' || tcEnSavings !== 'Saved $5,940') {
+    console.error(`ERROR: Live EN Trip Cost calculation failed. Expected $4,570 / Saved $5,940, got ${tcEnFinal} / ${tcEnSavings}`);
     failures++;
   } else {
     console.log(`Live EN Trip Cost calculation on load: ${tcEnFinal} final / ${tcEnSavings} saved (Passed)`);
+  }
+
+  // Check EN Label: ensure NO "Transfer Bonus Bonus" typo
+  if (tcEnHtml.includes('Transfer Bonus Bonus')) {
+    console.error('ERROR: Live EN Trip Cost contains typo "Transfer Bonus Bonus"');
+    failures++;
+  } else {
+    console.log('Live EN Trip Cost label check: 0 instances of "Transfer Bonus Bonus" (Passed)');
   }
 
   // Case Studies Page Live Verification

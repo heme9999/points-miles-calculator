@@ -90,6 +90,26 @@
 }
 </script>
 {% endif %}
+{% if faqItems %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in faqItems %}
+    {
+      "@type": "Question",
+      "name": "{{ faq.question | safe }}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ faq.answer | safe }}"
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
 </head>
 <body>
 <div class="wrap">
