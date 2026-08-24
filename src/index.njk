@@ -20,6 +20,10 @@ lastModified: "2026-08-22"
       积分与现金决策计算器 →
       <span>对比买票还是用积分兑换</span>
     </a>
+    <a href="/calculators/trip-cost-after-points/" class="calculator-link-card">
+      积分旅行预算计算器 →
+      <span>计算积分抵扣后的旅行实际现金支出</span>
+    </a>
     <a href="/calculators/cents-per-point/" class="calculator-link-card">
       单点价值 (CPP) 计算器 →
       <span>精确计算每点实际兑出价值</span>
@@ -59,17 +63,16 @@ lastModified: "2026-08-22"
   </div>
 
   <div class="field">
-    <label for="programPreset">你打算兑换的航司/联盟里程价值<span class="hint" id="hintPreset">价值 / 英里</span></label>
+    <label for="programPreset">你打算兑换的航司/联盟里程估值情景<span class="hint" id="hintPreset">价值 / 英里</span></label>
     <select id="programPreset" aria-describedby="hintPreset unitMileValue">
-      <option value="custom">自定义(手动输入)</option>
-      <option value="0.15">Chase Ultimate Rewards · TPG估值约0.15元/点(2026-05)</option>
-      <option value="0.35">经济舱短途参考 · 约0.35元/英里</option>
-      <option value="0.6">经济舱长途参考 · 约0.6元/英里</option>
-      <option value="1.2">公务舱长途参考 · 约1.2元/英里</option>
-      <option value="2.0">头等舱/稀缺舱位参考 · 约2.0元/英里</option>
+      <option value="custom">自定义估值情景</option>
+      <option value="0.084">保守估值情景 · 1.2美分/英里 (约0.084元)</option>
+      <option value="0.105" selected>中性航空里程情景 · 1.5美分/英里 (约0.105元)</option>
+      <option value="0.140">灵活积分/良好兑换情景 · 2.0美分/英里 (约0.140元)</option>
+      <option value="0.245">高价值/两舱兑换情景 · 3.5美分/英里 (约0.245元)</option>
     </select>
-    <input type="number" id="mileValue" value="0.6" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintPreset unitMileValue">
-    <div class="unit" id="unitMileValue">这是区间参考值,具体以你实际查到的航班报价换算为准</div>
+    <input type="number" id="mileValue" value="0.105" min="0.001" step="0.001" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintPreset unitMileValue">
+    <div class="unit" id="unitMileValue">预设数值为计算演示情景，非官方固定汇率。请以实际查到的现金票价与所需里程换算为准。</div>
   </div>
 </div>
 
@@ -198,12 +201,35 @@ lastModified: "2026-08-22"
   }
   
   const updateUnits = () => {
+    const sel = $('programPreset');
     if (currentCurrency === 'USD') {
       if($('hintCashRatio')) $('hintCashRatio').textContent = '积分 : 美元';
       if($('hintPreset')) $('hintPreset').textContent = '美分 / 英里';
+      if (sel) {
+        sel.options[0].text = 'Custom scenario (手动输入)';
+        sel.options[1].text = 'Conservative scenario · ~1.2¢/mile';
+        sel.options[1].value = '1.2';
+        sel.options[2].text = 'Typical airline-mile scenario · ~1.5¢/mile';
+        sel.options[2].value = '1.5';
+        sel.options[3].text = 'Flexible points scenario · ~2.0¢/mile';
+        sel.options[3].value = '2.0';
+        sel.options[4].text = 'Premium cabin sweet spot · ~3.5¢/mile';
+        sel.options[4].value = '3.5';
+      }
     } else {
       if($('hintCashRatio')) $('hintCashRatio').textContent = '积分 : 元';
       if($('hintPreset')) $('hintPreset').textContent = '元 / 英里';
+      if (sel) {
+        sel.options[0].text = '自定义估值情景';
+        sel.options[1].text = '保守估值情景 · 1.2美分/英里 (约0.084元)';
+        sel.options[1].value = '0.084';
+        sel.options[2].text = '中性航空里程情景 · 1.5美分/英里 (约0.105元)';
+        sel.options[2].value = '0.105';
+        sel.options[3].text = '灵活积分/良好兑换情景 · 2.0美分/英里 (约0.140元)';
+        sel.options[3].value = '0.140';
+        sel.options[4].text = '高价值/两舱兑换情景 · 3.5美分/英里 (约0.245元)';
+        sel.options[4].value = '0.245';
+      }
     }
   };
 

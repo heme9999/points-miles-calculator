@@ -83,8 +83,8 @@ async function runAudit() {
   report.totalUrls = urls.length;
   console.log(`- Total URLs in sitemap: ${urls.length}`);
 
-  if (urls.length !== 98) {
-    failures.push(`Sitemap URL count mismatch: Expected 98, got ${urls.length}`);
+  if (urls.length !== 104) {
+    failures.push(`Sitemap URL count mismatch: Expected 104, got ${urls.length}`);
   }
 
   // Check unique & no query params & no preview domains

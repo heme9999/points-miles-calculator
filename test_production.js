@@ -67,8 +67,8 @@ async function runTests() {
   console.log(`Sitemap total URLs: ${sitemapUrls.length}`);
   console.log(`Sitemap explicit lastmod entries: ${lastmods.length}`);
 
-  if (sitemapUrls.length !== 98) {
-    console.error(`ERROR: Expected 98 URLs in sitemap, got ${sitemapUrls.length}`);
+  if (sitemapUrls.length !== 104) {
+    console.error(`ERROR: Expected 104 URLs in sitemap, got ${sitemapUrls.length}`);
     failures++;
   }
 
@@ -92,6 +92,7 @@ async function runTests() {
   const expectedEnLinks = [
     '/en/calculators/points-to-dollars/',
     '/en/calculators/points-vs-cash/',
+    '/en/calculators/trip-cost-after-points/',
     '/en/calculators/cents-per-point/',
     '/en/calculators/transfer-bonus/'
   ];
@@ -99,29 +100,31 @@ async function runTests() {
   for (const linkHref of expectedEnLinks) {
     const el = enDoc.querySelector(`a[href="${linkHref}"]`);
     if (!el) {
-      console.error(`ERROR: English homepage missing server-rendered link to ${linkHref}`);
+      console.error(`ERROR: English homepage missing link to ${linkHref}`);
       failures++;
     } else {
-      console.log(`Found EN entry link: ${linkHref} -> "${el.textContent.trim().replace(/\s+/g, ' ')}"`);
+      console.log(`English homepage link OK: ${linkHref} -> "${el.textContent.replace(/\s+/g, ' ').trim()}"`);
     }
   }
 
-  const cnHomeRes = await fetch(`${baseUrl}/`);
-  const cnDoc = new JSDOM(cnHomeRes.data).window.document;
-  const expectedCnLinks = [
+  const zhHomeRes = await fetch(`${baseUrl}/`);
+  const zhDoc = new JSDOM(zhHomeRes.data).window.document;
+
+  const expectedZhLinks = [
     '/calculators/points-to-dollars/',
     '/calculators/points-vs-cash/',
+    '/calculators/trip-cost-after-points/',
     '/calculators/cents-per-point/',
     '/calculators/transfer-bonus/'
   ];
 
-  for (const linkHref of expectedCnLinks) {
-    const el = cnDoc.querySelector(`a[href="${linkHref}"]`);
+  for (const linkHref of expectedZhLinks) {
+    const el = zhDoc.querySelector(`a[href="${linkHref}"]`);
     if (!el) {
-      console.error(`ERROR: Chinese homepage missing server-rendered link to ${linkHref}`);
+      console.error(`ERROR: Chinese homepage missing link to ${linkHref}`);
       failures++;
     } else {
-      console.log(`Found CN entry link: ${linkHref} -> "${el.textContent.trim().replace(/\s+/g, ' ')}"`);
+      console.log(`Chinese homepage link OK: ${linkHref} -> "${el.textContent.replace(/\s+/g, ' ').trim()}"`);
     }
   }
 
@@ -434,6 +437,59 @@ async function runTests() {
     failures++;
   } else {
     console.log(`Transfer Bonus legacy alias params calculation: ${legacyRaw} (Passed)`);
+  }
+
+  // Trip Cost After Points Calculator Auto-Calculation (CN)
+  console.log('\n--- Trip Cost After Points Calculator Verification (CN & EN) ---');
+  const tcCnUrl = `${baseUrl}/calculators/trip-cost-after-points/?currency=CNY&days=7&adults=2&children=1&fCash=12000&hCash=15000&dCash=7000&tCash=3500&actCash=3000&visaCash=1200&simCash=300&othCash=2000&fMiles=75000&fTaxes=2100&hPoints=90000&hTaxes=300&hResort=0`;
+  const tcCpHtml = (await fetch(tcCnUrl)).data;
+  const tcCnDom = new JSDOM(tcCpHtml, { runScripts: "dangerously", url: tcCnUrl });
+  await new Promise(r => setTimeout(r, 150));
+  const tcCnFinal = tcCnDom.window.document.getElementById('cardFinalPrice')?.textContent;
+  const tcCnSavings = tcCnDom.window.document.getElementById('badgeTotalSavings')?.textContent;
+  if (tcCnFinal !== '¥19,400' || tcCnSavings !== '¥24,600') {
+    console.error(`ERROR: CN Trip Cost After Points calculation failed. Expected ¥19,400 / ¥24,600, got ${tcCnFinal} / ${tcCnSavings}`);
+    failures++;
+  } else {
+    console.log(`CN Trip Cost After Points on-load calculation: ${tcCnFinal} final / ${tcCnSavings} saved (Passed)`);
+  }
+
+  // Trip Cost After Points Calculator Auto-Calculation (EN)
+  const tcEnUrl = `${baseUrl}/en/calculators/trip-cost-after-points/?currency=USD&days=10&adults=2&children=1&fCash=3600&hCash=2700&dCash=1500&carCash=700&gasCash=450&actCash=900&visaCash=300&simCash=60&othCash=300&fMiles=180000&fTaxes=360&hPoints=120000&hTaxes=0&hResort=0`;
+  const tcEnHtml = (await fetch(tcEnUrl)).data;
+  const tcEnDom = new JSDOM(tcEnHtml, { runScripts: "dangerously", url: tcEnUrl });
+  await new Promise(r => setTimeout(r, 150));
+  const tcEnFinal = tcEnDom.window.document.getElementById('cardFinalPrice')?.textContent;
+  const tcEnSavings = tcEnDom.window.document.getElementById('badgeTotalSavings')?.textContent;
+  if (tcEnFinal !== '$4,570' || tcEnSavings !== '$5,940') {
+    console.error(`ERROR: EN Trip Cost After Points calculation failed. Expected $4,570 / $5,940, got ${tcEnFinal} / ${tcEnSavings}`);
+    failures++;
+  } else {
+    console.log(`EN Trip Cost After Points on-load calculation: ${tcEnFinal} final / ${tcEnSavings} saved (Passed)`);
+  }
+
+  // Case Studies Page Verification
+  const caseUrls = [
+    '/examples/usa-west-coast-family-trip-with-points/',
+    '/en/examples/usa-west-coast-family-trip-with-points/',
+    '/examples/japan-7-day-family-trip-with-points/',
+    '/en/examples/japan-7-day-family-trip-with-points/'
+  ];
+  for (const cUrl of caseUrls) {
+    const cRes = await fetch(`${baseUrl}${cUrl}`);
+    if (cRes.status !== 200) {
+      console.error(`ERROR: Case study ${cUrl} returned HTTP ${cRes.status}`);
+      failures++;
+    } else {
+      const cDoc = new JSDOM(cRes.data).window.document;
+      const h1 = cDoc.querySelector('h1')?.textContent;
+      if (!h1) {
+        console.error(`ERROR: Case study ${cUrl} missing H1`);
+        failures++;
+      } else {
+        console.log(`Case study OK: ${cUrl} (H1: "${h1}")`);
+      }
+    }
   }
 
   if (failures > 0) {

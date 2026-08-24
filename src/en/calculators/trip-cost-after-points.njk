@@ -1,0 +1,820 @@
+---
+layout: base.njk
+title: Trip Cost After Points Calculator | True Out-of-Pocket Travel Cost
+description: Estimate your trip’s full cash cost, apply airline miles, hotel points and credit card rewards, and calculate your true out-of-pocket cost, savings and redemption value.
+schemaType: WebApplication
+eyebrow: Tools · 06
+lastModified: "2026-08-24"
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: Trip Cost After Points
+---
+<h1>Trip Cost After Points Calculator</h1>
+<p class="sub">Estimate your full-cash travel budget, apply airline miles and hotel points, and calculate your true out-of-pocket cash expenses, total savings, points coverage rate, and realized cents per point (CPP).</p>
+
+<div class="currency-selector" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+  <div class="budget-toolbar" style="margin: 0;">
+    <button type="button" class="btn-action btn-action-primary" id="btnShare" aria-label="Copy Shareable Link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Share Calculation
+    </button>
+    <button type="button" class="btn-action" id="btnSaveLocal" aria-label="Save to Browser Storage">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save Draft
+    </button>
+    <button type="button" class="btn-action" id="btnCopySummary" aria-label="Copy Budget Summary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Summary
+    </button>
+    <button type="button" class="btn-action" id="btnPrint" aria-label="Print or Export PDF">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / PDF
+    </button>
+    <button type="button" class="btn-action" id="btnReset" style="color: #f87171;" aria-label="Reset all inputs">
+      Reset
+    </button>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 8px;">
+    <label for="currency" style="font-weight: 600; font-size: 14px;">Currency</label>
+    <select id="currency" style="padding: 6px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--surface); color: var(--paper); font-size: 14px;">
+      <option value="USD">USD ($)</option>
+      <option value="CNY">CNY (¥)</option>
+    </select>
+  </div>
+</div>
+
+<div id="toast" style="display: none; position: fixed; bottom: 24px; right: 24px; background: #0284c7; color: white; padding: 12px 20px; border-radius: 6px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-size: 14px; font-weight: 500;"></div>
+
+<!-- 1. Trip Basic Info -->
+<div class="budget-section">
+  <div class="budget-section-header">
+    <h2 class="budget-section-title">
+      <span>1. Trip Details</span>
+    </h2>
+    <span style="font-size: 12px; color: var(--muted);">All expense inputs represent [Total for all travelers for the whole trip]</span>
+  </div>
+  
+  <div class="expense-grid">
+    <div class="field">
+      <label for="origin">Origin<span class="hint">Optional</span></label>
+      <input type="text" id="origin" placeholder="e.g. New York / San Francisco / London">
+    </div>
+    <div class="field">
+      <label for="destination">Destination<span class="hint">Optional</span></label>
+      <input type="text" id="destination" placeholder="e.g. Tokyo / Hawaii / Paris">
+    </div>
+    <div class="field">
+      <label for="tripDays">Trip Length<span class="hint">Days</span></label>
+      <input type="number" id="tripDays" value="7" min="1" max="365" step="1" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="adults">Adults<span class="hint">Count</span></label>
+      <input type="number" id="adults" value="2" min="1" max="50" step="1" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="children">Children<span class="hint">Count</span></label>
+      <input type="number" id="children" value="0" min="0" max="50" step="1" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="travelStyle">Travel Style<span class="hint">Reference tag</span></label>
+      <select id="travelStyle">
+        <option value="custom">Custom Budget</option>
+        <option value="budget">Budget / Saver</option>
+        <option value="comfort" selected>Comfort / Balanced</option>
+        <option value="luxury">Luxury / Premium</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- 2. Full Cash Trip Expenses -->
+<div class="budget-section">
+  <div class="budget-section-header">
+    <h2 class="budget-section-title">
+      <span>2. All-Cash Travel Budget</span>
+    </h2>
+    <span class="badge-status badge-success" id="cashTripTotalBadge">All-Cash Total: $0</span>
+  </div>
+  <p style="font-size: 13px; color: var(--muted); margin-top: -8px; margin-bottom: 16px;">
+    Enter your baseline cash expenses assuming zero points or miles are used (total amount for all travelers combined).
+  </p>
+
+  <div class="expense-grid">
+    <div class="field">
+      <label for="expFlights">Flights Cash Price<span class="hint" id="hintExpFlights">$ Total for all travelers</span></label>
+      <input type="number" id="expFlights" value="1200" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expHotel">Hotels Cash Price<span class="hint" id="hintExpHotel">$ Total for all travelers</span></label>
+      <input type="number" id="expHotel" value="1400" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expDining">Dining & Food<span class="hint" id="hintExpDining">$ Total for all travelers</span></label>
+      <input type="number" id="expDining" value="700" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expTransit">Local & Rail Transit<span class="hint" id="hintExpTransit">$ Total for all travelers</span></label>
+      <input type="number" id="expTransit" value="150" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expCarRental">Car Rental<span class="hint" id="hintExpCarRental">$ Total for all travelers</span></label>
+      <input type="number" id="expCarRental" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expParkingTolls">Gas, Tolls & Parking<span class="hint" id="hintExpParkingTolls">$ Total for all travelers</span></label>
+      <input type="number" id="expParkingTolls" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expActivities">Activities & Attractions<span class="hint" id="hintExpActivities">$ Total for all travelers</span></label>
+      <input type="number" id="expActivities" value="300" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expVisaInsurance">Travel Insurance & Visas<span class="hint" id="hintExpVisaInsurance">$ Total for all travelers</span></label>
+      <input type="number" id="expVisaInsurance" value="100" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expConnectivity">eSIM / Cellular Data<span class="hint" id="hintExpConnectivity">$ Total for all travelers</span></label>
+      <input type="number" id="expConnectivity" value="40" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="expOther">Miscellaneous & Incidentals<span class="hint" id="hintExpOther">$ Total for all travelers</span></label>
+      <input type="number" id="expOther" value="100" min="0" step="1" inputmode="decimal" placeholder="0">
+    </div>
+  </div>
+</div>
+
+<!-- 3. Airline Miles Redemption -->
+<div class="budget-section">
+  <div class="budget-section-header">
+    <h2 class="budget-section-title">
+      <span>3. Airline Miles Flight Redemption</span>
+    </h2>
+    <label class="toggle-switch-label">
+      <input type="checkbox" id="enableFlightPoints" checked>
+      Apply Flight Miles
+    </label>
+  </div>
+
+  <div id="flightPointsFields">
+    <div class="expense-grid">
+      <div class="field">
+        <label for="flightMilesNeeded">Total Miles Required<span class="hint">MILES</span></label>
+        <input type="number" id="flightMilesNeeded" value="60000" min="0" step="1" inputmode="numeric" placeholder="e.g. 60000">
+      </div>
+      <div class="field">
+        <label for="flightAwardTaxes">Award Taxes & Fuel Surcharges<span class="hint" id="hintFlightTaxes">$ Out of pocket</span></label>
+        <input type="number" id="flightAwardTaxes" value="120" min="0" step="1" inputmode="decimal" placeholder="0">
+        <div class="unit">Mandatory government taxes and airline fuel surcharges</div>
+      </div>
+      <div class="field">
+        <label for="flightAwardCopay">Cash Copay (Miles+Cash)<span class="hint" id="hintFlightCopay">$ Optional</span></label>
+        <input type="number" id="flightAwardCopay" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="flightMilesBalance">Current Mileage Balance<span class="hint">Optional</span></label>
+        <input type="number" id="flightMilesBalance" value="75000" min="0" step="1" inputmode="numeric" placeholder="For balance check">
+      </div>
+      <div class="field">
+        <label for="flightProgramName">Loyalty Program<span class="hint">Optional</span></label>
+        <input type="text" id="flightProgramName" placeholder="e.g. United MileagePlus / Air Canada Aeroplan / Avios">
+      </div>
+      <div class="field">
+        <label for="flightTransferBonus">Transfer Bonus Bonus<span class="hint">% Optional</span></label>
+        <input type="number" id="flightTransferBonus" value="0" min="0" max="200" step="5" inputmode="numeric" placeholder="e.g. 20 for 20% bonus">
+      </div>
+    </div>
+    
+    <div id="flightRedemptionSummary" style="margin-top: 14px; padding: 12px 16px; background: rgba(2, 132, 199, 0.08); border-left: 3px solid #38bdf8; border-radius: 4px; font-size: 13.5px;">
+      <!-- Dynamic JS content -->
+    </div>
+  </div>
+</div>
+
+<!-- 4. Hotel Points Redemption -->
+<div class="budget-section">
+  <div class="budget-section-header">
+    <h2 class="budget-section-title">
+      <span>4. Hotel Points Stay Redemption</span>
+    </h2>
+    <label class="toggle-switch-label">
+      <input type="checkbox" id="enableHotelPoints" checked>
+      Apply Hotel Points
+    </label>
+  </div>
+
+  <div id="hotelPointsFields">
+    <div class="expense-grid">
+      <div class="field">
+        <label for="hotelPointsNeeded">Total Hotel Points Required<span class="hint">POINTS</span></label>
+        <input type="number" id="hotelPointsNeeded" value="70000" min="0" step="1" inputmode="numeric" placeholder="e.g. 70000">
+      </div>
+      <div class="field">
+        <label for="hotelAwardTaxes">Award Taxes & Service Fees<span class="hint" id="hintHotelTaxes">$ Out of pocket</span></label>
+        <input type="number" id="hotelAwardTaxes" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+        <div class="unit">Most hotel awards waive occupancy taxes</div>
+      </div>
+      <div class="field">
+        <label for="hotelResortFees">Mandatory Resort / Destination Fees<span class="hint" id="hintHotelResort">$ Out of pocket</span></label>
+        <input type="number" id="hotelResortFees" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+        <div class="unit">Waived on Hyatt and Hilton award stays; charged on Marriott & IHG</div>
+      </div>
+      <div class="field">
+        <label for="hotelCashCopay">Cash Copay (Points+Cash)<span class="hint" id="hintHotelCopay">$ Optional</span></label>
+        <input type="number" id="hotelCashCopay" value="0" min="0" step="1" inputmode="decimal" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="hotelPointsBalance">Current Points Balance<span class="hint">Optional</span></label>
+        <input type="number" id="hotelPointsBalance" value="80000" min="0" step="1" inputmode="numeric" placeholder="For balance check">
+      </div>
+      <div class="field">
+        <label for="hotelProgramName">Hotel Loyalty Program<span class="hint">Optional</span></label>
+        <input type="text" id="hotelProgramName" placeholder="e.g. World of Hyatt / Marriott Bonvoy / Hilton">
+      </div>
+    </div>
+
+    <div id="hotelRedemptionSummary" style="margin-top: 14px; padding: 12px 16px; background: rgba(2, 132, 199, 0.08); border-left: 3px solid #38bdf8; border-radius: 4px; font-size: 13.5px;">
+      <!-- Dynamic JS content -->
+    </div>
+  </div>
+</div>
+
+<!-- 5. Results & Waterfall -->
+<div class="ticket" aria-live="polite" style="margin-top: 30px;">
+  <div class="main">
+    <h2 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gold);">Trip Cost & Rewards Analysis Report</h2>
+
+    <!-- Side-by-side comparison -->
+    <div class="plan-comparison-grid">
+      <div class="plan-card">
+        <div class="plan-card-title">All-Cash Baseline Plan</div>
+        <div class="plan-card-price" id="cardCashPrice">$3,990</div>
+        <div style="font-size: 13px; color: var(--muted);">Paying 100% cash out of pocket</div>
+        <ul class="plan-metrics-list">
+          <li><span>Cash Per Person:</span><strong id="metricCashPerPerson">$1,995</strong></li>
+          <li><span>Cash Per Day:</span><strong id="metricCashDaily">$570</strong></li>
+          <li><span>Flights % of Total:</span><strong id="metricCashFlightPct">30.1%</strong></li>
+          <li><span>Hotel % of Total:</span><strong id="metricCashHotelPct">35.1%</strong></li>
+        </ul>
+      </div>
+
+      <div class="plan-card highlight">
+        <div class="plan-card-title">✨ Points-Optimized Plan</div>
+        <div class="plan-card-price" id="cardFinalPrice">$1,510</div>
+        <div style="font-size: 13px; color: #4ade80;">Total Net Savings: <span id="badgeTotalSavings">$2,480</span> (<span id="badgeCoveragePct">62.2%</span>)</div>
+        <ul class="plan-metrics-list">
+          <li><span>Out-of-Pocket Per Person:</span><strong id="metricFinalPerPerson">$755</strong></li>
+          <li><span>Out-of-Pocket Per Day:</span><strong id="metricFinalDaily">$216</strong></li>
+          <li><span>Flight Redemption CPP:</span><strong id="metricFlightCpp">1.80 ¢/pt</strong></li>
+          <li><span>Hotel Redemption CPP:</span><strong id="metricHotelCpp">2.00 ¢/pt</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Waterfall Breakdown Table -->
+    <h3 style="font-size: 16px; margin: 24px 0 12px 0; color: var(--paper);">Expense Calculation Waterfall</h3>
+    <div class="responsive-table-wrapper">
+      <table class="waterfall-table">
+        <thead>
+          <tr>
+            <th>Calculation Step</th>
+            <th>Description</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="waterfallBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" id="verdictSummaryBox" style="margin-top: 20px;">
+      <!-- Comprehensive decision advice generated here -->
+    </div>
+  </div>
+
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">Verdict</div>
+      <div class="verdict good" id="verdictBadge">Redeem Points</div>
+    </div>
+    <div class="code" id="verdictCode">SAVINGS 62%</div>
+  </div>
+</div>
+
+<!-- 6. Educational Content & FAQs -->
+<article class="seo-content" style="margin-top: 50px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>Why Calculate Your Trip’s True Out-of-Pocket Travel Cost?</h2>
+  <p>Award travel is rarely 100% free. While airline miles and hotel points can slash thousands of dollars off your vacation expenses, award tickets frequently carry mandatory airport taxes, government security fees, carrier fuel surcharges, and resort fees that must be paid in cash.</p>
+  <p>This comprehensive calculator bridges the gap between overall vacation budgeting and specific redemption decisions, helping you answer three critical questions:</p>
+  <ol>
+    <li>What is the true baseline cost of your vacation if paying entirely in cash?</li>
+    <li>After applying your airline miles and hotel points, exactly how much cash will still leave your wallet?</li>
+    <li>Should you allocate your flexible credit card points toward flights or hotels to maximize your realized cents per point (CPP)?</li>
+  </ol>
+
+  <h2>How to Use This Calculator</h2>
+  <h3>1. Enter Trip Logistics & All-Cash Budget</h3>
+  <p>Enter your traveler count, trip duration, and baseline expenses across all 10 categories. Note that all inputs represent the <strong>total cost for all travelers combined for the entire trip</strong>, ensuring accurate per-person and daily averages.</p>
+
+  <h3>2. Configure Airline & Hotel Redemptions</h3>
+  <p>Toggle the redemption modules for flights and hotels, entering the required points and any mandatory cash outlays (such as fuel surcharges or resort fees).</p>
+
+  <h3>3. Review the Waterfall & Recommendations</h3>
+  <p>The expense waterfall transparently subtracts the cash cost of flights and hotels covered by rewards, adds back mandatory award surcharges, and calculates your final out-of-pocket cash commitment alongside realized CPP metrics.</p>
+
+  <h2>Representative Case Studies</h2>
+  <p>Explore full, end-to-end trip analyses demonstrating real-world point optimizations:</p>
+  <div class="popular-calculators-grid" style="margin: 20px 0;">
+    <a href="/en/examples/usa-west-coast-family-trip-with-points/" class="calculator-link-card">
+      🇺🇸 US West Coast 10-Day Family Trip Case Study →
+      <span>Long-haul flights and hotel points optimization</span>
+    </a>
+    <a href="/en/examples/japan-7-day-family-trip-with-points/" class="calculator-link-card">
+      🇯🇵 Japan 7-Day Family Vacation Case Study →
+      <span>Short-haul award flights and Tokyo/Kyoto hotel redemptions</span>
+    </a>
+  </div>
+
+  <h2>Related Points & Miles Calculators</h2>
+  <div class="popular-calculators-grid">
+    <a href="/en/calculators/points-vs-cash/" class="calculator-link-card">
+      Points vs Cash Calculator →
+      <span>Compare booking flights with cash vs redeeming points</span>
+    </a>
+    <a href="/en/calculators/cents-per-point/" class="calculator-link-card">
+      Cents Per Point (CPP) Calculator →
+      <span>Quick valuation benchmark for any award booking</span>
+    </a>
+    <a href="/en/calculators/transfer-bonus/" class="calculator-link-card">
+      Transfer Bonus Calculator →
+      <span>Calculate point transfers with promotion bonuses</span>
+    </a>
+    <a href="/en/calculators/points-to-dollars/" class="calculator-link-card">
+      Points to Dollars Calculator →
+      <span>Convert your loyalty balances into dollar values</span>
+    </a>
+  </div>
+
+  <h2>Frequently Asked Questions (FAQ)</h2>
+  <details class="faq-item">
+    <summary><strong>Why is there still out-of-pocket cash after using miles for flights?</strong></summary>
+    <p>Frequent flyer miles only cover the airline’s base fare. Government taxes, airport security charges, international departure fees, and carrier-imposed fuel surcharges (YQ/YR) cannot be covered by miles and must be paid in cash.</p>
+  </details>
+  <details class="faq-item">
+    <summary><strong>Do hotel award stays charge resort fees?</strong></summary>
+    <p>Policies vary by loyalty program: World of Hyatt and Hilton Honors waive resort/destination fees on 100% point award bookings. Marriott Bonvoy and IHG One Rewards typically require guests to pay resort fees in cash at checkout even on award stays.</p>
+  </details>
+  <details class="faq-item">
+    <summary><strong>When is it better to pay cash instead of redeeming points?</strong></summary>
+    <p>You should pay cash if: 1. Award taxes and fees are excessively high, creating minimal or negative net savings; 2. The realized CPP is below conservative benchmark valuations (e.g. under 1.2¢ for airline miles or under 0.6¢ for hotel points); 3. Cash fares are on steep discount and earning cash/flight credits provides superior long-term utility.</p>
+  </details>
+  <details class="faq-item">
+    <summary><strong>Is my travel budget data sent to any server?</strong></summary>
+    <p>No. All calculations are executed 100% locally in your web browser. We do not store, track, or transmit your financial data or travel plans to any external server.</p>
+  </details>
+
+  <h2>Disclaimer & Editorial Notes</h2>
+  <p class="disclaimer">
+    Calculations and recommendations are provided for trip planning purposes and do not constitute financial advice. Cash prices, award space availability, loyalty program transfer rules, and mandatory taxes are subject to continuous change by airlines and hotel chains.<br>
+    Last verified: 2026-08-24 · Points & Miles Calculator Research Team
+  </p>
+</article>
+
+<script src="/assets/calculator-core.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const core = window.CalculatorCore || (function() {
+    const DEFAULT_FX_RATE = 7.0;
+    function toNum(val, fallback = 0) { const n = parseFloat(val); return !isNaN(n) && isFinite(n) && n >= 0 ? n : fallback; }
+    function formatCurrency(amount, currency = 'USD', lang = 'en') {
+      const val = toNum(amount);
+      if (currency === 'CNY') return '¥' + val.toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+      return '$' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    }
+    function calculateCPP(netSavingsLocal, pointsUsed, currency = 'USD', fxRate = DEFAULT_FX_RATE) {
+      const net = parseFloat(netSavingsLocal) || 0;
+      const pts = parseFloat(pointsUsed) || 0;
+      if (pts <= 0) return 0;
+      let netUsd = currency === 'CNY' ? (fxRate > 0 ? net / fxRate : 0) : net;
+      return (netUsd / pts) * 100;
+    }
+    function calculateLocalPerPoint(netSavingsLocal, pointsUsed) {
+      const net = parseFloat(netSavingsLocal) || 0;
+      const pts = parseFloat(pointsUsed) || 0;
+      return pts > 0 ? net / pts : 0;
+    }
+    function calculateTripCostAfterPoints(params) {
+      const data = params || {};
+      const currency = data.currency === 'USD' ? 'USD' : 'CNY';
+      const fxRate = toNum(data.fxRate, DEFAULT_FX_RATE);
+      const tripDays = Math.max(1, parseInt(data.tripDays, 10) || 1);
+      const adults = Math.max(1, parseInt(data.adults, 10) || 1);
+      const children = Math.max(0, parseInt(data.children, 10) || 0);
+      const totalTravelers = adults + children;
+      const expenses = data.expenses || {};
+      const flightsCash = toNum(expenses.flights);
+      const hotelCash = toNum(expenses.hotel);
+      const diningCash = toNum(expenses.dining);
+      const transitCash = toNum(expenses.transit);
+      const carRentalCash = toNum(expenses.carRental);
+      const parkingTollsCash = toNum(expenses.parkingTolls);
+      const activitiesCash = toNum(expenses.activities);
+      const visaInsuranceCash = toNum(expenses.visaInsurance);
+      const connectivityCash = toNum(expenses.connectivity);
+      const otherCash = toNum(expenses.other);
+      const cashTripCost = flightsCash + hotelCash + diningCash + transitCash + carRentalCash + parkingTollsCash + activitiesCash + visaInsuranceCash + connectivityCash + otherCash;
+      
+      const flightRedemption = data.flightRedemption || {};
+      const isFlightPointsActive = Boolean(flightRedemption.enabled && flightsCash > 0 && flightRedemption.milesNeeded > 0);
+      let flightRes = { enabled: false, netSavings: 0, outOfPocket: 0, isNegativeSavings: false, cpp: 0, localPerPoint: 0, cashPrice: flightsCash };
+      if (isFlightPointsActive) {
+        const outOfPocket = toNum(flightRedemption.awardTaxes) + toNum(flightRedemption.awardCashCopay);
+        const netSavings = flightsCash - outOfPocket;
+        const miles = toNum(flightRedemption.milesNeeded);
+        flightRes = { enabled: true, cashPrice: flightsCash, milesNeeded: miles, outOfPocket, netSavings, isNegativeSavings: netSavings < 0, cpp: calculateCPP(netSavings, miles, currency, fxRate), localPerPoint: calculateLocalPerPoint(netSavings, miles) };
+      }
+
+      const hotelRedemption = data.hotelRedemption || {};
+      const isHotelPointsActive = Boolean(hotelRedemption.enabled && hotelCash > 0 && hotelRedemption.pointsNeeded > 0);
+      let hotelRes = { enabled: false, netSavings: 0, outOfPocket: 0, isNegativeSavings: false, cpp: 0, localPerPoint: 0, cashPrice: hotelCash };
+      if (isHotelPointsActive) {
+        const outOfPocket = toNum(hotelRedemption.awardTaxes) + toNum(hotelRedemption.resortFees) + toNum(hotelRedemption.hotelCashCopay);
+        const netSavings = hotelCash - outOfPocket;
+        const points = toNum(hotelRedemption.pointsNeeded);
+        hotelRes = { enabled: true, cashPrice: hotelCash, pointsNeeded: points, outOfPocket, netSavings, isNegativeSavings: netSavings < 0, cpp: calculateCPP(netSavings, points, currency, fxRate), localPerPoint: calculateLocalPerPoint(netSavings, points) };
+      }
+
+      let finalOutOfPocket = cashTripCost;
+      if (flightRes.enabled) finalOutOfPocket = finalOutOfPocket - flightsCash + flightRes.outOfPocket;
+      if (hotelRes.enabled) finalOutOfPocket = finalOutOfPocket - hotelCash + hotelRes.outOfPocket;
+      finalOutOfPocket = Math.max(0, finalOutOfPocket);
+      const totalSavings = Math.max(0, cashTripCost - finalOutOfPocket);
+      const pointsCoverageRate = cashTripCost > 0 ? (totalSavings / cashTripCost) * 100 : 0;
+      
+      const flightBalance = flightRedemption.milesBalance !== undefined && flightRedemption.milesBalance !== '' ? toNum(flightRedemption.milesBalance) : null;
+      const hotelBalance = hotelRedemption.pointsBalance !== undefined && hotelRedemption.pointsBalance !== '' ? toNum(hotelRedemption.pointsBalance) : null;
+
+      return {
+        currency, fxRate, tripDays, adults, children, totalTravelers, cashTripCost, finalOutOfPocket, totalSavings, pointsCoverageRate,
+        perPersonCashOriginal: totalTravelers > 0 ? cashTripCost / totalTravelers : 0,
+        perPersonCashFinal: totalTravelers > 0 ? finalOutOfPocket / totalTravelers : 0,
+        dailyCashOriginal: tripDays > 0 ? cashTripCost / tripDays : 0,
+        dailyCashFinal: tripDays > 0 ? finalOutOfPocket / tripDays : 0,
+        flight: flightRes, hotel: hotelRes,
+        flightBalanceSufficient: flightBalance !== null ? flightBalance >= flightRedemption.milesNeeded : null,
+        hotelBalanceSufficient: hotelBalance !== null ? hotelBalance >= hotelRedemption.pointsNeeded : null,
+        breakdown: { flightsCash, hotelCash, diningCash, transitCash, carRentalCash, parkingTollsCash, activitiesCash, visaInsuranceCash, connectivityCash, otherCash }
+      };
+    }
+    return { formatCurrency, calculateTripCostAfterPoints, calculateCPP, calculateLocalPerPoint };
+  })();
+
+  let currentCurrency = 'USD';
+  let currentFx = 7.0;
+
+  const validCurrencies = ['USD', 'CNY'];
+  const params = new URLSearchParams(window.location.search);
+
+  const urlCurr = params.get('currency');
+  if (urlCurr && validCurrencies.includes(urlCurr)) {
+    currentCurrency = urlCurr;
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && validCurrencies.includes(saved)) currentCurrency = saved;
+    } catch(e) {}
+  }
+  if ($('currency')) $('currency').value = currentCurrency;
+
+  function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
+  }
+
+  function getTripInputData() {
+    return {
+      currency: currentCurrency,
+      fxRate: currentFx,
+      tripDays: parseFloat($('tripDays').value) || 1,
+      adults: parseFloat($('adults').value) || 1,
+      children: parseFloat($('children').value) || 0,
+      expenses: {
+        flights: parseFloat($('expFlights').value) || 0,
+        hotel: parseFloat($('expHotel').value) || 0,
+        dining: parseFloat($('expDining').value) || 0,
+        transit: parseFloat($('expTransit').value) || 0,
+        carRental: parseFloat($('expCarRental').value) || 0,
+        parkingTolls: parseFloat($('expParkingTolls').value) || 0,
+        activities: parseFloat($('expActivities').value) || 0,
+        visaInsurance: parseFloat($('expVisaInsurance').value) || 0,
+        connectivity: parseFloat($('expConnectivity').value) || 0,
+        other: parseFloat($('expOther').value) || 0
+      },
+      flightRedemption: {
+        enabled: $('enableFlightPoints').checked,
+        milesNeeded: parseFloat($('flightMilesNeeded').value) || 0,
+        awardTaxes: parseFloat($('flightAwardTaxes').value) || 0,
+        awardCashCopay: parseFloat($('flightAwardCopay').value) || 0,
+        milesBalance: $('flightMilesBalance').value !== '' ? parseFloat($('flightMilesBalance').value) : undefined
+      },
+      hotelRedemption: {
+        enabled: $('enableHotelPoints').checked,
+        pointsNeeded: parseFloat($('hotelPointsNeeded').value) || 0,
+        awardTaxes: parseFloat($('hotelAwardTaxes').value) || 0,
+        resortFees: parseFloat($('hotelResortFees').value) || 0,
+        hotelCashCopay: parseFloat($('hotelCashCopay').value) || 0,
+        pointsBalance: $('hotelPointsBalance').value !== '' ? parseFloat($('hotelPointsBalance').value) : undefined
+      }
+    };
+  }
+
+  function updateCurrencyLabels() {
+    const sym = currentCurrency === 'USD' ? '$' : '¥';
+    ['hintExpFlights','hintExpHotel','hintExpDining','hintExpTransit','hintExpCarRental',
+     'hintExpParkingTolls','hintExpActivities','hintExpVisaInsurance','hintExpConnectivity',
+     'hintExpOther'].forEach(id => {
+      const el = $(id);
+      if (el) el.textContent = `${sym} Total for all travelers`;
+    });
+    if ($('hintFlightTaxes')) $('hintFlightTaxes').textContent = `${sym} Out of pocket`;
+    if ($('hintFlightCopay')) $('hintFlightCopay').textContent = `${sym} Optional`;
+    if ($('hintHotelTaxes')) $('hintHotelTaxes').textContent = `${sym} Out of pocket`;
+    if ($('hintHotelResort')) $('hintHotelResort').textContent = `${sym} Out of pocket`;
+    if ($('hintHotelCopay')) $('hintHotelCopay').textContent = `${sym} Optional`;
+  }
+
+  function renderCalculator() {
+    const data = getTripInputData();
+    const res = core.calculateTripCostAfterPoints(data);
+
+    $('cashTripTotalBadge').textContent = `All-Cash Total: ${core.formatCurrency(res.cashTripCost, currentCurrency, 'en')}`;
+    $('cardCashPrice').textContent = core.formatCurrency(res.cashTripCost, currentCurrency, 'en');
+    $('cardFinalPrice').textContent = core.formatCurrency(res.finalOutOfPocket, currentCurrency, 'en');
+    $('badgeTotalSavings').textContent = core.formatCurrency(res.totalSavings, currentCurrency, 'en');
+    $('badgeCoveragePct').textContent = `${res.pointsCoverageRate.toFixed(1)}%`;
+
+    $('metricCashPerPerson').textContent = core.formatCurrency(res.perPersonCashOriginal, currentCurrency, 'en');
+    $('metricCashDaily').textContent = core.formatCurrency(res.dailyCashOriginal, currentCurrency, 'en');
+    $('metricFinalPerPerson').textContent = core.formatCurrency(res.perPersonCashFinal, currentCurrency, 'en');
+    $('metricFinalDaily').textContent = core.formatCurrency(res.dailyCashFinal, currentCurrency, 'en');
+
+    const fPct = res.cashTripCost > 0 ? ((res.breakdown.flightsCash / res.cashTripCost) * 100).toFixed(1) : '0.0';
+    const hPct = res.cashTripCost > 0 ? ((res.breakdown.hotelCash / res.cashTripCost) * 100).toFixed(1) : '0.0';
+    $('metricCashFlightPct').textContent = `${fPct}%`;
+    $('metricCashHotelPct').textContent = `${hPct}%`;
+
+    $('metricFlightCpp').textContent = res.flight.enabled 
+      ? `${res.flight.cpp.toFixed(2)} ¢/point`
+      : 'Not Applied';
+    $('metricHotelCpp').textContent = res.hotel.enabled 
+      ? `${res.hotel.cpp.toFixed(2)} ¢/point`
+      : 'Not Applied';
+
+    const fSummary = $('flightRedemptionSummary');
+    if (fSummary) {
+      if (!res.flight.enabled) {
+        fSummary.innerHTML = '<span>ℹ️ Flight miles redemption is currently disabled or missing inputs.</span>';
+      } else if (res.flight.isNegativeSavings) {
+        fSummary.innerHTML = `<span style="color:#f87171; font-weight:600;">⚠️ Warning: Award taxes (${core.formatCurrency(res.flight.outOfPocket, currentCurrency, 'en')}) exceed cash ticket price (${core.formatCurrency(res.flight.cashPrice, currentCurrency, 'en')}). Paying cash is strongly recommended!</span>`;
+      } else {
+        const balNote = res.flightBalanceSufficient === false ? ' <span style="color:#f87171;">(⚠️ Balance insufficient)</span>' : '';
+        fSummary.innerHTML = `<strong>Flight Net Savings: ${core.formatCurrency(res.flight.netSavings, currentCurrency, 'en')}</strong> | Value: <strong>${res.flight.cpp.toFixed(2)} ¢/mile</strong>${balNote}`;
+      }
+    }
+
+    const hSummary = $('hotelRedemptionSummary');
+    if (hSummary) {
+      if (!res.hotel.enabled) {
+        hSummary.innerHTML = '<span>ℹ️ Hotel points redemption is currently disabled or missing inputs.</span>';
+      } else if (res.hotel.isNegativeSavings) {
+        hSummary.innerHTML = `<span style="color:#f87171; font-weight:600;">⚠️ Warning: Resort fees & taxes (${core.formatCurrency(res.hotel.outOfPocket, currentCurrency, 'en')}) exceed cash room price (${core.formatCurrency(res.hotel.cashPrice, currentCurrency, 'en')}). Paying cash is recommended!</span>`;
+      } else {
+        const balNote = res.hotelBalanceSufficient === false ? ' <span style="color:#f87171;">(⚠️ Balance insufficient)</span>' : '';
+        hSummary.innerHTML = `<strong>Hotel Net Savings: ${core.formatCurrency(res.hotel.netSavings, currentCurrency, 'en')}</strong> | Value: <strong>${res.hotel.cpp.toFixed(2)} ¢/point</strong>${balNote}`;
+      }
+    }
+
+    const tbody = $('waterfallBody');
+    tbody.innerHTML = '';
+
+    const addRow = (step, desc, amount, type = 'normal') => {
+      const tr = document.createElement('tr');
+      if (type === 'negative') tr.className = 'waterfall-row-negative';
+      if (type === 'positive') tr.className = 'waterfall-row-positive';
+      if (type === 'total') tr.className = 'waterfall-row-total';
+      tr.innerHTML = `<td><strong>${step}</strong></td><td>${desc}</td><td>${amount}</td>`;
+      tbody.appendChild(tr);
+    };
+
+    addRow('1. All-Cash Budget Baseline', 'Sum of all 10 cash expense categories', core.formatCurrency(res.cashTripCost, currentCurrency, 'en'));
+
+    if (res.flight.enabled) {
+      addRow('2. Deduct Flight Cash Price', 'Replaced cash flights with airline miles', `-${core.formatCurrency(res.breakdown.flightsCash, currentCurrency, 'en')}`, 'negative');
+      addRow('3. Add Back Award Flight Taxes', 'Mandatory airport taxes and fuel surcharges', `+${core.formatCurrency(res.flight.outOfPocket, currentCurrency, 'en')}`, 'positive');
+    }
+
+    if (res.hotel.enabled) {
+      addRow('4. Deduct Hotel Cash Price', 'Replaced cash hotel rooms with hotel points', `-${core.formatCurrency(res.breakdown.hotelCash, currentCurrency, 'en')}`, 'negative');
+      if (res.hotel.outOfPocket > 0) {
+        addRow('5. Add Back Hotel Resort Fees', 'Mandatory hotel destination & resort fees', `+${core.formatCurrency(res.hotel.outOfPocket, currentCurrency, 'en')}`, 'positive');
+      }
+    }
+
+    addRow('Final Out-of-Pocket Cash', `Total cash required from your checking/credit card`, core.formatCurrency(res.finalOutOfPocket, currentCurrency, 'en'), 'total');
+
+    const vBadge = $('verdictBadge');
+    const vCode = $('verdictCode');
+    const vBox = $('verdictSummaryBox');
+
+    vBadge.className = 'verdict';
+    if (res.totalSavings > 0 && !res.flight.isNegativeSavings && !res.hotel.isNegativeSavings) {
+      vBadge.textContent = 'Redeem Points';
+      vBadge.className = 'verdict good';
+      vCode.textContent = `SAVE ${res.pointsCoverageRate.toFixed(0)}%`;
+      vBox.innerHTML = `<strong>💡 Recommendation:</strong> Applying rewards saves <strong>${core.formatCurrency(res.totalSavings, currentCurrency, 'en')}</strong> in cash outlays, covering <strong>${res.pointsCoverageRate.toFixed(1)}%</strong> of your total vacation budget.` +
+        (res.flight.enabled && res.hotel.enabled ? ` Realized <strong>${res.flight.cpp.toFixed(2)} ¢/pt</strong> on flights and <strong>${res.hotel.cpp.toFixed(2)} ¢/pt</strong> on hotels, with ${res.flight.cpp >= res.hotel.cpp ? 'flights providing higher unit redemption value.' : 'hotels providing higher unit redemption value.'}` : '');
+    } else if (res.flight.isNegativeSavings || res.hotel.isNegativeSavings) {
+      vBadge.textContent = 'Pay Cash on Items';
+      vBadge.className = 'verdict bad';
+      vCode.textContent = 'AVOID DEFICIT';
+      vBox.innerHTML = `<strong style="color:#f87171;">⚠️ Warning:</strong> Certain redemptions carry taxes/fees higher than their cash equivalent. Pay cash for those items to avoid a net loss.`;
+    } else {
+      vBadge.textContent = 'All-Cash Plan';
+      vCode.textContent = 'ALL CASH';
+      vBox.innerHTML = 'No points applied. Toggle the flight or hotel redemption modules above to estimate your savings.';
+    }
+  }
+
+  const allInputIds = [
+    'tripDays','adults','children','travelStyle',
+    'expFlights','expHotel','expDining','expTransit','expCarRental','expParkingTolls',
+    'expActivities','expVisaInsurance','expConnectivity','expOther',
+    'flightMilesNeeded','flightAwardTaxes','flightAwardCopay','flightMilesBalance',
+    'hotelPointsNeeded','hotelAwardTaxes','hotelResortFees','hotelCashCopay','hotelPointsBalance'
+  ];
+
+  allInputIds.forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('input', renderCalculator);
+  });
+
+  $('enableFlightPoints').addEventListener('change', (e) => {
+    $('flightPointsFields').style.opacity = e.target.checked ? '1' : '0.5';
+    renderCalculator();
+  });
+
+  $('enableHotelPoints').addEventListener('change', (e) => {
+    $('hotelPointsFields').style.opacity = e.target.checked ? '1' : '0.5';
+    renderCalculator();
+  });
+
+  $('currency').addEventListener('change', (e) => {
+    currentCurrency = e.target.value;
+    try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+    updateCurrencyLabels();
+    renderCalculator();
+  });
+
+  $('btnReset').addEventListener('click', () => {
+    allInputIds.forEach(id => {
+      const el = $(id);
+      if (el) {
+        if (id === 'tripDays') el.value = '7';
+        else if (id === 'adults') el.value = '2';
+        else if (id === 'children') el.value = '0';
+        else el.value = '0';
+      }
+    });
+    $('origin').value = '';
+    $('destination').value = '';
+    renderCalculator();
+    showToast('Reset all inputs to defaults');
+  });
+
+  $('btnPrint').addEventListener('click', () => {
+    window.print();
+  });
+
+  $('btnSaveLocal').addEventListener('click', () => {
+    const data = getTripInputData();
+    data.origin = $('origin').value;
+    data.destination = $('destination').value;
+    try {
+      localStorage.setItem('savedTripBudget', JSON.stringify(data));
+      showToast('Budget draft successfully saved to local browser');
+    } catch(e) {
+      showToast('Failed to save to local storage');
+    }
+  });
+
+  $('btnCopySummary').addEventListener('click', () => {
+    const data = getTripInputData();
+    const res = core.calculateTripCostAfterPoints(data);
+    const summary = `[Points & Miles Calculator - Trip Budget Summary]\nDestination: ${$('destination').value || 'Unspecified'} (${data.tripDays} days / ${data.adults} Adults, ${data.children} Children)\nAll-Cash Budget: ${core.formatCurrency(res.cashTripCost, currentCurrency, 'en')}\nOut-of-Pocket After Points: ${core.formatCurrency(res.finalOutOfPocket, currentCurrency, 'en')}\nNet Cash Savings: ${core.formatCurrency(res.totalSavings, currentCurrency, 'en')} (${res.pointsCoverageRate.toFixed(1)}% covered)\nOut-of-Pocket Per Person: ${core.formatCurrency(res.perPersonCashFinal, currentCurrency, 'en')}\nOut-of-Pocket Per Day: ${core.formatCurrency(res.dailyCashFinal, currentCurrency, 'en')}\nCalculated at: ${window.location.href}`;
+    navigator.clipboard.writeText(summary).then(() => {
+      showToast('Budget summary copied to clipboard');
+    }).catch(() => {
+      showToast('Failed to copy summary');
+    });
+  });
+
+  $('btnShare').addEventListener('click', () => {
+    const p = new URLSearchParams();
+    p.set('currency', currentCurrency);
+    p.set('days', $('tripDays').value);
+    p.set('adults', $('adults').value);
+    p.set('children', $('children').value);
+    if ($('expFlights').value) p.set('fCash', $('expFlights').value);
+    if ($('expHotel').value) p.set('hCash', $('expHotel').value);
+    if ($('expDining').value) p.set('dCash', $('expDining').value);
+    if ($('enableFlightPoints').checked && $('flightMilesNeeded').value) {
+      p.set('fMiles', $('flightMilesNeeded').value);
+      p.set('fTaxes', $('flightAwardTaxes').value);
+    }
+    if ($('enableHotelPoints').checked && $('hotelPointsNeeded').value) {
+      p.set('hPoints', $('hotelPointsNeeded').value);
+      p.set('hTaxes', $('hotelAwardTaxes').value);
+      p.set('hResort', $('hotelResortFees').value);
+    }
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${p.toString()}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast('Shareable link copied to clipboard!');
+    }).catch(() => {
+      showToast('Share link ready');
+    });
+  });
+
+  function parseUrlParams() {
+    if (!window.location.search) return;
+    ['expFlights','expHotel','expDining','expTransit','expCarRental','expParkingTolls',
+     'expActivities','expVisaInsurance','expConnectivity','expOther'].forEach(id => {
+      const el = $(id);
+      if (el) el.value = '0';
+    });
+
+    const parse = (key, id) => {
+      const val = params.get(key);
+      if (val !== null && !isNaN(parseFloat(val))) {
+        const el = $(id);
+        if (el) el.value = val;
+      }
+    };
+    parse('days', 'tripDays');
+    parse('adults', 'adults');
+    parse('children', 'children');
+    parse('fCash', 'expFlights');
+    parse('hCash', 'expHotel');
+    parse('dCash', 'expDining');
+    parse('tCash', 'expTransit');
+    parse('carCash', 'expCarRental');
+    parse('gasCash', 'expParkingTolls');
+    parse('actCash', 'expActivities');
+    parse('visaCash', 'expVisaInsurance');
+    parse('simCash', 'expConnectivity');
+    parse('othCash', 'expOther');
+    parse('fMiles', 'flightMilesNeeded');
+    parse('fTaxes', 'flightAwardTaxes');
+    parse('fCopay', 'flightAwardCopay');
+    parse('hPoints', 'hotelPointsNeeded');
+    parse('hTaxes', 'hotelAwardTaxes');
+    parse('hResort', 'hotelResortFees');
+    parse('hCopay', 'hotelCashCopay');
+  }
+
+  function tryRestoreLocalStorage() {
+    if (window.location.search) return;
+    try {
+      const saved = localStorage.getItem('savedTripBudget');
+      if (saved) {
+        const d = JSON.parse(saved);
+        if (d.origin) $('origin').value = d.origin;
+        if (d.destination) $('destination').value = d.destination;
+        if (d.tripDays) $('tripDays').value = d.tripDays;
+        if (d.adults) $('adults').value = d.adults;
+        if (d.children !== undefined) $('children').value = d.children;
+        if (d.expenses) {
+          if (d.expenses.flights !== undefined) $('expFlights').value = d.expenses.flights;
+          if (d.expenses.hotel !== undefined) $('expHotel').value = d.expenses.hotel;
+          if (d.expenses.dining !== undefined) $('expDining').value = d.expenses.dining;
+          if (d.expenses.transit !== undefined) $('expTransit').value = d.expenses.transit;
+          if (d.expenses.carRental !== undefined) $('expCarRental').value = d.expenses.carRental;
+          if (d.expenses.parkingTolls !== undefined) $('expParkingTolls').value = d.expenses.parkingTolls;
+          if (d.expenses.activities !== undefined) $('expActivities').value = d.expenses.activities;
+          if (d.expenses.visaInsurance !== undefined) $('expVisaInsurance').value = d.expenses.visaInsurance;
+          if (d.expenses.connectivity !== undefined) $('expConnectivity').value = d.expenses.connectivity;
+          if (d.expenses.other !== undefined) $('expOther').value = d.expenses.other;
+        }
+      }
+    } catch(e) {}
+  }
+
+  parseUrlParams();
+  tryRestoreLocalStorage();
+  updateCurrencyLabels();
+  renderCalculator();
+</script>

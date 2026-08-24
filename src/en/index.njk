@@ -20,6 +20,10 @@ lastModified: "2026-08-22"
       Points vs Cash Calculator →
       <span>Compare cash vs award ticket</span>
     </a>
+    <a href="/en/calculators/trip-cost-after-points/" class="calculator-link-card">
+      Trip Cost After Points →
+      <span>Calculate true out-of-pocket cost</span>
+    </a>
     <a href="/en/calculators/cents-per-point/" class="calculator-link-card">
       Cents Per Point Calculator →
       <span>Calculate CPP redemption value</span>
@@ -51,17 +55,16 @@ lastModified: "2026-08-22"
   </div>
 
   <div class="field">
-    <label for="programPreset">Target airline/alliance valuation<span class="hint" id="hintPreset">Cents / Mile</span></label>
+    <label for="programPreset">Target airline/alliance valuation scenario<span class="hint" id="hintPreset">Cents / Mile</span></label>
     <select id="programPreset" aria-describedby="hintPreset unitMileValue">
-      <option value="custom">Custom (Enter manually)</option>
-      <option value="2.0">Chase Ultimate Rewards · TPG ~2.0¢</option>
-      <option value="1.5">Short-haul economy · ~1.5¢/mile</option>
-      <option value="2.5">Long-haul economy · ~2.5¢/mile</option>
-      <option value="4.0">Long-haul business · ~4.0¢/mile</option>
-      <option value="8.0">First class/sweet spot · ~8.0¢/mile</option>
+      <option value="custom">Custom scenario (Enter manually)</option>
+      <option value="1.2">Conservative scenario · ~1.2¢/mile</option>
+      <option value="1.5" selected>Typical airline-mile scenario · ~1.5¢/mile</option>
+      <option value="2.0">Flexible points scenario · ~2.0¢/mile</option>
+      <option value="3.5">Premium cabin sweet spot · ~3.5¢/mile</option>
     </select>
-    <input type="number" id="mileValue" value="4.0" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintPreset unitMileValue">
-    <div class="unit" id="unitMileValue">This is a reference estimate. Actual value depends on the specific flight.</div>
+    <input type="number" id="mileValue" value="1.5" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintPreset unitMileValue">
+    <div class="unit" id="unitMileValue">Preset values are illustrative calculation scenarios, not live or guaranteed valuations.</div>
   </div>
 </div>
 

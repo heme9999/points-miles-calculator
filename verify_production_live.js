@@ -69,8 +69,8 @@ async function verifyLiveProduction() {
   console.log(`Live Sitemap URL count: ${sitemapUrls.length}`);
   console.log(`Live Sitemap explicit lastmod count: ${lastmods.length}`);
 
-  if (sitemapUrls.length !== 98) {
-    console.error(`ERROR: Expected 98 URLs in production sitemap.xml, found ${sitemapUrls.length}`);
+  if (sitemapUrls.length !== 104) {
+    console.error(`ERROR: Expected 104 URLs in production sitemap.xml, found ${sitemapUrls.length}`);
     failures++;
   }
 
@@ -85,13 +85,14 @@ async function verifyLiveProduction() {
     }
   }
 
-  // 3. Homepage 4 Core Links in Server HTML
+  // 3. Homepage Core Links in Server HTML
   console.log('\n3. Verifying Popular Calculators links on EN and CN Homepages...');
   const enHome = await fetch(`${prodBase}/en/?audit=${ts}`);
   const enDoc = new JSDOM(enHome.data).window.document;
   const expectedEn = [
     '/en/calculators/points-to-dollars/',
     '/en/calculators/points-vs-cash/',
+    '/en/calculators/trip-cost-after-points/',
     '/en/calculators/cents-per-point/',
     '/en/calculators/transfer-bonus/'
   ];
@@ -110,6 +111,7 @@ async function verifyLiveProduction() {
   const expectedCn = [
     '/calculators/points-to-dollars/',
     '/calculators/points-vs-cash/',
+    '/calculators/trip-cost-after-points/',
     '/calculators/cents-per-point/',
     '/calculators/transfer-bonus/'
   ];
@@ -129,11 +131,13 @@ async function verifyLiveProduction() {
     { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points and Miles Calculators | Points & Miles Calculator' },
     { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Points to Dollars Calculator | Miles Value | Points & Miles Calculator' },
     { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Award Travel | Points & Miles Calculator' },
+    { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | True Out-of-Pocket Travel Cost' },
     { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
     { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
     { path: '/calculators/points-to-dollars/', expectedH1: '积分换算现金价值计算器' },
     { path: '/calculators/points-vs-cash/', expectedH1: '积分与现金兑换决策计算器' },
+    { path: '/calculators/trip-cost-after-points/', expectedH1: '积分抵扣后的旅行实际成本计算器' },
     { path: '/calculators/cents-per-point/', expectedH1: '单点价值 (CPP) 计算器' },
     { path: '/calculators/transfer-bonus/', expectedH1: '信用卡转点加赠计算器' },
   ];
@@ -257,8 +261,61 @@ async function verifyLiveProduction() {
     console.log('Live Transfer Bonus calculation: 50,000 (Passed)');
   }
 
-  // 7. Full 98 URLs Live Crawl & Canonical/JSON-LD Audit (Batched parallel)
-  console.log('\n7. Auditing all 98 Live URLs on Production (Parallel batching)...');
+  // Trip Cost After Points Live Calculation (CN)
+  console.log('\n--- Trip Cost After Points Live Calculation (CN & EN) ---');
+  const tcCnUrl = `${prodBase}/calculators/trip-cost-after-points/?currency=CNY&days=7&adults=2&children=1&fCash=12000&hCash=15000&dCash=7000&tCash=3500&actCash=3000&visaCash=1200&simCash=300&othCash=2000&fMiles=75000&fTaxes=2100&hPoints=90000&hTaxes=300&hResort=0&audit=${ts}`;
+  const tcCpHtml = (await fetch(tcCnUrl)).data;
+  const tcCnDom = new JSDOM(tcCpHtml, { runScripts: "dangerously", url: tcCnUrl });
+  await new Promise(r => setTimeout(r, 150));
+  const tcCnFinal = tcCnDom.window.document.getElementById('cardFinalPrice')?.textContent;
+  const tcCnSavings = tcCnDom.window.document.getElementById('badgeTotalSavings')?.textContent;
+  if (tcCnFinal !== '¥19,400' || tcCnSavings !== '¥24,600') {
+    console.error(`ERROR: Live CN Trip Cost calculation failed. Expected ¥19,400 / ¥24,600, got ${tcCnFinal} / ${tcCnSavings}`);
+    failures++;
+  } else {
+    console.log(`Live CN Trip Cost calculation on load: ${tcCnFinal} final / ${tcCnSavings} saved (Passed)`);
+  }
+
+  // Trip Cost After Points Live Calculation (EN)
+  const tcEnUrl = `${prodBase}/en/calculators/trip-cost-after-points/?currency=USD&days=10&adults=2&children=1&fCash=3600&hCash=2700&dCash=1500&carCash=700&gasCash=450&actCash=900&visaCash=300&simCash=60&othCash=300&fMiles=180000&fTaxes=360&hPoints=120000&hTaxes=0&hResort=0&audit=${ts}`;
+  const tcEnHtml = (await fetch(tcEnUrl)).data;
+  const tcEnDom = new JSDOM(tcEnHtml, { runScripts: "dangerously", url: tcEnUrl });
+  await new Promise(r => setTimeout(r, 150));
+  const tcEnFinal = tcEnDom.window.document.getElementById('cardFinalPrice')?.textContent;
+  const tcEnSavings = tcEnDom.window.document.getElementById('badgeTotalSavings')?.textContent;
+  if (tcEnFinal !== '$4,570' || tcEnSavings !== '$5,940') {
+    console.error(`ERROR: Live EN Trip Cost calculation failed. Expected $4,570 / $5,940, got ${tcEnFinal} / ${tcEnSavings}`);
+    failures++;
+  } else {
+    console.log(`Live EN Trip Cost calculation on load: ${tcEnFinal} final / ${tcEnSavings} saved (Passed)`);
+  }
+
+  // Case Studies Page Live Verification
+  const caseUrls = [
+    '/examples/usa-west-coast-family-trip-with-points/',
+    '/en/examples/usa-west-coast-family-trip-with-points/',
+    '/examples/japan-7-day-family-trip-with-points/',
+    '/en/examples/japan-7-day-family-trip-with-points/'
+  ];
+  for (const cUrl of caseUrls) {
+    const cRes = await fetch(`${prodBase}${cUrl}?audit=${ts}`);
+    if (cRes.status !== 200) {
+      console.error(`ERROR: Live Case study ${cUrl} returned HTTP ${cRes.status}`);
+      failures++;
+    } else {
+      const cDoc = new JSDOM(cRes.data).window.document;
+      const h1 = cDoc.querySelector('h1')?.textContent;
+      if (!h1) {
+        console.error(`ERROR: Live Case study ${cUrl} missing H1`);
+        failures++;
+      } else {
+        console.log(`Live Case study OK: ${cUrl} (H1: "${h1}")`);
+      }
+    }
+  }
+
+  // 7. Full 104 URLs Live Crawl & Canonical/JSON-LD Audit (Batched parallel)
+  console.log('\n7. Auditing all 104 Live URLs on Production (Parallel batching)...');
   const batchSize = 15;
   for (let i = 0; i < sitemapUrls.length; i += batchSize) {
     const batch = sitemapUrls.slice(i, i + batchSize);
@@ -277,7 +334,7 @@ async function verifyLiveProduction() {
       }
     }));
   }
-  console.log('All 98 URLs returned HTTP 200 with valid canonicals.');
+  console.log('All 104 URLs returned HTTP 200 with valid canonicals.');
 
   if (failures > 0) {
     console.error(`\nLIVE PRODUCTION VERIFICATION FAILED WITH ${failures} ERRORS.`);

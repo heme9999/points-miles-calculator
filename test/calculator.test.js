@@ -95,7 +95,7 @@ test('Points vs Cash Advanced Calculator Tests (EN)', async (t) => {
   await t.test('3. EN Language correctness', () => {
     input('pointsNeeded', '40000');
     input('awardTaxes', '6000'); // extreme tax
-    assert.strictEqual($('verdictText').textContent, 'Avoid');
+    assert.strictEqual($('verdictText').textContent, 'Pay Cash');
   });
 });
 
