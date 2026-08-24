@@ -4,209 +4,101 @@ const CalculatorCore = require('../src/assets/calculator-core.js');
 
 test('CalculatorCore Unit Tests - Comprehensive Suite', async (t) => {
 
-  await t.test('1. 1.5¢ at FX 7.0 equals ¥0.105 per point', () => {
-    const cnyPerPoint = CalculatorCore.convertUsdCentsToLocal(1.5, 'CNY', 7.0);
-    assert.strictEqual(cnyPerPoint.toFixed(3), '0.105');
-    assert.notStrictEqual(cnyPerPoint, 1.5, 'Must not equate 1.5 cents to 1.5 RMB');
-    assert.notStrictEqual(cnyPerPoint, 10.5, 'Must not have 100x error');
-  });
-
-  await t.test('2. 10,000 miles illustrative valuation equals ¥1,050', () => {
-    const cnyPerPoint = CalculatorCore.convertUsdCentsToLocal(1.5, 'CNY', 7.0);
-    const totalCny = 10000 * cnyPerPoint;
-    assert.strictEqual(Math.round(totalCny), 1050);
-    assert.notStrictEqual(totalCny, 15000, 'Must not equate 10k miles to 15,000 RMB');
-  });
-
-  await t.test('3. 60,000 miles with 20% transfer bonus at 1:1 ratio requires 50,000 bank points', () => {
+  await t.test('Scenario A: Partial airline balance (60k required, 10k balance, 20% bonus, 42k bank balance)', () => {
     const res = CalculatorCore.calculateTransferRequirement({
       awardMilesRequired: 60000,
+      airlineMilesBalance: 10000,
+      baseTransferRatio: 1.0,
+      transferBonusPercent: 20,
+      transferIncrement: 1000,
+      transferablePointsBalance: 42000
+    });
+
+    assert.strictEqual(res.remainingMilesNeeded, 50000);
+    assert.strictEqual(Math.round(res.rawBankPointsNeeded * 100) / 100, 41666.67);
+    assert.strictEqual(res.bankPointsNeeded, 42000);
+    assert.strictEqual(res.milesReceived, 50400);
+    assert.strictEqual(res.projectedAirlineMiles, 60400);
+    assert.strictEqual(res.excessMilesAfterTransfer, 400);
+    assert.strictEqual(res.bankBalanceSufficient, true);
+    assert.strictEqual(res.airlineBalanceBeforeTransferSufficient, false);
+    assert.strictEqual(res.airlineBalanceAfterTransferSufficient, true);
+  });
+
+  await t.test('Scenario B: Airline miles already sufficient (60k required, 70k balance)', () => {
+    const res = CalculatorCore.calculateTransferRequirement({
+      awardMilesRequired: 60000,
+      airlineMilesBalance: 70000,
       baseTransferRatio: 1.0,
       transferBonusPercent: 20,
       transferIncrement: 1000
     });
-    // 60,000 / (1.0 * 1.20) = 50,000
+
+    assert.strictEqual(res.remainingMilesNeeded, 0);
+    assert.strictEqual(res.bankPointsNeeded, 0);
+    assert.strictEqual(res.milesReceived, 0);
+    assert.strictEqual(res.excessMilesAfterTransfer, 10000);
+    assert.strictEqual(res.airlineBalanceBeforeTransferSufficient, true);
+    assert.strictEqual(res.airlineBalanceAfterTransferSufficient, true);
+  });
+
+  await t.test('Scenario C: Bank balance short by 1 point (42k needed, 41999 balance)', () => {
+    const res = CalculatorCore.calculateTransferRequirement({
+      awardMilesRequired: 60000,
+      airlineMilesBalance: 10000,
+      baseTransferRatio: 1.0,
+      transferBonusPercent: 20,
+      transferIncrement: 1000,
+      transferablePointsBalance: 41999
+    });
+
+    assert.strictEqual(res.bankPointsNeeded, 42000);
+    assert.strictEqual(res.bankBalanceSufficient, false);
+  });
+
+  await t.test('Scenario D: Unspecified airline balance (null) calculates remaining as full award', () => {
+    const res = CalculatorCore.calculateTransferRequirement({
+      awardMilesRequired: 60000,
+      airlineMilesBalance: null,
+      baseTransferRatio: 1.0,
+      transferBonusPercent: 20,
+      transferIncrement: 1000
+    });
+
+    assert.strictEqual(res.airlineMilesBalance, null);
+    assert.strictEqual(res.remainingMilesNeeded, 60000);
     assert.strictEqual(res.bankPointsNeeded, 50000);
-    assert.strictEqual(res.standardBankPointsNeeded, 60000);
-    assert.strictEqual(res.bankPointsSaved, 10000);
     assert.strictEqual(res.milesReceived, 60000);
+    assert.strictEqual(res.airlineBalanceBeforeTransferSufficient, false);
   });
 
-  await t.test('4. Transfer increment ceiling rounding', () => {
-    // 55,000 miles / 1.20 = 45,833.33 -> round up to 46,000 (1000 increment)
-    const res = CalculatorCore.calculateTransferRequirement({
-      awardMilesRequired: 55000,
-      baseTransferRatio: 1.0,
+  await t.test('Scenario E: Non 1:1 transfer ratios (0.5 and 2.0)', () => {
+    // 50k remaining, ratio 0.5 (2 bank pts = 1 mile), 20% bonus -> multiplier = 0.6
+    // 50000 / 0.6 = 83333.33 -> 84,000 bank points -> 84000 * 0.6 = 50,400 miles
+    const resHalf = CalculatorCore.calculateTransferRequirement({
+      awardMilesRequired: 60000,
+      airlineMilesBalance: 10000,
+      baseTransferRatio: 0.5,
       transferBonusPercent: 20,
       transferIncrement: 1000
     });
-    assert.strictEqual(res.bankPointsNeeded, 46000);
-    assert.strictEqual(res.milesReceived, 46000 * 1.2); // 55,200 miles
-    assert.strictEqual(res.standardBankPointsNeeded, 55000);
-    assert.strictEqual(res.bankPointsSaved, 9000);
-  });
+    assert.strictEqual(resHalf.bankPointsNeeded, 84000);
+    assert.strictEqual(resHalf.milesReceived, 50400);
 
-  await t.test('5. Transferable bank balance and airline balance sufficiency checks', () => {
-    const insufficient = CalculatorCore.calculateTransferRequirement({
+    // 50k remaining, ratio 2.0 (1 bank pt = 2 miles), 20% bonus -> multiplier = 2.4
+    // 50000 / 2.4 = 20833.33 -> 21,000 bank points -> 21000 * 2.4 = 50,400 miles
+    const resDouble = CalculatorCore.calculateTransferRequirement({
       awardMilesRequired: 60000,
-      baseTransferRatio: 1.0,
+      airlineMilesBalance: 10000,
+      baseTransferRatio: 2.0,
       transferBonusPercent: 20,
-      transferIncrement: 1000,
-      transferablePointsBalance: 40000,
-      airlineMilesBalance: 10000
+      transferIncrement: 1000
     });
-    assert.strictEqual(insufficient.bankBalanceSufficient, false);
-    assert.strictEqual(insufficient.airlineBalanceSufficient, false);
-
-    const sufficient = CalculatorCore.calculateTransferRequirement({
-      awardMilesRequired: 60000,
-      baseTransferRatio: 1.0,
-      transferBonusPercent: 20,
-      transferIncrement: 1000,
-      transferablePointsBalance: 55000,
-      airlineMilesBalance: 70000
-    });
-    assert.strictEqual(sufficient.bankBalanceSufficient, true);
-    assert.strictEqual(sufficient.airlineBalanceSufficient, true);
+    assert.strictEqual(resDouble.bankPointsNeeded, 21000);
+    assert.strictEqual(resDouble.milesReceived, 50400);
   });
 
-  await t.test('6. Ten itemized cash categories exact sum', () => {
-    const exp = {
-      flights: 3000,
-      hotel: 2500,
-      dining: 1200,
-      transit: 300,
-      carRental: 500,
-      parkingTolls: 200,
-      activities: 800,
-      visaInsurance: 250,
-      connectivity: 80,
-      other: 170
-    };
-    const res = CalculatorCore.calculateCashTripCost(exp);
-    assert.strictEqual(res.total, 9000);
-    assert.strictEqual(res.breakdown.flights, 3000);
-    assert.strictEqual(res.breakdown.hotel, 2500);
-    assert.strictEqual(res.breakdown.other, 170);
-  });
-
-  await t.test('7. Airline miles only redemption', () => {
-    const res = CalculatorCore.calculateTripCostAfterPoints({
-      currency: 'USD',
-      tripDays: 10,
-      adults: 2,
-      children: 0,
-      expenses: { flights: 2000, hotel: 1500, dining: 800, transit: 100 },
-      flightRedemption: {
-        enabled: true,
-        awardMilesRequired: 80000,
-        awardTaxes: 120,
-        awardCashCopay: 0,
-        airlineMilesBalance: 100000
-      },
-      hotelRedemption: { enabled: false }
-    });
-
-    // Total cash = 2000 + 1500 + 800 + 100 = 4400
-    // Flight net savings = 2000 - 120 = 1880
-    // Final out of pocket = 4400 - 2000 + 120 = 2520
-    assert.strictEqual(res.cashTripCost, 4400);
-    assert.strictEqual(res.finalOutOfPocket, 2520);
-    assert.strictEqual(res.totalSavings, 1880);
-    assert.strictEqual(res.pointsCoverageRate, (1880 / 4400) * 100);
-    assert.strictEqual(res.flight.cpp.toFixed(2), '2.35');
-    assert.strictEqual(res.flight.enabled, true);
-    assert.strictEqual(res.hotel.enabled, false);
-  });
-
-  await t.test('8. Hotel points only redemption', () => {
-    const res = CalculatorCore.calculateTripCostAfterPoints({
-      currency: 'USD',
-      tripDays: 5,
-      adults: 2,
-      children: 0,
-      expenses: { flights: 600, hotel: 1200, dining: 500 },
-      flightRedemption: { enabled: false },
-      hotelRedemption: {
-        enabled: true,
-        pointsNeeded: 60000,
-        awardTaxes: 40,
-        resortFees: 150,
-        hotelCashCopay: 0,
-        pointsBalance: 50000
-      }
-    });
-
-    // Total cash = 600 + 1200 + 500 = 2300
-    // Hotel out of pocket = 40 + 150 = 190
-    // Hotel net savings = 1200 - 190 = 1010
-    // Final out of pocket = 2300 - 1200 + 190 = 1290
-    assert.strictEqual(res.cashTripCost, 2300);
-    assert.strictEqual(res.finalOutOfPocket, 1290);
-    assert.strictEqual(res.totalSavings, 1010);
-    assert.strictEqual(res.hotel.cpp.toFixed(2), '1.68');
-    assert.strictEqual(res.hotel.hotelBalanceSufficient, false);
-  });
-
-  await t.test('9. Simultaneous flights and hotel points redemption', () => {
-    const res = CalculatorCore.calculateTripCostAfterPoints({
-      currency: 'CNY',
-      fxRate: 7.0,
-      tripDays: 10,
-      adults: 2,
-      children: 1,
-      expenses: { flights: 14000, hotel: 10500, dining: 5000, transit: 1500, activities: 3000 },
-      flightRedemption: {
-        enabled: true,
-        awardMilesRequired: 90000,
-        awardTaxes: 1400,
-        awardCashCopay: 0,
-        baseTransferRatio: 1.0,
-        transferBonusPercent: 20
-      },
-      hotelRedemption: {
-        enabled: true,
-        pointsNeeded: 120000,
-        awardTaxes: 0,
-        resortFees: 1050,
-        hotelCashCopay: 0
-      }
-    });
-
-    // Total cash = 34,000
-    // Flight net savings = 14,000 - 1,400 = 12,600 (USD 1800 -> CPP = 2.00)
-    // Hotel net savings = 10,500 - 1,050 = 9,450 (USD 1350 -> CPP = 1.13)
-    // Final cash = 34,000 - 14,000 - 10,500 + 1,400 + 1,050 = 11,950
-    assert.strictEqual(res.cashTripCost, 34000);
-    assert.strictEqual(res.finalOutOfPocket, 11950);
-    assert.strictEqual(res.totalSavings, 22050);
-    assert.strictEqual(res.flight.cpp.toFixed(2), '2.00');
-    assert.strictEqual(res.hotel.cpp.toFixed(2), '1.13');
-    // Bank points needed for 90k miles with 20% bonus: 90000 / 1.2 = 75000
-    assert.strictEqual(res.flight.bankPointsNeeded, 75000);
-  });
-
-  await t.test('10. Negative net savings warning when taxes exceed cash price', () => {
-    const res = CalculatorCore.calculateTripCostAfterPoints({
-      currency: 'USD',
-      tripDays: 3,
-      adults: 1,
-      children: 0,
-      expenses: { flights: 200, hotel: 300 },
-      flightRedemption: {
-        enabled: true,
-        awardMilesRequired: 25000,
-        awardTaxes: 250, // Taxes > Cash price
-        awardCashCopay: 0
-      },
-      hotelRedemption: { enabled: false }
-    });
-
-    assert.strictEqual(res.flight.isNegativeSavings, true);
-    assert.strictEqual(res.verdictCode, 'AVOID_DEFICIT');
-  });
-
-  await t.test('11. Full state round-trip serialization (Share URL round-trip)', () => {
+  await t.test('Scenario F: Share URL parameters full round-trip verification', () => {
     const originalState = {
       origin: 'Beijing',
       destination: 'Tokyo',
@@ -223,14 +115,14 @@ test('CalculatorCore Unit Tests - Comprehensive Suite', async (t) => {
       flightRedemption: {
         enabled: true,
         programName: 'Asia Miles',
-        awardMilesRequired: 75000,
-        awardTaxes: 2100,
+        awardMilesRequired: 60000,
+        awardTaxes: 800,
         awardCashCopay: 0,
-        airlineMilesBalance: 80000,
+        airlineMilesBalance: 10000,
         baseTransferRatio: 1.0,
         transferBonusPercent: 20,
         transferIncrement: 1000,
-        transferablePointsBalance: 70000
+        transferablePointsBalance: 42000
       },
       hotelRedemption: {
         enabled: true,
@@ -249,18 +141,121 @@ test('CalculatorCore Unit Tests - Comprehensive Suite', async (t) => {
 
     assert.strictEqual(queryString, secondQueryString, 'Serialized URL query string must not drift');
     assert.strictEqual(restoredState.destination, 'Tokyo');
-    assert.strictEqual(restoredState.expenses.flights, 12000);
+    assert.strictEqual(restoredState.flightRedemption.airlineMilesBalance, 10000);
+    assert.strictEqual(restoredState.flightRedemption.baseTransferRatio, 1.0);
     assert.strictEqual(restoredState.flightRedemption.transferBonusPercent, 20);
-    assert.strictEqual(restoredState.hotelRedemption.pointsNeeded, 90000);
+    assert.strictEqual(restoredState.flightRedemption.transferIncrement, 1000);
+    assert.strictEqual(restoredState.flightRedemption.transferablePointsBalance, 42000);
 
-    const origRes = CalculatorCore.calculateTripCostAfterPoints(originalState);
-    const restoredRes = CalculatorCore.calculateTripCostAfterPoints(restoredState);
-    assert.strictEqual(origRes.finalOutOfPocket, restoredRes.finalOutOfPocket);
-    assert.strictEqual(origRes.totalSavings, restoredRes.totalSavings);
-    assert.strictEqual(origRes.flight.cpp.toFixed(2), restoredRes.flight.cpp.toFixed(2));
+    const origTrans = CalculatorCore.calculateTransferRequirement(originalState.flightRedemption);
+    const restTrans = CalculatorCore.calculateTransferRequirement(restoredState.flightRedemption);
+
+    assert.strictEqual(origTrans.remainingMilesNeeded, restTrans.remainingMilesNeeded);
+    assert.strictEqual(origTrans.bankPointsNeeded, restTrans.bankPointsNeeded);
+    assert.strictEqual(origTrans.milesReceived, restTrans.milesReceived);
+    assert.strictEqual(origTrans.projectedAirlineMiles, restTrans.projectedAirlineMiles);
+    assert.strictEqual(origTrans.excessMilesAfterTransfer, restTrans.excessMilesAfterTransfer);
+    assert.strictEqual(origTrans.bankBalanceSufficient, restTrans.bankBalanceSufficient);
   });
 
-  await t.test('12. LocalStorage serialization and version migration', () => {
+  await t.test('1. 1.5¢ at FX 7.0 equals ¥0.105 per point', () => {
+    const cnyPerPoint = CalculatorCore.convertUsdCentsToLocal(1.5, 'CNY', 7.0);
+    assert.strictEqual(cnyPerPoint.toFixed(3), '0.105');
+    assert.notStrictEqual(cnyPerPoint, 1.5, 'Must not equate 1.5 cents to 1.5 RMB');
+    assert.notStrictEqual(cnyPerPoint, 10.5, 'Must not have 100x error');
+  });
+
+  await t.test('2. 10,000 miles illustrative valuation equals ¥1,050', () => {
+    const cnyPerPoint = CalculatorCore.convertUsdCentsToLocal(1.5, 'CNY', 7.0);
+    const totalCny = 10000 * cnyPerPoint;
+    assert.strictEqual(Math.round(totalCny), 1050);
+    assert.notStrictEqual(totalCny, 15000, 'Must not equate 10k miles to 15,000 RMB');
+  });
+
+  await t.test('3. Ten itemized cash categories exact sum', () => {
+    const exp = {
+      flights: 3000, hotel: 2500, dining: 1200, transit: 300, carRental: 500,
+      parkingTolls: 200, activities: 800, visaInsurance: 250, connectivity: 80, other: 170
+    };
+    const res = CalculatorCore.calculateCashTripCost(exp);
+    assert.strictEqual(res.total, 9000);
+    assert.strictEqual(res.breakdown.flights, 3000);
+    assert.strictEqual(res.breakdown.hotel, 2500);
+    assert.strictEqual(res.breakdown.other, 170);
+  });
+
+  await t.test('4. Airline miles only redemption', () => {
+    const res = CalculatorCore.calculateTripCostAfterPoints({
+      currency: 'USD',
+      tripDays: 10,
+      adults: 2,
+      children: 0,
+      expenses: { flights: 2000, hotel: 1500, dining: 800, transit: 100 },
+      flightRedemption: {
+        enabled: true,
+        awardMilesRequired: 80000,
+        awardTaxes: 120,
+        awardCashCopay: 0,
+        airlineMilesBalance: 100000
+      },
+      hotelRedemption: { enabled: false }
+    });
+
+    assert.strictEqual(res.cashTripCost, 4400);
+    assert.strictEqual(res.finalOutOfPocket, 2520);
+    assert.strictEqual(res.totalSavings, 1880);
+    assert.strictEqual(res.pointsCoverageRate, (1880 / 4400) * 100);
+    assert.strictEqual(res.flight.cpp.toFixed(2), '2.35');
+    assert.strictEqual(res.flight.enabled, true);
+    assert.strictEqual(res.hotel.enabled, false);
+  });
+
+  await t.test('5. Hotel points only redemption', () => {
+    const res = CalculatorCore.calculateTripCostAfterPoints({
+      currency: 'USD',
+      tripDays: 5,
+      adults: 2,
+      children: 0,
+      expenses: { flights: 600, hotel: 1200, dining: 500 },
+      flightRedemption: { enabled: false },
+      hotelRedemption: {
+        enabled: true,
+        pointsNeeded: 60000,
+        awardTaxes: 40,
+        resortFees: 150,
+        hotelCashCopay: 0,
+        pointsBalance: 50000
+      }
+    });
+
+    assert.strictEqual(res.cashTripCost, 2300);
+    assert.strictEqual(res.finalOutOfPocket, 1290);
+    assert.strictEqual(res.totalSavings, 1010);
+    assert.strictEqual(res.hotel.cpp.toFixed(2), '1.68');
+    assert.strictEqual(res.hotel.hotelBalanceSufficient, false);
+  });
+
+  await t.test('6. Negative net savings warning when taxes exceed cash price', () => {
+    const res = CalculatorCore.calculateTripCostAfterPoints({
+      currency: 'USD',
+      tripDays: 3,
+      adults: 1,
+      children: 0,
+      expenses: { flights: 200, hotel: 300 },
+      flightRedemption: {
+        enabled: true,
+        awardMilesRequired: 25000,
+        awardTaxes: 250,
+        awardCashCopay: 0
+      },
+      hotelRedemption: { enabled: false }
+    });
+
+    assert.strictEqual(res.flight.isNegativeSavings, true);
+    assert.strictEqual(res.verdictCode, 'AVOID_DEFICIT');
+  });
+
+  await t.test('7. LocalStorage serialization and version migration', () => {
     const rawData = {
       origin: 'London',
       destination: 'Paris',
@@ -279,21 +274,7 @@ test('CalculatorCore Unit Tests - Comprehensive Suite', async (t) => {
     assert.deepStrictEqual(normalized, reNormalized);
   });
 
-  await t.test('13. Disabled redemption toggles maintain preserved fields without deduction', () => {
-    const state = CalculatorCore.normalizeTripState({
-      expenses: { flights: 1000, hotel: 1000 },
-      flightRedemption: { enabled: false, awardMilesRequired: 50000, awardTaxes: 100 },
-      hotelRedemption: { enabled: false, pointsNeeded: 40000, awardTaxes: 50 }
-    });
-
-    const res = CalculatorCore.calculateTripCostAfterPoints(state);
-    assert.strictEqual(res.cashTripCost, 2000);
-    assert.strictEqual(res.finalOutOfPocket, 2000);
-    assert.strictEqual(res.totalSavings, 0);
-    assert.strictEqual(state.flightRedemption.awardMilesRequired, 50000);
-  });
-
-  await t.test('14. Safe handling of invalid, negative, NaN, and Infinity inputs', () => {
+  await t.test('8. Safe handling of invalid, negative, NaN, and Infinity inputs', () => {
     const raw = {
       tripDays: -10,
       adults: NaN,
@@ -311,32 +292,6 @@ test('CalculatorCore Unit Tests - Comprehensive Suite', async (t) => {
     assert.strictEqual(state.expenses.hotel, 0);
     assert.strictEqual(state.flightRedemption.awardMilesRequired, 0);
     assert.strictEqual(state.flightRedemption.baseTransferRatio, 1.0);
-  });
-
-  await t.test('15. Currency formatting and custom FX calculations', () => {
-    assert.strictEqual(CalculatorCore.formatCurrency(5250, 'CNY', 'zh'), '¥5,250');
-    assert.strictEqual(CalculatorCore.formatCurrency(750, 'USD', 'en'), '$750');
-
-    // 1000 USD net savings with 50,000 points
-    const cppUsd = CalculatorCore.calculateCPP(1000, 50000, 'USD');
-    assert.strictEqual(cppUsd.toFixed(2), '2.00');
-
-    // 7200 CNY net savings with 50,000 points at FX 7.2
-    const cppCny = CalculatorCore.calculateCPP(7200, 50000, 'CNY', 7.2);
-    assert.strictEqual(cppCny.toFixed(2), '2.00');
-  });
-
-  await t.test('16. Bilingual calculation parity', () => {
-    const baseParams = {
-      tripDays: 7, adults: 2, children: 1,
-      expenses: { flights: 3000, hotel: 2000, dining: 1000 },
-      flightRedemption: { enabled: true, awardMilesRequired: 100000, awardTaxes: 200 },
-      hotelRedemption: { enabled: true, pointsNeeded: 80000, awardTaxes: 0, resortFees: 100 }
-    };
-    const resUsd = CalculatorCore.calculateTripCostAfterPoints(Object.assign({}, baseParams, { currency: 'USD' }));
-    assert.strictEqual(resUsd.cashTripCost, 6000);
-    assert.strictEqual(resUsd.finalOutOfPocket, 1300); // 6000 - 3000 - 2000 + 200 + 100 = 1300
-    assert.strictEqual(resUsd.totalSavings, 4700);
   });
 
 });

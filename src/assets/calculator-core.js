@@ -129,52 +129,94 @@
     const bonusPercent = toNum(input.transferBonusPercent || input.bonusPercent);
     const increment = Math.max(1, parseInt(input.transferIncrement || input.increment, 10) || 1);
 
+    const airlineMilesBalance = input.airlineMilesBalance !== undefined && input.airlineMilesBalance !== null && input.airlineMilesBalance !== ''
+      ? toNum(input.airlineMilesBalance) : null;
+    const transferablePointsBalance = input.transferablePointsBalance !== undefined && input.transferablePointsBalance !== null && input.transferablePointsBalance !== ''
+      ? toNum(input.transferablePointsBalance) : null;
+
+    const currentMiles = airlineMilesBalance !== null ? airlineMilesBalance : 0;
+    const airlineBalanceBeforeTransferSufficient = airlineMilesBalance !== null ? (airlineMilesBalance >= awardMilesRequired) : false;
+
     if (awardMilesRequired <= 0) {
       return {
         awardMilesRequired: 0,
+        airlineMilesBalance: airlineMilesBalance,
+        remainingMilesNeeded: 0,
         baseTransferRatio: baseRatio,
         transferBonusPercent: bonusPercent,
         transferIncrement: increment,
+        rawBankPointsNeeded: 0,
         bankPointsNeeded: 0,
         standardBankPointsNeeded: 0,
         bankPointsSaved: 0,
         milesReceived: 0,
-        bankBalanceSufficient: null,
-        airlineBalanceSufficient: null
+        projectedAirlineMiles: currentMiles,
+        excessMilesAfterTransfer: currentMiles,
+        transferablePointsBalance: transferablePointsBalance,
+        bankBalanceSufficient: true,
+        airlineBalanceBeforeTransferSufficient: true,
+        airlineBalanceAfterTransferSufficient: true
       };
     }
 
+    const remainingMilesNeeded = Math.max(0, awardMilesRequired - currentMiles);
     const effectiveMultiplier = (baseRatio > 0 ? baseRatio : 1.0) * (1 + bonusPercent / 100);
-    const rawBankPointsNeeded = effectiveMultiplier > 0 ? (awardMilesRequired / effectiveMultiplier) : awardMilesRequired;
+
+    if (remainingMilesNeeded === 0) {
+      const excessMiles = Math.max(0, currentMiles - awardMilesRequired);
+      return {
+        awardMilesRequired: awardMilesRequired,
+        airlineMilesBalance: airlineMilesBalance,
+        remainingMilesNeeded: 0,
+        baseTransferRatio: baseRatio,
+        transferBonusPercent: bonusPercent,
+        transferIncrement: increment,
+        rawBankPointsNeeded: 0,
+        bankPointsNeeded: 0,
+        standardBankPointsNeeded: 0,
+        bankPointsSaved: 0,
+        milesReceived: 0,
+        projectedAirlineMiles: currentMiles,
+        excessMilesAfterTransfer: excessMiles,
+        transferablePointsBalance: transferablePointsBalance,
+        bankBalanceSufficient: true,
+        airlineBalanceBeforeTransferSufficient: true,
+        airlineBalanceAfterTransferSufficient: true
+      };
+    }
+
+    const rawBankPointsNeeded = effectiveMultiplier > 0 ? (remainingMilesNeeded / effectiveMultiplier) : remainingMilesNeeded;
     const bankPointsNeeded = Math.ceil(rawBankPointsNeeded / increment) * increment;
 
-    const rawStandardNeeded = baseRatio > 0 ? (awardMilesRequired / baseRatio) : awardMilesRequired;
+    const rawStandardNeeded = baseRatio > 0 ? (remainingMilesNeeded / baseRatio) : remainingMilesNeeded;
     const standardBankPointsNeeded = Math.ceil(rawStandardNeeded / increment) * increment;
     const bankPointsSaved = Math.max(0, standardBankPointsNeeded - bankPointsNeeded);
 
     const milesReceived = Math.round(bankPointsNeeded * effectiveMultiplier);
+    const projectedAirlineMiles = currentMiles + milesReceived;
+    const excessMilesAfterTransfer = Math.max(0, projectedAirlineMiles - awardMilesRequired);
 
-    const transferablePointsBalance = input.transferablePointsBalance !== undefined && input.transferablePointsBalance !== null && input.transferablePointsBalance !== ''
-      ? toNum(input.transferablePointsBalance) : null;
     const bankBalanceSufficient = transferablePointsBalance !== null ? (transferablePointsBalance >= bankPointsNeeded) : null;
-
-    const airlineMilesBalance = input.airlineMilesBalance !== undefined && input.airlineMilesBalance !== null && input.airlineMilesBalance !== ''
-      ? toNum(input.airlineMilesBalance) : null;
-    const airlineBalanceSufficient = airlineMilesBalance !== null ? (airlineMilesBalance >= awardMilesRequired) : null;
+    const airlineBalanceAfterTransferSufficient = projectedAirlineMiles >= awardMilesRequired;
 
     return {
       awardMilesRequired: awardMilesRequired,
+      airlineMilesBalance: airlineMilesBalance,
+      remainingMilesNeeded: remainingMilesNeeded,
       baseTransferRatio: baseRatio,
       transferBonusPercent: bonusPercent,
       transferIncrement: increment,
+      rawBankPointsNeeded: rawBankPointsNeeded,
       bankPointsNeeded: bankPointsNeeded,
       standardBankPointsNeeded: standardBankPointsNeeded,
       bankPointsSaved: bankPointsSaved,
       milesReceived: milesReceived,
+      projectedAirlineMiles: projectedAirlineMiles,
+      excessMilesAfterTransfer: excessMilesAfterTransfer,
       transferablePointsBalance: transferablePointsBalance,
-      airlineMilesBalance: airlineMilesBalance,
       bankBalanceSufficient: bankBalanceSufficient,
-      airlineBalanceSufficient: airlineBalanceSufficient
+      airlineBalanceBeforeTransferSufficient: airlineBalanceBeforeTransferSufficient,
+      airlineBalanceAfterTransferSufficient: airlineBalanceAfterTransferSufficient
     };
   }
 
@@ -212,7 +254,7 @@
     const cpp = calculateCPP(netSavings, miles, currency, fxRate);
     const localPerPoint = calculateLocalPerPoint(netSavings, miles);
 
-    // Transfer bonus integration
+    // Transfer bonus integration with remaining miles
     const transferInput = {
       awardMilesRequired: miles,
       baseTransferRatio: input.baseTransferRatio,
@@ -225,7 +267,7 @@
 
     const effectiveBankCpp = transferDetails.bankPointsNeeded > 0
       ? calculateCPP(netSavings, transferDetails.bankPointsNeeded, currency, fxRate)
-      : cpp;
+      : 0;
 
     return {
       enabled: true,

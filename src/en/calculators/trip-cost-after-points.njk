@@ -1,6 +1,6 @@
 ---
 layout: base.njk
-title: Trip Cost After Points Calculator | True Out-of-Pocket Travel Cost
+title: Trip Cost After Points Calculator | Points & Miles
 description: Estimate your trip’s full cash cost, apply airline miles, hotel points and credit card rewards, and calculate your true out-of-pocket cost, savings and redemption value.
 canonical: /en/calculators/trip-cost-after-points/
 schemaType: WebApplication
@@ -177,8 +177,9 @@ faqItems:
         <h4 style="margin: 0 0 12px 0; font-size: 14px; color: var(--gold);">💳 Credit Card Points Transfer & Bonus (Optional)</h4>
         <div class="expense-grid">
           <div class="field">
-            <label for="flightBaseTransferRatio">Base Transfer Ratio (Bank:Airline)<span class="hint">RATIO</span></label>
+            <label for="flightBaseTransferRatio">Base Transfer Ratio (Miles per 1 bank point)<span class="hint">RATIO</span></label>
             <input type="number" id="flightBaseTransferRatio" value="1" min="0.1" max="10" step="0.1" inputmode="decimal" placeholder="1 for 1:1 ratio">
+            <div class="unit">e.g. 1:1 enter 1; 2 pts per 1 mile enter 0.5; 1 pt per 2 miles enter 2</div>
           </div>
           <div class="field">
             <label for="flightTransferBonus">Transfer Bonus<span class="hint">% Optional</span></label>
@@ -582,32 +583,74 @@ faqItems:
           ? `Net value ¥${res.flight.localPerPoint.toFixed(4)} / pt`
           : `Net value $${res.flight.localPerPoint.toFixed(4)} / pt`;
         
+        const td = res.flight.transferDetails;
         let transHtml = '';
-        if (res.flight.transferDetails && res.flight.transferDetails.bankPointsNeeded > 0) {
-          const td = res.flight.transferDetails;
-          transHtml = `<br>💳 <strong>Points Transfer:</strong> Transfer <strong>${td.bankPointsNeeded.toLocaleString()}</strong> bank points` +
-            (td.bankPointsSaved > 0 ? ` (Bonus saved <strong>${td.bankPointsSaved.toLocaleString()}</strong> pts)` : '') +
-            ` ➔ Yields <strong>${td.milesReceived.toLocaleString()}</strong> miles` +
-            ` · Effective bank point value: <strong>${res.flight.effectiveBankCpp.toFixed(2)} ¢/pt</strong>`;
-          if (td.bankBalanceSufficient === false) {
-            transHtml += ` · <span style="color:#f87171;">⚠️ Insufficient bank points</span>`;
-          } else if (td.bankBalanceSufficient === true) {
-            transHtml += ` · <span style="color:#4ade80;">✓ Bank balance sufficient</span>`;
+
+        if (td.airlineBalanceBeforeTransferSufficient) {
+          transHtml = `<div style="margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.15);">
+            ✈️ <strong>Airline Miles Sufficient:</strong> Award flight requires <span id="resultAwardMilesRequired">${td.awardMilesRequired.toLocaleString()}</span> miles. Account balance: <span id="resultExistingAirlineMiles">${td.airlineMilesBalance !== null ? td.airlineMilesBalance.toLocaleString() : 'None'}</span> miles.<br>
+            💡 <strong>Current airline miles are sufficient. No bank points transfer required.</strong>
+            <span id="resultRemainingMiles" style="display:none;">0</span>
+            <span id="resultBankPointsNeeded" style="display:none;">0</span>
+            <span id="resultBankPointsSaved" style="display:none;">0</span>
+            <span id="resultMilesReceived" style="display:none;">0</span>
+            <span id="resultProjectedAirlineMiles" style="display:none;">${td.projectedAirlineMiles.toLocaleString()}</span>
+            <span id="resultExcessMiles" style="display:none;">${td.excessMilesAfterTransfer.toLocaleString()}</span>
+            <span id="resultBankBalanceStatus" style="display:none;">No transfer needed</span>
+            <span id="resultAirlineBalanceBeforeStatus" style="display:none;">Sufficient</span>
+            <span id="resultAirlineBalanceAfterStatus" style="display:none;">Sufficient</span>
+          </div>`;
+        } else {
+          let unfillHint = '';
+          if (td.airlineMilesBalance === null) {
+            unfillHint = `<div style="color:var(--muted); font-size:12.5px; margin-bottom:4px;">ℹ️ Airline balance not provided; transfer estimate assumes 0 existing miles.</div>`;
           }
+
+          let excessText = '';
+          if (td.excessMilesAfterTransfer > 0) {
+            excessText = `, excess <span id="resultExcessMiles">${td.excessMilesAfterTransfer.toLocaleString()}</span> miles`;
+          } else {
+            excessText = `<span id="resultExcessMiles" style="display:none;">0</span>`;
+          }
+
+          let bankBalText = '';
+          if (td.bankBalanceSufficient === true) {
+            bankBalText = `, <span id="resultBankBalanceStatus" style="color:#4ade80;">Sufficient balance</span>`;
+          } else if (td.bankBalanceSufficient === false) {
+            bankBalText = `, <span id="resultBankBalanceStatus" style="color:#f87171;">⚠️ Insufficient bank balance</span>`;
+          } else {
+            bankBalText = `, <span id="resultBankBalanceStatus">Not verified</span>`;
+          }
+
+          transHtml = `<div style="margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.15);">
+            ${unfillHint}
+            💳 <strong>Points Transfer & Mileage Gap Breakdown:</strong><br>
+            1. Award flight requires <span id="resultAwardMilesRequired">${td.awardMilesRequired.toLocaleString()}</span> miles. Existing balance: <span id="resultExistingAirlineMiles">${td.airlineMilesBalance !== null ? td.airlineMilesBalance.toLocaleString() : 'None'}</span> miles, remaining gap: <span id="resultRemainingMiles">${td.remainingMilesNeeded.toLocaleString()}</span> miles.<br>
+            2. At ${td.baseTransferRatio} miles per bank point, ${td.transferBonusPercent}% bonus, rounded to ${td.transferIncrement.toLocaleString()} pts, transfer <span id="resultBankPointsNeeded">${td.bankPointsNeeded.toLocaleString()}</span> bank points` +
+            (td.bankPointsSaved > 0 ? ` (Bonus saved <span id="resultBankPointsSaved">${td.bankPointsSaved.toLocaleString()}</span> pts)` : `<span id="resultBankPointsSaved" style="display:none;">0</span>`) + `.<br>
+            3. Yields <span id="resultMilesReceived">${td.milesReceived.toLocaleString()}</span> miles. Projected airline balance: <span id="resultProjectedAirlineMiles">${td.projectedAirlineMiles.toLocaleString()}</span> miles${excessText}.<br>
+            4. Transferable bank points balance: ${td.transferablePointsBalance !== null ? td.transferablePointsBalance.toLocaleString() : 'None'}${bankBalText} · Effective bank point value: <strong>${res.flight.effectiveBankCpp.toFixed(2)} ¢/pt</strong>.
+            <span id="resultAirlineBalanceBeforeStatus" style="display:none;">${td.airlineBalanceBeforeTransferSufficient ? 'Sufficient' : 'Insufficient'}</span>
+            <span id="resultAirlineBalanceAfterStatus" style="display:none;">${td.airlineBalanceAfterTransferSufficient ? 'Sufficient' : 'Insufficient'}</span>
+          </div>`;
         }
 
-        let airlineBalHtml = '';
-        if (res.flight.transferDetails && res.flight.transferDetails.airlineBalanceSufficient === false) {
-          airlineBalHtml = ` · <span style="color:#f87171;">⚠️ Insufficient airline miles</span>`;
-        } else if (res.flight.transferDetails && res.flight.transferDetails.airlineBalanceSufficient === true) {
-          airlineBalHtml = ` · <span style="color:#4ade80;">✓ Airline miles sufficient</span>`;
-        }
-
-        flightBox.innerHTML = `✈️ <strong>Flight Deduction:</strong> Cash fare <strong>${core.formatCurrency(res.flight.cashPrice, curr, 'en')}</strong> ➔ Covered by <strong>${res.flight.milesNeeded.toLocaleString()}</strong> miles, paying <strong>${core.formatCurrency(res.flight.outOfPocket, curr, 'en')}</strong> in cash taxes/fees. Net cash saved: <strong>${core.formatCurrency(res.flight.netSavings, curr, 'en')}</strong> (Realized <strong>${res.flight.cpp.toFixed(2)} ¢/pt</strong>)${airlineBalHtml}${transHtml}`;
+        flightBox.innerHTML = `✈️ <strong>Flight Deduction:</strong> Cash fare <strong>${core.formatCurrency(res.flight.cashPrice, curr, 'en')}</strong> ➔ Covered by <strong>${res.flight.milesNeeded.toLocaleString()}</strong> miles, paying <strong>${core.formatCurrency(res.flight.outOfPocket, curr, 'en')}</strong> in cash taxes/fees. Net cash saved: <strong>${core.formatCurrency(res.flight.netSavings, curr, 'en')}</strong> (Realized <strong>${res.flight.cpp.toFixed(2)} ¢/pt</strong>)${transHtml}`;
       } else {
         $('valFlightCpp').textContent = '—';
         $('valFlightLocal').textContent = 'No flight miles applied';
-        flightBox.innerHTML = '✈️ Flight miles deduction is disabled or cash flight price is $0.';
+        flightBox.innerHTML = `✈️ Flight miles deduction is disabled or cash flight price is $0.
+          <span id="resultAwardMilesRequired" style="display:none;">0</span>
+          <span id="resultExistingAirlineMiles" style="display:none;">0</span>
+          <span id="resultRemainingMiles" style="display:none;">0</span>
+          <span id="resultBankPointsNeeded" style="display:none;">0</span>
+          <span id="resultBankPointsSaved" style="display:none;">0</span>
+          <span id="resultMilesReceived" style="display:none;">0</span>
+          <span id="resultProjectedAirlineMiles" style="display:none;">0</span>
+          <span id="resultExcessMiles" style="display:none;">0</span>
+          <span id="resultBankBalanceStatus" style="display:none;">Disabled</span>
+          <span id="resultAirlineBalanceBeforeStatus" style="display:none;">Disabled</span>
+          <span id="resultAirlineBalanceAfterStatus" style="display:none;">Disabled</span>`;
       }
 
       // Hotel Summary Box
