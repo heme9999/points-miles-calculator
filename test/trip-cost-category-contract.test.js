@@ -25,12 +25,15 @@ test('Phase 9.4.6: Trip Cost Category Definition & Data Integrity Gatekeeper', a
 
   // Helper to load DOM with custom URL parameters and execute scripts
   async function loadPageWithParams(html, url) {
-    const dom = new JSDOM(html, { runScripts: 'dangerously', resources: 'usable', url });
+    const dom = new JSDOM(html, {
+      runScripts: 'dangerously',
+      url,
+      beforeParse(window) {
+        window.CalculatorCore = core;
+      }
+    });
     // Wait for JS execution
-    for (let i = 0; i < 30; i++) {
-      await new Promise(r => setTimeout(r, 50));
-      if (dom.window.document.getElementById('resultRemainingMiles')?.textContent) break;
-    }
+    await new Promise(r => setTimeout(r, 100));
     return dom;
   }
 
@@ -105,7 +108,7 @@ test('Phase 9.4.6: Trip Cost Category Definition & Data Integrity Gatekeeper', a
     assert.strictEqual(zhTbodyRows.length, 8, 'ZH must render exactly 8 category rows when 2 are zero');
     assert.strictEqual(enTbodyRows.length, 8, 'EN must render exactly 8 category rows when 2 are zero');
     assert.strictEqual(zhCards.length, 8, 'ZH must render exactly 8 category cards when 2 are zero');
-    assert.strictEqual(enCards.length, 8, 'EN must render exactly 8 category cards when 2 are zero');
+    assert.strictEqual(enCards.length, 8, 'EN must render taxes 8 category cards when 2 are zero');
 
     const expected8Ids = EXPECTED_CATEGORY_IDS.filter(id => id !== 'carRental' && id !== 'parkingTolls');
     assert.deepStrictEqual(zhTbodyRows.map(r => r.getAttribute('data-category-id')), expected8Ids);
@@ -135,5 +138,33 @@ test('Phase 9.4.6: Trip Cost Category Definition & Data Integrity Gatekeeper', a
     const expected9Ids = EXPECTED_CATEGORY_IDS.filter(id => id !== 'parkingTolls');
     assert.deepStrictEqual(zhTbodyRows.map(r => r.getAttribute('data-category-id')), expected9Ids);
     assert.deepStrictEqual(enTbodyRows.map(r => r.getAttribute('data-category-id')), expected9Ids);
+  });
+
+  await t.test('4. Scenario D: Zero Cash Baseline with Award Taxes / Resort Fees Display Test', async () => {
+    // expFlights = 0, but fMiles = 60,000, fTaxes = 150 -> flights MUST display
+    // expHotel = 0, but hPoints = 50,000, hResort = 200 -> hotel MUST display
+    // All other 8 items = 0
+    const zeroCashAwardFeeParams = 'currency=CNY&days=5&adults=2&children=0&fCash=0&hCash=0&dCash=0&tCash=0&carCash=0&gasCash=0&actCash=0&visaCash=0&simCash=0&othCash=0&fMiles=60000&fBal=60000&fTaxes=150&hPoints=50000&hTaxes=0&hResort=200';
+    const zhUrl = `https://points-miles-calculator.pages.dev/calculators/trip-cost-after-points/?${zeroCashAwardFeeParams}`;
+    const enUrl = `https://points-miles-calculator.pages.dev/en/calculators/trip-cost-after-points/?${zeroCashAwardFeeParams.replace('currency=CNY', 'currency=USD')}`;
+
+    const zhDom = await loadPageWithParams(zhHtml, zhUrl);
+    const enDom = await loadPageWithParams(enHtml, enUrl);
+
+    const zhTbodyRows = Array.from(zhDom.window.document.querySelectorAll('#waterfallBody tr.waterfall-row'));
+    const enTbodyRows = Array.from(enDom.window.document.querySelectorAll('#waterfallBody tr.waterfall-row'));
+    const zhCards = Array.from(zhDom.window.document.querySelectorAll('#waterfallCardsList article.waterfall-mobile-card'));
+    const enCards = Array.from(enDom.window.document.querySelectorAll('#waterfallCardsList article.waterfall-mobile-card'));
+
+    assert.strictEqual(zhTbodyRows.length, 2, 'ZH table must display 2 categories (flights and hotel) despite cash=0');
+    assert.strictEqual(enTbodyRows.length, 2, 'EN table must display 2 categories (flights and hotel) despite cash=0');
+    assert.strictEqual(zhCards.length, 2, 'ZH cards must display 2 categories');
+    assert.strictEqual(enCards.length, 2, 'EN cards must display 2 categories');
+
+    const expectedIds = ['flights', 'hotel'];
+    assert.deepStrictEqual(zhTbodyRows.map(r => r.getAttribute('data-category-id')), expectedIds);
+    assert.deepStrictEqual(enTbodyRows.map(r => r.getAttribute('data-category-id')), expectedIds);
+    assert.deepStrictEqual(zhCards.map(c => c.getAttribute('data-category-id')), expectedIds);
+    assert.deepStrictEqual(enCards.map(c => c.getAttribute('data-category-id')), expectedIds);
   });
 });

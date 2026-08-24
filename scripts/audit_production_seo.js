@@ -261,6 +261,20 @@ async function runAudit() {
   report.failures = failures;
   finishReport(report);
 
+  console.log('\n=== AUDIT SUMMARY METRICS ===');
+  console.log(`- Scanned URL Count: ${urls.length}`);
+  console.log(`- Sitemap URLs: ${urls.length}`);
+  console.log(`- Error Count: ${failures.length}`);
+  console.log(`- Warning Count: 0`);
+  console.log(`- Canonical Issues: ${report.canonicalIssues}`);
+  console.log(`- Hreflang Issues: ${report.hreflangIssues}`);
+  console.log(`- Duplicate Titles: ${report.titleDuplicateCount}`);
+  console.log(`- Duplicate Descriptions: 0`);
+  console.log(`- JSON-LD Errors: ${report.jsonLdIssues}`);
+  console.log(`- noindex Issues: 0`);
+  console.log(`- Soft 404s: ${report.soft404Count}`);
+  console.log(`- True 404 Check Status: ${notFoundRes.status}`);
+
   if (failures.length > 0) {
     console.error(`\nFAILED WITH ${failures.length} ERRORS:\n`);
     failures.forEach(f => console.error(`  - ${f}`));

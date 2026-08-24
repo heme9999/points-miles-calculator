@@ -228,7 +228,7 @@
     const miles = toNum(input.awardMilesRequired || input.milesNeeded || input.flightMilesNeeded);
     const taxes = toNum(input.awardTaxes || input.flightAwardTaxes);
     const copay = toNum(input.awardCashCopay || input.flightAwardCopay);
-    const enabled = Boolean(input.enabled !== false && cash > 0 && miles > 0);
+    const enabled = Boolean(input.enabled !== false && miles > 0 && (cash > 0 || taxes > 0 || copay > 0));
 
     if (!enabled) {
       return {
@@ -297,7 +297,7 @@
     const taxes = toNum(input.awardTaxes || input.hotelAwardTaxes);
     const resort = toNum(input.resortFees || input.hotelResortFees);
     const copay = toNum(input.hotelCashCopay || input.hotelCashCopay);
-    const enabled = Boolean(input.enabled !== false && cash > 0 && points > 0);
+    const enabled = Boolean(input.enabled !== false && points > 0 && (cash > 0 || taxes > 0 || resort > 0 || copay > 0));
 
     if (!enabled) {
       return {
