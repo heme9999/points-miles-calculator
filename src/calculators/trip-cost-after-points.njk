@@ -3,6 +3,7 @@ layout: base.njk
 title: 积分旅行预算计算器｜使用里程后还要花多少钱？
 description: 计算旅行全现金成本，并用航空里程、酒店积分和信用卡积分抵扣，得出实际现金支出、节省金额、积分覆盖比例和兑换CPP。
 canonical: /calculators/trip-cost-after-points/
+wrapClass: "wrap-wide"
 schemaType: WebApplication
 breadcrumbs:
   - name: 工具箱
@@ -252,66 +253,81 @@ faqItems:
   </div>
 
   <!-- 5. 结果计算区 -->
-  <div class="ticket" aria-live="polite" style="margin-top: 30px;">
-    <div class="main">
-      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gold);">旅行成本与积分抵扣对比报告</h2>
+  <div class="ticket trip-cost-ticket" aria-live="polite" style="margin-top: 30px;">
+    <div class="ticket-header-row">
+      <div class="main-summary">
+        <h2 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gold);">旅行成本与积分抵扣对比报告</h2>
 
-      <!-- 双方案并排对比 -->
-      <div class="plan-comparison-grid">
-        <div class="plan-card">
-          <div class="plan-card-title">全现金基准方案 (All-Cash)</div>
-          <div class="plan-card-price" id="cardOriginalPrice">¥30,800</div>
-          <div class="plan-card-desc">如果不使用任何积分或里程，旅行的预估全自费总现金支出。</div>
+        <!-- 双方案并排对比 -->
+        <div class="plan-comparison-grid">
+          <div class="plan-card">
+            <div class="plan-card-title">全现金基准方案 (All-Cash)</div>
+            <div class="plan-card-price" id="cardOriginalPrice">¥30,800</div>
+            <div class="plan-card-desc">如果不使用任何积分或里程，旅行的预估全自费总现金支出。</div>
+          </div>
+
+          <div class="plan-card highlight">
+            <span class="badge-status badge-success" id="badgeTotalSavings">省 ¥20,400</span>
+            <div class="plan-card-title">✨ 积分抵扣后的实际自付方案</div>
+            <div class="plan-card-price" id="cardFinalPrice">¥10,400</div>
+            <div class="plan-card-desc">通过积分抵扣后，您最终需要从银行卡刷出的实际真金白银。</div>
+          </div>
         </div>
 
-        <div class="plan-card highlight">
-          <span class="badge-status badge-success" id="badgeTotalSavings">省 ¥20,400</span>
-          <div class="plan-card-title">✨ 积分抵扣后的实际自付方案</div>
-          <div class="plan-card-price" id="cardFinalPrice">¥10,400</div>
-          <div class="plan-card-desc" id="cardCoverageDesc">通过积分抵扣后，您最终需要从银行卡刷出的实际真金白银。</div>
+        <!-- 核心指标摘要网格 -->
+        <div class="expense-grid" style="margin-top: 24px;">
+          <div class="field">
+            <label>积分覆盖比例 (Coverage)</label>
+            <div style="font-size: 20px; font-weight: 700; color: #0284c7; font-family: var(--font-mono);" id="valCoverageRate">66.2%</div>
+            <div class="unit">积分抵扣额占全现金总预算的比例</div>
+          </div>
+          <div class="field">
+            <label>人均最终自付现金</label>
+            <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valPerPersonCash">¥5,200</div>
+            <div class="unit" id="unitPerPerson">按 2 位旅客平摊</div>
+          </div>
+          <div class="field">
+            <label>日均最终自付现金</label>
+            <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valDailyCash">¥1,486</div>
+            <div class="unit" id="unitDaily">按 7 天行程平摊</div>
+          </div>
+          <div class="field">
+            <label>机票实际兑出价值 (CPP)</label>
+            <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valFlightCpp">2.67 ¢/点</div>
+            <div class="unit" id="valFlightLocal">折合 ¥0.1867 / 里</div>
+          </div>
+          <div class="field">
+            <label>酒店实际兑出价值 (CPP)</label>
+            <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valHotelCpp">2.86 ¢/点</div>
+            <div class="unit" id="valHotelLocal">折合 ¥0.2000 / 点</div>
+          </div>
         </div>
       </div>
 
-      <!-- 核心指标摘要网格 -->
-      <div class="expense-grid" style="margin-top: 24px;">
-        <div class="field">
-          <label>积分覆盖比例 (Coverage)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #0284c7; font-family: var(--font-mono);" id="valCoverageRate">66.2%</div>
-          <div class="unit">积分抵扣额占全现金总预算的比例</div>
+      <!-- 决策侧栏 -->
+      <div class="stub">
+        <div class="decision-box" id="verdictBox">
+          <div class="verdict-label">最终决策</div>
+          <div class="verdict good" id="verdictBadge">推荐使用积分</div>
         </div>
-        <div class="field">
-          <label>人均最终自付现金</label>
-          <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valPerPersonCash">¥5,200</div>
-          <div class="unit" id="unitPerPerson">按 2 位旅客平摊</div>
-        </div>
-        <div class="field">
-          <label>日均最终自付现金</label>
-          <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valDailyCash">¥1,486</div>
-          <div class="unit" id="unitDaily">按 7 天行程平摊</div>
-        </div>
-        <div class="field">
-          <label>机票实际兑出价值 (CPP)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valFlightCpp">2.67 ¢/点</div>
-          <div class="unit" id="valFlightLocal">折合 ¥0.1867 / 里</div>
-        </div>
-        <div class="field">
-          <label>酒店实际兑出价值 (CPP)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valHotelCpp">2.86 ¢/点</div>
-          <div class="unit" id="valHotelLocal">折合 ¥0.2000 / 点</div>
-        </div>
+        <div class="code" id="verdictCode">SAVINGS 62%</div>
       </div>
+    </div>
 
-      <!-- 结构化费用瀑布逻辑表 -->
-      <h3 style="margin: 28px 0 12px 0; font-size: 15px; color: #0e1a2b;">📊 旅行自付现金流水瀑布表 (Waterfall Breakdown)</h3>
-      <div class="responsive-table-wrapper">
+    <!-- 全宽明细与操作区 -->
+    <div class="ticket-full-width-section">
+      <h3 style="margin: 0 0 14px 0; font-size: 16px; color: #0e1a2b;">📊 旅行自付现金流水明细 (Waterfall Breakdown)</h3>
+      
+      <!-- 桌面端五列表格 (>= 700px) -->
+      <div class="responsive-table-wrapper waterfall-desktop-view">
         <table class="waterfall-table">
           <thead>
             <tr>
-              <th>预算类别</th>
-              <th>全现金基准</th>
-              <th>积分抵扣扣减</th>
-              <th>必须自付税费/附加费</th>
-              <th>最终实际自付现金</th>
+              <th scope="col">预算类别</th>
+              <th scope="col">全现金基准</th>
+              <th scope="col">积分抵扣扣减</th>
+              <th scope="col">必须自付税费/附加费</th>
+              <th scope="col">最终实际自付现金</th>
             </tr>
           </thead>
           <tbody id="waterfallBody">
@@ -320,8 +336,18 @@ faqItems:
         </table>
       </div>
 
+      <!-- 移动端纵向卡片列表 (< 700px) -->
+      <div class="waterfall-mobile-view" id="waterfallMobileCards" style="display: none;">
+        <div class="waterfall-mobile-card-list" id="waterfallCardsList">
+          <!-- Dynamic Cards generation -->
+        </div>
+        <div class="waterfall-mobile-card-total-wrap" id="waterfallCardsTotal">
+          <!-- Dynamic Total Card -->
+        </div>
+      </div>
+
       <!-- 操作工具栏 -->
-      <div class="calculator-actions-toolbar" style="margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px;">
+      <div class="calculator-actions-toolbar">
         <button type="button" class="btn-action btn-action-primary" id="btnShare">🔗 分享此计算</button>
         <button type="button" class="btn-action" id="btnSaveLocal">💾 暂存至本地</button>
         <button type="button" class="btn-action" id="btnCopySummary">📋 复制预算摘要</button>
@@ -329,15 +355,6 @@ faqItems:
         <button type="button" class="btn-action" id="btnReset">🔄 重置表单</button>
       </div>
       <div id="toast" class="toast" style="display:none;"></div>
-    </div>
-
-    <!-- 决策侧栏 -->
-    <div class="stub">
-      <div class="decision-box" id="verdictBox">
-        <div class="verdict-label">最终决策</div>
-        <div class="verdict good" id="verdictBadge">推荐使用积分</div>
-      </div>
-      <div class="code" id="verdictCode">SAVINGS 62%</div>
     </div>
   </div>
 </div>
@@ -695,8 +712,10 @@ faqItems:
         hotelBox.innerHTML = '🏨 酒店积分抵扣未启用或酒店现金价为 0。';
       }
 
-      // Waterfall Table
+      // Waterfall Table & Mobile Cards
       const wb = $('waterfallBody');
+      const cardsListEl = $('waterfallCardsList');
+      const cardsTotalEl = $('waterfallCardsTotal');
       const b = res.breakdown;
       const rows = [
         { name: '✈️ 往返机票', cash: b.flights, deduction: res.flight.enabled ? -b.flights : 0, taxes: res.flight.enabled ? res.flight.outOfPocket : 0, final: res.flight.enabled ? res.flight.outOfPocket : b.flights },
@@ -711,27 +730,86 @@ faqItems:
         { name: '🛍️ 其他杂费', cash: b.other, deduction: 0, taxes: 0, final: b.other }
       ];
 
-      let html = '';
+      // 1. Desktop 5-column table rendering
+      let tableHtml = '';
       rows.forEach(r => {
         if (r.cash === 0 && r.final === 0) return;
         const dedClass = r.deduction < 0 ? 'col-deduction' : 'col-muted';
         const taxClass = r.taxes > 0 ? 'col-taxes' : 'col-muted';
-        html += `<tr class="waterfall-row">
-          <td><strong>${r.name}</strong></td>
+        tableHtml += `<tr class="waterfall-row">
+          <th scope="row"><strong>${r.name}</strong></th>
           <td>${core.formatCurrency(r.cash, curr, 'zh')}</td>
           <td class="${dedClass}">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'zh') : '—'}</td>
           <td class="${taxClass}">${r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'zh') : '—'}</td>
           <td><strong>${core.formatCurrency(r.final, curr, 'zh')}</strong></td>
         </tr>`;
       });
-      html += `<tr class="waterfall-row-total">
-        <td>全行程总计</td>
+      tableHtml += `<tr class="waterfall-row-total">
+        <th scope="row">全行程总计</th>
         <td>${core.formatCurrency(res.cashTripCost, curr, 'zh')}</td>
         <td class="col-deduction">-${core.formatCurrency(res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
         <td class="col-taxes">+${core.formatCurrency((res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'zh')}</td>
         <td class="col-final">${core.formatCurrency(res.finalOutOfPocket, curr, 'zh')}</td>
       </tr>`;
-      wb.innerHTML = html;
+      wb.innerHTML = tableHtml;
+
+      // 2. Mobile vertical cards rendering
+      if (cardsListEl && cardsTotalEl) {
+        let cardsHtml = '';
+        rows.forEach(r => {
+          if (r.cash === 0 && r.final === 0) return;
+          const dedText = r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'zh') : '—';
+          const taxText = r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'zh') : '—';
+          const dedClass = r.deduction < 0 ? 'value-deduction' : 'value-muted';
+          const taxClass = r.taxes > 0 ? 'value-fees' : 'value-muted';
+          cardsHtml += `<article class="waterfall-mobile-card">
+            <h3>${r.name}</h3>
+            <dl>
+              <div>
+                <dt>全现金基准</dt>
+                <dd>${core.formatCurrency(r.cash, curr, 'zh')}</dd>
+              </div>
+              <div>
+                <dt>积分抵扣</dt>
+                <dd class="${dedClass}">${dedText}</dd>
+              </div>
+              <div>
+                <dt>必须自付税费/附加费</dt>
+                <dd class="${taxClass}">${taxText}</dd>
+              </div>
+              <div class="final-value">
+                <dt>最终实际自付</dt>
+                <dd>${core.formatCurrency(r.final, curr, 'zh')}</dd>
+              </div>
+            </dl>
+          </article>`;
+        });
+        cardsListEl.innerHTML = cardsHtml;
+
+        const totalDed = res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0);
+        const totalTax = (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0);
+        cardsTotalEl.innerHTML = `<article class="waterfall-mobile-card waterfall-mobile-card-total">
+          <h3>📊 全行程总计 (Total Trip Budget)</h3>
+          <dl>
+            <div>
+              <dt>全现金总基准</dt>
+              <dd>${core.formatCurrency(res.cashTripCost, curr, 'zh')}</dd>
+            </div>
+            <div>
+              <dt>积分抵扣总额</dt>
+              <dd class="value-deduction">-${core.formatCurrency(totalDed, curr, 'zh')}</dd>
+            </div>
+            <div>
+              <dt>自付税杂费总计</dt>
+              <dd class="value-fees">+${core.formatCurrency(totalTax, curr, 'zh')}</dd>
+            </div>
+            <div class="final-value">
+              <dt>最终自付总现金</dt>
+              <dd>${core.formatCurrency(res.finalOutOfPocket, curr, 'zh')}</dd>
+            </div>
+          </dl>
+        </article>`;
+      }
 
       // Verdict Box
       const vBadge = $('verdictBadge');

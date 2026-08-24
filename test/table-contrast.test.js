@@ -55,8 +55,8 @@ test('Trip Cost Waterfall Table Accessibility & Contrast Tests', async (t) => {
     const dom = new JSDOM(html);
     const doc = dom.window.document;
 
-    const thead = doc.querySelector('.ticket .main .waterfall-table thead');
-    assert.ok(thead, 'thead must exist inside .ticket .main .waterfall-table');
+    const thead = doc.querySelector('.waterfall-table thead');
+    assert.ok(thead, 'thead must exist inside .waterfall-table');
 
     const ths = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
     assert.strictEqual(ths.length, 5, 'Must have exactly 5 table headers');
@@ -76,8 +76,8 @@ test('Trip Cost Waterfall Table Accessibility & Contrast Tests', async (t) => {
     const dom = new JSDOM(html);
     const doc = dom.window.document;
 
-    const thead = doc.querySelector('.ticket .main .waterfall-table thead');
-    assert.ok(thead, 'thead must exist inside .ticket .main .waterfall-table');
+    const thead = doc.querySelector('.waterfall-table thead');
+    assert.ok(thead, 'thead must exist inside .waterfall-table');
 
     const ths = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
     assert.strictEqual(ths.length, 5, 'Must have exactly 5 table headers');

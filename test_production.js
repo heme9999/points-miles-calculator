@@ -581,8 +581,8 @@ async function runTests() {
     }
   }
 
-  // Waterfall Table Header Checks (CN & EN)
-  const cnThead = tcCnDom.window.document.querySelector('.ticket .main .waterfall-table thead');
+  // Waterfall Table & Mobile Cards Verification (CN & EN)
+  const cnThead = tcCnDom.window.document.querySelector('.waterfall-table thead');
   const cnThs = Array.from(cnThead ? cnThead.querySelectorAll('th') : []).map(th => th.textContent.trim());
   const expectedCnThs = ['预算类别', '全现金基准', '积分抵扣扣减', '必须自付税费/附加费', '最终实际自付现金'];
   if (JSON.stringify(cnThs) !== JSON.stringify(expectedCnThs)) {
@@ -592,7 +592,33 @@ async function runTests() {
     console.log('CN Waterfall Table 5-column headers verified (Passed)');
   }
 
-  const enThead = tcEnDom.window.document.querySelector('.ticket .main .waterfall-table thead');
+  // Check Table Row scope attributes
+  const cnRowThs = tcCnDom.window.document.querySelectorAll('.waterfall-table tbody th[scope="row"]');
+  if (cnRowThs.length === 0) {
+    console.error('ERROR: CN Waterfall Table rows missing th[scope="row"]');
+    failures++;
+  }
+
+  // Check Mobile Cards existence & data consistency (CN)
+  const cnCards = tcCnDom.window.document.querySelectorAll('#waterfallCardsList .waterfall-mobile-card');
+  const cnTableRows = tcCnDom.window.document.querySelectorAll('#waterfallBody .waterfall-row');
+  if (cnCards.length === 0 || cnCards.length !== cnTableRows.length) {
+    console.error(`ERROR: CN Mobile cards count (${cnCards.length}) does not match table rows count (${cnTableRows.length})`);
+    failures++;
+  } else {
+    console.log(`CN Mobile cards count (${cnCards.length}) matches table rows exactly (Passed)`);
+  }
+
+  // CN Total Card Check
+  const cnTotalCard = tcCnDom.window.document.querySelector('#waterfallCardsTotal .waterfall-mobile-card-total');
+  if (!cnTotalCard) {
+    console.error('ERROR: CN Mobile Total Card missing');
+    failures++;
+  } else {
+    console.log('CN Mobile Total Card verified (Passed)');
+  }
+
+  const enThead = tcEnDom.window.document.querySelector('.waterfall-table thead');
   const enThs = Array.from(enThead ? enThead.querySelectorAll('th') : []).map(th => th.textContent.trim());
   const expectedEnThs = ['Budget Category', 'All-Cash Baseline', 'Points Deduction', 'Mandatory Taxes / Fees', 'Final Out-of-Pocket Cash'];
   if (JSON.stringify(enThs) !== JSON.stringify(expectedEnThs)) {
@@ -600,6 +626,32 @@ async function runTests() {
     failures++;
   } else {
     console.log('EN Waterfall Table 5-column headers verified (Passed)');
+  }
+
+  // Check Table Row scope attributes (EN)
+  const enRowThs = tcEnDom.window.document.querySelectorAll('.waterfall-table tbody th[scope="row"]');
+  if (enRowThs.length === 0) {
+    console.error('ERROR: EN Waterfall Table rows missing th[scope="row"]');
+    failures++;
+  }
+
+  // Check Mobile Cards existence & data consistency (EN)
+  const enCards = tcEnDom.window.document.querySelectorAll('#waterfallCardsList .waterfall-mobile-card');
+  const enTableRows = tcEnDom.window.document.querySelectorAll('#waterfallBody .waterfall-row');
+  if (enCards.length === 0 || enCards.length !== enTableRows.length) {
+    console.error(`ERROR: EN Mobile cards count (${enCards.length}) does not match table rows count (${enTableRows.length})`);
+    failures++;
+  } else {
+    console.log(`EN Mobile cards count (${enCards.length}) matches table rows exactly (Passed)`);
+  }
+
+  // EN Total Card Check
+  const enTotalCard = tcEnDom.window.document.querySelector('#waterfallCardsTotal .waterfall-mobile-card-total');
+  if (!enTotalCard) {
+    console.error('ERROR: EN Mobile Total Card missing');
+    failures++;
+  } else {
+    console.log('EN Mobile Total Card verified (Passed)');
   }
 
   // Check EN Label: ensure NO "Transfer Bonus Bonus" typo

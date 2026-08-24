@@ -112,7 +112,7 @@
 {% endif %}
 </head>
 <body>
-<div class="wrap">
+<div class="wrap{% if wrapClass %} {{ wrapClass }}{% endif %}">
   <header class="site-nav">
     <a href="{{ homeUrl }}" class="brand">{{ siteName }}</a>
     <nav>

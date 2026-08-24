@@ -3,6 +3,7 @@ layout: base.njk
 title: Trip Cost After Points Calculator
 description: Estimate your trip’s full cash cost, apply airline miles, hotel points and credit card rewards, and calculate your true out-of-pocket cost, savings and redemption value.
 canonical: /en/calculators/trip-cost-after-points/
+wrapClass: "wrap-wide"
 schemaType: WebApplication
 breadcrumbs:
   - name: Calculators
@@ -251,66 +252,81 @@ faqItems:
   </div>
 
   <!-- 5. Results & Plan Comparison -->
-  <div class="ticket" aria-live="polite" style="margin-top: 30px;">
-    <div class="main">
-      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gold);">Trip Cost & Points Deduction Analysis</h2>
+  <div class="ticket trip-cost-ticket" aria-live="polite" style="margin-top: 30px;">
+    <div class="ticket-header-row">
+      <div class="main-summary">
+        <h2 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gold);">Trip Cost & Points Deduction Analysis</h2>
 
-      <!-- Side-by-side plan comparison -->
-      <div class="plan-comparison-grid">
-        <div class="plan-card">
-          <div class="plan-card-title">All-Cash Benchmark Plan</div>
-          <div class="plan-card-price" id="cardOriginalPrice">$10,510</div>
-          <div class="plan-card-desc">Estimated total cash cost if paying completely out-of-pocket without loyalty rewards.</div>
+        <!-- Side-by-side plan comparison -->
+        <div class="plan-comparison-grid">
+          <div class="plan-card">
+            <div class="plan-card-title">All-Cash Benchmark Plan</div>
+            <div class="plan-card-price" id="cardOriginalPrice">$10,510</div>
+            <div class="plan-card-desc">Estimated total cash cost if paying completely out-of-pocket without loyalty rewards.</div>
+          </div>
+
+          <div class="plan-card highlight">
+            <span class="badge-status badge-success" id="badgeTotalSavings">Saved $5,940</span>
+            <div class="plan-card-title">✨ True Out-of-Pocket Plan (With Points)</div>
+            <div class="plan-card-price" id="cardFinalPrice">$4,570</div>
+            <div class="plan-card-desc">Actual net cash you still need to pay after points & miles deductions.</div>
+          </div>
         </div>
 
-        <div class="plan-card highlight">
-          <span class="badge-status badge-success" id="badgeTotalSavings">Saved $5,940</span>
-          <div class="plan-card-title">✨ True Out-of-Pocket Plan (With Points)</div>
-          <div class="plan-card-price" id="cardFinalPrice">$4,570</div>
-          <div class="plan-card-desc" id="cardCoverageDesc">Actual net cash you still need to pay after points & miles deductions.</div>
+        <!-- Key metrics -->
+        <div class="expense-grid" style="margin-top: 24px;">
+          <div class="field">
+            <label>Points Budget Coverage</label>
+            <div style="font-size: 20px; font-weight: 700; color: #0284c7; font-family: var(--font-mono);" id="valCoverageRate">56.5%</div>
+            <div class="unit">Percentage of total trip budget covered by points</div>
+          </div>
+          <div class="field">
+            <label>Per-Person Final Cash Cost</label>
+            <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valPerPersonCash">$1,523</div>
+            <div class="unit" id="unitPerPerson">Split across 3 travelers (was $3,503/person)</div>
+          </div>
+          <div class="field">
+            <label>Daily Final Cash Cost</label>
+            <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valDailyCash">$457</div>
+            <div class="unit" id="unitDaily">Split across 10 days (was $1,051/day)</div>
+          </div>
+          <div class="field">
+            <label>Flight Redemption Value (CPP)</label>
+            <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valFlightCpp">1.80 ¢/pt</div>
+            <div class="unit" id="valFlightLocal">Net value per airline mile</div>
+          </div>
+          <div class="field">
+            <label>Hotel Redemption Value (CPP)</label>
+            <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valHotelCpp">2.25 ¢/pt</div>
+            <div class="unit" id="valHotelLocal">Net value per hotel point</div>
+          </div>
         </div>
       </div>
 
-      <!-- Key metrics -->
-      <div class="expense-grid" style="margin-top: 24px;">
-        <div class="field">
-          <label>Points Budget Coverage</label>
-          <div style="font-size: 20px; font-weight: 700; color: #0284c7; font-family: var(--font-mono);" id="valCoverageRate">56.5%</div>
-          <div class="unit">Percentage of total trip budget covered by points</div>
+      <!-- Decision Stub -->
+      <div class="stub">
+        <div class="decision-box" id="verdictBox">
+          <div class="verdict-label">Recommendation</div>
+          <div class="verdict good" id="verdictBadge">Points Recommended</div>
         </div>
-        <div class="field">
-          <label>Per-Person Final Cash Cost</label>
-          <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valPerPersonCash">$1,523</div>
-          <div class="unit" id="unitPerPerson">Split across 3 travelers (was $3,503/person)</div>
-        </div>
-        <div class="field">
-          <label>Daily Final Cash Cost</label>
-          <div style="font-size: 20px; font-weight: 700; color: #0e1a2b; font-family: var(--font-mono);" id="valDailyCash">$457</div>
-          <div class="unit" id="unitDaily">Split across 10 days (was $1,051/day)</div>
-        </div>
-        <div class="field">
-          <label>Flight Redemption Value (CPP)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valFlightCpp">1.80 ¢/pt</div>
-          <div class="unit" id="valFlightLocal">Net value per airline mile</div>
-        </div>
-        <div class="field">
-          <label>Hotel Redemption Value (CPP)</label>
-          <div style="font-size: 20px; font-weight: 700; color: #166534; font-family: var(--font-mono);" id="valHotelCpp">2.25 ¢/pt</div>
-          <div class="unit" id="valHotelLocal">Net value per hotel point</div>
-        </div>
+        <div class="code" id="verdictCode">SAVINGS 57%</div>
       </div>
+    </div>
 
-      <!-- Structured Waterfall Table -->
-      <h3 style="margin: 28px 0 12px 0; font-size: 15px; color: #0e1a2b;">📊 Out-of-Pocket Cash Flow Waterfall Table</h3>
-      <div class="responsive-table-wrapper">
+    <!-- Full Width Details & Action Section -->
+    <div class="ticket-full-width-section">
+      <h3 style="margin: 0 0 14px 0; font-size: 16px; color: #0e1a2b;">📊 Out-of-Pocket Cash Flow Waterfall Breakdown</h3>
+      
+      <!-- Desktop 5-column table (>= 700px) -->
+      <div class="responsive-table-wrapper waterfall-desktop-view">
         <table class="waterfall-table">
           <thead>
             <tr>
-              <th>Budget Category</th>
-              <th>All-Cash Baseline</th>
-              <th>Points Deduction</th>
-              <th>Mandatory Taxes / Fees</th>
-              <th>Final Out-of-Pocket Cash</th>
+              <th scope="col">Budget Category</th>
+              <th scope="col">All-Cash Baseline</th>
+              <th scope="col">Points Deduction</th>
+              <th scope="col">Mandatory Taxes / Fees</th>
+              <th scope="col">Final Out-of-Pocket Cash</th>
             </tr>
           </thead>
           <tbody id="waterfallBody">
@@ -319,8 +335,18 @@ faqItems:
         </table>
       </div>
 
+      <!-- Mobile vertical cards list (< 700px) -->
+      <div class="waterfall-mobile-view" id="waterfallMobileCards" style="display: none;">
+        <div class="waterfall-mobile-card-list" id="waterfallCardsList">
+          <!-- Dynamic Cards generation -->
+        </div>
+        <div class="waterfall-mobile-card-total-wrap" id="waterfallCardsTotal">
+          <!-- Dynamic Total Card -->
+        </div>
+      </div>
+
       <!-- Action Toolbar -->
-      <div class="calculator-actions-toolbar" style="margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px;">
+      <div class="calculator-actions-toolbar">
         <button type="button" class="btn-action btn-action-primary" id="btnShare">🔗 Share This Calculation</button>
         <button type="button" class="btn-action" id="btnSaveLocal">💾 Save to Browser</button>
         <button type="button" class="btn-action" id="btnCopySummary">📋 Copy Summary</button>
@@ -328,15 +354,6 @@ faqItems:
         <button type="button" class="btn-action" id="btnReset">🔄 Reset Form</button>
       </div>
       <div id="toast" class="toast" style="display:none;"></div>
-    </div>
-
-    <!-- Decision Stub -->
-    <div class="stub">
-      <div class="decision-box" id="verdictBox">
-        <div class="verdict-label">Recommendation</div>
-        <div class="verdict good" id="verdictBadge">Points Recommended</div>
-      </div>
-      <div class="code" id="verdictCode">SAVINGS 57%</div>
     </div>
   </div>
 </div>
@@ -688,8 +705,10 @@ faqItems:
         hotelBox.innerHTML = '🏨 Hotel points deduction is disabled or cash hotel price is $0.';
       }
 
-      // Waterfall Table
+      // Waterfall Table & Mobile Cards
       const wb = $('waterfallBody');
+      const cardsListEl = $('waterfallCardsList');
+      const cardsTotalEl = $('waterfallCardsTotal');
       const b = res.breakdown;
       const rows = [
         { name: '✈️ Roundtrip Flights', cash: b.flights, deduction: res.flight.enabled ? -b.flights : 0, taxes: res.flight.enabled ? res.flight.outOfPocket : 0, final: res.flight.enabled ? res.flight.outOfPocket : b.flights },
@@ -704,27 +723,86 @@ faqItems:
         { name: '🛍️ Miscellaneous', cash: b.other, deduction: 0, taxes: 0, final: b.other }
       ];
 
-      let html = '';
+      // 1. Desktop 5-column table rendering
+      let tableHtml = '';
       rows.forEach(r => {
         if (r.cash === 0 && r.final === 0) return;
         const dedClass = r.deduction < 0 ? 'col-deduction' : 'col-muted';
         const taxClass = r.taxes > 0 ? 'col-taxes' : 'col-muted';
-        html += `<tr class="waterfall-row">
-          <td><strong>${r.name}</strong></td>
+        tableHtml += `<tr class="waterfall-row">
+          <th scope="row"><strong>${r.name}</strong></th>
           <td>${core.formatCurrency(r.cash, curr, 'en')}</td>
           <td class="${dedClass}">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'en') : '—'}</td>
           <td class="${taxClass}">${r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'en') : '—'}</td>
           <td><strong>${core.formatCurrency(r.final, curr, 'en')}</strong></td>
         </tr>`;
       });
-      html += `<tr class="waterfall-row-total">
-        <td>Total Trip Budget</td>
+      tableHtml += `<tr class="waterfall-row-total">
+        <th scope="row">Total Trip Budget</th>
         <td>${core.formatCurrency(res.cashTripCost, curr, 'en')}</td>
         <td class="col-deduction">-${core.formatCurrency(res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'en')}</td>
         <td class="col-taxes">+${core.formatCurrency((res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0), curr, 'en')}</td>
         <td class="col-final">${core.formatCurrency(res.finalOutOfPocket, curr, 'en')}</td>
       </tr>`;
-      wb.innerHTML = html;
+      wb.innerHTML = tableHtml;
+
+      // 2. Mobile vertical cards rendering
+      if (cardsListEl && cardsTotalEl) {
+        let cardsHtml = '';
+        rows.forEach(r => {
+          if (r.cash === 0 && r.final === 0) return;
+          const dedText = r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'en') : '—';
+          const taxText = r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'en') : '—';
+          const dedClass = r.deduction < 0 ? 'value-deduction' : 'value-muted';
+          const taxClass = r.taxes > 0 ? 'value-fees' : 'value-muted';
+          cardsHtml += `<article class="waterfall-mobile-card">
+            <h3>${r.name}</h3>
+            <dl>
+              <div>
+                <dt>All-Cash Baseline</dt>
+                <dd>${core.formatCurrency(r.cash, curr, 'en')}</dd>
+              </div>
+              <div>
+                <dt>Points Deduction</dt>
+                <dd class="${dedClass}">${dedText}</dd>
+              </div>
+              <div>
+                <dt>Mandatory Taxes / Fees</dt>
+                <dd class="${taxClass}">${taxText}</dd>
+              </div>
+              <div class="final-value">
+                <dt>Final Out-of-Pocket</dt>
+                <dd>${core.formatCurrency(r.final, curr, 'en')}</dd>
+              </div>
+            </dl>
+          </article>`;
+        });
+        cardsListEl.innerHTML = cardsHtml;
+
+        const totalDed = res.cashTripCost - res.finalOutOfPocket + (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0);
+        const totalTax = (res.flight.enabled ? res.flight.outOfPocket : 0) + (res.hotel.enabled ? res.hotel.outOfPocket : 0);
+        cardsTotalEl.innerHTML = `<article class="waterfall-mobile-card waterfall-mobile-card-total">
+          <h3>📊 Total Trip Budget Summary</h3>
+          <dl>
+            <div>
+              <dt>Total All-Cash Baseline</dt>
+              <dd>${core.formatCurrency(res.cashTripCost, curr, 'en')}</dd>
+            </div>
+            <div>
+              <dt>Total Points Deduction</dt>
+              <dd class="value-deduction">-${core.formatCurrency(totalDed, curr, 'en')}</dd>
+            </div>
+            <div>
+              <dt>Total Mandatory Taxes / Fees</dt>
+              <dd class="value-fees">+${core.formatCurrency(totalTax, curr, 'en')}</dd>
+            </div>
+            <div class="final-value">
+              <dt>Total Final Out-of-Pocket</dt>
+              <dd>${core.formatCurrency(res.finalOutOfPocket, curr, 'en')}</dd>
+            </div>
+          </dl>
+        </article>`;
+      }
 
       // Verdict Box
       const vBadge = $('verdictBadge');

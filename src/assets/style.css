@@ -758,8 +758,83 @@ h3 + .faq, h2 + .faq {
   font-family: 'IBM Plex Mono', monospace;
 }
 
-/* --- Scoped Light Result Area Theme (.ticket .main) --- */
-.ticket .main {
+/* --- Scoped Light Result Area Theme (.ticket .main & .trip-cost-ticket) --- */
+.wrap.wrap-wide {
+  max-width: 1060px;
+}
+
+.ticket.trip-cost-ticket {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border-radius: 6px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.ticket.trip-cost-ticket .ticket-header-row {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border-bottom: 2px dashed rgba(14, 26, 43, 0.25);
+}
+
+.ticket.trip-cost-ticket .main-summary {
+  flex: 1;
+  padding: 28px 26px;
+  color: #0e1a2b;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ticket.trip-cost-ticket .stub {
+  width: 200px;
+  min-width: 170px;
+  flex-shrink: 0;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 22px;
+  box-sizing: border-box;
+}
+
+.ticket.trip-cost-ticket .ticket-full-width-section {
+  padding: 24px 26px 28px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  color: #0e1a2b;
+}
+
+@media (max-width: 760px) {
+  .ticket.trip-cost-ticket .ticket-header-row {
+    flex-direction: column;
+  }
+  .ticket.trip-cost-ticket .stub {
+    width: 100%;
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 2px dashed rgba(14, 26, 43, 0.25);
+    padding: 20px 16px;
+  }
+  .ticket.trip-cost-ticket .main-summary,
+  .ticket.trip-cost-ticket .ticket-full-width-section {
+    padding: 20px 14px;
+  }
+}
+
+.ticket .main,
+.ticket.trip-cost-ticket .main-summary {
   color: #0e1a2b;
   width: 100%;
   max-width: 100%;
@@ -767,13 +842,16 @@ h3 + .faq, h2 + .faq {
   overflow: visible;
   box-sizing: border-box;
 }
-.ticket .main > * {
+.ticket .main > *,
+.ticket.trip-cost-ticket .main-summary > * {
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
 }
 .ticket .main .plan-comparison-grid,
-.ticket .main .expense-grid {
+.ticket .main .expense-grid,
+.ticket.trip-cost-ticket .plan-comparison-grid,
+.ticket.trip-cost-ticket .expense-grid {
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -782,19 +860,23 @@ h3 + .faq, h2 + .faq {
 .ticket .main .plan-comparison-grid > *,
 .ticket .main .expense-grid > *,
 .ticket .main .field,
-.ticket .main .plan-card {
+.ticket .main .plan-card,
+.ticket.trip-cost-ticket .field,
+.ticket.trip-cost-ticket .plan-card {
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
 }
-.ticket .main .plan-card {
+.ticket .main .plan-card,
+.ticket.trip-cost-ticket .plan-card {
   background: #ffffff;
   border-color: rgba(14, 26, 43, 0.18);
   min-width: 0;
   overflow-wrap: anywhere;
   word-break: normal;
 }
-.ticket .main .plan-card.highlight {
+.ticket .main .plan-card.highlight,
+.ticket.trip-cost-ticket .plan-card.highlight {
   background: #ffffff;
   border-color: #2563eb;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
@@ -803,41 +885,79 @@ h3 + .faq, h2 + .faq {
 .ticket .main .plan-card-desc,
 .ticket .main .field label,
 .ticket .main .unit,
-.ticket .main .plan-metrics-list {
+.ticket .main .plan-metrics-list,
+.ticket.trip-cost-ticket .plan-card-title,
+.ticket.trip-cost-ticket .plan-card-desc,
+.ticket.trip-cost-ticket .field label,
+.ticket.trip-cost-ticket .unit,
+.ticket.trip-cost-ticket .plan-metrics-list {
   color: #475569;
 }
-.ticket .main .plan-card.highlight .plan-card-title {
+.ticket .main .plan-card.highlight .plan-card-title,
+.ticket.trip-cost-ticket .plan-card.highlight .plan-card-title {
   color: #1d4ed8;
 }
 .ticket .main .plan-card-price,
-.ticket .main .plan-metrics-list strong {
+.ticket .main .plan-metrics-list strong,
+.ticket.trip-cost-ticket .plan-card-price,
+.ticket.trip-cost-ticket .plan-metrics-list strong {
   color: #0e1a2b;
 }
-.ticket .main .plan-card-price {
+.ticket .main .plan-card-price,
+.ticket.trip-cost-ticket .plan-card-price {
   white-space: nowrap;
   font-size: clamp(22px, 4vw, 30px);
 }
-.ticket .main .plan-card.highlight .plan-card-price {
+.ticket .main .plan-card.highlight .plan-card-price,
+.ticket.trip-cost-ticket .plan-card.highlight .plan-card-price {
   color: #1e40af;
 }
 .ticket .main h2,
-.ticket .main h3 {
+.ticket .main h3,
+.ticket.trip-cost-ticket h2,
+.ticket.trip-cost-ticket h3 {
   color: #0e1a2b;
 }
 .ticket .main .expense-grid .field label,
-.ticket .main .expense-grid .field .unit {
+.ticket .main .expense-grid .field .unit,
+.ticket.trip-cost-ticket .expense-grid .field label,
+.ticket.trip-cost-ticket .expense-grid .field .unit {
   max-width: 100%;
   white-space: normal;
   overflow-wrap: anywhere;
 }
-.ticket .main .expense-grid .field > div:not(.unit) {
+.ticket .main .expense-grid .field > div:not(.unit),
+.ticket.trip-cost-ticket .expense-grid .field > div:not(.unit) {
   max-width: 100%;
   overflow-wrap: anywhere;
 }
 
+/* Responsive visibility for Waterfall Breakdown */
+@media (min-width: 700px) {
+  .waterfall-desktop-view {
+    display: block !important;
+  }
+  .waterfall-mobile-view {
+    display: none !important;
+  }
+}
+
+@media (max-width: 699px) {
+  .waterfall-desktop-view {
+    display: none !important;
+  }
+  .waterfall-mobile-view {
+    display: flex !important;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
 /* Responsive Table Wrapper & Waterfall Table in Ticket Result Area */
-.responsive-table-wrapper,
-.ticket .main .responsive-table-wrapper {
+.responsive-table-wrapper {
   display: block;
   width: 100%;
   max-width: 100%;
@@ -853,19 +973,21 @@ h3 + .faq, h2 + .faq {
   margin: 16px 0;
 }
 
-.ticket .main .waterfall-table {
+.waterfall-table,
+.ticket .main .waterfall-table,
+.ticket-full-width-section .waterfall-table {
   width: 100%;
-  min-width: 720px;
-  max-width: none;
-  margin: 0;
+  table-layout: fixed;
   border-collapse: collapse;
   background: #ffffff;
   color: #0e1a2b;
   font-size: 13.5px;
-  table-layout: auto;
+  box-sizing: border-box;
 }
 
-.ticket .main .waterfall-table thead th {
+.waterfall-table thead th,
+.ticket .main .waterfall-table thead th,
+.ticket-full-width-section .waterfall-table thead th {
   padding: 12px 14px;
   background: #e7edf4;
   color: #0e1a2b;
@@ -874,77 +996,304 @@ h3 + .faq, h2 + .faq {
   font-weight: 700;
   line-height: 1.4;
   vertical-align: middle;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.waterfall-table thead th:first-child {
+  width: 28%;
   text-align: left;
 }
 
-.ticket .main .waterfall-table tbody td {
+.waterfall-table thead th:not(:first-child) {
+  width: 18%;
+}
+
+.waterfall-table tbody td,
+.waterfall-table tbody th {
   padding: 12px 14px;
   color: #0e1a2b;
   border-bottom: 1px solid rgba(14, 26, 43, 0.16);
   vertical-align: middle;
+  text-align: right;
+  font-family: 'IBM Plex Mono', monospace;
+  box-sizing: border-box;
 }
 
-.ticket .main .waterfall-table tbody tr:nth-child(even) td {
+.waterfall-table tbody th[scope="row"] {
+  text-align: left;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
+}
+
+.waterfall-table tbody tr:nth-child(even) td,
+.waterfall-table tbody tr:nth-child(even) th {
   background: #f8fafc;
 }
 
-.ticket .main .waterfall-table th:first-child,
-.ticket .main .waterfall-table td:first-child {
-  min-width: 120px;
-  white-space: normal;
-  text-align: left;
-}
-
-.ticket .main .waterfall-table th:not(:first-child),
-.ticket .main .waterfall-table td:not(:first-child) {
-  white-space: nowrap;
-}
-
-.ticket .main .waterfall-table th:last-child,
-.ticket .main .waterfall-table td:last-child {
-  text-align: right;
-}
-
-/* High-contrast amount colors in light table */
-.ticket .main .waterfall-table .col-deduction,
-.ticket .main .waterfall-row-negative td:nth-child(3),
-.ticket .main .waterfall-row-negative td:last-child {
+.waterfall-table .col-deduction {
   color: #166534;
   font-weight: 600;
 }
 
-.ticket .main .waterfall-table .col-taxes,
-.ticket .main .waterfall-row-positive td:nth-child(4),
-.ticket .main .waterfall-row-positive td:last-child {
+.waterfall-table .col-taxes {
   color: #b42318;
   font-weight: 600;
 }
 
-.ticket .main .waterfall-table .col-muted {
+.waterfall-table .col-muted {
   color: #64748b;
+  font-weight: 400;
 }
 
-.ticket .main .waterfall-row-total td {
+.waterfall-row-total td,
+.waterfall-row-total th {
   background: #dbeafe !important;
-  color: #0e1a2b;
+  color: #0e1a2b !important;
   font-weight: 700;
-  border-top: 2px solid #2563eb;
+  border-top: 2px solid #2563eb !important;
   border-bottom: none;
 }
 
-.ticket .main .waterfall-row-total td.col-deduction {
+.waterfall-row-total td.col-deduction {
+  color: #166534 !important;
+}
+
+.waterfall-row-total td.col-taxes {
+  color: #b42318 !important;
+}
+
+.waterfall-row-total td:last-child,
+.waterfall-row-total td.col-final {
+  color: #1e3a8a !important;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Mobile Vertical Cards Styles */
+.waterfall-mobile-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.waterfall-mobile-card {
+  background: #ffffff;
+  border: 1px solid rgba(14, 26, 43, 0.16);
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.waterfall-mobile-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0e1a2b;
+}
+
+.waterfall-mobile-card dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.waterfall-mobile-card dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13.5px;
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(14, 26, 43, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.waterfall-mobile-card dl > div:last-child {
+  border-bottom: none;
+}
+
+.waterfall-mobile-card dt {
+  color: #475569;
+  font-weight: 500;
+}
+
+.waterfall-mobile-card dd {
+  margin: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  color: #0e1a2b;
+  text-align: right;
+}
+
+.waterfall-mobile-card dd.value-deduction {
   color: #166534;
 }
 
-.ticket .main .waterfall-row-total td.col-taxes {
+.waterfall-mobile-card dd.value-fees {
   color: #b42318;
 }
 
-.ticket .main .waterfall-row-total td:last-child,
-.ticket .main .waterfall-row-total td.col-final {
-  color: #1e3a8a;
-  font-size: 16px;
+.waterfall-mobile-card dd.value-muted {
+  color: #64748b;
+  font-weight: 400;
+}
+
+.waterfall-mobile-card .final-value {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(14, 26, 43, 0.14) !important;
   font-weight: 700;
+}
+
+.waterfall-mobile-card .final-value dt {
+  color: #0e1a2b;
+  font-weight: 700;
+}
+
+.waterfall-mobile-card .final-value dd {
+  color: #1e3a8a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Total Card (Highlighted) */
+.waterfall-mobile-card-total-wrap {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 4px;
+}
+
+.waterfall-mobile-card-total {
+  background: #dbeafe;
+  border: 2px solid #2563eb;
+  border-radius: 8px;
+  padding: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+.waterfall-mobile-card-total h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0e1a2b;
+}
+
+.waterfall-mobile-card-total dl {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.waterfall-mobile-card-total dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 14px;
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(37, 99, 235, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.waterfall-mobile-card-total dl > div:last-child {
+  border-bottom: none;
+}
+
+.waterfall-mobile-card-total dt {
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.waterfall-mobile-card-total dd {
+  margin: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  color: #0e1a2b;
+}
+
+.waterfall-mobile-card-total dd.value-deduction {
+  color: #166534;
+}
+
+.waterfall-mobile-card-total dd.value-fees {
+  color: #b42318;
+}
+
+.waterfall-mobile-card-total .final-value {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 2px solid #2563eb !important;
+}
+
+.waterfall-mobile-card-total .final-value dt {
+  color: #0e1a2b;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.waterfall-mobile-card-total .final-value dd {
+  color: #1e3a8a;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Calculator Actions Toolbar */
+.calculator-actions-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.calculator-actions-toolbar .btn-action {
+  min-height: 44px;
+  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .calculator-actions-toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .calculator-actions-toolbar .btn-action {
+    width: 100%;
+    padding: 10px 8px;
+    font-size: 13px;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .calculator-actions-toolbar {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Tool Buttons Bar */

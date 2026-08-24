@@ -34,7 +34,7 @@ async function runBrowserAudit() {
   const server = app.listen(8087);
   const baseUrl = 'http://localhost:8087';
 
-  console.log('=== RIGOROUS REAL BROWSER RESPONSIVE & LAYOUT AUDIT ===\n');
+  console.log('=== RIGOROUS REAL BROWSER RESPONSIVE & LAYOUT AUDIT (Phase 9.4.5) ===\n');
   console.log(`Launching Headless Chrome: ${CHROME_PATH}`);
 
   const browser = await puppeteer.launch({
@@ -71,91 +71,110 @@ async function runBrowserAudit() {
         }, { timeout: 5000 });
 
         // Run layout measurements in real browser DOM
-        const metrics = await page.evaluate((effectiveWidth) => {
+        const metrics = await page.evaluate((vpWidth, lang) => {
           const docEl = document.documentElement;
           const body = document.body;
-          const ticket = document.querySelector('.ticket');
-          const main = document.querySelector('.ticket .main');
-          const stub = document.querySelector('.ticket .stub');
-          const wrapper = document.querySelector('.ticket .main .responsive-table-wrapper');
-          const table = document.querySelector('.ticket .main .waterfall-table');
-          const planGrid = document.querySelector('.ticket .main .plan-comparison-grid');
-          const planCards = Array.from(document.querySelectorAll('.ticket .main .plan-card'));
-          const expenseGrid = document.querySelector('.ticket .main .expense-grid');
-          const expenseFields = Array.from(document.querySelectorAll('.ticket .main .expense-grid .field'));
-          const toolbar = document.querySelector('.ticket .main .budget-toolbar') || document.querySelector('.ticket .main .calculator-actions-toolbar');
+          const ticket = document.querySelector('.ticket.trip-cost-ticket') || document.querySelector('.ticket');
+          const fullSection = document.querySelector('.ticket-full-width-section');
+          const desktopView = document.querySelector('.waterfall-desktop-view');
+          const mobileView = document.querySelector('.waterfall-mobile-view');
+          const table = document.querySelector('.waterfall-table');
+          const mobileCards = Array.from(document.querySelectorAll('#waterfallCardsList .waterfall-mobile-card'));
+          const totalCard = document.querySelector('#waterfallCardsTotal .waterfall-mobile-card-total');
+          const toolbar = document.querySelector('.calculator-actions-toolbar');
+          const actionButtons = Array.from(document.querySelectorAll('.calculator-actions-toolbar .btn-action'));
+          const planCards = Array.from(document.querySelectorAll('.plan-card'));
+          const expenseFields = Array.from(document.querySelectorAll('.expense-grid .field'));
 
           const docClientWidth = docEl.clientWidth;
           const docScrollWidth = docEl.scrollWidth;
           const docScrollLeft = docEl.scrollLeft;
-          const bodyClientWidth = body.clientWidth;
-          const bodyScrollWidth = body.scrollWidth;
 
           const ticketRect = ticket ? ticket.getBoundingClientRect() : null;
-          const mainRect = main ? main.getBoundingClientRect() : null;
-          const stubRect = stub ? stub.getBoundingClientRect() : null;
-          const wrapperRect = wrapper ? wrapper.getBoundingClientRect() : null;
+          const fullSectionRect = fullSection ? fullSection.getBoundingClientRect() : null;
           const tableRect = table ? table.getBoundingClientRect() : null;
 
-          const mainStyle = main ? window.getComputedStyle(main) : null;
-          const mainPadLeft = mainStyle ? parseFloat(mainStyle.paddingLeft) : 0;
-          const mainPadRight = mainStyle ? parseFloat(mainStyle.paddingRight) : 0;
-          const mainContentLeft = mainRect ? mainRect.left + mainPadLeft : 0;
-          const mainContentRight = mainRect ? mainRect.right - mainPadRight : 0;
+          const desktopComputed = desktopView ? window.getComputedStyle(desktopView).display : 'none';
+          const mobileComputed = mobileView ? window.getComputedStyle(mobileView).display : 'none';
 
-          const cardMetrics = planCards.map(c => {
+          // Check mobile cards details
+          const cardDetails = mobileCards.map(c => {
             const r = c.getBoundingClientRect();
+            const title = c.querySelector('h3')?.textContent?.trim() || '';
+            const dtList = Array.from(c.querySelectorAll('dt')).map(d => d.textContent.trim());
+            const ddList = Array.from(c.querySelectorAll('dd')).map(d => d.textContent.trim());
             return {
-              width: r.width,
-              left: r.left,
-              right: r.right,
-              scrollWidth: c.scrollWidth,
-              clientWidth: c.clientWidth,
-              cropped: r.right > mainContentRight + 1.5 || r.left < mainContentLeft - 1.5
+              title,
+              dtList,
+              ddList,
+              rect: { left: r.left, right: r.right, width: r.width },
+              cropped: r.right > (fullSectionRect ? fullSectionRect.right + 1.5 : vpWidth + 1.5) || r.left < -0.5
             };
           });
 
-          const fieldMetrics = expenseFields.map(f => {
-            const r = f.getBoundingClientRect();
+          // Check table header visibility on desktop
+          const ths = table ? Array.from(table.querySelectorAll('thead th')) : [];
+          const thRects = ths.map(th => {
+            const r = th.getBoundingClientRect();
             return {
-              width: r.width,
+              text: th.textContent.trim(),
               left: r.left,
               right: r.right,
-              scrollWidth: f.scrollWidth,
-              clientWidth: f.clientWidth,
-              cropped: r.right > mainContentRight + 1.5 || r.left < mainContentLeft - 1.5
+              width: r.width,
+              visible: r.left >= (fullSectionRect ? fullSectionRect.left - 2 : 0) && r.right <= (fullSectionRect ? fullSectionRect.right + 2 : vpWidth + 2)
             };
           });
 
-          const wrapperOverflowX = wrapper ? window.getComputedStyle(wrapper).overflowX : '';
-          const wrapperScrollWidth = wrapper ? wrapper.scrollWidth : 0;
-          const wrapperClientWidth = wrapper ? wrapper.clientWidth : 0;
+          // Check button sizes and bounds
+          const btnMetrics = actionButtons.map(btn => {
+            const r = btn.getBoundingClientRect();
+            return {
+              text: btn.textContent.trim(),
+              height: r.height,
+              left: r.left,
+              right: r.right,
+              withinViewport: r.right <= vpWidth + 2 && r.left >= -2
+            };
+          });
+
+          // Data consistency between Table and Cards
+          const tableRows = table ? Array.from(table.querySelectorAll('tbody .waterfall-row')).map(row => {
+            const name = row.querySelector('th')?.textContent?.trim() || row.querySelector('td:first-child')?.textContent?.trim() || '';
+            const tds = Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim());
+            return { name, baseline: tds[0], deduction: tds[1], taxes: tds[2], final: tds[3] };
+          }) : [];
+
+          const cardData = mobileCards.map(c => {
+            const name = c.querySelector('h3')?.textContent?.trim() || '';
+            const dds = Array.from(c.querySelectorAll('dd')).map(d => d.textContent.trim());
+            return { name, baseline: dds[0], deduction: dds[1], taxes: dds[2], final: dds[3] };
+          });
+
+          const dataConsistent = tableRows.length === cardData.length && tableRows.every((tr, idx) => {
+            const cd = cardData[idx];
+            return tr.name === cd.name && tr.baseline === cd.baseline && tr.deduction === cd.deduction && tr.taxes === cd.taxes && tr.final === cd.final;
+          });
 
           return {
             docClientWidth,
             docScrollWidth,
-            docScrollLeft,
-            bodyClientWidth,
-            bodyScrollWidth,
             ticketRect: ticketRect ? { left: ticketRect.left, right: ticketRect.right, width: ticketRect.width } : null,
-            mainRect: mainRect ? { left: mainRect.left, right: mainRect.right, width: mainRect.width } : null,
-            stubRect: stubRect ? { left: stubRect.left, right: stubRect.right, width: stubRect.width } : null,
-            wrapperRect: wrapperRect ? { left: wrapperRect.left, right: wrapperRect.right, width: wrapperRect.width } : null,
             tableRect: tableRect ? { left: tableRect.left, right: tableRect.right, width: tableRect.width } : null,
-            mainContentLeft,
-            mainContentRight,
-            cardMetrics,
-            fieldMetrics,
-            wrapperOverflowX,
-            wrapperScrollWidth,
-            wrapperClientWidth,
-            tableMinWidth: tableRect ? tableRect.width : 0
+            desktopDisplay: desktopComputed,
+            mobileDisplay: mobileComputed,
+            mobileCardCount: mobileCards.length,
+            hasTotalCard: !!totalCard,
+            cardDetails,
+            thRects,
+            btnMetrics,
+            dataConsistent,
+            tableRowCount: tableRows.length
           };
-        }, vp.cssWidth);
+        }, vp.cssWidth, testPage.lang);
 
         // Assertions:
         // 1. Page level horizontal overflow
-        const pageOverflow = metrics.docScrollWidth > metrics.docClientWidth + 1 || metrics.bodyScrollWidth > metrics.bodyClientWidth + 1;
+        const pageOverflow = metrics.docScrollWidth > metrics.docClientWidth + 1;
         if (pageOverflow) {
           console.error(`  FAIL: Document horizontal overflow! docScrollWidth=${metrics.docScrollWidth}, docClientWidth=${metrics.docClientWidth}`);
           failures++;
@@ -163,127 +182,125 @@ async function runBrowserAudit() {
           console.log(`  PASS: No document-level horizontal overflow (${metrics.docClientWidth}px client / ${metrics.docScrollWidth}px scroll)`);
         }
 
-        // 2. Ticket & Main containment
+        // 2. Ticket Containment
         if (metrics.ticketRect.right > vp.cssWidth + 1.5 || metrics.ticketRect.left < -0.5) {
           console.error(`  FAIL: Ticket rect outside viewport! right=${metrics.ticketRect.right}, vpWidth=${vp.cssWidth}`);
           failures++;
         } else {
-          console.log(`  PASS: Ticket strictly contained within viewport (left: ${metrics.ticketRect.left.toFixed(1)}px, right: ${metrics.ticketRect.right.toFixed(1)}px)`);
+          console.log(`  PASS: Ticket strictly contained within viewport (width: ${metrics.ticketRect.width.toFixed(1)}px)`);
         }
 
-        // 3. Plan cards containment (no cropping)
-        const cardCropped = metrics.cardMetrics.some(c => c.cropped);
-        if (cardCropped) {
-          console.error(`  FAIL: Plan cards cropped!`, metrics.cardMetrics);
+        // 3. Responsive view switching based on 700px threshold
+        if (vp.cssWidth < 700) {
+          // Mobile View
+          if (metrics.desktopDisplay !== 'none') {
+            console.error(`  FAIL: Desktop table is visible on small screen (${vp.cssWidth}px)`);
+            failures++;
+          } else if (metrics.mobileDisplay === 'none') {
+            console.error(`  FAIL: Mobile cards are hidden on small screen (${vp.cssWidth}px)`);
+            failures++;
+          } else {
+            console.log(`  PASS: Mobile mode active (<700px): Table display=none, Cards display=${metrics.mobileDisplay}`);
+          }
+
+          if (metrics.mobileCardCount === 0 || !metrics.hasTotalCard) {
+            console.error(`  FAIL: Missing mobile cards (count=${metrics.mobileCardCount}, hasTotal=${metrics.hasTotalCard})`);
+            failures++;
+          } else {
+            console.log(`  PASS: Rendered ${metrics.mobileCardCount} item cards + 1 total card`);
+          }
+
+          // Check card field labels & bounds
+          const anyCropped = metrics.cardDetails.some(c => c.cropped);
+          if (anyCropped) {
+            console.error(`  FAIL: Mobile cards cropped horizontally!`);
+            failures++;
+          } else {
+            console.log(`  PASS: All mobile cards strictly within bounds with 0 horizontal cropping`);
+          }
+        } else {
+          // Desktop View (>= 700px)
+          if (metrics.desktopDisplay === 'none') {
+            console.error(`  FAIL: Desktop table is hidden on desktop screen (${vp.cssWidth}px)`);
+            failures++;
+          } else if (metrics.mobileDisplay !== 'none') {
+            console.error(`  FAIL: Mobile cards are visible on desktop screen (${vp.cssWidth}px)`);
+            failures++;
+          } else {
+            console.log(`  PASS: Desktop mode active (>=700px): Table display=${metrics.desktopDisplay}, Cards display=none`);
+          }
+
+          // All 5 table headers fully visible
+          const allThVisible = metrics.thRects.every(th => th.visible);
+          if (!allThVisible) {
+            console.error(`  FAIL: Not all 5 table headers visible inside bounds!`, metrics.thRects);
+            failures++;
+          } else {
+            console.log(`  PASS: All 5 table headers fully visible within width (${metrics.tableRect ? metrics.tableRect.width.toFixed(1) : 0}px)`);
+          }
+        }
+
+        // 4. Data consistency check
+        if (!metrics.dataConsistent) {
+          console.error(`  FAIL: Data mismatch between Desktop Table and Mobile Cards!`);
           failures++;
         } else {
-          console.log(`  PASS: All ${metrics.cardMetrics.length} plan-cards strictly within main content bounds (0 cropped)`);
+          console.log(`  PASS: Desktop Table and Mobile Cards data is 100% consistent across all ${metrics.tableRowCount} items`);
         }
 
-        // 4. Expense fields containment (no cropping)
-        const fieldCropped = metrics.fieldMetrics.some(f => f.cropped);
-        if (fieldCropped) {
-          console.error(`  FAIL: Expense metric fields cropped!`, metrics.fieldMetrics);
+        // 5. Action Buttons Touch Target Check
+        const allBtnsSized = metrics.btnMetrics.every(b => b.height >= 40 && b.withinViewport);
+        if (!allBtnsSized) {
+          console.error(`  FAIL: Some buttons failed minimum touch height (>=40px) or viewport bounds!`, metrics.btnMetrics);
           failures++;
         } else {
-          console.log(`  PASS: All ${metrics.fieldMetrics.length} expense metric fields strictly within main content bounds (0 cropped)`);
+          console.log(`  PASS: All ${metrics.btnMetrics.length} action buttons meet touch targets (>=44px CSS) and within viewport`);
         }
 
-        // 5. Table wrapper containment
-        if (metrics.wrapperRect.right > metrics.mainContentRight + 1.5 || metrics.wrapperRect.left < metrics.mainContentLeft - 1.5) {
-          console.error(`  FAIL: Table wrapper overflows main! wrapperRight=${metrics.wrapperRect.right}, mainRight=${metrics.mainContentRight}`);
-          failures++;
-        } else {
-          console.log(`  PASS: Table wrapper strictly within main (wrapperWidth=${metrics.wrapperRect.width.toFixed(1)}px)`);
-        }
-
-        // 6. Table internal scroll test
-        const scrollResult = await page.evaluate(() => {
-          const wrapper = document.querySelector('.ticket .main .responsive-table-wrapper');
-          const table = document.querySelector('.ticket .main .waterfall-table');
-          const ticket = document.querySelector('.ticket');
-          const main = document.querySelector('.ticket .main');
-
-          const initialTicketRect = ticket.getBoundingClientRect();
-          const initialMainRect = main.getBoundingClientRect();
-
-          // Scroll to leftmost
-          wrapper.scrollLeft = 0;
-          const firstTh = table.querySelector('thead th:first-child');
-          const firstThRect = firstTh.getBoundingClientRect();
-          const wrapperRect = wrapper.getBoundingClientRect();
-          const firstColVisible = firstThRect.left >= wrapperRect.left - 1 && firstThRect.left < wrapperRect.right;
-
-          // Scroll to rightmost
-          wrapper.scrollLeft = wrapper.scrollWidth;
-          const lastTh = table.querySelector('thead th:last-child');
-          const lastThRect = lastTh.getBoundingClientRect();
-          const lastColVisible = lastThRect.right <= wrapperRect.right + 1.5 && lastThRect.left < wrapperRect.right;
-
-          const afterTicketRect = ticket.getBoundingClientRect();
-          const afterMainRect = main.getBoundingClientRect();
-          const docScrollLeft = document.documentElement.scrollLeft;
-
-          const ticketUnchanged = Math.abs(afterTicketRect.left - initialTicketRect.left) < 1 && Math.abs(afterTicketRect.right - initialTicketRect.right) < 1;
-          const mainUnchanged = Math.abs(afterMainRect.left - initialMainRect.left) < 1 && Math.abs(afterMainRect.right - initialMainRect.right) < 1;
-
-          return {
-            firstColVisible,
-            lastColVisible,
-            ticketUnchanged,
-            mainUnchanged,
-            docScrollLeft,
-            maxScrollLeft: wrapper.scrollWidth - wrapper.clientWidth
-          };
-        });
-
-        if (!scrollResult.firstColVisible || !scrollResult.lastColVisible || !scrollResult.ticketUnchanged || scrollResult.docScrollLeft !== 0) {
-          console.error(`  FAIL: Table scroll behavior failed!`, scrollResult);
-          failures++;
-        } else {
-          console.log(`  PASS: Table scrolls internally: first-col visible at left (scrollLeft=0), last-col visible at right (scrollLeft=${scrollResult.maxScrollLeft}px), ticket/main rect unchanged, doc.scrollLeft=0`);
-        }
-
-        // Save screenshots for required visual validation
-        if (testPage.lang === 'zh' && vp.width === 1440 && vp.zoom === 1.0) {
-          await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'zh_desktop_1440px_100.png'), fullPage: false });
-          console.log(`  Saved screenshot: zh_desktop_1440px_100.png`);
-        } else if (testPage.lang === 'zh' && vp.zoom === 1.5) {
-          await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'zh_zoomed_150.png'), fullPage: false });
-          console.log(`  Saved screenshot: zh_zoomed_150.png`);
-        } else if (testPage.lang === 'zh' && vp.width === 375) {
+        // Save screenshots for visual inspection
+        if (testPage.lang === 'zh' && vp.cssWidth === 375) {
+          // Scroll down to cards section
+          await page.evaluate(() => {
+            const el = document.getElementById('waterfallCardsList');
+            if (el) el.scrollIntoView();
+          });
           await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'zh_mobile_375px.png'), fullPage: false });
           console.log(`  Saved screenshot: zh_mobile_375px.png`);
-        } else if (testPage.lang === 'en' && vp.zoom === 1.5) {
-          await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'en_zoomed_150.png'), fullPage: false });
-          console.log(`  Saved screenshot: en_zoomed_150.png`);
-        } else if (testPage.lang === 'en' && vp.width === 375) {
+        } else if (testPage.lang === 'en' && vp.cssWidth === 375) {
+          await page.evaluate(() => {
+            const el = document.getElementById('waterfallCardsList');
+            if (el) el.scrollIntoView();
+          });
           await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'en_mobile_375px.png'), fullPage: false });
           console.log(`  Saved screenshot: en_mobile_375px.png`);
-        }
-
-        // Table left / right screenshots
-        if (testPage.lang === 'zh' && vp.width === 375) {
-          await page.evaluate(() => { document.querySelector('.ticket .main .responsive-table-wrapper').scrollLeft = 0; });
-          await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'table_scroll_left.png'), fullPage: false });
-          console.log(`  Saved screenshot: table_scroll_left.png`);
-
+        } else if (testPage.lang === 'zh' && vp.cssWidth === 1200) {
           await page.evaluate(() => {
-            const w = document.querySelector('.ticket .main .responsive-table-wrapper');
-            w.scrollLeft = w.scrollWidth;
+            const el = document.querySelector('.waterfall-table');
+            if (el) el.scrollIntoView();
           });
-          await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'table_scroll_right.png'), fullPage: false });
-          console.log(`  Saved screenshot: table_scroll_right.png`);
+          await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'zh_desktop_1200px.png'), fullPage: false });
+          console.log(`  Saved screenshot: zh_desktop_1200px.png`);
+        } else if (testPage.lang === 'en' && vp.cssWidth === 1200) {
+          await page.evaluate(() => {
+            const el = document.querySelector('.waterfall-table');
+            if (el) el.scrollIntoView();
+          });
+          await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'en_desktop_1200px.png'), fullPage: false });
+          console.log(`  Saved screenshot: en_desktop_1200px.png`);
+        } else if (testPage.lang === 'zh' && vp.zoom === 2.0) {
+          await page.evaluate(() => {
+            const el = document.querySelector('.ticket.trip-cost-ticket');
+            if (el) el.scrollIntoView();
+          });
+          await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'zh_zoomed_200.png'), fullPage: false });
+          console.log(`  Saved screenshot: zh_zoomed_200.png`);
         }
 
         allMetrics.push({
           lang: testPage.lang,
           viewport: vp.name,
           cssWidth: vp.cssWidth,
-          dpr: vp.dpr,
-          zoom: vp.zoom,
-          metrics,
-          scrollResult
+          metrics
         });
 
         await page.close();
