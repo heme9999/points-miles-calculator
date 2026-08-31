@@ -60,41 +60,26 @@ async function runAudit() {
     }
   }
 
-  // 2. Fetch and validate the sitemap index with both UAs, then combine children.
-  console.log('\n2. Fetching & Validating sitemap-index.xml...');
+  // 2. Fetch and Validate Sitemap with both UAs
+  console.log('\n2. Fetching & Validating sitemap.xml...');
   let sitemapXml = '';
   for (const [uaName, ua] of [['Regular UA', REGULAR_UA], ['Googlebot UA', GOOGLEBOT_UA]]) {
-    const res = await fetchWithUA(`${targetBase}/sitemap-index.xml?audit=${Date.now()}`, ua);
+    const res = await fetchWithUA(`${targetBase}/sitemap.xml?audit=${Date.now()}`, ua);
     const cType = res.headers['content-type'] || '';
     report.sitemapUaChecks[uaName] = { status: res.status, contentType: cType };
     if (res.status !== 200) {
-      failures.push(`sitemap-index.xml returned status ${res.status} for ${uaName}`);
+      failures.push(`sitemap.xml returned status ${res.status} for ${uaName}`);
     }
     if (!cType.includes('xml')) {
-      failures.push(`sitemap-index.xml content-type is '${cType}', expected xml for ${uaName}`);
+      failures.push(`sitemap.xml content-type is '${cType}', expected xml for ${uaName}`);
     }
     if (uaName === 'Regular UA') sitemapXml = res.data;
-    console.log(`- sitemap-index.xml (${uaName}): Status ${res.status}, Content-Type: ${cType}`);
+    console.log(`- sitemap.xml (${uaName}): Status ${res.status}, Content-Type: ${cType}`);
   }
 
-  const childSitemaps = (sitemapXml.match(/<loc>(.*?)<\/loc>/g) || [])
-    .map(m => m.replace(/<\/?loc>/g, '').trim());
-  const expectedChildren = [`${PROD_BASE}/sitemap-en.xml`, `${PROD_BASE}/sitemap-zh.xml`];
-  if (JSON.stringify(childSitemaps) !== JSON.stringify(expectedChildren)) {
-    failures.push(`Sitemap index children mismatch: ${JSON.stringify(childSitemaps)}`);
-  }
-  const urls = [];
-  for (const child of childSitemaps) {
-    const childUrl = child.replace(PROD_BASE, targetBase);
-    const childRes = await fetchWithUA(`${childUrl}?audit=${Date.now()}`, REGULAR_UA);
-    if (childRes.status !== 200 || !(childRes.headers['content-type'] || '').includes('xml')) {
-      failures.push(`Child sitemap failed: ${childUrl}, status ${childRes.status}`);
-      continue;
-    }
-    const childUrls = (childRes.data.match(/<loc>(.*?)<\/loc>/g) || [])
-      .map(m => m.replace(/<\/?loc>/g, '').trim());
-    urls.push(...childUrls);
-  }
+  // Parse XML using regex to extract <loc>...</loc>
+  const urlMatches = sitemapXml.match(/<loc>(.*?)<\/loc>/g) || [];
+  const urls = urlMatches.map(m => m.replace(/<\/?loc>/g, '').trim());
   report.totalUrls = urls.length;
   console.log(`- Total URLs in sitemap: ${urls.length}`);
 

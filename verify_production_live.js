@@ -36,7 +36,7 @@ async function verifyLiveProduction() {
   if (robotsRes.status !== 200) {
     console.error(`ERROR: robots.txt returned ${robotsRes.status}`);
     failures++;
-  } else if (!robotsRes.data.includes('Sitemap: https://points-miles-calculator.pages.dev/sitemap-index.xml')) {
+  } else if (!robotsRes.data.includes('Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml')) {
     console.error('ERROR: robots.txt missing absolute Sitemap URL');
     failures++;
   } else {
@@ -72,23 +72,6 @@ async function verifyLiveProduction() {
   if (sitemapUrls.length !== 104) {
     console.error(`ERROR: Expected 104 URLs in production sitemap.xml, found ${sitemapUrls.length}`);
     failures++;
-  }
-
-  const sitemapIndex = await fetch(`${prodBase}/sitemap-index.xml?audit=${ts}`);
-  const sitemapEn = await fetch(`${prodBase}/sitemap-en.xml?audit=${ts}`);
-  const sitemapZh = await fetch(`${prodBase}/sitemap-zh.xml?audit=${ts}`);
-  const indexedSitemaps = [...sitemapIndex.data.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
-  const enUrls = [...sitemapEn.data.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
-  const zhUrls = [...sitemapZh.data.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
-  if (sitemapIndex.status !== 200 || sitemapEn.status !== 200 || sitemapZh.status !== 200 ||
-      indexedSitemaps.length !== 2 || enUrls.length + zhUrls.length !== 104 ||
-      new Set([...enUrls, ...zhUrls]).size !== 104 ||
-      enUrls.some(url => !new URL(url).pathname.startsWith('/en/')) ||
-      zhUrls.some(url => new URL(url).pathname.startsWith('/en/'))) {
-    console.error(`ERROR: Live split sitemap contract failed. children=${indexedSitemaps.length}, EN=${enUrls.length}, ZH=${zhUrls.length}`);
-    failures++;
-  } else {
-    console.log(`Live sitemap index OK: EN=${enUrls.length}, ZH=${zhUrls.length}`);
   }
 
   for (const lm of lastmods) {
@@ -146,10 +129,10 @@ async function verifyLiveProduction() {
   console.log('\n4. Verifying Search Intent, Single H1 & Shortened Titles on Live Production...');
   const pagesToCheck = [
     { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points and Miles Calculators | Points & Miles Calculator' },
-    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Miles to Money Calculator', expectedTitle: 'Miles to Money Calculator | Points & Miles Calculator' },
+    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Points to Dollars Calculator | Miles Value | Points & Miles Calculator' },
     { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Award Travel | Points & Miles Calculator' },
     { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles Calculator' },
-    { path: '/en/calculators/cents-per-point/', expectedH1: 'Points Value Calculator (CPP)', expectedTitle: 'Points Value & CPP Calculator | Points & Miles Calculator' },
+    { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
     { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
     { path: '/calculators/points-to-dollars/', expectedH1: '积分换算现金价值计算器' },
