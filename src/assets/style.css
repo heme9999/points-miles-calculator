@@ -1418,3 +1418,33 @@ h3 + .faq, h2 + .faq {
 }
 
 
+
+/* Language Switcher */
+.lang-switcher {
+  margin-left: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lang-switcher a.lang-link {
+  margin-left: 0;
+  text-decoration: none;
+  font-weight: 500;
+  color: #94a3b8; /* Slate 400 - high contrast inactive */
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+.lang-switcher a.lang-link:hover, .lang-switcher a.lang-link:focus {
+  color: var(--paper);
+  background: rgba(244, 240, 230, 0.1);
+  outline: none;
+}
+.lang-switcher a.lang-link[aria-current="page"] {
+  color: var(--gold);
+  font-weight: 600;
+  border: 1px solid var(--gold);
+  background: rgba(212, 167, 60, 0.1);
+}

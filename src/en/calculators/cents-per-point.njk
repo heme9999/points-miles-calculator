@@ -176,4 +176,7 @@ breadcrumbs:
   ['cashPrice','awardTaxes','pointsNeeded'].forEach(id => {
     if($(id)) $(id).addEventListener('input', calcCpp);
   });
+
+  // Calculate once on load to show default or URL param values
+  calcCpp();
 </script>

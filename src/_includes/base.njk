@@ -126,13 +126,13 @@
       <a href="/methodology/">方法论</a>
       {% endif %}
     </nav>
-    <div class="lang-switcher" style="margin-left: 20px; font-size: 14px;">
+    <div class="lang-switcher">
       {% if isEnglish %}
-      <a href="{{ zhUrl }}" hreflang="zh-CN" lang="zh-CN" style="margin-right: 10px; color: #64748b; text-decoration: none;">中文</a>
-      <a href="{{ enUrl }}" hreflang="en" lang="en" aria-current="true" style="font-weight: 600; color: #0f172a; text-decoration: none;">English</a>
+      <a href="{{ zhUrl }}" hreflang="zh-CN" lang="zh-CN" class="lang-link">中文</a>
+      <a href="{{ enUrl }}" hreflang="en" lang="en" aria-current="page" class="lang-link">English</a>
       {% else %}
-      <a href="{{ zhUrl }}" hreflang="zh-CN" lang="zh-CN" aria-current="true" style="margin-right: 10px; font-weight: 600; color: #0f172a; text-decoration: none;">中文</a>
-      <a href="{{ enUrl }}" hreflang="en" lang="en" style="color: #64748b; text-decoration: none;">English</a>
+      <a href="{{ zhUrl }}" hreflang="zh-CN" lang="zh-CN" aria-current="page" class="lang-link">中文</a>
+      <a href="{{ enUrl }}" hreflang="en" lang="en" class="lang-link">English</a>
       {% endif %}
     </div>
   </header>
