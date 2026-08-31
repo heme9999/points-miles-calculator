@@ -38,7 +38,7 @@ async function runTests() {
     console.error(`ERROR: robots.txt returned ${robotsRes.status}`);
     failures++;
   }
-  if (!robotsRes.data.includes('Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml')) {
+  if (!robotsRes.data.includes('Sitemap: https://points-miles-calculator.pages.dev/sitemap-index.xml')) {
     console.error('ERROR: robots.txt does not contain absolute sitemap URL');
     failures++;
   } else {
@@ -72,6 +72,32 @@ async function runTests() {
   if (sitemapUrls.length !== 104) {
     console.error(`ERROR: Expected 104 URLs in sitemap, got ${sitemapUrls.length}`);
     failures++;
+  }
+
+  const sitemapIndexRes = await fetch(`${baseUrl}/sitemap-index.xml`);
+  const sitemapEnRes = await fetch(`${baseUrl}/sitemap-en.xml`);
+  const sitemapZhRes = await fetch(`${baseUrl}/sitemap-zh.xml`);
+  const indexedSitemaps = [...sitemapIndexRes.data.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
+  const enUrls = [...sitemapEnRes.data.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
+  const zhUrls = [...sitemapZhRes.data.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
+  const splitUrls = [...enUrls, ...zhUrls];
+  const expectedChildren = [
+    'https://points-miles-calculator.pages.dev/sitemap-en.xml',
+    'https://points-miles-calculator.pages.dev/sitemap-zh.xml'
+  ];
+  if (sitemapIndexRes.status !== 200 || !sitemapIndexRes.headers['content-type']?.includes('xml') ||
+      JSON.stringify(indexedSitemaps) !== JSON.stringify(expectedChildren)) {
+    console.error(`ERROR: sitemap index contract failed: ${JSON.stringify(indexedSitemaps)}`);
+    failures++;
+  }
+  if (sitemapEnRes.status !== 200 || sitemapZhRes.status !== 200 || splitUrls.length !== 104 ||
+      new Set(splitUrls).size !== 104 || splitUrls.some(url => !sitemapUrls.includes(url)) ||
+      enUrls.some(url => !new URL(url).pathname.startsWith('/en/')) ||
+      zhUrls.some(url => new URL(url).pathname.startsWith('/en/'))) {
+    console.error(`ERROR: split sitemap contract failed. EN=${enUrls.length}, ZH=${zhUrls.length}, total=${splitUrls.length}`);
+    failures++;
+  } else {
+    console.log(`Sitemap index OK: EN=${enUrls.length}, ZH=${zhUrls.length}, total=${splitUrls.length}`);
   }
 
   // Verify lastmod format and date constraint
@@ -134,10 +160,10 @@ async function runTests() {
   console.log('\n--- 4. Search Intent, Single H1 & Titles Verification ---');
   const pagesToCheck = [
     { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points and Miles Calculators | Points & Miles Calculator' },
-    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Points to Dollars Calculator | Miles Value | Points & Miles Calculator' },
+    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Miles to Money Calculator', expectedTitle: 'Miles to Money Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Award Travel | Points & Miles Calculator' },
     { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles Calculator' },
-    { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
+    { path: '/en/calculators/cents-per-point/', expectedH1: 'Points Value Calculator (CPP)', expectedTitle: 'Points Value & CPP Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
     { path: '/calculators/points-to-dollars/', expectedH1: '积分换算现金价值计算器' },
