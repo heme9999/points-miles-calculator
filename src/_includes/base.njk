@@ -35,34 +35,51 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "{{ schemaType }}",
-  "inLanguage": "{{ currentLang }}",
-  "name": "{{ title | safe }}",
-  "headline": "{{ title | safe }}",
-  "url": "{{ site.url }}{{ page.url }}",
-  "description": "{{ description or site.description }}"
-  {% if schemaType == 'Article' %}
-  ,"author": {
-    "@type": "Organization",
-    "@id": "{{ site.url }}/#organization",
-    "name": "Points & Miles Calculator",
-    "url": "{{ site.url }}/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "@id": "{{ site.url }}/#organization",
-    "name": "Points & Miles Calculator",
-    "url": "{{ site.url }}/"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "{{ site.url }}{{ page.url }}"
-  },
-  {% if datePublished %}
-  "datePublished": "{{ datePublished }}",
-  {% endif %}
-  "dateModified": "{{ dateModified | default(page.date.toISOString()) }}"
-  {% endif %}
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "{{ site.url }}/#website",
+      "url": "{{ site.url }}/",
+      "name": "Points & Miles Calculator",
+      "alternateName": "里程账",
+      "publisher": {
+        "@id": "{{ site.url }}/#organization"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "{{ site.url }}/#organization",
+      "url": "{{ site.url }}/",
+      "name": "Points & Miles Calculator",
+      "alternateName": "里程账"
+    },
+    {
+      "@type": "{{ schemaType }}",
+      "@id": "{{ site.url }}{{ page.url }}#{{ schemaType | lower }}",
+      "isPartOf": { "@id": "{{ site.url }}/#website" },
+      "inLanguage": "{{ currentLang }}",
+      "name": "{{ title | safe }}",
+      "headline": "{{ title | safe }}",
+      "url": "{{ site.url }}{{ page.url }}",
+      "description": "{{ description or site.description }}"
+      {% if schemaType == 'Article' %}
+      ,"author": {
+        "@id": "{{ site.url }}/#organization"
+      },
+      "publisher": {
+        "@id": "{{ site.url }}/#organization"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ site.url }}{{ page.url }}"
+      },
+      {% if datePublished %}
+      "datePublished": "{{ datePublished }}",
+      {% endif %}
+      "dateModified": "{{ dateModified | default(page.date.toISOString()) }}"
+      {% endif %}
+    }
+  ]
 }
 </script>
 {% endif %}

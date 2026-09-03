@@ -29,3 +29,7 @@ We do this by providing:
 - **Editorial Integrity**: The valuations and opinions expressed on this site are our own editorial estimates. They are not influenced by affiliate partnerships.
 
 If you find our tools helpful, please share them with your fellow travelers. Safe travels and happy redeeming!
+
+## Brand Identity
+
+We operate globally under the name **Points & Miles Calculator** and serve the Chinese-speaking community under our alternate name **里程账** (Li Cheng Zhang). Both versions of the site share the same underlying logic, commitment to privacy, and independent editorial standards.
