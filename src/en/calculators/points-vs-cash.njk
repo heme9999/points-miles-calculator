@@ -51,7 +51,7 @@ breadcrumbs:
 
   <div class="field">
     <label for="personalValuation">Personal point valuation<span class="hint" id="hintValuation">¢ / Point (Optional)</span></label>
-    <input type="number" id="personalValuation" value="1.5" min="0" step="0.01" inputmode="decimal" aria-describedby="hintValuation unitValuation">
+    <input type="number" id="personalValuation" min="0" step="0.01" inputmode="decimal" aria-describedby="hintValuation unitValuation">
     <div class="unit" id="unitValuation">Your baseline expectation for how much a point is worth</div>
   </div>
 </div>
@@ -213,23 +213,26 @@ breadcrumbs:
       const oldCurrency = currentCurrency;
       currentCurrency = e.target.value;
       if (oldCurrency !== currentCurrency) {
-        $('cashPrice').value = '';
-        $('awardTaxes').value = '';
-        $('forgoneValue').value = '';
-        $('personalValuation').value = '';
+        const fx = 7.0;
+        const multiply = currentCurrency === 'CNY' ? fx : (1 / fx);
         
-        const warningMsg = 'Currency changed. To avoid confusion, please re-enter all amounts and your personal valuation.';
-          
-        function clearCalculatorResults() {
-          $('cppResult').textContent = '-';
-          $('costCompare').innerHTML = 'Points Cost: -<br>Cash Cost: -';
-          $('verdictText').textContent = '—';
-          $('verdictCode').textContent = '-';
-          $('verdictText').className = 'verdict';
-          $('cppResult').classList.remove('win');
-          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
+        ['cashPrice', 'awardTaxes', 'forgoneValue'].forEach(id => {
+          if ($(id).value) {
+             const val = parseFloat($(id).value);
+             $(id).value = (val * multiply).toFixed(0);
+          }
+        });
+        
+        if ($('personalValuation').value) {
+           const v = parseFloat($('personalValuation').value);
+           if (currentCurrency === 'CNY') {
+             // USD to CNY: cents/point to CNY/point
+             $('personalValuation').value = ((v * fx) / 100).toFixed(4);
+           } else {
+             // CNY to USD: CNY/point to cents/point
+             $('personalValuation').value = ((v / fx) * 100).toFixed(2);
+           }
         }
-        clearCalculatorResults();
       }
       try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
       updateUnits();
@@ -253,6 +256,9 @@ breadcrumbs:
   parseParam('forgone', 'forgoneValue');
   parseParam('bonus', 'transferBonus', 1000);
   parseParam('valuation', 'personalValuation', 1000);
+  if (!params.has('valuation')) {
+    $('personalValuation').value = currentCurrency === 'USD' ? '1.5' : '0.105';
+  }
 
   function calcAdv(){
     let C = parseFloat($('cashPrice').value) || 0;

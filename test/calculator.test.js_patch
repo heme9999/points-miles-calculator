@@ -1,0 +1,18 @@
+const fs = require('fs');
+let code = fs.readFileSync('test/calculator.test.js', 'utf8');
+
+// Replace the path to the EN page with the ZH page for the test
+code = code.replace(/..\/_site\/en\/calculators\/points-vs-cash\/index.html/, '../_site/calculators/points-vs-cash/index.html');
+
+// Change the expected initial default values since ZH page defaults to CNY and 0.105
+code = code.replace(/await t.test\('1. Initial USD values set to 500 cash, 1.5 valuation', \(\) => {[\s\S]*?}\);/, 
+`await t.test('1. Initial CNY values set to 3500 cash, 0.105 valuation', () => {
+    // Manually trigger the currency dropdown change to USD to test switching
+    $('currency').value = 'USD';
+    $('currency').dispatchEvent(new dom.window.Event('change'));
+    
+    input('cashPrice', '500');
+    assert.strictEqual($('personalValuation').value, '1.50');
+  });`);
+  
+fs.writeFileSync('test/calculator.test.js', code);

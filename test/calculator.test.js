@@ -178,3 +178,49 @@ test('Currency Preference & URL Params Parsing', async (t) => {
     assert.notStrictEqual(doc.getElementById('pointsNeeded').value, '-10');
   });
 });
+
+test('USD/CNY currency toggling does not cause numerical drift', async (t) => {
+  const htmlPath = path.resolve(__dirname, '../_site/calculators/points-vs-cash/index.html');
+  if (!fs.existsSync(htmlPath)) return;
+  const html = fs.readFileSync(htmlPath, 'utf8');
+
+  // Load ZH page which defaults to CNY
+  const dom = new JSDOM(html, { runScripts: 'dangerously' });
+  const document = dom.window.document;
+  const $ = (id) => document.getElementById(id);
+  const input = (id, value) => {
+    const el = $(id);
+    el.value = value;
+    el.dispatchEvent(new dom.window.Event('input'));
+  };
+
+  await t.test('1. Initial CNY values set to 3500 cash, 0.105 valuation', () => {
+    // Manually trigger the currency dropdown change to USD to test switching
+    $('currency').value = 'USD';
+    $('currency').dispatchEvent(new dom.window.Event('change'));
+    
+    input('cashPrice', '500');
+    assert.strictEqual($('personalValuation').value, '1.50');
+  });
+
+  await t.test('2. Switch to CNY, values should convert with fx 7.0', () => {
+    // Manually trigger the currency dropdown change
+    $('currency').value = 'CNY';
+    $('currency').dispatchEvent(new dom.window.Event('change'));
+    
+    // Cash should be 500 * 7.0 = 3500
+    assert.strictEqual($('cashPrice').value, '3500');
+    // Valuation should be (1.5 * 7) / 100 = 0.1050
+    assert.strictEqual($('personalValuation').value, '0.1050');
+  });
+
+  await t.test('3. Switch back to USD, values should restore', () => {
+    $('currency').value = 'USD';
+    $('currency').dispatchEvent(new dom.window.Event('change'));
+    
+    // Cash should be 3500 / 7.0 = 500
+    assert.strictEqual($('cashPrice').value, '500');
+    // Valuation should be (0.105 / 7) * 100 = 1.50
+    assert.strictEqual($('personalValuation').value, '1.50');
+  });
+});

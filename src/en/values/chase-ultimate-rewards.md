@@ -25,7 +25,7 @@ breadcrumbs:
 <h2>The Chase Redemption Decision Flow</h2>
 <p>To maximize your Chase Ultimate Rewards, you have three distinct redemption paths. You should always compare them before booking:</p>
 <ol>
-  <li><strong>The Cash Equivalent (1.0¢)</strong>: Redeeming for statement credits or cash back provides a floor value of 1.0¢. This is the absolute minimum you should accept.</li>
+  <li><strong>The Cash Equivalent (1.0¢)</strong>: Redeeming for statement credits or cash back provides a floor value of 1.0¢. This is a common cash-equivalent baseline.</li>
   <li><strong>The Chase Travel Portal & Points Boost</strong>: Before transferring points to a partner, check the cash price of the flight or hotel in the Chase Portal. Look for active Points Boost offers on your account. If a flight or hotel is eligible for a 1.5¢ or 2.0¢ boost, booking it directly might cost fewer points than using a transfer partner's award chart. (Use our <a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a> to verify the math).</li>
   <li><strong>Airline & Hotel Transfer Partners (Potentially 2.0¢+)</strong>: Transferring to partners like United MileagePlus, Air France/KLM Flying Blue, or World of Hyatt is typically how you unlock outsized value. Note that while historically all transfers were 1:1, recent changes mean some transfers (like Hyatt for certain newer accounts) may operate on a 4:3 ratio. Always verify the exact transfer ratio in your Chase portal before proceeding.</li>
 </ol>
@@ -35,7 +35,7 @@ breadcrumbs:
 <p>When you decide that transferring to a partner offers the best value, keep these rules in mind:</p>
 <ul>
   <li><strong>Confirm Inventory Prior to Transfer</strong>: Do not move your UR points without a concrete plan. Make certain that the exact award space you want is open for booking on the partner airline or hotel portal.</li>
-  <li><strong>Transfers Are Final</strong>: Moving Ultimate Rewards to a partner program is a one-way street. The process cannot be undone under any circumstances, so proceed with caution.</li>
+  <li><strong>Transfers Are Final</strong>: Moving Ultimate Rewards to a partner program is a one-way street. Transfers are generally final and normally cannot be reversed, so proceed with caution.</li>
   <li><strong>Verify the Required Amount</strong>: When taking advantage of promotional transfer bonuses, run the numbers through our <a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a> to precisely determine how many UR points to send.</li>
 </ul>
 
