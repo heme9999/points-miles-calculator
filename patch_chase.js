@@ -1,4 +1,6 @@
----
+const fs = require('fs');
+
+const content = `---
 layout: base.njk
 title: Chase Ultimate Rewards (UR) Points Value Guide
 description: Learn how to maximize Chase Ultimate Rewards. Understand portal multipliers, transfer partners, and how your card product changes your points' value.
@@ -30,17 +32,19 @@ breadcrumbs:
 </ol>
 <p>For a detailed breakdown of how this ecosystem compares to its main competitor, read our guide on <a href="/en/compare/capital-one-vs-chase/">Capital One Miles vs Chase Ultimate Rewards</a>.</p>
 
-<h2>Important Guidelines Before Transferring</h2>
+<h2>Crucial Transfer Rules</h2>
 <p>When you decide that transferring to a partner offers the best value, keep these rules in mind:</p>
 <ul>
-  <li><strong>Confirm Inventory Prior to Transfer</strong>: Do not move your UR points without a concrete plan. Make certain that the exact award space you want is open for booking on the partner airline or hotel portal.</li>
-  <li><strong>Transfers Are Final</strong>: Moving Ultimate Rewards to a partner program is a one-way street. The process cannot be undone under any circumstances, so proceed with caution.</li>
-  <li><strong>Verify the Required Amount</strong>: When taking advantage of promotional transfer bonuses, run the numbers through our <a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a> to precisely determine how many UR points to send.</li>
+  <li><strong>Check Availability First</strong>: Never transfer points speculatively. Always ensure the specific award flight or hotel night is available to book on the partner's website.</li>
+  <li><strong>Irreversible Transfers</strong>: Once you transfer Chase points to an airline or hotel program, the transfer is <strong>strictly one-way and cannot be reversed</strong>.</li>
+  <li><strong>Calculate the Final Cost</strong>: If you are relying on a limited-time transfer bonus, use our <a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a> to ensure you don't transfer more points than absolutely necessary.</li>
 </ul>
 
-<h2>Reference Data and Fact-Checking</h2>
+<h2>Data Sources and Last Fact-Checked</h2>
 <ul>
-  <li><strong>Editorial Estimates (e.g. TPG)</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Usually around 2.0¢ per point</a></li>
-  <li><strong>Official Portal Information</strong>: <a href="https://ultimaterewardspoints.chase.com/" target="_blank" rel="noopener">Direct from Chase</a></li>
+  <li><strong>[Editorial] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Baseline Value (2.0¢)</a></li>
+  <li><strong>[Official] Chase Rewards Program</strong>: <a href="https://ultimaterewardspoints.chase.com/" target="_blank" rel="noopener">Chase Ultimate Rewards Portal</a></li>
 </ul>
 <p class="disclaimer"><em>Last Fact-Checked: September 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice. Third-party valuations are not real-time or guaranteed.</em></p>
+`;
+fs.writeFileSync('src/en/values/chase-ultimate-rewards.md', content);

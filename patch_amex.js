@@ -1,4 +1,6 @@
----
+const fs = require('fs');
+
+const content = `---
 layout: base.njk
 title: Amex Membership Rewards (MR) Points Value Guide
 description: Maximize your Amex Membership Rewards points. Learn the best transfer partners, airline vs hotel valuations, and how to avoid the excise tax.
@@ -46,3 +48,5 @@ breadcrumbs:
   <li><strong>[Official] Amex Official Rules</strong>: <a href="https://www.americanexpress.com/en-us/rewards/membership-rewards/" target="_blank" rel="noopener">Transfer Ratios</a></li>
 </ul>
 <p class="disclaimer"><em>Last Fact-Checked: September 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice. Third-party valuations are not real-time or guaranteed.</em></p>
+`;
+fs.writeFileSync('src/en/values/amex-membership-rewards.md', content);
