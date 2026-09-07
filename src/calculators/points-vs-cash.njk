@@ -192,20 +192,30 @@ breadcrumbs:
         const multiply = currentCurrency === 'CNY' ? fx : (1 / fx);
         
         ['cashPrice', 'awardTaxes', 'forgoneValue'].forEach(id => {
-          if ($(id).value) {
-             const val = parseFloat($(id).value);
-             $(id).value = (val * multiply).toFixed(0);
+          const el = $(id);
+          if (el && el.value) {
+             let val = parseFloat(el.dataset.rawValue || el.value);
+             if (!isNaN(val)) {
+                let newVal = val * multiply;
+                el.dataset.rawValue = newVal;
+                el.value = Math.round(newVal);
+             }
           }
         });
         
-        if ($('personalValuation').value) {
-           const v = parseFloat($('personalValuation').value);
-           if (currentCurrency === 'CNY') {
-             // USD to CNY: cents/point to CNY/point
-             $('personalValuation').value = ((v * fx) / 100).toFixed(4);
-           } else {
-             // CNY to USD: CNY/point to cents/point
-             $('personalValuation').value = ((v / fx) * 100).toFixed(2);
+        const pvEl = $('personalValuation');
+        if (pvEl && pvEl.value) {
+           let v = parseFloat(pvEl.dataset.rawValue || pvEl.value);
+           if (!isNaN(v)) {
+             if (currentCurrency === 'CNY') {
+               let newVal = (v * fx) / 100;
+               pvEl.dataset.rawValue = newVal;
+               pvEl.value = newVal.toFixed(4);
+             } else {
+               let newVal = (v / fx) * 100;
+               pvEl.dataset.rawValue = newVal;
+               pvEl.value = newVal.toFixed(2);
+             }
            }
         }
       }
@@ -343,8 +353,13 @@ breadcrumbs:
     }
   }
 
-  ['cashPrice','pointsNeeded','awardTaxes','forgoneValue','personalValuation','transferBonus'].forEach(id => {
-    if($(id)) $(id).addEventListener('input', calcAdv);
+  ['cashPrice', 'pointsNeeded', 'awardTaxes', 'forgoneValue', 'transferBonus', 'personalValuation'].forEach(id => {
+    if($(id)) {
+      $(id).addEventListener('input', (e) => {
+         e.target.dataset.rawValue = e.target.value;
+         calcAdv();
+      });
+    }
   });
   
   updateUnits();

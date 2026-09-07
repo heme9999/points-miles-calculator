@@ -224,3 +224,45 @@ test('USD/CNY currency toggling does not cause numerical drift', async (t) => {
     assert.strictEqual($('personalValuation').value, '1.50');
   });
 });
+
+test('USD/CNY currency toggling drift gatekeeper (non-divisible by 7)', async (t) => {
+  const htmlPath = path.resolve(__dirname, '../_site/calculators/points-vs-cash/index.html');
+  if (!fs.existsSync(htmlPath)) return;
+  const html = fs.readFileSync(htmlPath, 'utf8');
+
+  // Load ZH page which defaults to CNY
+  const dom = new JSDOM(html, { runScripts: 'dangerously' });
+  const document = dom.window.document;
+  const $ = (id) => document.getElementById(id);
+  const input = (id, value) => {
+    const el = $(id);
+    el.value = value;
+    el.dispatchEvent(new dom.window.Event('input'));
+  };
+
+  await t.test('1. Initial CNY values set to 5000 / 800 / 200', () => {
+    input('cashPrice', '5000');
+    input('awardTaxes', '800');
+    input('forgoneValue', '200');
+    assert.strictEqual($('cashPrice').value, '5000');
+    assert.strictEqual($('awardTaxes').value, '800');
+    assert.strictEqual($('forgoneValue').value, '200');
+  });
+
+  await t.test('2. Multiple currency swaps do not accumulate rounding drift', () => {
+    for (let i = 0; i < 10; i++) {
+      // CNY -> USD
+      $('currency').value = 'USD';
+      $('currency').dispatchEvent(new dom.window.Event('change'));
+      
+      // USD -> CNY
+      $('currency').value = 'CNY';
+      $('currency').dispatchEvent(new dom.window.Event('change'));
+    }
+    
+    // Values should remain EXACTLY the same as original input, despite 5000 / 7 = 714.28...
+    assert.strictEqual($('cashPrice').value, '5000');
+    assert.strictEqual($('awardTaxes').value, '800');
+    assert.strictEqual($('forgoneValue').value, '200');
+  });
+});
