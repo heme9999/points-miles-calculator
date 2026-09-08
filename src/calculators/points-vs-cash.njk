@@ -329,9 +329,9 @@ breadcrumbs:
       code.textContent = 'DIFF +' + diffPercent.toFixed(0) + '%';
       
       if (currentCurrency === 'USD') {
-        explain.textContent = `实际用出 ${actualCpp.toFixed(2)} 美分/点的价值，高出个人期望 (${V} 美分/点)，兑换收益突出。`;
+        explain.textContent = `实际用出 ${actualCpp.toFixed(2)} 美分/点的价值，高于个人估值基准 (${V} 美分/点)。使用积分在当前假设下更具价值。`;
       } else {
-        explain.textContent = `实际用出 ¥${actualCpp.toFixed(4)}/点的价值，高出个人估值 (¥${V}/点)，非常划算。`;
+        explain.textContent = `实际用出 ¥${actualCpp.toFixed(4)}/点的价值，高于个人估值基准 (¥${V}/点)。使用积分在当前假设下更具价值。`;
       }
     } else if (actualCpp < V && V > 0) {
       verdict.textContent = '建议付现金';
@@ -341,9 +341,9 @@ breadcrumbs:
       code.textContent = 'DIFF -' + diffPercent.toFixed(0) + '%';
       
       if (currentCurrency === 'USD') {
-        explain.textContent = `实际仅用出 ${actualCpp.toFixed(2)} 美分/点，低于期望估值 (${V} 美分/点)，建议保留积分直接买票。`;
+        explain.textContent = `实际用出 ${actualCpp.toFixed(2)} 美分/点，低于个人估值基准 (${V} 美分/点)。在当前假设下，建议使用现金购票并保留积分。`;
       } else {
-        explain.textContent = `实际仅用出 ¥${actualCpp.toFixed(4)}/点，低于个人估值 (¥${V}/点)，建议直接花钱买票并积累新里程。`;
+        explain.textContent = `实际用出 ¥${actualCpp.toFixed(4)}/点，低于个人估值基准 (¥${V}/点)。在当前假设下，建议使用现金购票并保留积分。`;
       }
     } else {
       verdict.textContent = '两者皆可';

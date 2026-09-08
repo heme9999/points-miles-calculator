@@ -327,13 +327,13 @@ breadcrumbs:
       $('cppResult').classList.add('win');
       $('cppResult').parentElement.classList.add('win');
       const diff = ((compActualCpp - V) / V * 100).toFixed(0);
-      explain.textContent = `This redemption yields ${diff}% more value than your personal valuation. A great deal!`;
+      explain.textContent = `This redemption yields ${diff}% more value than your personal baseline. Using points is mathematically advantageous under these assumptions.`;
       code.textContent = `DIFF +${diff}%`;
     } else if (compActualCpp < V && V > 0) {
       verdict.textContent = 'Pay Cash';
       verdict.className = 'verdict bad';
       const diff = ((V - compActualCpp) / V * 100).toFixed(0);
-      explain.textContent = `The actual value falls ${diff}% short of your personal valuation. You are better off paying cash and saving the points.`;
+      explain.textContent = `This redemption falls ${diff}% short of your personal baseline. Under these assumptions, paying cash and conserving points is recommended.`;
       code.textContent = `DIFF -${diff}%`;
     } else {
       verdict.textContent = 'Either Option';
