@@ -64,6 +64,7 @@ Different points systems have different baseline values. If your calculation yie
 
 Stop using a handheld calculator. You can use our free tools to instantly run these scenarios:
 
+- 💵 [Miles to Dollars Calculator](/en/calculators/points-to-dollars/): Estimate the dollar value of miles for your entire points balance.
 - 🧮 [Advanced Points vs Cash Calculator](/en/calculators/points-vs-cash/): Automatically handles taxes, forgone earnings, and even transfer bonuses.
 - 📊 [Chase Ultimate Rewards Value Guide](/en/values/chase-ultimate-rewards/): See the best ways to get outsized value from Chase.
 - 📊 [Amex Membership Rewards Value Guide](/en/values/amex-membership-rewards/): Learn why transferring to ANA is an Amex favorite.

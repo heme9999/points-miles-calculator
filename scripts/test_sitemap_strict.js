@@ -46,8 +46,8 @@ async function runTests() {
 
   console.log(`Found ${urls.length} URLs in sitemap`);
   
-  if (urls.length !== 104) {
-    console.error(`[FAIL] Expected 104 URLs, found ${urls.length}`);
+  if (urls.length !== 106) {
+    console.error(`[FAIL] Expected 106 URLs, found ${urls.length}`);
     failures++;
   } else {
     console.log(`[PASS] URL count is exactly 104`);

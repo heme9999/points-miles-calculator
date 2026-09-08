@@ -69,8 +69,8 @@ async function verifyLiveProduction() {
   console.log(`Live Sitemap URL count: ${sitemapUrls.length}`);
   console.log(`Live Sitemap explicit lastmod count: ${lastmods.length}`);
 
-  if (sitemapUrls.length !== 104) {
-    console.error(`ERROR: Expected 104 URLs in production sitemap.xml, found ${sitemapUrls.length}`);
+  if (sitemapUrls.length !== 106) {
+    console.error(`ERROR: Expected 106 URLs in production sitemap.xml, found ${sitemapUrls.length}`);
     failures++;
   }
 

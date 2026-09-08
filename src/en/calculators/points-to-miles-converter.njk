@@ -1,0 +1,258 @@
+---
+layout: base.njk
+title: Points to Miles Converter
+description: Convert your credit card points to airline miles easily. Calculate transfer ratios, bonuses, and minimum increments with our free points to miles converter.
+schemaType: WebApplication
+eyebrow: Tools · 05
+datePublished: "2026-09-08"
+dateModified: "2026-09-08"
+lastModified: "2026-09-08"
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: Points to Miles Converter
+---
+<h1>Points to Miles Converter</h1>
+
+<div class="direct-answer">
+  <strong>Direct Answer:</strong> To calculate how many airline miles you will receive, first round your bank points down to the nearest transfer increment (usually 1,000). Then, multiply that number by the base transfer ratio. Finally, add any promotional transfer bonus percentage to get your total airline miles.
+</div>
+
+<div class="calculator-container" style="margin-top: 2rem;">
+  <div class="input-group">
+    <label for="bankPoints">Bank points available</label>
+    <input type="number" id="bankPoints" min="0" step="1" inputmode="numeric">
+  </div>
+  
+  <div class="input-group">
+    <label for="baseRatio">Base transfer ratio <span class="hint">(e.g., 1.0 = 1 point → 1 mile)</span></label>
+    <input type="number" id="baseRatio" value="1" min="0.01" step="0.01" inputmode="decimal">
+  </div>
+
+  <div class="input-group">
+    <label for="bonusPercent">Transfer bonus percentage <span class="hint">(%)</span></label>
+    <input type="number" id="bonusPercent" value="0" min="0" step="1" inputmode="numeric">
+  </div>
+
+  <div class="input-group">
+    <label for="increment">Transfer increment <span class="hint">(Usually 1000)</span></label>
+    <input type="number" id="increment" value="1000" min="1" step="1" inputmode="numeric">
+  </div>
+
+  <div class="input-group">
+    <label for="targetProgram">Target program name <span class="hint">(Optional)</span></label>
+    <input type="text" id="targetProgram" placeholder="e.g., Flying Blue">
+  </div>
+
+  <div class="result-box" style="margin-top: 2rem;">
+    <h3 style="margin-top:0">Conversion Result</h3>
+    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);" id="totalMiles">-</div>
+    <div style="margin-top: 1rem; font-size: 0.9rem; color: #4b5563;" id="explain">Please enter your available bank points.</div>
+    <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;" id="breakdownBox" style="display:none;">
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>Transferable Points:</span> <strong id="transferablePoints">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>Remaining Bank Points:</span> <strong id="remainingPoints">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>Base Miles:</span> <strong id="baseMiles">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>Bonus Miles:</span> <strong id="bonusMiles">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; border-top: 1px solid #d1d5db; padding-top: 0.5rem; margin-top: 0.5rem;">
+        <span>Effective Ratio:</span> <strong id="effectiveRatio">-</strong>
+      </div>
+    </div>
+  </div>
+  
+  <button id="btnShare" class="btn-secondary" style="margin-top:1rem; width:100%;">🔗 Copy Share Link</button>
+  <div id="toast" class="toast">Link copied to clipboard!</div>
+</div>
+
+<div class="prose" style="margin-top: 3rem;">
+  <h2>How to Convert Points to Airline Miles</h2>
+  <p>The math behind converting your flexible credit card rewards (like Chase Ultimate Rewards or Amex Membership Rewards) into airline miles relies on a standard formula:</p>
+  
+  <div class="math-formula">
+    <strong>Standard Conversion Formula:</strong><br><br>
+    <em>Transferable Points = floor(Bank Points / Increment) × Increment</em><br>
+    <em>Base Miles = Transferable Points × Base Ratio</em><br>
+    <em>Bonus Miles = Base Miles × Bonus Percentage</em><br>
+    <em>Total Miles = Base Miles + Bonus Miles</em>
+  </div>
+
+  <h3>Calculation Examples</h3>
+  
+  <h4>Example 1: Standard 1:1 Transfer with a 20% Bonus</h4>
+  <p>You have 50,000 Amex points and want to transfer them to Air France Flying Blue during a 20% transfer bonus. The increment is 1,000.</p>
+  <ul>
+    <li>Transferable Points: 50,000</li>
+    <li>Base Miles (1:1): 50,000</li>
+    <li>Bonus Miles (20%): 10,000</li>
+    <li><strong>Total Miles: 60,000</strong></li>
+  </ul>
+
+  <h4>Example 2: Non-1:1 Transfer with Step Restrictions</h4>
+  <p>You have 50,500 Marriott Bonvoy points and want to transfer them to United Airlines. The ratio is 3:1 (which means 0.333 or technically 3 points = 1 mile). Wait, the easiest way to represent 3:1 in our calculator is <code>0.33333</code> or conceptually <code>1 point = 0.333 miles</code>. However, to be exact, let's look at Capital One to EVA Air which is 4:3 (0.75 ratio). You have 50,500 Capital One miles. Increment is 1,000. Bonus is 0%.</p>
+  <ul>
+    <li>Transferable Points: 50,000 (500 points left behind)</li>
+    <li>Base Miles (0.75 ratio): 37,500</li>
+    <li>Bonus Miles (0%): 0</li>
+    <li><strong>Total Miles: 37,500</strong></li>
+  </ul>
+
+  <h2>Points to Miles Converter vs. Transfer Bonus Calculator</h2>
+  <p>Our website offers two dedicated tools for bank transfers, designed for opposite scenarios:</p>
+  <ul>
+    <li><strong>Points to Miles Converter (This Tool)</strong>: You know how many bank points you have, and you want to calculate exactly how many airline miles you will get.</li>
+    <li><strong><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a></strong>: You know the exact flight cost (e.g., you need 65,000 miles), and you want to calculate the minimum number of bank points you need to transfer to reach that target.</li>
+  </ul>
+
+  <h2>Where to Find Real Transfer Ratios</h2>
+  <p>Never assume all transfers are 1:1. While Chase and Bilt transfer strictly at 1:1, programs like American Express, Citi, and Capital One have exceptions. You can always confirm the exact ratio by logging into your bank's reward portal and selecting the transfer partner. The portal will explicitly state the ratio (e.g., "1,000 points = 1,000 miles").</p>
+
+  <h2>Important Transfer Rules and Limitations</h2>
+  <ul>
+    <li><strong>Transfers are Final</strong>: Once you convert bank points to airline miles, the transaction cannot be reversed. Never transfer points speculatively.</li>
+    <li><strong>Award Availability</strong>: Just because you have the miles doesn't mean you can book the flight. Always confirm award space exists before initiating a transfer.</li>
+    <li><strong>Transfer Delays</strong>: While many transfers are instant, some partners (like ANA or Singapore Airlines) can take 24 to 48 hours to process.</li>
+  </ul>
+
+  <h3>Frequently Asked Questions</h3>
+  <div class="faq">
+    <details>
+      <summary>Do all credit card points transfer at a 1:1 ratio?</summary>
+      <div>
+        <p>No. While 1:1 is the most common ratio for premium travel cards, many hotel points (like Marriott or Hilton) and specific bank partners have different ratios. For example, Marriott typically transfers to airlines at a 3:1 ratio.</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>Can I transfer just the exact amount of points I need?</summary>
+      <div>
+        <p>Usually not. Most major banks enforce a minimum transfer amount (often 1,000 points) and require transfers to be in 1,000-point increments.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Why didn't my bonus miles show up immediately?</summary>
+      <div>
+        <p>In most cases, the base miles will appear instantly, but promotional bonus miles can sometimes take an additional 24 to 48 hours to post to your airline account, depending on the bank and airline systems.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    const params = new URLSearchParams(window.location.search);
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+
+  parseParam('points', 'bankPoints');
+  parseParam('baseRatio', 'baseRatio');
+  parseParam('bonusPercent', 'bonusPercent');
+  parseParam('increment', 'increment');
+
+  function calculateConversion() {
+    let points = parseFloat($('bankPoints').value);
+    let ratio = parseFloat($('baseRatio').value);
+    let bonus = parseFloat($('bonusPercent').value);
+    let inc = parseFloat($('increment').value);
+    let targetProg = $('targetProgram').value.trim() || 'airline';
+
+    const resetState = (msg = 'Please enter valid numbers.') => {
+      $('totalMiles').textContent = '-';
+      $('explain').textContent = msg;
+      $('transferablePoints').textContent = '-';
+      $('remainingPoints').textContent = '-';
+      $('baseMiles').textContent = '-';
+      $('bonusMiles').textContent = '-';
+      $('effectiveRatio').textContent = '-';
+    };
+
+    if (isNaN(points) || isNaN(ratio) || isNaN(bonus) || isNaN(inc)) {
+      resetState('Please enter valid numbers.');
+      return;
+    }
+
+    if (points < 0 || ratio <= 0 || bonus < 0 || inc <= 0) {
+      resetState('Inputs cannot be negative. Ratio and increment must be greater than 0.');
+      return;
+    }
+
+    if (!isFinite(points) || !isFinite(ratio) || !isFinite(bonus) || !isFinite(inc)) {
+      resetState('Inputs are too large.');
+      return;
+    }
+
+    if (points === 0) {
+      resetState('Enter your bank points to see how many miles you will receive.');
+      return;
+    }
+
+    let transferablePoints = Math.floor(points / inc) * inc;
+    let remainingBankPoints = points - transferablePoints;
+    
+    if (transferablePoints === 0) {
+      resetState(`You need at least ${inc} points to make a transfer.`);
+      return;
+    }
+
+    let baseMiles = transferablePoints * ratio;
+    let bonusMiles = baseMiles * (bonus / 100);
+    let totalMiles = baseMiles + bonusMiles;
+    let effectiveRatio = totalMiles / transferablePoints;
+
+    $('totalMiles').textContent = totalMiles.toLocaleString('en-US', {maximumFractionDigits:0}) + ' Miles';
+    
+    let explainHtml = `You can transfer <strong>${transferablePoints.toLocaleString('en-US')}</strong> points to receive <strong>${totalMiles.toLocaleString('en-US', {maximumFractionDigits:0})}</strong> ${targetProg} miles.`;
+    if (remainingBankPoints > 0) {
+      explainHtml += ` You will have <strong>${remainingBankPoints.toLocaleString('en-US')}</strong> points left in your bank account due to increment restrictions.`;
+    }
+    $('explain').innerHTML = explainHtml;
+
+    $('transferablePoints').textContent = transferablePoints.toLocaleString('en-US');
+    $('remainingPoints').textContent = remainingBankPoints.toLocaleString('en-US');
+    $('baseMiles').textContent = baseMiles.toLocaleString('en-US', {maximumFractionDigits:0});
+    $('bonusMiles').textContent = bonusMiles.toLocaleString('en-US', {maximumFractionDigits:0});
+    $('effectiveRatio').textContent = effectiveRatio.toLocaleString('en-US', {maximumFractionDigits:2});
+  }
+
+  ['bankPoints', 'baseRatio', 'bonusPercent', 'increment', 'targetProgram'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calculateConversion);
+  });
+
+  if ($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const url = new URL(window.location.origin + window.location.pathname);
+      const points = parseFloat($('bankPoints').value);
+      const ratio = parseFloat($('baseRatio').value);
+      const bonus = parseFloat($('bonusPercent').value);
+      const inc = parseFloat($('increment').value);
+
+      if(points > 0) url.searchParams.set('points', points);
+      if(ratio > 0) url.searchParams.set('baseRatio', ratio);
+      if(bonus >= 0) url.searchParams.set('bonusPercent', bonus);
+      if(inc > 0) url.searchParams.set('increment', inc);
+
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const toast = $('toast');
+        if(toast) {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+      });
+    });
+  }
+
+  calculateConversion();
+</script>

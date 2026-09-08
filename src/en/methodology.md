@@ -13,6 +13,14 @@ At Points & Miles Calculator, we believe that points and miles do not have a sin
 
 Here is how we determine those numbers.
 
+## Apply the Method
+
+Put our methodology into practice with our free calculators:
+- [Points to Miles Converter](/en/calculators/points-to-miles-converter/): Convert bank points to exact airline miles.
+- [Miles to Dollars Calculator](/en/calculators/points-to-dollars/): Estimate the dollar value of miles.
+- [Cents Per Point Calculator](/en/calculators/cents-per-point/): Find the precise redemption value of a ticket.
+- [Points vs Cash Calculator](/en/calculators/points-vs-cash/): Compare the full cost of awards vs. cash.
+
 ## 1. Industry Consensus
 
 We aggregate and review valuations published by major US and international travel media outlets, such as The Points Guy (TPG) and One Mile at a Time (OMAAT). These platforms conduct extensive, ongoing research into the purchasing power of various currencies. By averaging and referencing their established baselines, we ensure our figures represent a broad industry consensus rather than a single subjective opinion.

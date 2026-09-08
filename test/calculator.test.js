@@ -266,3 +266,73 @@ test('USD/CNY currency toggling drift gatekeeper (non-divisible by 7)', async (t
     assert.strictEqual($('forgoneValue').value, '200');
   });
 });
+
+test('Points to Miles Converter Core Logic & UI Tests', async (t) => {
+  const htmlPath = path.resolve(__dirname, '../_site/en/calculators/points-to-miles-converter/index.html');
+  if (!fs.existsSync(htmlPath)) return;
+  const html = fs.readFileSync(htmlPath, 'utf8');
+
+  // Load EN page
+  const dom = new JSDOM(html, { runScripts: 'dangerously' });
+  const document = dom.window.document;
+  const $ = (id) => document.getElementById(id);
+  const input = (id, value) => {
+    const el = $(id);
+    el.value = value;
+    el.dispatchEvent(new dom.window.Event('input'));
+  };
+
+  await t.test('1. Points to Miles 1:1 + 20%', () => {
+    input('bankPoints', '50000');
+    input('baseRatio', '1');
+    input('bonusPercent', '20');
+    input('increment', '1000');
+    
+    assert.strictEqual($('transferablePoints').textContent, '50,000');
+    assert.strictEqual($('baseMiles').textContent, '50,000');
+    assert.strictEqual($('bonusMiles').textContent, '10,000');
+    assert.strictEqual($('totalMiles').textContent, '60,000 Miles');
+  });
+
+  await t.test('2. 非 1:1 (Non 1:1 ratio)', () => {
+    input('bankPoints', '50000');
+    input('baseRatio', '0.5');
+    input('bonusPercent', '20');
+    input('increment', '1000');
+    
+    assert.strictEqual($('transferablePoints').textContent, '50,000');
+    assert.strictEqual($('baseMiles').textContent, '25,000');
+    assert.strictEqual($('bonusMiles').textContent, '5,000');
+    assert.strictEqual($('totalMiles').textContent, '30,000 Miles');
+  });
+
+  await t.test('3. 步长余数 (Increment remainder)', () => {
+    input('bankPoints', '50500');
+    input('baseRatio', '1');
+    input('bonusPercent', '0');
+    input('increment', '1000');
+    
+    assert.strictEqual($('transferablePoints').textContent, '50,000');
+    assert.strictEqual($('remainingPoints').textContent, '500');
+    assert.strictEqual($('totalMiles').textContent, '50,000 Miles');
+  });
+
+  await t.test('4. 步长大于余额 (Increment larger than balance)', () => {
+    input('bankPoints', '500');
+    input('baseRatio', '1');
+    input('bonusPercent', '0');
+    input('increment', '1000');
+    
+    assert.strictEqual($('totalMiles').textContent, '-');
+    assert.match($('explain').textContent, /You need at least 1000 points to make a transfer/);
+  });
+
+  await t.test('5. 空值、0、负数和非法参数 (Invalid inputs)', () => {
+    input('bankPoints', '0');
+    assert.strictEqual($('totalMiles').textContent, '-');
+    
+    input('bankPoints', '-5000');
+    assert.strictEqual($('totalMiles').textContent, '-');
+    assert.match($('explain').textContent, /Inputs cannot be negative/);
+  });
+});

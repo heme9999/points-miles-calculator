@@ -1,0 +1,258 @@
+---
+layout: base.njk
+title: 积分转航空里程换算器｜计算转点比例与加赠里程
+description: 准确计算信用卡积分转入航空里程的最终结果。自动处理转点比例、加赠活动和转点步长限制，帮助您精确规划积分兑换。
+schemaType: WebApplication
+eyebrow: 工具箱 · 05
+datePublished: "2026-09-08"
+dateModified: "2026-09-08"
+lastModified: "2026-09-08"
+breadcrumbs:
+  - name: 计算工具箱
+    url: /calculators/
+  - name: 积分转航空里程换算器
+---
+<h1>积分转航空里程换算器</h1>
+
+<div class="direct-answer">
+  <strong>核心计算逻辑：</strong>首先根据“转点步长”（通常为 1,000）将您可用的银行积分向下取整，得到实际可转出的积分数；然后乘以“基础转点比例”获得基础里程；最后加上促销期间的加赠比例，得出您最终能够收到的航空里程总数。
+</div>
+
+<div class="calculator-container" style="margin-top: 2rem;">
+  <div class="input-group">
+    <label for="bankPoints">可转银行积分总额</label>
+    <input type="number" id="bankPoints" min="0" step="1" inputmode="numeric">
+  </div>
+  
+  <div class="input-group">
+    <label for="baseRatio">基础转点比例 <span class="hint">（例如：1.0 = 1 积分 → 1 里程）</span></label>
+    <input type="number" id="baseRatio" value="1" min="0.01" step="0.01" inputmode="decimal">
+  </div>
+
+  <div class="input-group">
+    <label for="bonusPercent">转点加赠比例 <span class="hint">(%)</span></label>
+    <input type="number" id="bonusPercent" value="0" min="0" step="1" inputmode="numeric">
+  </div>
+
+  <div class="input-group">
+    <label for="increment">最小转点步长 <span class="hint">（通常为 1000）</span></label>
+    <input type="number" id="increment" value="1000" min="1" step="1" inputmode="numeric">
+  </div>
+
+  <div class="input-group">
+    <label for="targetProgram">目标里程计划名称 <span class="hint">（选填）</span></label>
+    <input type="text" id="targetProgram" placeholder="例如：法荷航 Flying Blue">
+  </div>
+
+  <div class="result-box" style="margin-top: 2rem;">
+    <h3 style="margin-top:0">换算结果</h3>
+    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);" id="totalMiles">-</div>
+    <div style="margin-top: 1rem; font-size: 0.9rem; color: #4b5563;" id="explain">请输入您当前持有的可用银行积分。</div>
+    <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;" id="breakdownBox">
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>实际可转积分数：</span> <strong id="transferablePoints">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>账户剩余积分：</span> <strong id="remainingPoints">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>基础兑换里程：</span> <strong id="baseMiles">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span>额外加赠里程：</span> <strong id="bonusMiles">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; border-top: 1px solid #d1d5db; padding-top: 0.5rem; margin-top: 0.5rem;">
+        <span>综合转点倍率：</span> <strong id="effectiveRatio">-</strong>
+      </div>
+    </div>
+  </div>
+  
+  <button id="btnShare" class="btn-secondary" style="margin-top:1rem; width:100%;">🔗 复制计算结果链接</button>
+  <div id="toast" class="toast">链接已复制到剪贴板！</div>
+</div>
+
+<div class="prose" style="margin-top: 3rem;">
+  <h2>如何计算积分转里程的结果？</h2>
+  <p>将灵活的信用卡积分（如 Chase UR 或 Amex MR）转换为航空里程的计算涉及以下标准公式：</p>
+  
+  <div class="math-formula">
+    <strong>标准换算公式：</strong><br><br>
+    <em>实际可转积分 = floor(总积分 ÷ 转点步长) × 转点步长</em><br>
+    <em>基础里程 = 实际可转积分 × 基础转点比例</em><br>
+    <em>加赠里程 = 基础里程 × 加赠比例</em><br>
+    <em>最终里程总数 = 基础里程 + 加赠里程</em>
+  </div>
+
+  <h3>实际计算案例</h3>
+  
+  <h4>案例一：标准 1:1 比例叠加 20% 加赠</h4>
+  <p>您有 50,000 点美国运通 MR 积分，计划在 20% 加赠期间转入法荷航 Flying Blue。转点步长为 1,000。</p>
+  <ul>
+    <li>实际可转积分：50,000</li>
+    <li>基础里程 (1:1)：50,000</li>
+    <li>加赠里程 (20%)：10,000</li>
+    <li><strong>最终总里程：60,000 里程</strong></li>
+  </ul>
+
+  <h4>案例二：非 1:1 比例且受步长限制</h4>
+  <p>您有 50,500 点 Capital One 积分，计划转入长荣航空 (EVA Air)。该转点比例为 4:3（即 1 积分 = 0.75 里程）。无加赠活动，步长为 1,000。</p>
+  <ul>
+    <li>实际可转积分：50,000（500 点因不够步长将留在账户中）</li>
+    <li>基础里程 (按 0.75 比例)：37,500</li>
+    <li>加赠里程 (0%)：0</li>
+    <li><strong>最终总里程：37,500 里程</strong></li>
+  </ul>
+
+  <h2>积分转里程换算器 与 转点加赠计算器 有什么区别？</h2>
+  <p>我们提供两个专门针对积分转点的工具，分别适用于完全相反的使用场景：</p>
+  <ul>
+    <li><strong>积分转航空里程换算器（本页面）</strong>：您已经知道自己<strong>手头有多少银行积分</strong>，想计算如果全部转出，最终能收到多少航空里程。这是正向计算。</li>
+    <li><strong><a href="/calculators/transfer-bonus/">转点加赠计算器</a></strong>：您在航司官网查到了机票，知道自己<strong>目标需要多少里程</strong>（例如 65,000），想反算出到底需要从银行扣除多少积分。这是逆向反推。</li>
+  </ul>
+
+  <h2>在哪里查询真实的转点比例？</h2>
+  <p>不要想当然地认为所有转点都是 1:1。虽然 Chase 和 Bilt 的常规转点都是 1:1，但万豪、Amex、Citi 和 Capital One 等在部分航司上存在特殊比例。请务必登录您的银行网银，进入转点操作界面，系统会明确标示当前的准确兑换比例（例如“每 1,000 积分 = 1,000 里程”）。</p>
+
+  <h2>转点的重要限制与风险提示</h2>
+  <ul>
+    <li><strong>转点不可逆</strong>：一旦您将银行积分转换为航空里程或酒店积分，就绝对无法退回银行账户。请勿盲目囤积航空里程。</li>
+    <li><strong>奖励机票库存变化</strong>：在确认有票之前不要轻易转点。</li>
+    <li><strong>转点延迟风险</strong>：部分航司（如全日空 ANA 或新加坡航空）的转点可能需要 24 到 48 小时才能到账，期间您看中的机票可能会被抢走。</li>
+  </ul>
+
+  <h3>常见问题解答 (FAQ)</h3>
+  <div class="faq">
+    <details>
+      <summary>所有的信用卡积分转里程都是 1:1 吗？</summary>
+      <div>
+        <p>并不是。虽然高端旅行信用卡的多数转点伙伴是 1:1，但部分特殊航司或酒店积分（如万豪转航空）比例不同。例如，万豪通常以 3:1 的比例转为航空里程。</p>
+      </div>
+    </details>
+    
+    <details>
+      <summary>我可以精确转出刚好需要的积分零头吗？</summary>
+      <div>
+        <p>通常不行。大多数主要银行都强制规定了转点的最低起转门槛（通常是 1,000 积分），并且必须以 1,000 积分的倍数（即步长）进行转点。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>为什么我转点后的加赠里程没有立刻到账？</summary>
+      <div>
+        <p>在多数情况下，基础里程会立刻到账，但在某些促销活动中，额外的加赠里程是由航司或银行系统单独分批处理的，可能会延迟 24 到 48 小时，甚至更久才能显示在您的账户中。</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    const params = new URLSearchParams(window.location.search);
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+
+  parseParam('points', 'bankPoints');
+  parseParam('baseRatio', 'baseRatio');
+  parseParam('bonusPercent', 'bonusPercent');
+  parseParam('increment', 'increment');
+
+  function calculateConversion() {
+    let points = parseFloat($('bankPoints').value);
+    let ratio = parseFloat($('baseRatio').value);
+    let bonus = parseFloat($('bonusPercent').value);
+    let inc = parseFloat($('increment').value);
+    let targetProg = $('targetProgram').value.trim() || '航空';
+
+    const resetState = (msg = '请输入有效的数值。') => {
+      $('totalMiles').textContent = '-';
+      $('explain').textContent = msg;
+      $('transferablePoints').textContent = '-';
+      $('remainingPoints').textContent = '-';
+      $('baseMiles').textContent = '-';
+      $('bonusMiles').textContent = '-';
+      $('effectiveRatio').textContent = '-';
+    };
+
+    if (isNaN(points) || isNaN(ratio) || isNaN(bonus) || isNaN(inc)) {
+      resetState('请输入有效的数值。');
+      return;
+    }
+
+    if (points < 0 || ratio <= 0 || bonus < 0 || inc <= 0) {
+      resetState('数值不能为负，且比例和步长必须大于 0。');
+      return;
+    }
+
+    if (!isFinite(points) || !isFinite(ratio) || !isFinite(bonus) || !isFinite(inc)) {
+      resetState('输入的数值过大。');
+      return;
+    }
+
+    if (points === 0) {
+      resetState('请输入您的银行积分总额以查看可获得的里程。');
+      return;
+    }
+
+    let transferablePoints = Math.floor(points / inc) * inc;
+    let remainingBankPoints = points - transferablePoints;
+    
+    if (transferablePoints === 0) {
+      resetState(`余额不足。每次至少需要转出 ${inc} 积分。`);
+      return;
+    }
+
+    let baseMiles = transferablePoints * ratio;
+    let bonusMiles = baseMiles * (bonus / 100);
+    let totalMiles = baseMiles + bonusMiles;
+    let effectiveRatio = totalMiles / transferablePoints;
+
+    $('totalMiles').textContent = totalMiles.toLocaleString('en-US', {maximumFractionDigits:0}) + ' 里程';
+    
+    let explainHtml = `您可以转出 <strong>${transferablePoints.toLocaleString('en-US')}</strong> 点积分，最终获得 <strong>${totalMiles.toLocaleString('en-US', {maximumFractionDigits:0})}</strong> ${targetProg}里程。`;
+    if (remainingBankPoints > 0) {
+      explainHtml += ` 由于步长限制，您的银行账户中将剩余 <strong>${remainingBankPoints.toLocaleString('en-US')}</strong> 点积分。`;
+    }
+    $('explain').innerHTML = explainHtml;
+
+    $('transferablePoints').textContent = transferablePoints.toLocaleString('en-US');
+    $('remainingPoints').textContent = remainingBankPoints.toLocaleString('en-US');
+    $('baseMiles').textContent = baseMiles.toLocaleString('en-US', {maximumFractionDigits:0});
+    $('bonusMiles').textContent = bonusMiles.toLocaleString('en-US', {maximumFractionDigits:0});
+    $('effectiveRatio').textContent = effectiveRatio.toLocaleString('en-US', {maximumFractionDigits:2});
+  }
+
+  ['bankPoints', 'baseRatio', 'bonusPercent', 'increment', 'targetProgram'].forEach(id => {
+    if($(id)) $(id).addEventListener('input', calculateConversion);
+  });
+
+  if ($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const url = new URL(window.location.origin + window.location.pathname);
+      const points = parseFloat($('bankPoints').value);
+      const ratio = parseFloat($('baseRatio').value);
+      const bonus = parseFloat($('bonusPercent').value);
+      const inc = parseFloat($('increment').value);
+
+      if(points > 0) url.searchParams.set('points', points);
+      if(ratio > 0) url.searchParams.set('baseRatio', ratio);
+      if(bonus >= 0) url.searchParams.set('bonusPercent', bonus);
+      if(inc > 0) url.searchParams.set('increment', inc);
+
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const toast = $('toast');
+        if(toast) {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+      });
+    });
+  }
+
+  calculateConversion();
+</script>
