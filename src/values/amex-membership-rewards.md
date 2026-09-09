@@ -29,7 +29,7 @@ breadcrumbs:
 
 <h2>常见高价值兑换方式与示例</h2>
 <p>Amex Membership Rewards (MR) 玩家公认的常见用法通常包括：</p>
-<p><em>转点至全日空 (ANA) 兑换中美往返商务舱，或在转点加赠期间转入英国航空 (BA Avios) 兑换短途机票。</em></p>
+<p><em>转点至全日空 (ANA) 兑换中美往返商务舱，或在转点加赠期间转入英国航空 (BA Avios) 兑换短途机票。在进行操作前，我们建议您使用<a href="/calculators/points-to-miles-converter/">计算实际可获得的航空里程数</a>，以确保结果符合预期。</em></p>
 
 <h3>如何自行验证是否划算？</h3>
 <p>当你准备兑换时，请按照以下步骤自行验证：</p>

@@ -317,7 +317,7 @@ lastModified: "2026-08-22"
     
     // Internal calculations use the values directly.
     // If USD is chosen, we assume mileValue was entered as Cents, so we convert to Dollars for the total.
-    // Wait, the preset options are in CNY (0.15, 0.35, 0.6, 1.2, 2.0). 
+    // Note: the preset options are in CNY (0.15, 0.35, 0.6, 1.2, 2.0). 
     // If user selects USD, they should enter Cents (e.g., 4.0), so we need to divide by 100 for dollar value.
     let milesValue = 0;
     if (currentCurrency === 'USD') {
