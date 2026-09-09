@@ -46,11 +46,21 @@ async function runTests() {
 
   console.log(`Found ${urls.length} URLs in sitemap`);
   
+  
+  if (!urls.includes('https://points-miles-calculator.pages.dev/en/calculators/points-to-miles-converter/')) {
+    console.error('[FAIL] Missing EN Points to Miles Converter');
+    failures++;
+  }
+  if (!urls.includes('https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/')) {
+    console.error('[FAIL] Missing ZH Points to Miles Converter');
+    failures++;
+  }
+
   if (urls.length !== 106) {
     console.error(`[FAIL] Expected 106 URLs, found ${urls.length}`);
     failures++;
   } else {
-    console.log(`[PASS] URL count is exactly 104`);
+    console.log(`[PASS] URL count is exactly 106`);
   }
 
   const locs = new Set();

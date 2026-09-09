@@ -128,9 +128,9 @@ async function verifyLiveProduction() {
   // 4. Search Intent, Single H1 & Shortened Titles Verification
   console.log('\n4. Verifying Search Intent, Single H1 & Shortened Titles on Live Production...');
   const pagesToCheck = [
-    { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points and Miles Calculators | Points & Miles Calculator' },
-    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Points to Dollars Calculator | Miles Value | Points & Miles Calculator' },
-    { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Award Travel | Points & Miles Calculator' },
+    { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points to Miles & Award Calculators | Points & Miles Calculator' },
+    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Miles to Dollars Calculator | Points & Miles Calculator' },
+    { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
     { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
@@ -547,8 +547,8 @@ async function verifyLiveProduction() {
     }
   }
 
-  // 7. Full 104 URLs Live Crawl & Canonical/JSON-LD Audit (Batched parallel)
-  console.log('\n7. Auditing all 104 Live URLs on Production (Parallel batching)...');
+  // 7. Full ${sitemapUrls.length} URLs Live Crawl & Canonical/JSON-LD Audit (Batched parallel)
+  console.log(`\n7. Auditing all ${sitemapUrls.length} Live URLs on Production (Parallel batching)...`);
   const batchSize = 15;
   for (let i = 0; i < sitemapUrls.length; i += batchSize) {
     const batch = sitemapUrls.slice(i, i + batchSize);
@@ -567,7 +567,7 @@ async function verifyLiveProduction() {
       }
     }));
   }
-  console.log('All 104 URLs returned HTTP 200 with valid canonicals.');
+  console.log(`All ${sitemapUrls.length} URLs returned HTTP 200 with valid canonicals.`);
 
   if (failures > 0) {
     console.error(`\nLIVE PRODUCTION VERIFICATION FAILED WITH ${failures} ERRORS.`);
