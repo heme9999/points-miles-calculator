@@ -34,9 +34,9 @@ Always compare the points cost against the total cash cost, including all taxes 
 
 ## Hyatt vs. Hilton vs. Marriott Examples
 
-* **World of Hyatt:** The last major holdout with an award chart. Points are generally valued very high, often around 1.7 to 2.0 cents each.
-* **Hilton Honors:** Highly dynamic. Points are easy to earn but generally valued lower, around 0.4 to 0.5 cents each.
-* **Marriott Bonvoy:** Fully dynamic. Generally valued around 0.6 to 0.8 cents each. 
+* **[World of Hyatt Points Value](/en/values/hyatt-points/):** The last major holdout with an award chart. Points are generally valued very high, often around 1.7 to 2.0 cents each.
+* **[Hilton Honors Points Value](/en/values/hilton-points/):** Highly dynamic. Points are easy to earn but generally valued lower, around 0.4 to 0.5 cents each.
+* **[Marriott Bonvoy Points Value](/en/values/marriott-points/):** Fully dynamic. Generally valued around 0.6 to 0.8 cents each. 
 
 ## Valuation Pages
 

@@ -61,4 +61,4 @@ Points bookings are often highly flexible. Many airline and hotel loyalty progra
 
 ## Try Our Advanced Calculator
 
-Ready to crunch the numbers for your next trip? Use our [Advanced Calculator](/en/calculators/) to easily compare your options, factor in taxes, and determine the exact value of your redemption!
+Ready to crunch the numbers for your next trip? Use our [Advanced Calculator](/en/calculators/) to easily compare your options, factor in taxes, and determine the exact value of your redemption! If you are evaluating a complete vacation budget with both flights and hotel rewards, use our [Trip Cost After Points Calculator](/en/calculators/trip-cost-after-points/) to model total net cash expenditure.

@@ -13,7 +13,7 @@ breadcrumbs:
 
 ## Overview
 
-Capital One Miles and Chase Ultimate Rewards represent two distinct approaches to travel rewards. Chase focuses on category bonuses and domestic sweet spots, while Capital One champions simplicity and flat-rate earning.
+Capital One Miles and Chase Ultimate Rewards represent two distinct approaches to travel rewards. For a deep dive into baseline program valuations, see our [Capital One Miles Valuation Guide](/en/values/capital-one-miles/). Chase focuses on category bonuses and domestic sweet spots, while Capital One champions simplicity and flat-rate earning.
 
 ## Earning Structures (2x vs Categories)
 

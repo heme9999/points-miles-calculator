@@ -11,7 +11,7 @@ breadcrumbs:
 
 # Guide to Points Transfer Bonuses
 
-Transfer bonuses are one of the best ways to stretch the value of your credit card points. Programs like Chase Ultimate Rewards, Amex Membership Rewards, and Capital One Miles frequently offer promotions to transfer points to airlines or hotels with an added bonus.
+Transfer bonuses are one of the best ways to stretch the value of your credit card points. Programs like Chase Ultimate Rewards, Amex Membership Rewards, and [Capital One Miles](/en/values/capital-one-miles/) frequently offer promotions to transfer points to airlines or hotels with an added bonus.
 
 ## How Transfer Bonuses Work
 

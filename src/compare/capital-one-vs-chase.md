@@ -13,7 +13,7 @@ breadcrumbs:
 
 ## 概述
 
-Capital One Miles（第一资本里程）和 Chase Ultimate Rewards（大通银行 UR 积分）代表了两种截然不同的信用卡奖励哲学。Chase 侧重于多类别消费加成和强大的国内兑换亮点，而 Capital One 则主打极简主义和固定比例返点。
+Capital One Miles（第一资本里程）和 Chase Ultimate Rewards（大通银行 UR 积分）代表了两种截然不同的信用卡奖励哲学。想要深入了解该体系的基准价值与使用技巧，请参考我们的 [Capital One 里程估值分析](/values/capital-one-miles/)。Chase 侧重于多类别消费加成和强大的国内兑换亮点，而 Capital One 则主打极简主义和固定比例返点。
 
 ## 攒点结构 (2x 统一返点 vs 类别加成)
 

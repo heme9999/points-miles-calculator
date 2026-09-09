@@ -16,7 +16,7 @@ If you hold a co-branded hotel credit card from Marriott, Hilton, or IHG, you li
 
 A Free Night Award is a certificate that can be redeemed for a one-night stay at participating properties within a hotel portfolio. 
 
-- **Marriott Bonvoy**: Certificates are capped by point value (e.g., 35,000 points or 50,000 points). However, Marriott allows you to "top off" your certificate with up to 15,000 of your own points to book a more expensive property.
+- **[Marriott Bonvoy](/en/values/marriott-points/)**: Certificates are capped by point value (e.g., 35,000 points or 50,000 points). However, Marriott allows you to "top off" your certificate with up to 15,000 of your own points to book a more expensive property.
 - **Hilton Honors**: Hilton's Free Night Rewards are uncapped, meaning they can be used at almost any property in the world (with a few exclusions) on any day of the week, provided there is a standard room reward available.
 
 ## How to Earn Them

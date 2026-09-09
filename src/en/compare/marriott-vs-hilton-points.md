@@ -33,8 +33,8 @@ Both programs offer a fantastic perk for longer stays: book five consecutive awa
 
 Because of how easily they are earned and the inflated pricing of rooms, hotel points are generally worth less than airline miles.
 
-*   **Marriott Bonvoy:** Generally valued at around **0.7 to 0.8 cents per point**.
-*   **Hilton Honors:** Generally valued at around **0.4 to 0.5 cents per point**.
+*   **Marriott Bonvoy:** Generally valued at around **0.7 to 0.8 cents per point** (see our [Marriott Bonvoy valuation analysis](/en/values/marriott-points/)).
+*   **Hilton Honors:** Generally valued at around **0.4 to 0.5 cents per point** (read our detailed [Hilton Honors points valuation guide](/en/values/hilton-points/)).
 
 While Hilton points are mathematically worth less, they are often much easier to earn through credit card multipliers and promotions.
 

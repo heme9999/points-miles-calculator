@@ -11,7 +11,7 @@ breadcrumbs:
 
 # 积分转点奖励计算指南
 
-转点奖励（Transfer Bonuses）是最大化信用卡积分价值的最佳方式之一。像 Chase Ultimate Rewards、Amex Membership Rewards 和 Capital One Miles 这样的银行积分系统，经常会推出将积分转入特定航空或酒店合作伙伴的加赠活动。
+转点奖励（Transfer Bonuses）是最大化信用卡积分价值的最佳方式之一。像 Chase Ultimate Rewards、Amex Membership Rewards 和 [Capital One 里程体系](/values/capital-one-miles/) 这样的银行积分系统，经常会推出将积分转入特定航空或酒店合作伙伴的加赠活动。
 
 ## 转点奖励如何运作
 

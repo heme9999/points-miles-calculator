@@ -20,6 +20,7 @@ Put our methodology into practice with our free calculators:
 - [Miles to Dollars Calculator](/en/calculators/points-to-dollars/): Estimate the dollar value of miles.
 - [Cents Per Point Calculator](/en/calculators/cents-per-point/): Find the precise redemption value of a ticket.
 - [Points vs Cash Calculator](/en/calculators/points-vs-cash/): Compare the full cost of awards vs. cash.
+- [Trip Cost After Points Calculator](/en/calculators/trip-cost-after-points/): Model total out-of-pocket cash needs across complete itineraries.
 
 ## 1. Industry Consensus
 

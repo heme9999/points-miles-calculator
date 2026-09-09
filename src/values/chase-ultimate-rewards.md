@@ -29,7 +29,7 @@ breadcrumbs:
 
 <h2>常见高价值兑换方式与示例</h2>
 <p>Chase Ultimate Rewards (UR) 玩家公认的常见用法通常包括：</p>
-<p><em>1:1 转入 World of Hyatt 兑换高端奢华酒店，或转入美联航 (United Airlines) 兑换星空联盟网络。如果您需要规划不同比例下的兑换，可以使用我们的<a href="/calculators/points-to-miles-converter/">积分转航空里程工具</a>来计算准确的转换结果。</em></p>
+<p><em>1:1 转入 <a href="/values/hyatt-points/">World of Hyatt 凯悦酒店</a> 兑换高端奢华酒店，或转入美联航 (United Airlines) 兑换星空联盟网络。如果您需要规划不同比例下的兑换，可以使用我们的<a href="/calculators/points-to-miles-converter/">积分转航空里程工具</a>来计算准确的转换结果。</em></p>
 
 <h3>如何自行验证是否划算？</h3>
 <p>当你准备兑换时，请按照以下步骤自行验证：</p>

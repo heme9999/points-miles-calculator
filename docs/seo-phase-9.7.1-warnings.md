@@ -1,0 +1,148 @@
+# Audit Warnings Report
+
+**Date**: 2026-09-09T04:05:28.906Z
+**Total URLs**: 106
+**Intentional Support Pages**: 8
+**Technical Blockers**: 0
+**Content/Link Warnings**: 34
+
+These warnings may reduce discovery or perceived page importance, but they do not prove that Google has excluded the URLs. Actual indexing status requires GSC validation.
+
+## Warning List
+
+- **https://points-miles-calculator.pages.dev/values/avios/**
+  - Warning Type: `insufficient-contextual-inbound-links`
+  - Inbound Count: 1
+  - Sources: ["https://points-miles-calculator.pages.dev/calculators/cents-per-point/"]
+- **https://points-miles-calculator.pages.dev/values/citi-thankyou-points/**
+  - Warning Type: `insufficient-contextual-inbound-links`
+  - Inbound Count: 1
+  - Sources: ["https://points-miles-calculator.pages.dev/calculators/transfer-bonus/"]
+- **https://points-miles-calculator.pages.dev/guides/how-to-calculate-point-value/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/values/aeroplan-points/**
+  - Warning Type: `insufficient-contextual-inbound-links`
+  - Inbound Count: 1
+  - Sources: ["https://points-miles-calculator.pages.dev/en/calculators/points-to-dollars/"]
+- **https://points-miles-calculator.pages.dev/en/values/avios/**
+  - Warning Type: `insufficient-contextual-inbound-links`
+  - Inbound Count: 1
+  - Sources: ["https://points-miles-calculator.pages.dev/en/calculators/cents-per-point/"]
+- **https://points-miles-calculator.pages.dev/en/values/citi-thankyou-points/**
+  - Warning Type: `insufficient-contextual-inbound-links`
+  - Inbound Count: 1
+  - Sources: ["https://points-miles-calculator.pages.dev/en/calculators/transfer-bonus/"]
+- **https://points-miles-calculator.pages.dev/en/guides/how-to-calculate-point-value/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/guides/hotel-points-value/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/guides/points-vs-cash/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/guides/what-is-cents-per-point/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/guides/hotel-points-value/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/guides/points-vs-cash/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/guides/transfer-bonus-calculator-guide/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/guides/what-is-cents-per-point/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/guides/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/guides/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/examples/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/examples/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/guides/free-night-awards/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/guides/valuing-hotel-points/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/guides/free-night-awards/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/guides/valuing-hotel-points/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/examples/hotel-fifth-night-free-calculation/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/examples/hotel-fifth-night-free-calculation/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/examples/buy-points-100-percent-bonus/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/examples/buy-points-100-percent-bonus/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/examples/transfer-bonus-break-even/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/examples/transfer-bonus-break-even/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/blog/xinyongka-jifen-zhuan-yazhouwanlitong/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/blog/yazhouwanlitong-licheng-jiazhi/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/blog/zhaohang-jifen-huan-licheng/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/blog/xinyongka-jifen-zhuan-yazhouwanlitong/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/blog/yazhouwanlitong-licheng-jiazhi/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []
+- **https://points-miles-calculator.pages.dev/en/blog/zhaohang-jifen-huan-licheng/**
+  - Warning Type: `zero-contextual-inbound-links`
+  - Inbound Count: 0
+  - Sources: []

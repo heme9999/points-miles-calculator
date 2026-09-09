@@ -29,7 +29,7 @@ When you book 5 consecutive nights on points, you only pay for 4. This effective
 ## The Impact of Resort Fees
 
 When calculating the value of your points, you must factor in taxes and resort fees:
-- **Hilton & Hyatt**: Completely waive resort fees on award stays. This can save you $30-$50 per night and greatly increases the value of your points.
-- **Marriott**: Does **not** waive resort fees on award stays (except at a few specific properties). You still have to pay them out of pocket.
+- **[Hilton Honors](/en/values/hilton-points/) & [World of Hyatt](/en/values/hyatt-points/)**: Completely waive resort fees on award stays. This can save you $30-$50 per night and greatly increases the value of your points.
+- **[Marriott Bonvoy](/en/values/marriott-points/)**: Does **not** waive resort fees on award stays (except at a few specific properties). You still have to pay them out of pocket.
 
 To accurately account for these fees and the 5th night free perk, run your potential stays through our [Hotel Points vs Cash Calculator](/en/calculators/hotel-points-vs-cash/).
