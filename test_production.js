@@ -725,6 +725,148 @@ async function runTests() {
     }
   }
 
+  // --- Phase 9.8 Specific Gatekeeper Tests ---
+  console.log('\n--- Phase 9.8: GSC Ranking & Core Page Enhancement Tests ---');
+
+  // 1. Amex Balance Table Verification
+  const amexRes = await fetch(`${baseUrl}/en/values/amex-membership-rewards/`);
+  if (amexRes.status !== 200) {
+    console.error('ERROR: Amex page returned ' + amexRes.status);
+    failures++;
+  } else {
+    const amexDoc = new JSDOM(amexRes.data).window.document;
+    const table = amexDoc.querySelector('table');
+    if (!table) {
+      console.error('ERROR: Amex page missing valuation table');
+      failures++;
+    } else {
+      const tableText = table.textContent;
+      const expectedRows = [
+        { pts: '10,000', v1: '$100', v15: '$150', v2: '$200' },
+        { pts: '25,000', v1: '$250', v15: '$375', v2: '$500' },
+        { pts: '50,000', v1: '$500', v15: '$750', v2: '$1,000' },
+        { pts: '100,000', v1: '$1,000', v15: '$1,500', v2: '$2,000' }
+      ];
+      let tableOk = true;
+      for (const row of expectedRows) {
+        if (!tableText.includes(row.pts) || !tableText.includes(row.v1) || !tableText.includes(row.v15) || !tableText.includes(row.v2)) {
+          console.error('ERROR: Amex balance table missing values for ' + row.pts);
+          failures++;
+          tableOk = false;
+        }
+      }
+      if (tableOk) console.log('Amex balance table math values verified (Passed)');
+    }
+
+    // Check Geographic Scope note
+    if (!amexRes.data.includes('This page primarily discusses U.S. Membership Rewards accounts')) {
+      console.error('ERROR: Amex page missing US geographic scope statement');
+      failures++;
+    } else {
+      console.log('Amex geographic scope note verified (Passed)');
+    }
+
+    // Check Direct Answer word count
+    const directEl = amexDoc.querySelector('.direct-answer');
+    if (!directEl) {
+      console.error('ERROR: Amex page missing .direct-answer');
+      failures++;
+    } else {
+      const words = directEl.textContent.trim().split(/\s+/).length;
+      if (words < 40 || words > 80) {
+        console.error('ERROR: Amex direct answer word count outside 40-70 range: ' + words);
+        failures++;
+      } else {
+        console.log('Amex direct answer word count OK (' + words + ' words) (Passed)');
+      }
+    }
+  }
+
+  // 2. Prefill links auto-calculation test
+  const prefillTests = [
+    { pts: 10000, cpp: 1.5, expected: '$150' },
+    { pts: 25000, cpp: 1.5, expected: '$375' },
+    { pts: 50000, cpp: 1.5, expected: '$750' },
+    { pts: 100000, cpp: 1.5, expected: '$1,500' }
+  ];
+  for (const pt of prefillTests) {
+    const pfUrl = `${baseUrl}/en/calculators/points-to-dollars/?totalPoints=${pt.pts}&cppValue=${pt.cpp}`;
+    const pfRes = await fetch(pfUrl);
+    if (pfRes.status !== 200) {
+      console.error('ERROR: Prefill link returned ' + pfRes.status);
+      failures++;
+    } else {
+      const pfDom = new JSDOM(pfRes.data, { url: pfUrl, runScripts: 'dangerously', resources: 'usable' });
+      const val = pfDom.window.document.getElementById('dollarValue')?.textContent;
+      if (val !== pt.expected) {
+        console.error(`ERROR: Prefill ${pt.pts} @ ${pt.cpp} expected ${pt.expected}, got ${val}`);
+        failures++;
+      } else {
+        console.log(`Prefill ${pt.pts} @ ${pt.cpp} auto-calculated: ${val} (Passed)`);
+      }
+
+      // Canonical check on prefill URL response
+      const canonical = pfDom.window.document.querySelector('link[rel="canonical"]')?.getAttribute('href');
+      if (canonical !== 'https://points-miles-calculator.pages.dev/en/calculators/points-to-dollars/') {
+        console.error('ERROR: Prefill URL has invalid canonical: ' + canonical);
+        failures++;
+      }
+    }
+  }
+
+  // 3. Quick balance preset buttons test
+  const p2dPageUrl = `${baseUrl}/en/calculators/points-to-dollars/`;
+  const p2dRes = await fetch(p2dPageUrl);
+  const p2dPresetDom = new JSDOM(p2dRes.data, { url: p2dPageUrl, runScripts: 'dangerously', resources: 'usable' });
+  const p2dPresetDoc = p2dPresetDom.window.document;
+  const presetBtns = p2dPresetDoc.querySelectorAll('.btn-balance-preset');
+  if (presetBtns.length !== 4) {
+    console.error('ERROR: Expected 4 balance preset buttons, got ' + presetBtns.length);
+    failures++;
+  } else {
+    const btn100k = Array.from(presetBtns).find(b => b.getAttribute('data-points') === '100000');
+    if (!btn100k) {
+      console.error('ERROR: 100k preset button not found');
+      failures++;
+    } else {
+      btn100k.click();
+      const afterVal = p2dPresetDoc.getElementById('dollarValue')?.textContent;
+      if (afterVal !== '$1,500') {
+        console.error('ERROR: Clicking 100k preset did not update to $1,500, got: ' + afterVal);
+        failures++;
+      } else {
+        console.log('Quick balance button click updated value to $1,500 immediately (Passed)');
+      }
+    }
+  }
+
+  // 4. Points to Miles Converter Scenario (50,000 + 20% = 60,000)
+  const p2mUrl = `${baseUrl}/en/calculators/points-to-miles-converter/?bankPoints=50000&baseRatio=1&bonusPercent=20&increment=1000`;
+  const p2mRes = await fetch(p2mUrl);
+  const p2mDom = new JSDOM(p2mRes.data, { url: p2mUrl, runScripts: 'dangerously', resources: 'usable' });
+  const p2mMiles = p2mDom.window.document.getElementById('totalMiles')?.textContent?.replace(/[^0-9]/g, '');
+  if (p2mMiles !== '60000') {
+    console.error('ERROR: Points to Miles 50k + 20% expected 60000, got: ' + p2mMiles);
+    failures++;
+  } else {
+    console.log('Points to Miles 50,000 + 20% bonus verified: 60,000 miles (Passed)');
+  }
+
+  // 5. English Calculators Directory Distinct IO Statements
+  const calcIndexRes = await fetch(`${baseUrl}/en/calculators/`);
+  const calcIndexText = calcIndexRes.data;
+  if (!calcIndexText.includes('Miles to Dollars Calculator') ||
+      !calcIndexText.includes('Points to Miles Converter') ||
+      !calcIndexText.includes('Transfer Bonus Calculator')) {
+    console.error('ERROR: English calculators index missing key tools');
+    failures++;
+  } else if (!calcIndexText.includes('Input:') || !calcIndexText.includes('Output:')) {
+    console.error('ERROR: English calculators index missing Input/Output definitions');
+    failures++;
+  } else {
+    console.log('English calculators index tool separation and Input/Output verified (Passed)');
+  }
+
   if (failures > 0) {
     console.error(`\nFAILED WITH ${failures} ERRORS.`);
     process.exit(1);

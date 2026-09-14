@@ -5,8 +5,8 @@ description: Convert airline miles and credit card points to dollar value across
 schemaType: WebApplication
 eyebrow: Tools · 05
 datePublished: "2026-08-14"
-dateModified: "2026-08-23"
-lastModified: "2026-08-23"
+dateModified: "2026-09-14"
+lastModified: "2026-09-14"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
@@ -17,7 +17,7 @@ breadcrumbs:
 <p class="sub">Convert airline miles and credit card rewards into estimated cash value. Choose an illustrative valuation scenario or input your own custom CPP to model potential purchasing power.</p>
 
 <div class="direct-answer">
-  <strong>Direct Calculation Rule:</strong> Using a 1.5¢-per-mile illustrative airline-mile scenario, 50,000 miles represents roughly $750 in estimated travel value. This is a calculation example, not a live or guaranteed valuation for a specific loyalty program.
+  <strong>Direct Calculation Rule:</strong> This <strong>miles to dollars calculator</strong> converts your total <strong>points balance</strong> into an estimated cash value based on an <strong>illustrative valuation</strong> assumption. For example, multiplying a 50,000 balance by an illustrative 1.5 <strong>cents per point</strong> (CPP) benchmark yields approximately $750 in modeled travel value.
 </div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
@@ -27,6 +27,13 @@ breadcrumbs:
   <div class="field">
     <label for="totalPoints">Total points / miles in your account<span class="hint" id="hintTotal">Points</span></label>
     <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal">
+    <div class="preset-buttons" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+      <span style="font-size: 0.85rem; color: #64748b;">Quick balances:</span>
+      <button type="button" class="btn-balance-preset" data-points="10000">10,000</button>
+      <button type="button" class="btn-balance-preset" data-points="25000">25,000</button>
+      <button type="button" class="btn-balance-preset" data-points="50000">50,000</button>
+      <button type="button" class="btn-balance-preset" data-points="100000">100,000</button>
+    </div>
   </div>
   
   <div class="field">
@@ -80,6 +87,10 @@ breadcrumbs:
 </div>
 
 <div class="callout" style="margin-top: 24px;">
+  <strong>Valuing Specific Reward Programs:</strong> If you are calculating rewards for a specific credit card ecosystem rather than general airline miles, baseline values vary by redemption method. For instance, see our in-depth <a href="/en/values/amex-membership-rewards/">Amex Membership Rewards Points Value Guide</a> to learn why transfer partners yield significantly more value than retail checkout, or check our <a href="/en/values/chase-ultimate-rewards/">Chase Ultimate Rewards Guide</a>.
+</div>
+
+<div class="callout" style="margin-top: 16px;">
   <strong>Core Consideration:</strong> Loyalty points carry no legal cash guarantee and face ongoing risk of program devaluation. A practical approach is to accumulate rewards for planned trips rather than hoarding large balances indefinitely.
 </div>
 
@@ -182,11 +193,18 @@ breadcrumbs:
           <td>$160</td>
         </tr>
         <tr>
-          <td style="text-align: left; font-weight: 600; color: #0f172a;">17,000 miles</td>
-          <td>$102</td>
-          <td>$204</td>
-          <td>$255</td>
-          <td>$340</td>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">10,000 miles</td>
+          <td>$60</td>
+          <td>$120</td>
+          <td>$150</td>
+          <td>$200</td>
+        </tr>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">25,000 miles</td>
+          <td>$150</td>
+          <td>$300</td>
+          <td>$375</td>
+          <td>$500</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">50,000 miles</td>
@@ -196,11 +214,11 @@ breadcrumbs:
           <td>$1,000</td>
         </tr>
         <tr>
-          <td style="text-align: left; font-weight: 600; color: #0f172a;">60,000 miles</td>
-          <td>$360</td>
-          <td>$720</td>
-          <td>$900</td>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">100,000 miles</td>
+          <td>$600</td>
           <td>$1,200</td>
+          <td>$1,500</td>
+          <td>$2,000</td>
         </tr>
       </tbody>
     </table>
@@ -211,6 +229,7 @@ breadcrumbs:
   <div class="related-tools">
     <h3>Related Calculators for Award Travel</h3>
     <ul>
+      <li><a href="/en/calculators/points-to-miles-converter/">Points to Miles Converter</a>: Calculate exact airline miles received when converting bank points across custom transfer ratios and bonus promotions.</li>
       <li><a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>: Calculate the exact CPP value of a specific flight or hotel ticket after taxes.</li>
       <li><a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>: Compare paying cash vs redeeming miles, factoring in taxes and forgone credit card rewards.</li>
       <li><a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a>: Calculate how many flexible bank points you need to transfer during bonus promotions.</li>
@@ -242,6 +261,23 @@ breadcrumbs:
     </details>
   </div>
 </div>
+
+<style>
+  .btn-balance-preset {
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #334155;
+    transition: all 0.15s ease;
+  }
+  .btn-balance-preset:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+  }
+</style>
 
 <script>
   const $ = id => document.getElementById(id);
@@ -304,8 +340,17 @@ breadcrumbs:
     
     $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
     $('dollarValue').classList.add('win');
-    $('explain').textContent = `At an illustrative valuation of ${V}¢ / point, your ${P.toLocaleString('en-US', {maximumFractionDigits:0})} points hold roughly $${total.toLocaleString('en-US', {maximumFractionDigits:0})} in modeled purchasing power. This is an illustrative scenario, not a guaranteed cashout.`;
+    $('explain').textContent = `Points balance: ${P.toLocaleString('en-US')} | Valuation: ${V}¢ CPP | Estimated value: $${total.toLocaleString('en-US', {maximumFractionDigits:0})}. This is a modeled travel value, not a guaranteed cashout amount.`;
   }
+
+  // Preset balance buttons
+  document.querySelectorAll('.btn-balance-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pts = btn.getAttribute('data-points');
+      $('totalPoints').value = pts;
+      calcDollars();
+    });
+  });
 
   $('presetValuation').addEventListener('change', e => {
     if(e.target.value !== 'custom'){

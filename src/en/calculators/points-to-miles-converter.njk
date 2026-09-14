@@ -5,8 +5,8 @@ description: Convert your credit card points to airline miles easily. Calculate 
 schemaType: WebApplication
 eyebrow: Tools · 05
 datePublished: "2026-09-08"
-dateModified: "2026-09-08"
-lastModified: "2026-09-08"
+dateModified: "2026-09-14"
+lastModified: "2026-09-14"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
@@ -15,7 +15,7 @@ breadcrumbs:
 <h1>Points to Miles Converter</h1>
 
 <div class="direct-answer">
-  <strong>Direct Answer:</strong> To calculate how many airline miles you will receive, first round your bank points down to the nearest transfer increment (usually 1,000). Then, multiply that number by the base transfer ratio. Finally, add any promotional transfer bonus percentage to get your total airline miles.
+  <strong>Direct Answer:</strong> The <strong>Points to Miles Converter</strong> calculates the exact number of airline miles you will receive from a known bank points balance after applying transfer increments, base ratios, and promotional bonuses. This tool performs a forward calculation. It differs from the <a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a> (which reverse-calculates how many bank points you need for a target award ticket) and the <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a> (which estimates the monetary dollar value of a rewards balance).
 </div>
 
 <div class="calculator-container" style="margin-top: 2rem;">
@@ -111,7 +111,7 @@ breadcrumbs:
   </ul>
 
   <h2>Where to Find Real Transfer Ratios</h2>
-  <p>Never assume all transfers are 1:1. Many transfers use a 1:1 ratio, but exceptions and account-specific transition rules exist. Always verify the live ratio shown in your rewards portal before transferring. You can always confirm the exact ratio by logging into your bank's reward portal and selecting the transfer partner. The portal will explicitly state the ratio (e.g., "1,000 points = 1,000 miles").</p>
+  <p>Never assume all transfers are 1:1. While many airline partners across programs like Amex, Chase, and Capital One transfer at 1:1, there are numerous exceptions (e.g., 4:3, 2:1, or 3:1 for hotel currencies), and promotional bonuses temporarily alter effective ratios. Always treat listed transfer ratios as illustrative examples and verify the live ratio shown in your bank's reward portal before initiating a transfer. The portal will explicitly state the current ratio (e.g., "1,000 points = 1,000 miles").</p>
 
   <h2>Important Transfer Rules and Limitations</h2>
   <ul>
@@ -158,6 +158,7 @@ breadcrumbs:
   };
 
   parseParam('points', 'bankPoints');
+  parseParam('bankPoints', 'bankPoints');
   parseParam('baseRatio', 'baseRatio');
   parseParam('bonusPercent', 'bonusPercent');
   parseParam('increment', 'increment');

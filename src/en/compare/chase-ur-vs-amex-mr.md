@@ -31,10 +31,10 @@ Both share valuable partners like Air France/KLM Flying Blue, British Airways Av
 
 ## Value and Redemption
 
-*   **Chase UR:** Offers a high "floor" value. If you don't want to transfer to partners, you can redeem points for 1.25 to 1.5 cents each (depending on the card) directly through the Chase Travel Portal.
-*   **Amex MR:** Requires effort to maximize. Using them for statement credits or through the Amex travel portal usually yields a dismal 0.6 to 1 cent per point. To get good value, you *must* transfer to airline partners.
+*   **Chase UR:** Offers a high "floor" value. If you don't want to transfer to partners, you can redeem points for 1.25 to 1.5 cents each (depending on the card) directly through the Chase Travel Portal. Read our [Chase Ultimate Rewards Value Guide](/en/values/chase-ultimate-rewards/) for detailed redemption analysis.
+*   **Amex MR:** Requires effort to maximize. Using them for statement credits or through the Amex travel portal usually yields a dismal 0.6 to 1 cent per point. To get good value, you *must* transfer to airline partners. Learn more in our [Amex Membership Rewards Points Value Guide](/en/values/amex-membership-rewards/).
 
-Check our [Points Value Calculator](/en/tools/calculator) to see real-time valuations based on your specific redemption goals.
+Use our [Points vs Cash Calculator](/en/calculators/points-vs-cash/) or [Miles to Dollars Calculator](/en/calculators/points-to-dollars/) to model valuations based on your specific redemption goals.
 
 ## Verdict: Who is it for?
 
