@@ -336,3 +336,97 @@ test('Points to Miles Converter Core Logic & UI Tests', async (t) => {
     assert.match($('explain').textContent, /Inputs cannot be negative/);
   });
 });
+
+test('Hotel Points vs Cash Engine Unit Tests', async (t) => {
+  const CalculatorCore = require('../src/assets/calculator-core.js');
+
+  await t.test('1. Simple Mode: $1500 cash, 100k points, $50 award fees -> 1.45 CPP', () => {
+    const res = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'checkout-total',
+      currency: 'USD',
+      totalCashPrice: 1500,
+      totalPointsRequired: 100000,
+      awardCashFees: 50,
+      personalValuation: 1.0,
+      nights: 3
+    });
+
+    assert.strictEqual(res.grossCashCost, 1500);
+    assert.strictEqual(res.awardCashCost, 50);
+    assert.strictEqual(res.avoidedCashSpend, 1450);
+    assert.strictEqual(res.actualPointsUsed, 100000);
+    assert.strictEqual(res.cpp, 1.45);
+    assert.strictEqual(res.recommendation, 'points');
+    assert.strictEqual(res.personalValuationDifference, 45);
+  });
+
+  await t.test('2. Award fees exceed cash price: $300 cash, $350 award fees -> Warning & Cash recommendation', () => {
+    const res = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'checkout-total',
+      currency: 'USD',
+      totalCashPrice: 300,
+      totalPointsRequired: 50000,
+      awardCashFees: 350,
+      personalValuation: 1.0,
+      nights: 1
+    });
+
+    assert.ok(res.calculationWarnings.includes('award_cash_exceeds_cash_price'));
+    assert.strictEqual(res.recommendation, 'cash');
+  });
+
+  await t.test('3. Advanced Mode: 5 nights, 20k pts/night, 5th night free -> 80k pts used', () => {
+    const res = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'nightly-breakdown',
+      currency: 'USD',
+      nightlyCashPrice: 200,
+      pointsPerNight: 20000,
+      nights: 5,
+      freeNightRule: '5th',
+      cashTaxes: 0,
+      cashResortFees: 0,
+      awardTaxes: 0,
+      awardResortFees: 0,
+      personalValuation: 1.0
+    });
+
+    assert.strictEqual(res.freeNights, 1);
+    assert.strictEqual(res.pointsBeforeFreeNight, 100000);
+    assert.strictEqual(res.actualPointsUsed, 80000);
+    assert.strictEqual(res.grossCashCost, 1000);
+    assert.strictEqual(res.cpp, 1.25);
+  });
+
+  await t.test('4. Simple mode preserves 80k pts without double-discounting 5th night', () => {
+    const res = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'checkout-total',
+      currency: 'USD',
+      totalCashPrice: 1000,
+      totalPointsRequired: 80000,
+      awardCashFees: 0,
+      nights: 5,
+      personalValuation: 1.0
+    });
+
+    assert.strictEqual(res.freeNights, 0); // Checkout points already factored discounts
+    assert.strictEqual(res.actualPointsUsed, 80000);
+    assert.strictEqual(res.cpp, 1.25);
+  });
+
+  await t.test('5. Missing personal valuation -> displays CPP with no verdict bias', () => {
+    const res = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'checkout-total',
+      currency: 'USD',
+      totalCashPrice: 1000,
+      totalPointsRequired: 80000,
+      awardCashFees: 0,
+      nights: 5,
+      personalValuation: null
+    });
+
+    assert.strictEqual(res.cpp, 1.25);
+    assert.strictEqual(res.personalValuation, null);
+    assert.strictEqual(res.recommendation, 'insufficient');
+  });
+});
+

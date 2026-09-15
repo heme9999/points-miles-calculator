@@ -94,6 +94,7 @@ async function runTests() {
   const expectedEnLinks = [
     '/en/calculators/points-to-dollars/',
     '/en/calculators/points-vs-cash/',
+    '/en/calculators/hotel-points-vs-cash/',
     '/en/calculators/trip-cost-after-points/',
     '/en/calculators/cents-per-point/',
     '/en/calculators/transfer-bonus/'
@@ -115,6 +116,7 @@ async function runTests() {
   const expectedZhLinks = [
     '/calculators/points-to-dollars/',
     '/calculators/points-vs-cash/',
+    '/calculators/hotel-points-vs-cash/',
     '/calculators/trip-cost-after-points/',
     '/calculators/cents-per-point/',
     '/calculators/transfer-bonus/'
@@ -857,6 +859,7 @@ async function runTests() {
   const calcIndexText = calcIndexRes.data;
   if (!calcIndexText.includes('Miles to Dollars Calculator') ||
       !calcIndexText.includes('Points to Miles Converter') ||
+      !calcIndexText.includes('Hotel Points vs Cash Calculator') ||
       !calcIndexText.includes('Transfer Bonus Calculator')) {
     console.error('ERROR: English calculators index missing key tools');
     failures++;
@@ -865,6 +868,166 @@ async function runTests() {
     failures++;
   } else {
     console.log('English calculators index tool separation and Input/Output verified (Passed)');
+  }
+
+  // 6. Phase 9.9: Hotel Points vs Cash Tool Suite & Usability Verification
+  console.log('\n--- 6. Phase 9.9: Hotel Points vs Cash Tool Suite Verification ---');
+  
+  // 6.1 Check EN & ZH Hotel Pages exist and return HTTP 200
+  const enHotelUrl = `${baseUrl}/en/calculators/hotel-points-vs-cash/`;
+  const zhHotelUrl = `${baseUrl}/calculators/hotel-points-vs-cash/`;
+  const [enHotelRes, zhHotelRes] = await Promise.all([fetch(enHotelUrl), fetch(zhHotelUrl)]);
+
+  if (enHotelRes.status !== 200 || zhHotelRes.status !== 200) {
+    console.error(`ERROR: Hotel pages HTTP status failure. EN: ${enHotelRes.status}, ZH: ${zhHotelRes.status}`);
+    failures++;
+  } else {
+    console.log('Hotel points vs cash EN & ZH pages HTTP 200 OK');
+  }
+
+  const enHotelDom = new JSDOM(enHotelRes.data, { url: enHotelUrl, runScripts: 'dangerously', resources: 'usable' });
+  const zhHotelDom = new JSDOM(zhHotelRes.data, { url: zhHotelUrl, runScripts: 'dangerously', resources: 'usable' });
+
+  // Wait for scripts to execute and initial calculation to populate
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    const cpp = enHotelDom.window.document.getElementById('cppResult')?.textContent;
+    if (cpp && cpp !== '-') break;
+  }
+
+  // 6.2 Check Single H1 and Canonicals
+  const enH1s = enHotelDom.window.document.querySelectorAll('h1');
+  const zhH1s = zhHotelDom.window.document.querySelectorAll('h1');
+  if (enH1s.length !== 1 || enH1s[0].textContent.trim() !== 'Hotel Points vs Cash Calculator') {
+    console.error(`ERROR: EN Hotel H1 mismatch: found ${enH1s.length}, text: ${enH1s[0]?.textContent}`);
+    failures++;
+  } else {
+    console.log('EN Hotel H1 single and matches expected (Passed)');
+  }
+  if (zhH1s.length !== 1 || zhH1s[0].textContent.trim() !== '酒店积分 vs 现金决策计算器') {
+    console.error(`ERROR: ZH Hotel H1 mismatch: found ${zhH1s.length}, text: ${zhH1s[0]?.textContent}`);
+    failures++;
+  } else {
+    console.log('ZH Hotel H1 single and matches expected (Passed)');
+  }
+
+  // 6.3 Verify 9 Hotel Program Presets
+  const enProgOptions = enHotelDom.window.document.querySelectorAll('#programPreset option');
+  if (enProgOptions.length !== 9) {
+    console.error(`ERROR: Expected 9 hotel programs in preset dropdown, found ${enProgOptions.length}`);
+    failures++;
+  } else {
+    console.log('9 hotel programs confirmed in preset dropdown (Passed)');
+  }
+
+  // 6.4 Scenario 1: Simple mode: Total cash $1,500, Points 100,000, Award fees $50 -> CPP 1.45 ¢/pt
+  const doc = enHotelDom.window.document;
+  doc.getElementById('totalCashPrice').value = '1500';
+  doc.getElementById('totalPointsRequired').value = '100000';
+  doc.getElementById('awardCashFees').value = '50';
+  doc.getElementById('personalValuation').value = '1.0';
+  doc.getElementById('nights').value = '3';
+  doc.getElementById('totalCashPrice').dispatchEvent(new enHotelDom.window.Event('input'));
+
+  const s1Cpp = doc.getElementById('cppResult')?.textContent;
+  if (!s1Cpp.includes('1.45')) {
+    console.error(`ERROR: Scenario 1 expected 1.45 ¢/pt, got: ${s1Cpp}`);
+    failures++;
+  } else {
+    console.log(`Scenario 1 (Simple mode $1,500 cash / 100k pts / $50 fees) -> ${s1Cpp} (Passed)`);
+  }
+
+  // 6.5 Scenario 2: Fees >= cash: Total cash $300, Award fees $350 -> Warning & Cash recommendation
+  doc.getElementById('totalCashPrice').value = '300';
+  doc.getElementById('totalPointsRequired').value = '50000';
+  doc.getElementById('awardCashFees').value = '350';
+  doc.getElementById('totalCashPrice').dispatchEvent(new enHotelDom.window.Event('input'));
+
+  const s2Verdict = doc.getElementById('verdictText')?.textContent;
+  const s2Code = doc.getElementById('verdictCode')?.textContent;
+  if (!s2Code.includes('FEES > CASH')) {
+    console.error(`ERROR: Scenario 2 expected FEES > CASH warning, got: ${s2Verdict} (${s2Code})`);
+    failures++;
+  } else {
+    console.log(`Scenario 2 (Fees >= Cash) correctly triggers warning: ${s2Verdict} [${s2Code}] (Passed)`);
+  }
+
+  // 6.6 Scenario 3: Advanced Mode 5 nights, 20k pts/night, 5th night free -> 80k pts
+  doc.getElementById('nightlyCashPrice').value = '200';
+  doc.getElementById('pointsPerNight').value = '20000';
+  doc.getElementById('nights').value = '5';
+  doc.getElementById('freeNightRule').value = '5th';
+  doc.getElementById('awardCashFees').value = '0';
+  doc.getElementById('awardTaxes').value = '0';
+  doc.getElementById('awardResortFees').value = '0';
+  doc.getElementById('pointsPerNight').dispatchEvent(new enHotelDom.window.Event('input'));
+
+  const s3PointsUsed = doc.getElementById('stepPoints')?.textContent;
+  const s3SimplePoints = doc.getElementById('totalPointsRequired')?.value;
+  if (!s3PointsUsed.includes('80,000') || s3SimplePoints !== '80000') {
+    console.error(`ERROR: Scenario 3 expected 80,000 points used, got step: ${s3PointsUsed}, field: ${s3SimplePoints}`);
+    failures++;
+  } else {
+    console.log(`Scenario 3 (5 nights @ 20k with 5th night free) -> ${s3SimplePoints} pts used (Passed)`);
+  }
+
+  // 6.7 Scenario 4: Simple mode 80k pts & 5 nights -> does not double-deduct 5th night free
+  doc.getElementById('totalPointsRequired').value = '80000';
+  doc.getElementById('totalCashPrice').value = '1000';
+  doc.getElementById('nights').value = '5';
+  doc.getElementById('awardCashFees').value = '0';
+  doc.getElementById('totalPointsRequired').dispatchEvent(new enHotelDom.window.Event('input'));
+
+  const s4StepPoints = doc.getElementById('stepPoints')?.textContent;
+  if (!s4StepPoints.includes('80,000')) {
+    console.error(`ERROR: Scenario 4 simple mode double-deducted points: ${s4StepPoints}`);
+    failures++;
+  } else {
+    console.log(`Scenario 4 (Simple mode checkout total preserves 80k without double discount) (Passed)`);
+  }
+
+  // 6.8 Scenario 5: Missing personal valuation displays CPP without absolute verdict
+  doc.getElementById('personalValuation').value = '';
+  doc.getElementById('personalValuation').dispatchEvent(new enHotelDom.window.Event('input'));
+  const s5Verdict = doc.getElementById('verdictText')?.textContent;
+  const s5Code = doc.getElementById('verdictCode')?.textContent;
+  const s5Cpp = doc.getElementById('cppResult')?.textContent;
+  if (!s5Code.includes('NO VAL') || !s5Cpp.includes('1.25')) {
+    console.error(`ERROR: Scenario 5 expected NO VAL & valid CPP, got: ${s5Verdict} (${s5Code}) CPP: ${s5Cpp}`);
+    failures++;
+  } else {
+    console.log(`Scenario 5 (Missing valuation outputs CPP without forced verdict: ${s5Verdict} [${s5Code}]) (Passed)`);
+  }
+
+  // 6.9 Scenario 6: 3 Quick Examples load correctly
+  doc.getElementById('exampleHilton').click();
+  const hiltonPts = doc.getElementById('totalPointsRequired')?.value;
+  const hiltonCpp = doc.getElementById('cppResult')?.textContent;
+  if (hiltonPts !== '240000' || !hiltonCpp.includes('0.63')) {
+    console.error(`ERROR: Hilton example load failed: pts ${hiltonPts}, cpp ${hiltonCpp}`);
+    failures++;
+  } else {
+    console.log(`Hilton example loaded: 240,000 pts -> ${hiltonCpp} (Passed)`);
+  }
+
+  doc.getElementById('exampleMarriott').click();
+  const marriottPts = doc.getElementById('totalPointsRequired')?.value;
+  const marriottCpp = doc.getElementById('cppResult')?.textContent;
+  if (marriottPts !== '140000' || !marriottCpp.includes('0.89')) {
+    console.error(`ERROR: Marriott example load failed: pts ${marriottPts}, cpp ${marriottCpp}`);
+    failures++;
+  } else {
+    console.log(`Marriott example loaded: 140,000 pts -> ${marriottCpp} (Passed)`);
+  }
+
+  doc.getElementById('exampleHyatt').click();
+  const hyattPts = doc.getElementById('totalPointsRequired')?.value;
+  const hyattCpp = doc.getElementById('cppResult')?.textContent;
+  if (hyattPts !== '42000' || !hyattCpp.includes('2.02')) {
+    console.error(`ERROR: Hyatt example load failed: pts ${hyattPts}, cpp ${hyattCpp}`);
+    failures++;
+  } else {
+    console.log(`Hyatt example loaded: 42,000 pts -> ${hyattCpp} (Passed)`);
   }
 
   if (failures > 0) {

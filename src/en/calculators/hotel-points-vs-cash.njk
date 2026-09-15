@@ -1,22 +1,40 @@
 ---
 layout: base.njk
-title: Hotel Points vs Cash Decision Calculator
-description: Comprehensively consider taxes, resort fees, free night policies, and forgone points to accurately calculate if a hotel points redemption is worth it.
+title: Hotel Points vs Cash Calculator
+description: Compare hotel points vs cash bookings across Hyatt, Hilton, Marriott, IHG, Wyndham, Choice, Accor, and Best Western. Factors in resort fees, 5th night free, and taxes.
 schemaType: WebApplication
-eyebrow: Points & Miles · Tool 05
+eyebrow: Tools · 05
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
-  - name: Hotel Points Calculator
+  - name: Hotel Points vs Cash
 ---
-<h1>Hotel Award Stay Calculator</h1>
-<p class="sub">Beyond basic numbers, this calculator factors in taxes, resort fees, free night policies (like 5th night free), and forgone points to give you the most accurate decision.</p>
+<h1>Hotel Points vs Cash Calculator</h1>
+<p class="sub">Decide whether to use hotel points or pay cash in 30 seconds. Factors in resort fee waivers, 5th-night-free benefits, taxes, and forgone rewards across 9 major hotel loyalty programs.</p>
+
+<div class="hotel-examples-wrapper">
+  <div class="hotel-examples-label">Quick-Load Real Booking Scenarios</div>
+  <div class="hotel-examples-grid">
+    <button type="button" class="btn-hotel-example" id="exampleHilton" data-example="hilton">
+      <span>🏨 Hilton 5-Night Resort Stay</span>
+      <small style="opacity:0.8;">($1,500 vs 240k pts · Waived resort fees)</small>
+    </button>
+    <button type="button" class="btn-hotel-example" id="exampleMarriott" data-example="marriott">
+      <span>🏙️ Marriott 5-Night City Stay</span>
+      <small style="opacity:0.8;">($1,250 vs 140k pts · Stay 5 Pay 4)</small>
+    </button>
+    <button type="button" class="btn-hotel-example" id="exampleHyatt" data-example="hyatt">
+      <span>✨ Hyatt 2-Night Luxury Stay</span>
+      <small style="opacity:0.8;">($850 vs 42k pts · No copay or fees)</small>
+    </button>
+  </div>
+</div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-  <button id="btnShare" style="padding: 4px 12px; border-radius: 4px; border: 1px solid #0284c7; background: #e0f2fe; color: #0284c7; cursor: pointer; font-size: 14px;">Share this calculation</button>
+  <button type="button" id="btnShare" class="btn-share" style="padding: 6px 14px; border-radius: 4px; border: 1px solid #0284c7; background: #e0f2fe; color: #0284c7; cursor: pointer; font-size: 13px; font-weight: 500;">Share this calculation</button>
   <div>
     <label for="currency" style="font-weight: bold; margin-right: 8px;">Currency</label>
-    <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+    <select id="currency" style="padding: 6px 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
       <option value="USD">USD ($)</option>
       <option value="CNY">CNY (¥)</option>
     </select>
@@ -24,493 +42,717 @@ breadcrumbs:
 </div>
 <div id="toast" style="display: none; position: fixed; top: 20px; right: 20px; background: #22c55e; color: white; padding: 10px 20px; border-radius: 4px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Link copied to clipboard!</div>
 
-<div class="panel">
-  <h3>Cash Booking Costs</h3>
+<div class="hotel-notice-banner" id="modeNotice">
+  <strong>Important:</strong> Enter the total cash price and total points shown at checkout. If the hotel has already applied a fifth-night-free or similar benefit to the displayed points total, do not apply it again.
+</div>
+
+<!-- Simple Mode (Default, completes in 30 seconds) -->
+<div class="panel" id="simpleModePanel">
   <div class="row">
     <div class="field">
-      <label for="cashPrice">Cash Rate per Night<span class="hint" id="hintCash">Currency</span></label>
-      <input type="number" id="cashPrice" min="0" step="1" inputmode="decimal" placeholder="e.g. 300">
+      <label for="programPreset">Hotel Program<span class="hint">Rules & Baselines</span></label>
+      <select id="programPreset" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d7dee8; font-size: 15px;">
+        {% for prog in hotelPrograms %}
+        <option value="{{ prog.id }}" data-free-rule="{{ prog.freeNightRule }}" data-usd="{{ prog.valuationScenarioUsdCents }}" data-cny="{{ prog.valuationScenarioCny }}">
+          {{ prog.nameEn }}
+        </option>
+        {% endfor %}
+      </select>
     </div>
     <div class="field">
-      <label for="nights">Total Nights<span class="hint">nights</span></label>
+      <label for="nights">Number of Nights<span class="hint" id="hintNights">nights</span></label>
       <input type="number" id="nights" value="1" min="1" step="1" inputmode="numeric">
     </div>
   </div>
-  
-  <div class="row">
+
+  <div id="programPolicyCard" class="program-policy-card" aria-live="polite">
+    <div class="program-policy-header">
+      <span id="policyResortBadge" class="policy-badge waived">Resort Fees Waived</span>
+      <span id="policyFreeBadge" class="policy-badge varies">Free Night Policy</span>
+    </div>
+    <div id="policyText" class="program-policy-text">Enter your reservation details and custom rules below.</div>
+    <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">
+      Source: <a id="policySourceLink" href="#" target="_blank" rel="noopener noreferrer" class="program-source-link">Official Program Terms</a>
+      <span id="policyFactChecked" style="margin-left: 8px;">(Verified September 2026)</span>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top: 16px;">
     <div class="field">
-      <label for="cashTaxes">Total Taxes & Fees<span class="hint" id="hintTaxes">Currency</span></label>
-      <input type="number" id="cashTaxes" value="0" min="0" step="1" inputmode="decimal">
+      <label for="totalCashPrice">Total Cash Price (Taxes & Fees Included)<span class="hint" id="hintTotalCash">$</span></label>
+      <input type="number" id="totalCashPrice" min="0" step="1" inputmode="decimal" placeholder="e.g. 1500" value="1500">
+      <div class="unit">Enter the final cash amount shown on the checkout screen</div>
     </div>
     <div class="field">
-      <label for="cashResortFees">Total Resort/Dest. Fees<span class="hint" id="hintCashResort">Currency</span></label>
-      <input type="number" id="cashResortFees" value="0" min="0" step="1" inputmode="decimal">
+      <label for="totalPointsRequired">Total Points Required<span class="hint" id="hintTotalPoints">points</span></label>
+      <input type="number" id="totalPointsRequired" min="0" step="1" inputmode="numeric" placeholder="e.g. 80000" value="80000">
+      <div class="unit">Enter the final points deducted at checkout (already discounted)</div>
     </div>
   </div>
 
   <div class="row">
     <div class="field">
-      <label for="cashValueEarned">Base Points Forgone<span class="hint" id="hintValueEarned">Currency (opt)</span></label>
-      <input type="number" id="cashValueEarned" value="0" min="0" step="1" inputmode="decimal">
-      <div class="unit">Value of hotel points you would earn if paying cash</div>
+      <label for="awardCashFees">Award Out-of-Pocket Cash Fees<span class="hint" id="hintAwardCashFees">$</span></label>
+      <input type="number" id="awardCashFees" value="0" min="0" step="1" inputmode="decimal">
+      <div class="unit">Usually $0 on full points stays; enter mandatory resort fees or taxes if charged</div>
     </div>
     <div class="field">
-      <label for="ccRewardsValue">Credit Card Rewards<span class="hint" id="hintCCRewards">Currency (opt)</span></label>
-      <input type="number" id="ccRewardsValue" value="0" min="0" step="1" inputmode="decimal">
+      <label for="personalValuation">Personal Point Valuation<span class="hint" id="hintValuation">¢/pt (Optional)</span></label>
+      <input type="number" id="personalValuation" value="1.0" min="0" step="0.0001" inputmode="decimal">
+      <div class="unit" id="unitValuationNote">Illustrative research baseline; edit anytime to match your target value</div>
     </div>
   </div>
 </div>
 
-<div class="panel">
-  <h3>Award Booking Costs</h3>
-  
-  <div class="row">
-    <div class="field">
-      <label for="programPreset">Program Preset<span class="hint">Rules</span></label>
-      <select id="programPreset" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d7dee8;">
-        <option value="custom">Custom (No presets)</option>
-        <option value="hyatt">World of Hyatt</option>
-        <option value="hilton">Hilton Honors</option>
-        <option value="marriott">Marriott Bonvoy</option>
-      </select>
-      <div class="unit" id="presetNote" style="color: #0284c7; margin-top: 5px;">Check program rules before booking.</div>
+<!-- Advanced Breakdown Mode (Collapsed) -->
+<details class="details-advanced" id="advancedDetails">
+  <summary>
+    <span>⚙️ Advanced Breakdown: Nightly rates, taxes, resort fees & forgone rewards (Click to expand)</span>
+  </summary>
+  <div class="advanced-body">
+    <p style="font-size: 13px; color: var(--muted); margin-top: 0; margin-bottom: 16px;">
+      Enter per-night line items here to factor in consecutive free night benefits and forgone cash earning. Values automatically sync to the simple total fields above.
+    </p>
+
+    <div class="row">
+      <div class="field">
+        <label for="nightlyCashPrice">Nightly Room Rate (Pre-tax)<span class="hint" id="hintNightlyCash">$/night</span></label>
+        <input type="number" id="nightlyCashPrice" min="0" step="1" inputmode="decimal" placeholder="e.g. 300">
+      </div>
+      <div class="field">
+        <label for="pointsPerNight">Points Required / Night<span class="hint">pts/night</span></label>
+        <input type="number" id="pointsPerNight" min="0" step="1" inputmode="numeric" placeholder="e.g. 20000">
+      </div>
     </div>
-    <div class="field">
-      <label for="freeNightRule">Free Night Policy<span class="hint">Discount</span></label>
-      <select id="freeNightRule" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d7dee8;">
-        <option value="none">No free night</option>
-        <option value="5th">5th Night Free</option>
-        <option value="custom">Custom Nth night free</option>
-      </select>
+
+    <div class="row">
+      <div class="field">
+        <label for="cashTaxes">Total Cash Room Taxes<span class="hint" id="hintCashTaxes">$</span></label>
+        <input type="number" id="cashTaxes" value="0" min="0" step="1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="cashResortFees">Total Cash Resort/Dest. Fees<span class="hint" id="hintCashResort">$</span></label>
+        <input type="number" id="cashResortFees" value="0" min="0" step="1" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="freeNightRule">Consecutive Free Night Policy<span class="hint">Benefit</span></label>
+        <select id="freeNightRule" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d7dee8;">
+          <option value="none">No free night discount (Standard stay)</option>
+          <option value="5th">5th Night Free (Stay 5, Pay 4 · Marriott, Hilton, etc.)</option>
+          <option value="4th">4th Night Free (Stay 4, Pay 3 · Select IHG credit cards)</option>
+          <option value="custom">Custom Nth night free</option>
+        </select>
+      </div>
+      <div class="field" id="customIntervalField" style="display: none;">
+        <label for="customFreeNightInterval">Interval N (e.g. 4 for 4th free)<span class="hint">N value</span></label>
+        <input type="number" id="customFreeNightInterval" value="4" min="2" step="1" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="awardTaxes">Award Cash Taxes<span class="hint" id="hintAwardTaxes">$</span></label>
+        <input type="number" id="awardTaxes" value="0" min="0" step="1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="awardResortFees">Award Resort Fees<span class="hint" id="hintAwardResort">$</span></label>
+        <input type="number" id="awardResortFees" value="0" min="0" step="1" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="hotelPointsEarnedValue">Forgone Hotel Points Value<span class="hint" id="hintHotelEarned">$ (Optional)</span></label>
+        <input type="number" id="hotelPointsEarnedValue" value="0" min="0" step="1" inputmode="decimal">
+        <div class="unit">Value of hotel loyalty points you would earn by paying cash</div>
+      </div>
+      <div class="field">
+        <label for="creditCardRewardsValue">Forgone Credit Card Rewards<span class="hint" id="hintCCEarned">$ (Optional)</span></label>
+        <input type="number" id="creditCardRewardsValue" value="0" min="0" step="1" inputmode="decimal">
+        <div class="unit">Value of cashback or credit card points earned on cash stay</div>
+      </div>
     </div>
   </div>
+</details>
 
-  <div class="field" id="customNField" style="display: none;">
-    <label for="customN">Nth night free<span class="hint">N value</span></label>
-    <input type="number" id="customN" value="4" min="2" step="1" inputmode="numeric">
-  </div>
-
-  <div class="row">
-    <div class="field">
-      <label for="pointsPerNight">Points Required / Night<span class="hint">pts/night</span></label>
-      <input type="number" id="pointsPerNight" min="0" step="1" inputmode="numeric" placeholder="e.g. 20000">
-    </div>
-    <div class="field">
-      <label for="personalValuation">Personal Point Valuation<span class="hint" id="hintValuation">cents/pt (opt)</span></label>
-      <input type="number" id="personalValuation" value="1.5" min="0" step="0.0001" inputmode="decimal">
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="field">
-      <label for="awardTaxes">Award Cash Taxes<span class="hint" id="hintAwardTaxes">Currency</span></label>
-      <input type="number" id="awardTaxes" value="0" min="0" step="1" inputmode="decimal">
-    </div>
-    <div class="field">
-      <label for="awardResortFees">Award Resort Fees<span class="hint" id="hintAwardResort">Currency</span></label>
-      <input type="number" id="awardResortFees" value="0" min="0" step="1" inputmode="decimal">
-    </div>
-  </div>
-</div>
-
+<!-- Two-Tier Results Section -->
 <div class="ticket" aria-live="polite">
   <div class="main">
     <div class="compare">
       <div class="item">
-        <div class="k">Actual CPP (Cents per Point)</div>
+        <div class="k">Redemption Value (CPP)</div>
         <div class="v" id="cppResult" style="word-break: break-word; overflow-wrap: anywhere;">-</div>
       </div>
       <div class="item">
-        <div class="k">Equivalent Cost</div>
-        <div class="v" id="costCompare" style="font-size:16px; margin-top:10px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5;">Points Eq Cost: -<br>Net Cash Cost: -</div>
+        <div class="k">Cost Comparison</div>
+        <div class="v" id="costCompare" style="font-size:16px; margin-top:8px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5;">
+          Points Equiv: -<br>Net Cash Cost: -
+        </div>
       </div>
     </div>
-    <div class="note" id="explain">Please input required information.</div>
-    <div class="note" id="mathBreakdown" style="font-size: 13px; color: #64748b; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1; display: none;"></div>
+
+    <div class="note" id="explain" style="margin-top: 14px;">Enter total cash price and points required to evaluate your booking.</div>
+
+    <!-- Tier 2: Step-by-Step Mathematical Breakdown -->
+    <div class="hotel-tier2-breakdown" id="tier2Breakdown" style="display: none;">
+      <div style="font-weight: 600; color: var(--gold); margin-bottom: 8px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">
+        Calculation Breakdown & Steps
+      </div>
+      <div class="hotel-breakdown-step" id="stepGrossCash"></div>
+      <div class="hotel-breakdown-step" id="stepForgone" style="display: none;"></div>
+      <div class="hotel-breakdown-step" id="stepAwardCash"></div>
+      <div class="hotel-breakdown-step" id="stepNetSaved"></div>
+      <div class="hotel-breakdown-step" id="stepPoints"></div>
+      <div class="hotel-breakdown-step" id="stepValuationComp" style="border-top: 1px dashed rgba(244,240,230,0.2); padding-top: 8px; margin-top: 8px;"></div>
+    </div>
   </div>
   <div class="perf"></div>
   <div class="stub">
     <div>
-      <div class="verdict-label">Recommendation</div>
+      <div class="verdict-label">Verdict</div>
       <div class="verdict" id="verdictText">—</div>
     </div>
     <div class="code" id="verdictCode">DIFF —</div>
   </div>
 </div>
 
+<article class="seo-content" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>9 Major Hotel Loyalty Programs: Rules & Valuation Benchmarks</h2>
+  <p>Hotel loyalty programs differ fundamentally in whether they waive resort fees on award nights and how they structure consecutive free night promotions. Here is the verified policy matrix across major chains:</p>
 
-<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
-  <h2>The Core Formula for Hotel Point Valuations</h2>
-  <p>To decide whether to use hotel points, you must compare the "cash expenditure avoided" against the "actual points consumed." This calculator uses the following precise formula:</p>
-  <div class="formula-box">
-    <span class="formula-name">Cash Avoided =</span>
-    <span class="formula-expression">(Nightly Rate × Nights) + Cash Taxes + Cash Resort Fees - (Base Points Forgone + CC Rewards) - Award Cash Taxes - Award Resort Fees</span>
-  </div>
-  <div class="formula-box" style="margin-top: -1rem;">
-    <span class="formula-name">Actual CPP =</span>
-    <span class="formula-expression">Cash Avoided ÷ Actual Points Consumed</span>
-  </div>
-
-  <h3>Comprehensive 5-Night Stay Example</h3>
-  <div class="example-box">
-    <h4>Example: 5 Nights at a Luxury Resort</h4>
-    <ul>
-      <li><strong>Cash Rate</strong>: $300 / night ($1,500 total)</li>
-      <li><strong>Cash Taxes & Resort Fees</strong>: $350 total</li>
-      <li><strong>Points Required</strong>: 50,000 / night</li>
-    </ul>
-    <p><strong>Applying the 5th Night Free</strong>: Since many programs (like Marriott and Hilton) offer the 5th night free on award stays, you only pay for 4 nights, requiring 200,000 points total instead of 250,000.</p>
-    <p><strong>Net Cash Saved</strong>: If the program waives resort fees and taxes on award stays, you save the full $1,850. The resulting value is ($1,850 ÷ 200,000) × 100 = <strong>0.925¢ per point</strong>.</p>
-  </div>
-
-  <h2>Important Program Variations</h2>
-  <p>Hotel loyalty programs have vastly different policies for award stays. The features in this calculator adapt based on these rules, which vary by program and specific property:</p>
-  <ul>
-    <li><strong>Taxes on Award Stays</strong>: Some jurisdictions require hotels to charge local taxes based on the cash value of an award night.</li>
-    <li><strong>Resort Fee Waivers</strong>: Hilton Honors and World of Hyatt generally waive resort and destination fees on fully points-booked award stays. Marriott Bonvoy, however, typically <em>does not</em> waive resort fees on award stays. Always verify with the specific property.</li>
-    <li><strong>Fifth Night Free</strong>: Hilton (for elite members) and Marriott (for all members) offer the 5th consecutive award night free. Hyatt and IHG have different structures or credit card requirements for similar perks.</li>
-    <li><strong>Elite Benefits</strong>: Free breakfast, parking, or lounge access can significantly reduce your out-of-pocket costs, altering the math.</li>
-  </ul>
-
-  <h2>When Cash May Still Be Better</h2>
-  <p>Even if the math looks close, paying cash for a hotel stay might be preferable in certain situations:</p>
-  <ul>
-    <li><strong>Cash Promotions</strong>: Seasonal sales, OTA discounts, or cashback portals can drastically lower the cash price.</li>
-    <li><strong>Earning Points and Nights</strong>: Cash stays earn base points, elite bonus points, and qualifying elite nights, which have their own monetary value.</li>
-    <li><strong>Cancellation Policies</strong>: While award stays are usually flexible, some cash rates offer even better cancellation terms or pay-at-property convenience.</li>
-    <li><strong>Resort Fees Still Payable</strong>: If the property charges a $50 daily resort fee that isn't waived on award stays, your "free" night could still be expensive.</li>
-    <li><strong>Low Points Value</strong>: If the calculated value is significantly below standard benchmarks (e.g., getting 0.3¢ per Marriott point), it's usually better to save the points.</li>
-  </ul>
-
-
-  <h3>Frequently Asked Questions (FAQ)</h3>
-  <div class="faq">
-    <details>
-      <summary>Why must we consider Resort Fees?</summary>
-      <div>
-        <p>Many hotels in popular destinations charge exorbitant mandatory resort or destination fees. Certain loyalty programs (like Hyatt and Hilton) waive these fees entirely on full-point award bookings, which drastically increases the actual value of your points. Others (like Marriott) still charge resort fees on award stays. Be sure to input these correctly.</p>
-      </div>
-    </details>
-    
-    <details>
-      <summary>How does the "5th Night Free" rule work?</summary>
-      <div>
-        <p>If you stay 5 nights and the program offers a 5th night free on award bookings, you only pay points for 4 nights. This effectively amplifies your point purchasing power by 25% and is often the key to achieving outsized CPP. Note that cash rates may also have 4th/5th night free promos, so compare carefully.</p>
-      </div>
-    </details>
-
-    <details>
-      <summary>Why are "Forgone Rewards" important?</summary>
-      <div>
-        <p>By redeeming points, you forfeit the lucrative base points and promotional bonuses you would have earned on a cash stay. Additionally, you miss out on credit card multiplier earnings (e.g., 6x on a co-branded card). This lost value is a "sunk cost" of award travel.</p>
-      </div>
-    </details>
+  <div class="hotel-table-container">
+    <table class="hotel-comparison-table">
+      <thead>
+        <tr>
+          <th>Hotel Program</th>
+          <th>Illustrative Baseline</th>
+          <th>Free Night Policy</th>
+          <th>Resort Fees on Points</th>
+          <th>Official Terms Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for prog in hotelPrograms %}
+        <tr>
+          <td><strong>{{ prog.nameEn }}</strong></td>
+          <td>{{ prog.valuationScenarioUsdCents }}¢ (approx. ¥{{ prog.valuationScenarioCny }})</td>
+          <td>{{ prog.eligibilityNoteEn }}</td>
+          <td>
+            {% if "Waived" in prog.resortFeeNoteEn %}
+            <span class="policy-badge waived">Fully Waived</span>
+            {% elseif "Not waived" in prog.resortFeeNoteEn %}
+            <span class="policy-badge charged">Mandatory Cash</span>
+            {% else %}
+            <span class="policy-badge varies">Property Dependent</span>
+            {% endif %}
+            <div style="font-size: 11.5px; color: var(--muted); margin-top: 4px;">{{ prog.resortFeeNoteEn }}</div>
+          </td>
+          <td>
+            {% if prog.officialSourceUrl %}
+            <a href="{{ prog.officialSourceUrl }}" target="_blank" rel="noopener noreferrer" class="program-source-link">{{ prog.officialSourceName }}</a>
+            {% else %}
+            <span style="color: var(--muted);">Custom Input</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 
-  <h2>Related Guides & Tools</h2>
-  <ul>
-    <li><a href="/en/guides/hotel-free-night-calculator/">How to Maximize Hotel 5th Night Free Benefits?</a></li>
-    <li><a href="/en/compare/">Credit Card and Hotel Point Valuation Comparisons</a></li>
-  </ul>
   
-  <p class="disclaimer" style="margin-top: 30px; font-size: 0.85em; color: #64748b;"><em>Last verified: August 2026. Presets are for demonstration only and may not cover all hotels or promotions. Check program terms before booking.</em></p>
-</div>
+  <h2>Related Guides & Comparisons</h2>
+  <ul>
+    <li><a href="/en/compare/">Compare Point Values Across Major Hotel & Credit Card Programs</a></li>
+    <li><a href="/en/guides/free-night-awards/">How to Maximize Annual Hotel Free Night Awards (FNC)</a></li>
+    <li><a href="/en/guides/valuing-hotel-points/">Ultimate Hotel Point Valuation Guide: Dynamic Pricing & 5th Night Free</a></li>
+    <li><a href="/en/calculators/points-vs-cash/">Flight Points vs Cash Decision Calculator</a></li>
+  </ul>
 
+  <h2>Key Considerations When Valuing Hotel Points vs Cash</h2>
+  <div class="faq" style="margin-top: 20px;">
+    <details>
+      <summary>1. Does checkout points pricing already include the 5th night free?</summary>
+      <div>
+        <p>Yes. On the official booking websites and mobile apps for Hilton and Marriott, when an eligible member searches for 5 or more consecutive award nights, <strong>the total points displayed at checkout already reflects the free night deduction</strong>. In our Simple Mode, enter the final points total shown on your screen; do not subtract a free night a second time, as doing so would artificially inflate your CPP calculation.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>2. How do resort fee waivers impact redemption value?</summary>
+      <div>
+        <p>In resort destinations like Las Vegas, Hawaii, Miami, or Orlando, hotels frequently charge mandatory resort or destination fees ranging from $35 to $65+ per night. <strong>World of Hyatt and Hilton Honors</strong> waive resort fees on 100% points award reservations for all members. Conversely, Marriott Bonvoy and most IHG properties require guests to pay resort fees in cash at checkout even on award stays. A waived resort fee effectively saves pure cash, substantially boosting the redemption CPP.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>3. What forgone points and rewards should I account for on cash bookings?</summary>
+      <div>
+        <p>When you book with cash, you typically earn: (1) base loyalty points (commonly 10 points per dollar spent); (2) elite status tier bonuses (up to 100% extra points); (3) seasonal hotel promotions (e.g. 2,000 bonus points per stay); and (4) credit card rewards (such as 6x points per dollar on co-branded cards). Because award stays do not earn base points or cash spending rewards, those forgone points represent an opportunity cost. In our Advanced Mode, you can deduct this value for the most rigorous comparison.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>4. Should I redeem Free Night Certificates (FNC) or points?</summary>
+      <div>
+        <p>Annual free night certificates from credit cards (such as Marriott 35k/50k certificates, IHG 40k certificates, or Hyatt Category 1-4 certificates) have strict 12-month expiration dates and do not qualify for 5th-night-free promotions. For single-night high-value stays, prioritize burning certificates before they expire, and preserve your flexible points balance for multi-night stays where consecutive night discounts apply.</p>
+      </div>
+    </details>
+  </div>
+
+  <p class="disclaimer" style="margin-top: 30px; font-size: 0.85em; color: #64748b;">
+    <em>Last Fact-Checked: September 2026. Editorial Disclaimer: Program rules, resort fee policies, and valuation benchmarks are for educational modeling purposes and do not represent guaranteed cash value. Confirm property cancellation and fee policies directly with the hotel prior to booking.</em>
+  </p>
+</article>
+
+<script src="/assets/calculator-core.js" onload="if(typeof calculate==='function') calculate();"></script>
 <script>
   const $ = id => document.getElementById(id);
-  
+
+  const state = {
+    currency: 'USD',
+    fxRate: 7.0,
+    programId: 'custom',
+    inputMode: 'checkout-total',
+    userHasCustomValuation: false,
+    rawValues: {
+      totalCashPrice: 1500,
+      totalPointsRequired: 80000,
+      awardCashFees: 0,
+      personalValuation: 1.0,
+      nightlyCashPrice: 300,
+      pointsPerNight: 20000,
+      cashTaxes: 0,
+      cashResortFees: 0,
+      awardTaxes: 0,
+      awardResortFees: 0,
+      hotelPointsEarnedValue: 0,
+      creditCardRewardsValue: 0
+    }
+  };
+
+  const programsData = {
+    {% for prog in hotelPrograms %}
+    "{{ prog.id }}": {
+      id: "{{ prog.id }}",
+      nameZh: "{{ prog.nameZh }}",
+      nameEn: "{{ prog.nameEn }}",
+      usdCents: {{ prog.valuationScenarioUsdCents }},
+      cny: {{ prog.valuationScenarioCny }},
+      freeNightRule: "{{ prog.freeNightRule }}",
+      eligibilityEn: "{{ prog.eligibilityNoteEn | escape }}",
+      resortFeeEn: "{{ prog.resortFeeNoteEn | escape }}",
+      officialSourceUrl: "{{ prog.officialSourceUrl }}",
+      officialSourceName: "{{ prog.officialSourceName }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  };
+
   const params = new URLSearchParams(window.location.search);
-  let currentCurrency = 'USD';
   const validCurrencies = ['CNY', 'USD'];
-  const urlCurr = params.get('currency');
+  const urlCurr = params.get('currency') || params.get('curr');
   if (urlCurr && validCurrencies.includes(urlCurr)) {
-    currentCurrency = urlCurr;
+    state.currency = urlCurr;
   } else {
     try {
       const saved = localStorage.getItem('preferredCurrency');
-      if (saved && validCurrencies.includes(saved)) {
-        currentCurrency = saved;
-      }
+      if (saved && validCurrencies.includes(saved)) state.currency = saved;
     } catch(e) {}
   }
-  
-  const updateUnits = () => {
-    const isUSD = currentCurrency === 'USD';
-    const cHint = isUSD ? 'USD' : 'CNY';
-    const cValHint = isUSD ? 'cents/pt (opt)' : 'CNY/pt (opt)';
+  $('currency').value = state.currency;
+
+  function updateCurrencyLabels() {
+    const isUSD = state.currency === 'USD';
+    const sym = isUSD ? '$' : '¥';
+    const valHint = isUSD ? '¢/pt (Optional)' : '¥/pt (Optional)';
     
-    ['hintCash', 'hintTaxes', 'hintCashResort', 'hintValueEarned', 'hintCCRewards', 'hintAwardTaxes', 'hintAwardResort'].forEach(id => {
-      if($(id)) $(id).textContent = cHint;
-    });
-    if($('hintValuation')) $('hintValuation').textContent = cValHint;
-  };
-
-  if ($('currency')) {
-    $('currency').value = currentCurrency;
-    $('currency').addEventListener('change', (e) => {
-      const oldCurrency = currentCurrency;
-      currentCurrency = e.target.value;
-      if (oldCurrency !== currentCurrency) {
-        ['cashPrice', 'cashTaxes', 'cashResortFees', 'cashValueEarned', 'ccRewardsValue', 'personalValuation', 'awardTaxes', 'awardResortFees'].forEach(id => {
-           if($(id)) $(id).value = '';
-        });
-        
-        const warningMsg = 'Currency changed. To avoid confusion, please re-enter all amounts and your personal valuation.';
-          
-        function clearCalculatorResults() {
-          $('cppResult').textContent = '-';
-          $('costCompare').innerHTML = 'Points Eq Cost: -<br>Net Cash Cost: -';
-          $('verdictText').textContent = '—';
-          $('verdictCode').textContent = '-';
-          $('verdictText').className = 'v';
-          $('cppResult').classList.remove('win');
-          $('explain').innerHTML = `<span style="color:#eab308; font-weight:bold;">${warningMsg}</span>`;
-          $('mathBreakdown').style.display = 'none';
-        }
-        clearCalculatorResults();
-      }
-      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
-      updateUnits();
-      if ($('cashPrice').value) calcAdv();
-    });
+    $('hintTotalCash').textContent = sym;
+    $('hintAwardCashFees').textContent = sym;
+    $('hintValuation').textContent = valHint;
+    $('hintNightlyCash').textContent = sym + '/night';
+    $('hintCashTaxes').textContent = sym;
+    $('hintCashResort').textContent = sym;
+    $('hintAwardTaxes').textContent = sym;
+    $('hintAwardResort').textContent = sym;
+    $('hintHotelEarned').textContent = sym + ' (Optional)';
+    $('hintCCEarned').textContent = sym + ' (Optional)';
   }
 
-  const parseParam = (key, elId, maxVal = 1000000000, aliasKeys = []) => {
-    let raw = params.get(key);
-    if (raw === null) {
-      for (const alias of aliasKeys) {
-        raw = params.get(alias);
-        if (raw !== null) break;
-      }
+  function updateProgramPolicyCard(progId) {
+    const prog = programsData[progId] || programsData.custom;
+    const rBadge = $('policyResortBadge');
+    const fBadge = $('policyFreeBadge');
+    const pText = $('policyText');
+    const pLink = $('policySourceLink');
+
+    if (prog.resortFeeEn.includes('Waived')) {
+      rBadge.className = 'policy-badge waived';
+      rBadge.textContent = 'Resort Fees Waived';
+    } else if (prog.resortFeeEn.includes('Not waived')) {
+      rBadge.className = 'policy-badge charged';
+      rBadge.textContent = 'Resort Fees Charged';
+    } else {
+      rBadge.className = 'policy-badge varies';
+      rBadge.textContent = 'Fees Vary by Property';
     }
-    let val = parseFloat(raw);
-    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
-      if (key === 'points' && val === 0) return;
-      const el = $(elId);
-      if (el) el.value = val;
-    }
-  };
-  
-  // URL Param Extraction
-  parseParam('cash', 'cashPrice');
-  parseParam('nights', 'nights', 365);
-  parseParam('taxes', 'cashTaxes');
-  parseParam('resort', 'cashResortFees');
-  parseParam('points', 'pointsPerNight');
-  parseParam('ataxes', 'awardTaxes');
-  parseParam('aresort', 'awardResortFees');
-  parseParam('earned', 'cashValueEarned');
-  parseParam('cc', 'ccRewardsValue');
-  parseParam('valuation', 'personalValuation', 1000);
-  
-  let pFreeRule = params.get('freeRule');
-  if (pFreeRule === null && params.get('fifthNight') === 'true') {
-    pFreeRule = '5th';
-  }
-  if (['none', '5th', 'custom'].includes(pFreeRule)) {
-    $('freeNightRule').value = pFreeRule;
-  }
-  parseParam('customN', 'customN', 30);
-  const pPreset = params.get('preset');
-  if (['custom', 'hyatt', 'hilton', 'marriott'].includes(pPreset)) {
-    $('programPreset').value = pPreset;
-  }
 
-  // Presets logic
-  $('programPreset').addEventListener('change', (e) => {
-    const v = e.target.value;
-    const note = $('presetNote');
-    if (v === 'hyatt') {
-      note.textContent = 'Hyatt: Waives resort fees on award stays. Minor CC earning exceptions exist.';
-      if (!params.has('valuation')) { $('personalValuation').value = currentCurrency === 'USD' ? '1.7' : '0.12'; }
-    } else if (v === 'hilton') {
-      note.textContent = 'Hilton: 5th night free for Silver+ members. Waives resort fees on award stays.';
-      if (!params.has('valuation')) { $('personalValuation').value = currentCurrency === 'USD' ? '0.5' : '0.035'; }
-      $('freeNightRule').value = '5th';
-    } else if (v === 'marriott') {
-      note.textContent = 'Marriott: 5th night free on award stays. DOES NOT waive resort fees on award stays.';
-      if (!params.has('valuation')) { $('personalValuation').value = currentCurrency === 'USD' ? '0.7' : '0.05'; }
+    if (prog.freeNightRule === '5th') {
+      fBadge.className = 'policy-badge waived';
+      fBadge.textContent = '5th Night Free Benefit';
       $('freeNightRule').value = '5th';
     } else {
-      note.textContent = 'Check program rules before booking.';
-    }
-    calcAdv();
-  });
-
-  $('freeNightRule').addEventListener('change', (e) => {
-    $('customNField').style.display = (e.target.value === 'custom') ? 'block' : 'none';
-    calcAdv();
-  });
-  if($('freeNightRule').value === 'custom') $('customNField').style.display = 'block';
-
-  function calcAdv(){
-    let cashRate = parseFloat($('cashPrice').value) || 0;
-    let nights = parseInt($('nights').value) || 1;
-    let cashTaxes = parseFloat($('cashTaxes').value) || 0;
-    let cashResort = parseFloat($('cashResortFees').value) || 0;
-    let pointsPerNight = parseFloat($('pointsPerNight').value) || 0;
-    let awardTaxes = parseFloat($('awardTaxes').value) || 0;
-    let awardResort = parseFloat($('awardResortFees').value) || 0;
-    let earned = parseFloat($('cashValueEarned').value) || 0;
-    let cc = parseFloat($('ccRewardsValue').value) || 0;
-    let V = parseFloat($('personalValuation').value) || 0;
-    
-    let freeRule = $('freeNightRule').value;
-    let customN = parseInt($('customN').value) || 4;
-
-    const resetState = (msg) => {
-      $('cppResult').textContent = '-';
-      $('costCompare').innerHTML = 'Points Eq Cost: -<br>Net Cash Cost: -';
-      $('verdictText').textContent = '—';
-      $('verdictCode').textContent = 'DIFF —';
-      $('explain').textContent = msg;
-      $('verdictText').className = 'verdict';
-      $('cppResult').classList.remove('win');
-      $('cppResult').parentElement.classList.remove('win');
-      $('mathBreakdown').style.display = 'none';
-    };
-
-    if (pointsPerNight <= 0 || cashRate <= 0) {
-      resetState('Please enter Cash Rate and Points Required.');
-      return;
+      fBadge.className = 'policy-badge varies';
+      fBadge.textContent = 'No 5th Night Free';
+      if ($('freeNightRule').value === '5th') $('freeNightRule').value = 'none';
     }
 
-    // Free nights logic
-    let paidAwardNights = nights;
-    let freeNights = 0;
-    if (freeRule === '5th') {
-      freeNights = Math.floor(nights / 5);
-      paidAwardNights = nights - freeNights;
-    } else if (freeRule === 'custom') {
-      freeNights = Math.floor(nights / customN);
-      paidAwardNights = nights - freeNights;
+    pText.textContent = prog.eligibilityEn + ' ' + prog.resortFeeEn;
+
+    if (prog.officialSourceUrl) {
+      pLink.href = prog.officialSourceUrl;
+      pLink.textContent = prog.officialSourceName;
+      pLink.style.display = 'inline';
+    } else {
+      pLink.textContent = 'User Custom Input';
+      pLink.removeAttribute('href');
     }
 
-    let totalPointsRequired = paidAwardNights * pointsPerNight;
-    let totalCashCost = (cashRate * nights) + cashTaxes + cashResort;
-    let forgoneValue = earned + cc;
-    let awardCashCost = awardTaxes + awardResort;
-    
-    let netCashSaved = totalCashCost - forgoneValue - awardCashCost;
-    
-    if (netCashSaved < 0) {
-      resetState('Forgone rewards and award fees exceed cash cost. Paying cash yields better value in this scenario.');
-      $('verdictText').textContent = 'Pay Cash';
-      $('verdictText').className = 'verdict bad';
-      $('verdictCode').textContent = 'DIFF < 0';
+    if (!state.userHasCustomValuation) {
+      const defaultVal = state.currency === 'USD' ? prog.usdCents : prog.cny;
+      state.rawValues.personalValuation = defaultVal;
+      $('personalValuation').value = defaultVal;
+    }
+  }
+
+  function renderResults(result) {
+    const isUSD = state.currency === 'USD';
+    const sym = isUSD ? '$' : '¥';
+
+    const cppResultEl = $('cppResult');
+    const costCompareEl = $('costCompare');
+    const explainEl = $('explain');
+    const verdictTextEl = $('verdictText');
+    const verdictCodeEl = $('verdictCode');
+    const tier2El = $('tier2Breakdown');
+
+    verdictTextEl.className = 'verdict';
+    cppResultEl.classList.remove('win');
+    cppResultEl.parentElement.classList.remove('win');
+
+    if (result.actualPointsUsed <= 0 || result.grossCashCost <= 0) {
+      cppResultEl.textContent = '-';
+      costCompareEl.innerHTML = 'Points Equiv: -<br>Net Cash Cost: -';
+      verdictTextEl.textContent = '—';
+      verdictCodeEl.textContent = 'DIFF —';
+      explainEl.textContent = 'Enter cash rate and points required to see recommendation.';
+      tier2El.style.display = 'none';
       return;
     }
 
     let displayCpp = '';
-    let actualCpp = totalPointsRequired > 0 ? (netCashSaved / totalPointsRequired) : 0; 
-    let compActualCpp = actualCpp;
-
-    if (currentCurrency === 'USD') {
-      compActualCpp = actualCpp * 100; // cents
-      displayCpp = compActualCpp.toFixed(2) + ' cents/pt';
+    if (isUSD) {
+      displayCpp = result.cpp.toFixed(2) + ' ¢/pt';
     } else {
-      displayCpp = '¥' + actualCpp.toFixed(4) + ' / pt';
+      displayCpp = '¥' + result.localPerPoint.toFixed(4) + ' / pt';
     }
-    
-    $('cppResult').textContent = displayCpp;
+    cppResultEl.textContent = displayCpp;
 
-    let costIfPoints = 0;
-    if (currentCurrency === 'USD') {
-      costIfPoints = (totalPointsRequired * (V / 100)) + awardCashCost;
-    } else {
-      costIfPoints = (totalPointsRequired * V) + awardCashCost;
-    }
-    const costIfCash = totalCashCost - forgoneValue;
-
-    if (currentCurrency === 'USD') {
-      $('costCompare').innerHTML = `Points Eq Cost: $${costIfPoints.toLocaleString('en-US', {maximumFractionDigits:0})}<br>Net Cash Cost: $${costIfCash.toLocaleString('en-US', {maximumFractionDigits:0})}`;
-    } else {
-      $('costCompare').innerHTML = `Points Eq Cost: ¥${costIfPoints.toLocaleString('zh-CN', {maximumFractionDigits:0})}<br>Net Cash Cost: ¥${costIfCash.toLocaleString('zh-CN', {maximumFractionDigits:0})}`;
+    let pointsEquivalentCost = 0;
+    if (result.personalValuation) {
+      if (isUSD) {
+        pointsEquivalentCost = (result.actualPointsUsed * (result.personalValuation / 100)) + result.awardCashCost;
+      } else {
+        pointsEquivalentCost = (result.actualPointsUsed * result.personalValuation) + result.awardCashCost;
+      }
     }
 
-    // Breakdown math
-    let currSym = currentCurrency === 'USD' ? '$' : '¥';
-    $('mathBreakdown').style.display = 'block';
-    $('mathBreakdown').innerHTML = `
-      <strong>Calculation:</strong><br>
-      • Cash total: ${nights} nights × ${currSym}${cashRate} + Fees ${currSym}${cashTaxes + cashResort} = ${currSym}${totalCashCost}<br>
-      • Minus forgone rewards: -${currSym}${forgoneValue}<br>
-      • Minus award fees: -${currSym}${awardCashCost}<br>
-      • Actual Cash Avoided: <strong>${currSym}${netCashSaved}</strong><br>
-      • Actual Points Consumed: ${nights} nights - ${freeNights} free = ${paidAwardNights} nights × ${pointsPerNight} = <strong>${totalPointsRequired} points</strong>
+    costCompareEl.innerHTML = `
+      Points Equiv: ${result.personalValuation ? sym + Math.round(pointsEquivalentCost).toLocaleString() : 'No Valuation'}<br>
+      Net Cash Cost: ${sym + Math.round(result.netCashCost).toLocaleString()}
     `;
 
-    const verdict = $('verdictText');
-    const code = $('verdictCode');
-    const explain = $('explain');
-
-    $('cppResult').classList.remove('win');
-    $('cppResult').parentElement.classList.remove('win');
-    verdict.className = 'verdict';
-
-    if (compActualCpp <= 0) {
-      verdict.textContent = 'Pay Cash';
-      verdict.className = 'verdict bad';
-      explain.textContent = 'Using points is a poor value.';
-      code.textContent = 'DIFF < 0';
-    } else if (compActualCpp > V && V > 0) {
-      verdict.textContent = 'Use Points';
-      verdict.className = 'verdict good';
-      $('cppResult').classList.add('win');
-      const diff = ((compActualCpp - V) / V * 100).toFixed(0);
-      explain.textContent = `This redemption yields ${diff}% more value than your personal valuation. A great deal!`;
-      code.textContent = `DIFF +${diff}%`;
-    } else if (compActualCpp < V && V > 0) {
-      verdict.textContent = 'Pay Cash';
-      verdict.className = 'verdict bad';
-      const diff = ((V - compActualCpp) / V * 100).toFixed(0);
-      explain.textContent = `The actual value is ${diff}% lower than your valuation. Save your points for a better redemption.`;
-      code.textContent = `DIFF -${diff}%`;
+    tier2El.style.display = 'block';
+    $('stepGrossCash').innerHTML = '1. Total Cash Booking: <strong>' + sym + result.grossCashCost.toLocaleString() + '</strong>';
+    
+    if (result.hotelPointsEarnedValue > 0 || result.creditCardRewardsValue > 0) {
+      $('stepForgone').style.display = 'block';
+      $('stepForgone').innerHTML = '2. Less Forgone Cash Rewards: -' + sym + (result.hotelPointsEarnedValue + result.creditCardRewardsValue).toLocaleString() + ' (Net Cash: ' + sym + result.netCashCost.toLocaleString() + ')';
     } else {
-      verdict.textContent = 'It Depends';
-      verdict.className = 'verdict';
-      explain.textContent = V === 0 ? 'No personal valuation provided. Please judge based on the CPP above.' : 'The value aligns with your baseline. Either option is fine.';
-      code.textContent = 'DIFF ~0%';
+      $('stepForgone').style.display = 'none';
+    }
+
+    $('stepAwardCash').innerHTML = '3. Award Out-of-Pocket Cash Fees: <strong>' + sym + result.awardCashCost.toLocaleString() + '</strong>';
+    $('stepNetSaved').innerHTML = '4. Net Avoided Cash Spend: <strong>' + sym + result.avoidedCashSpend.toLocaleString() + '</strong>';
+    $('stepPoints').innerHTML = '5. Actual Points Consumed: <strong>' + result.actualPointsUsed.toLocaleString() + ' points</strong> (' + result.nights + ' nights' + (result.freeNights > 0 ? ', including ' + result.freeNights + ' free night' : '') + ')';
+
+    if (result.personalValuationDifference !== null) {
+      const diffSign = result.personalValuationDifference >= 0 ? '+' : '';
+      $('stepValuationComp').innerHTML = '6. Valuation Benchmark: Redemption value is <strong>' + diffSign + result.personalValuationDifference + '%</strong> vs your baseline (' + result.personalValuation + (isUSD ? '¢' : '¥') + ')';
+    } else {
+      $('stepValuationComp').innerHTML = '6. Personal valuation not entered: Compare the calculated ' + displayCpp + ' against your personal acquisition cost.';
+    }
+
+    if (result.calculationWarnings.includes('award_cash_exceeds_cash_price')) {
+      verdictTextEl.textContent = 'Avoid Points';
+      verdictTextEl.className = 'verdict bad';
+      verdictCodeEl.textContent = 'FEES > CASH';
+      explainEl.textContent = 'Warning: Award out-of-pocket cash fees meet or exceed the total cash room rate. Paying cash is strictly better.';
+    } else if (result.calculationWarnings.includes('negative_avoided_cash')) {
+      verdictTextEl.textContent = 'Pay Cash';
+      verdictTextEl.className = 'verdict bad';
+      verdictCodeEl.textContent = 'SAVINGS < 0';
+      explainEl.textContent = 'After factoring in fees and forgone rewards, redeeming points does not save money. Booking with cash is recommended.';
+    } else if (result.recommendation === 'points') {
+      verdictTextEl.textContent = 'Use Points';
+      verdictTextEl.className = 'verdict good';
+      cppResultEl.classList.add('win');
+      cppResultEl.parentElement.classList.add('win');
+      verdictCodeEl.textContent = 'DIFF +' + Math.round(result.personalValuationDifference) + '%';
+      explainEl.textContent = 'The actual redemption value exceeds your personal baseline by ' + Math.round(result.personalValuationDifference) + '%. Using points delivers superior value.';
+    } else if (result.recommendation === 'cash') {
+      verdictTextEl.textContent = 'Pay Cash';
+      verdictTextEl.className = 'verdict bad';
+      verdictCodeEl.textContent = 'DIFF ' + Math.round(result.personalValuationDifference) + '%';
+      explainEl.textContent = 'Redemption value is below your personal valuation (' + Math.abs(Math.round(result.personalValuationDifference)) + '% lower). Preserving points and paying cash is recommended.';
+    } else if (result.recommendation === 'even') {
+      verdictTextEl.textContent = 'Comparable';
+      verdictTextEl.className = 'verdict';
+      verdictCodeEl.textContent = 'DIFF ~0%';
+      explainEl.textContent = 'Redemption value matches your personal baseline closely. Choose based on points expiration or liquidity preference.';
+    } else {
+      verdictTextEl.textContent = 'Evaluate CPP';
+      verdictTextEl.className = 'verdict';
+      verdictCodeEl.textContent = 'NO VAL';
+      explainEl.textContent = 'No personal valuation entered. Review the calculated CPP above against your personal target.';
     }
   }
 
-  ['cashPrice','nights','cashTaxes','cashResortFees','cashValueEarned','ccRewardsValue','personalValuation','awardTaxes','awardResortFees','pointsPerNight','customN'].forEach(id => {
-    if($(id)) $(id).addEventListener('input', calcAdv);
-  });
-  
-  updateUnits();
-  if($('cashPrice').value) calcAdv();
-
-  // Share functionality
-  $('btnShare').addEventListener('click', () => {
-    const newParams = new URLSearchParams();
-    const safeSet = (key, id) => {
-      const v = parseFloat($(id).value);
-      if (!isNaN(v) && v > 0) newParams.set(key, v);
+  function calculate() {
+    if (!window.CalculatorCore || !window.CalculatorCore.calculateHotelPointsVsCash) return;
+    const input = {
+      inputMode: state.inputMode,
+      currency: state.currency,
+      fxRate: state.fxRate,
+      nights: parseInt($('nights').value, 10) || 1,
+      totalCashPrice: parseFloat($('totalCashPrice').value) || 0,
+      totalPointsRequired: parseFloat($('totalPointsRequired').value) || 0,
+      awardCashFees: parseFloat($('awardCashFees').value) || 0,
+      personalValuation: $('personalValuation').value !== '' ? parseFloat($('personalValuation').value) : null,
+      nightlyCashPrice: parseFloat($('nightlyCashPrice').value) || 0,
+      cashTaxes: parseFloat($('cashTaxes').value) || 0,
+      cashResortFees: parseFloat($('cashResortFees').value) || 0,
+      pointsPerNight: parseFloat($('pointsPerNight').value) || 0,
+      freeNightRule: $('freeNightRule').value,
+      customFreeNightInterval: parseInt($('customFreeNightInterval').value, 10) || 4,
+      awardTaxes: parseFloat($('awardTaxes').value) || 0,
+      awardResortFees: parseFloat($('awardResortFees').value) || 0,
+      hotelPointsEarnedValue: parseFloat($('hotelPointsEarnedValue').value) || 0,
+      creditCardRewardsValue: parseFloat($('creditCardRewardsValue').value) || 0
     };
-    safeSet('cash', 'cashPrice');
-    safeSet('nights', 'nights');
-    safeSet('taxes', 'cashTaxes');
-    safeSet('resort', 'cashResortFees');
-    safeSet('points', 'pointsPerNight');
-    safeSet('ataxes', 'awardTaxes');
-    safeSet('aresort', 'awardResortFees');
-    safeSet('earned', 'cashValueEarned');
-    safeSet('cc', 'ccRewardsValue');
-    safeSet('valuation', 'personalValuation');
-    
-    if ($('freeNightRule').value !== 'none') newParams.set('freeRule', $('freeNightRule').value);
-    if ($('freeNightRule').value === 'custom') safeSet('customN', 'customN');
-    if ($('programPreset').value !== 'custom') newParams.set('preset', $('programPreset').value);
-    newParams.set('currency', currentCurrency);
-    
-    const newUrl = window.location.pathname + '?' + newParams.toString();
-    history.replaceState(null, '', newUrl);
-    
-    navigator.clipboard.writeText(window.location.origin + newUrl).then(() => {
-      const toast = $('toast');
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+
+    const res = window.CalculatorCore.calculateHotelPointsVsCash(input);
+    renderResults(res);
+  }
+
+  function syncAdvancedToSimple() {
+    state.inputMode = 'nightly-breakdown';
+    const nights = parseInt($('nights').value, 10) || 1;
+    const nightlyPrice = parseFloat($('nightlyCashPrice').value) || 0;
+    const cashTaxes = parseFloat($('cashTaxes').value) || 0;
+    const cashResort = parseFloat($('cashResortFees').value) || 0;
+    const pointsPerNight = parseFloat($('pointsPerNight').value) || 0;
+    const awardTaxes = parseFloat($('awardTaxes').value) || 0;
+    const awardResort = parseFloat($('awardResortFees').value) || 0;
+
+    let freeNights = 0;
+    const rule = $('freeNightRule').value;
+    if (rule === '5th' && nights >= 5) freeNights = Math.floor(nights / 5);
+    else if (rule === '4th' && nights >= 4) freeNights = Math.floor(nights / 4);
+    else if (rule === 'custom') {
+      const interval = parseInt($('customFreeNightInterval').value, 10) || 4;
+      if (interval >= 2 && nights >= interval) freeNights = Math.floor(nights / interval);
+    }
+
+    const grossCash = (nightlyPrice * nights) + cashTaxes + cashResort;
+    const awardCash = awardTaxes + awardResort;
+    const totalPts = Math.max(0, (nights - freeNights) * pointsPerNight);
+
+    if (nightlyPrice > 0) $('totalCashPrice').value = grossCash;
+    if (pointsPerNight > 0) $('totalPointsRequired').value = totalPts;
+    $('awardCashFees').value = awardCash;
+  }
+
+  ['totalCashPrice', 'totalPointsRequired', 'awardCashFees', 'nights'].forEach(id => {
+    $(id).addEventListener('input', () => {
+      state.inputMode = 'checkout-total';
+      calculate();
     });
   });
+
+  $('personalValuation').addEventListener('input', () => {
+    state.userHasCustomValuation = true;
+    calculate();
+  });
+
+  ['nightlyCashPrice', 'pointsPerNight', 'cashTaxes', 'cashResortFees', 'awardTaxes', 'awardResortFees', 'hotelPointsEarnedValue', 'creditCardRewardsValue'].forEach(id => {
+    $(id).addEventListener('input', () => {
+      syncAdvancedToSimple();
+      calculate();
+    });
+  });
+
+  $('freeNightRule').addEventListener('change', (e) => {
+    $('customIntervalField').style.display = e.target.value === 'custom' ? 'block' : 'none';
+    if ($('advancedDetails').open) {
+      syncAdvancedToSimple();
+    }
+    calculate();
+  });
+  $('customFreeNightInterval').addEventListener('input', () => {
+    syncAdvancedToSimple();
+    calculate();
+  });
+
+  $('programPreset').addEventListener('change', (e) => {
+    state.programId = e.target.value;
+    updateProgramPolicyCard(e.target.value);
+    calculate();
+  });
+
+  $('currency').addEventListener('change', (e) => {
+    const oldCurr = state.currency;
+    const newCurr = e.target.value;
+    if (oldCurr === newCurr) return;
+
+    state.currency = newCurr;
+    try { localStorage.setItem('preferredCurrency', newCurr); } catch(err) {}
+    updateCurrencyLabels();
+
+    const fx = state.fxRate;
+    const toUSD = newCurr === 'USD';
+
+    const scaleField = (id) => {
+      const el = $(id);
+      const val = parseFloat(el.value);
+      if (!isNaN(val) && val > 0) {
+        el.value = toUSD ? parseFloat((val / fx).toFixed(2)) : Math.round(val * fx);
+      }
+    };
+
+    scaleField('totalCashPrice');
+    scaleField('awardCashFees');
+    scaleField('nightlyCashPrice');
+    scaleField('cashTaxes');
+    scaleField('cashResortFees');
+    scaleField('awardTaxes');
+    scaleField('awardResortFees');
+    scaleField('hotelPointsEarnedValue');
+    scaleField('creditCardRewardsValue');
+
+    if (!state.userHasCustomValuation) {
+      const prog = programsData[state.programId] || programsData.custom;
+      $('personalValuation').value = toUSD ? prog.usdCents : prog.cny;
+    } else {
+      const pVal = parseFloat($('personalValuation').value);
+      if (!isNaN(pVal) && pVal > 0) {
+        $('personalValuation').value = toUSD ? parseFloat(((pVal * 100) / fx).toFixed(2)) : parseFloat(((pVal * fx) / 100).toFixed(4));
+      }
+    }
+
+    calculate();
+  });
+
+  $('exampleHilton').addEventListener('click', () => {
+    state.programId = 'hilton';
+    $('programPreset').value = 'hilton';
+    updateProgramPolicyCard('hilton');
+    $('nights').value = '5';
+    $('totalCashPrice').value = state.currency === 'USD' ? '1500' : '10500';
+    $('totalPointsRequired').value = '240000';
+    $('awardCashFees').value = '0';
+    $('personalValuation').value = state.currency === 'USD' ? '0.5' : '0.035';
+    state.userHasCustomValuation = false;
+    state.inputMode = 'checkout-total';
+    calculate();
+  });
+
+  $('exampleMarriott').addEventListener('click', () => {
+    state.programId = 'marriott';
+    $('programPreset').value = 'marriott';
+    updateProgramPolicyCard('marriott');
+    $('nights').value = '5';
+    $('totalCashPrice').value = state.currency === 'USD' ? '1250' : '8750';
+    $('totalPointsRequired').value = '140000';
+    $('awardCashFees').value = '0';
+    $('personalValuation').value = state.currency === 'USD' ? '0.7' : '0.049';
+    state.userHasCustomValuation = false;
+    state.inputMode = 'checkout-total';
+    calculate();
+  });
+
+  $('exampleHyatt').addEventListener('click', () => {
+    state.programId = 'hyatt';
+    $('programPreset').value = 'hyatt';
+    updateProgramPolicyCard('hyatt');
+    $('nights').value = '2';
+    $('totalCashPrice').value = state.currency === 'USD' ? '850' : '5950';
+    $('totalPointsRequired').value = '42000';
+    $('awardCashFees').value = '0';
+    $('personalValuation').value = state.currency === 'USD' ? '1.7' : '0.119';
+    state.userHasCustomValuation = false;
+    state.inputMode = 'checkout-total';
+    calculate();
+  });
+
+  $('btnShare').addEventListener('click', () => {
+    const shareParams = new URLSearchParams();
+    shareParams.set('currency', state.currency);
+    shareParams.set('prog', state.programId);
+    shareParams.set('mode', state.inputMode);
+    shareParams.set('nights', $('nights').value);
+    shareParams.set('cash', $('totalCashPrice').value);
+    shareParams.set('points', $('totalPointsRequired').value);
+    if ($('awardCashFees').value !== '0') shareParams.set('fees', $('awardCashFees').value);
+    if ($('personalValuation').value) shareParams.set('val', $('personalValuation').value);
+
+    const shareUrl = window.location.origin + window.location.pathname + '?' + shareParams.toString();
+    history.replaceState(null, '', shareUrl);
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        const toast = $('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+      });
+    }
+  });
+
+  function loadUrlParams() {
+    const pProg = params.get('prog') || params.get('preset');
+    if (pProg && programsData[pProg]) {
+      state.programId = pProg;
+      $('programPreset').value = pProg;
+    }
+    const pNights = params.get('nights');
+    if (pNights) $('nights').value = pNights;
+    const pCash = params.get('cash') || params.get('cashTotal');
+    if (pCash) $('totalCashPrice').value = pCash;
+    const pPoints = params.get('points') || params.get('pts') || params.get('pointsTotal');
+    if (pPoints) $('totalPointsRequired').value = pPoints;
+    const pFees = params.get('fees') || params.get('awardCash');
+    if (pFees) $('awardCashFees').value = pFees;
+    const pVal = params.get('val') || params.get('valuation');
+    if (pVal) {
+      $('personalValuation').value = pVal;
+      state.userHasCustomValuation = true;
+    }
+  }
+
+  updateCurrencyLabels();
+  loadUrlParams();
+  updateProgramPolicyCard(state.programId);
+  calculate();
 </script>

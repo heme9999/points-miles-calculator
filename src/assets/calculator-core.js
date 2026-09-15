@@ -639,6 +639,135 @@
     return normalizeTripState(raw);
   }
 
+  /**
+   * Phase 9.9: Hotel Points vs Cash Decision Engine
+   */
+  function calculateHotelPointsVsCash(input = {}) {
+    const inputMode = input.inputMode === 'nightly-breakdown' ? 'nightly-breakdown' : 'checkout-total';
+    const currency = input.currency === 'CNY' ? 'CNY' : 'USD';
+    const fxRate = toNum(input.fxRate, DEFAULT_FX_RATE);
+    const nights = Math.max(1, parseInt(input.nights, 10) || 1);
+
+    let grossCashCost = 0;
+    let netCashCost = 0;
+    let pointsBeforeFreeNight = 0;
+    let freeNights = 0;
+    let actualPointsUsed = 0;
+    let awardCashCost = 0;
+    let avoidedCashSpend = 0;
+    let hotelPointsEarnedValue = 0;
+    let creditCardRewardsValue = 0;
+    const calculationWarnings = [];
+
+    if (inputMode === 'checkout-total') {
+      grossCashCost = toNum(input.totalCashPrice);
+      netCashCost = grossCashCost;
+      actualPointsUsed = toNum(input.totalPointsRequired);
+      pointsBeforeFreeNight = actualPointsUsed;
+      freeNights = 0; // In simple mode, total points already includes any program discounts applied at checkout
+      awardCashCost = toNum(input.awardCashFees);
+      avoidedCashSpend = grossCashCost - awardCashCost;
+    } else {
+      // Nightly breakdown mode
+      const nightlyCashPrice = toNum(input.nightlyCashPrice);
+      const cashTaxes = toNum(input.cashTaxes);
+      const cashResortFees = toNum(input.cashResortFees);
+      hotelPointsEarnedValue = toNum(input.hotelPointsEarnedValue);
+      creditCardRewardsValue = toNum(input.creditCardRewardsValue);
+      grossCashCost = (nightlyCashPrice * nights) + cashTaxes + cashResortFees;
+      netCashCost = Math.max(0, grossCashCost - hotelPointsEarnedValue - creditCardRewardsValue);
+
+      const pointsPerNight = toNum(input.pointsPerNight);
+      pointsBeforeFreeNight = pointsPerNight * nights;
+
+      // Free night rules
+      const rule = input.freeNightRule || 'none';
+      if (rule === '5th' && nights >= 5) {
+        freeNights = Math.floor(nights / 5);
+      } else if (rule === '4th' && nights >= 4) {
+        freeNights = Math.floor(nights / 4);
+      } else if (rule === 'custom') {
+        const interval = parseInt(input.customFreeNightInterval, 10);
+        if (interval >= 2 && nights >= interval) {
+          freeNights = Math.floor(nights / interval);
+        }
+      }
+      actualPointsUsed = Math.max(0, pointsBeforeFreeNight - (freeNights * pointsPerNight));
+
+      const awardTaxes = toNum(input.awardTaxes);
+      const awardResortFees = toNum(input.awardResortFees);
+      awardCashCost = awardTaxes + awardResortFees;
+      avoidedCashSpend = netCashCost - awardCashCost;
+    }
+
+    // CPP & Local Per Point
+    let cpp = 0;
+    let localPerPoint = 0;
+    if (actualPointsUsed > 0) {
+      cpp = calculateCPP(avoidedCashSpend, actualPointsUsed, currency, fxRate);
+      localPerPoint = calculateLocalPerPoint(avoidedCashSpend, actualPointsUsed);
+    }
+
+    // Warnings
+    if (actualPointsUsed <= 0) {
+      calculationWarnings.push('required_points_missing');
+    }
+    if (awardCashCost >= grossCashCost && grossCashCost > 0) {
+      calculationWarnings.push('award_cash_exceeds_cash_price');
+    } else if (avoidedCashSpend <= 0 && grossCashCost > 0) {
+      calculationWarnings.push('negative_avoided_cash');
+    }
+
+    // Valuation comparison & recommendation
+    const personalValuation = input.personalValuation !== undefined && input.personalValuation !== null && input.personalValuation !== ''
+      ? parseFloat(input.personalValuation) : null;
+
+    let personalValuationDifference = null;
+    let recommendation = 'insufficient'; // 'points' | 'cash' | 'even' | 'insufficient'
+
+    if (personalValuation !== null && !isNaN(personalValuation) && personalValuation > 0) {
+      const currentUnitValue = currency === 'USD' ? cpp : localPerPoint;
+      const valDiff = currentUnitValue - personalValuation;
+      const pctDiff = (valDiff / personalValuation) * 100;
+      personalValuationDifference = isFinite(pctDiff) ? parseFloat(pctDiff.toFixed(2)) : 0;
+
+      if (actualPointsUsed <= 0 || grossCashCost <= 0) {
+        recommendation = 'insufficient';
+      } else if (avoidedCashSpend <= 0 || awardCashCost >= grossCashCost) {
+        recommendation = 'cash';
+      } else if (Math.abs(valDiff) < 0.0001 || Math.abs(pctDiff) < 0.5) {
+        recommendation = 'even';
+      } else if (currentUnitValue > personalValuation) {
+        recommendation = 'points';
+      } else {
+        recommendation = 'cash';
+      }
+    } else {
+      recommendation = 'insufficient';
+    }
+
+    return {
+      inputMode,
+      currency,
+      nights,
+      grossCashCost: parseFloat(grossCashCost.toFixed(2)),
+      netCashCost: parseFloat(netCashCost.toFixed(2)),
+      hotelPointsEarnedValue: parseFloat(hotelPointsEarnedValue.toFixed(2)),
+      creditCardRewardsValue: parseFloat(creditCardRewardsValue.toFixed(2)),
+      pointsBeforeFreeNight,
+      freeNights,
+      actualPointsUsed,
+      awardCashCost: parseFloat(awardCashCost.toFixed(2)),
+      avoidedCashSpend: parseFloat(avoidedCashSpend.toFixed(2)),
+      cpp: parseFloat(cpp.toFixed(4)),
+      localPerPoint: parseFloat(localPerPoint.toFixed(4)),
+      personalValuation: personalValuation !== null && !isNaN(personalValuation) && personalValuation > 0 ? personalValuation : null,
+      personalValuationDifference,
+      recommendation,
+      calculationWarnings
+    };
+  }
+
   return {
     DEFAULT_FX_RATE: DEFAULT_FX_RATE,
     toNum: toNum,
@@ -648,8 +777,8 @@
     calculateLocalPerPoint: calculateLocalPerPoint,
     calculateCashTripCost: calculateCashTripCost,
     calculateTransferRequirement: calculateTransferRequirement,
-    calculateFlightPointsSavings: calculateFlightPointsSavings,
     calculateHotelPointsSavings: calculateHotelPointsSavings,
+    calculateHotelPointsVsCash: calculateHotelPointsVsCash,
     calculateTripCostAfterPoints: calculateTripCostAfterPoints,
     formatCurrency: formatCurrency,
     normalizeTripState: normalizeTripState,
