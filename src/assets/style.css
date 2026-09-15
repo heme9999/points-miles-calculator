@@ -185,8 +185,8 @@ nav.breadcrumb a{ color: var(--muted); text-decoration: none; border-bottom: 1px
 nav.breadcrumb a:hover{ border-color: var(--muted); }
 nav.breadcrumb span.sep{ margin: 0 8px; opacity: 0.4; }
 
-.site-nav{ display:flex; justify-content:space-between; align-items:center; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; padding-bottom:16px; margin-bottom:48px; border-bottom:1px solid var(--line); }
-.site-nav a{ color:var(--paper); text-decoration:none; margin-left: 20px; }
+.site-nav{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; padding-bottom:16px; margin-bottom:48px; border-bottom:1px solid var(--line); }
+.site-nav a{ color:var(--paper); text-decoration:none; margin-left: 12px; }
 .site-nav a:hover{ color:var(--gold); }
 .site-nav .brand{ color:var(--gold); margin-left:0; font-weight:600; letter-spacing:0.1em; }
 
