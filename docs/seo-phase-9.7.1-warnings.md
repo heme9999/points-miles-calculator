@@ -1,10 +1,10 @@
 # Audit Warnings Report
 
-**Date**: 2026-09-15T03:52:15.000Z
+**Date**: 2026-09-19T11:58:49.459Z
 **Total URLs**: 106
 **Intentional Support Pages**: 8
 **Technical Blockers**: 0
-**Content/Link Warnings**: 30
+**Content/Link Warnings**: 28
 
 These warnings may reduce discovery or perceived page importance, but they do not prove that Google has excluded the URLs. Actual indexing status requires GSC validation.
 
@@ -79,14 +79,6 @@ These warnings may reduce discovery or perceived page importance, but they do no
   - Inbound Count: 0
   - Sources: []
 - **https://points-miles-calculator.pages.dev/en/examples/**
-  - Warning Type: `zero-contextual-inbound-links`
-  - Inbound Count: 0
-  - Sources: []
-- **https://points-miles-calculator.pages.dev/en/examples/hotel-fifth-night-free-calculation/**
-  - Warning Type: `zero-contextual-inbound-links`
-  - Inbound Count: 0
-  - Sources: []
-- **https://points-miles-calculator.pages.dev/examples/hotel-fifth-night-free-calculation/**
   - Warning Type: `zero-contextual-inbound-links`
   - Inbound Count: 0
   - Sources: []

@@ -29,6 +29,8 @@ The easiest way to earn FNAs is by holding premium hotel credit cards. Many card
 2. **Watch the Expiration**: FNAs typically expire 12 months from the date of issuance. They rarely can be extended, so use them before you lose them.
 3. **Avoid Using Them on Cheap Nights**: If a hotel costs $100 but requires a 50k certificate, pay cash instead and save the certificate for a higher-value redemption.
 
-## Valuing Your Certificates
+## Evaluating Free Night Awards vs. Points Stays
 
-To determine if you're getting good value from a certificate, use our [Advanced Hotel Points vs Cash Calculator](/en/calculators/hotel-points-vs-cash/). Simply input the cash price of the room (including taxes) to see if burning your certificate makes sense compared to paying cash.
+Travelers often confuse **credit card Free Night Certificates** with **pure points stays**:
+- **Free Night Awards (FNAs / Certificates)**: These certificates come with strict point caps (e.g., Marriott 35k/50k, IHG 40k) and do **not** qualify for consecutive free night benefits like 5th Night Free. Evaluating an FNA centers on whether the avoided cash room rate comfortably exceeds your card's annual fee.
+- **Pure Points Stays**: When deciding between redeeming your accumulated loyalty points versus paying cash for a reservation, use our dedicated [Hotel Points vs Cash Calculator](/en/calculators/hotel-points-vs-cash/). Please note that our calculator focuses exclusively on pure points stays (factoring in waived resort fees, 5th night free rules, and forgone member cash earning); it does not calculate certificate top-off math or card annual fee breakevens.

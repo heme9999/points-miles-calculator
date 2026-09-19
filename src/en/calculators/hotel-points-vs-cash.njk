@@ -13,7 +13,7 @@ breadcrumbs:
 <p class="sub">Decide whether to use hotel points or pay cash in 30 seconds. Factors in resort fee waivers, 5th-night-free benefits, taxes, and forgone rewards across 9 major hotel loyalty programs.</p>
 
 <div class="hotel-examples-wrapper">
-  <div class="hotel-examples-label">Quick-Load Real Booking Scenarios</div>
+  <div class="hotel-examples-label">Quick-Load Real Booking Scenarios (Illustrative Demo Data)</div>
   <div class="hotel-examples-grid">
     <button type="button" class="btn-hotel-example" id="exampleHilton" data-example="hilton">
       <span>🏨 Hilton 5-Night Resort Stay</span>
@@ -80,12 +80,12 @@ breadcrumbs:
   <div class="row" style="margin-top: 16px;">
     <div class="field">
       <label for="totalCashPrice">Total Cash Price (Taxes & Fees Included)<span class="hint" id="hintTotalCash">$</span></label>
-      <input type="number" id="totalCashPrice" min="0" step="1" inputmode="decimal" placeholder="e.g. 1500" value="1500">
+      <input type="number" id="totalCashPrice" min="0" step="1" inputmode="decimal" placeholder="e.g. 1500" value="">
       <div class="unit">Enter the final cash amount shown on the checkout screen</div>
     </div>
     <div class="field">
       <label for="totalPointsRequired">Total Points Required<span class="hint" id="hintTotalPoints">points</span></label>
-      <input type="number" id="totalPointsRequired" min="0" step="1" inputmode="numeric" placeholder="e.g. 80000" value="80000">
+      <input type="number" id="totalPointsRequired" min="0" step="1" inputmode="numeric" placeholder="e.g. 80000" value="">
       <div class="unit">Enter the final points deducted at checkout (already discounted)</div>
     </div>
   </div>
@@ -95,11 +95,12 @@ breadcrumbs:
       <label for="awardCashFees">Award Out-of-Pocket Cash Fees<span class="hint" id="hintAwardCashFees">$</span></label>
       <input type="number" id="awardCashFees" value="0" min="0" step="1" inputmode="decimal">
       <div class="unit">Usually $0 on full points stays; enter mandatory resort fees or taxes if charged</div>
+      <div id="awardFeeNotice" style="display: none; font-size: 12px; margin-top: 6px; padding: 6px 10px; border-radius: 4px; background: #fffbeb; border: 1px solid #fef3c7; color: #92400e; line-height: 1.4;"></div>
     </div>
     <div class="field">
-      <label for="personalValuation">Personal Point Valuation<span class="hint" id="hintValuation">¢/pt (Optional)</span></label>
-      <input type="number" id="personalValuation" value="1.0" min="0" step="0.0001" inputmode="decimal">
-      <div class="unit" id="unitValuationNote">Illustrative research baseline; edit anytime to match your target value</div>
+      <label for="personalValuation">Personal Point Valuation<span class="hint" id="hintValuation">¢/pt (Optional baseline)</span></label>
+      <input type="number" id="personalValuation" value="" placeholder="Optional, e.g. 1.0" min="0" step="0.0001" inputmode="decimal">
+      <div class="unit" id="unitValuationNote">Optional decision baseline. If empty, the calculator still computes realized CPP and net savings without forcing a subjective recommendation.</div>
     </div>
   </div>
 </div>
@@ -266,9 +267,10 @@ breadcrumbs:
   
   <h2>Related Guides & Comparisons</h2>
   <ul>
-    <li><a href="/en/compare/">Compare Point Values Across Major Hotel & Credit Card Programs</a></li>
-    <li><a href="/en/guides/free-night-awards/">How to Maximize Annual Hotel Free Night Awards (FNC)</a></li>
+    <li><a href="/en/examples/hotel-fifth-night-free-calculation/">Hotel 5th Night Free Calculation Example & Savings Analysis</a></li>
     <li><a href="/en/guides/valuing-hotel-points/">Ultimate Hotel Point Valuation Guide: Dynamic Pricing & 5th Night Free</a></li>
+    <li><a href="/en/guides/free-night-awards/">How to Maximize Annual Hotel Free Night Awards (FNC)</a></li>
+    <li><a href="/en/compare/">Compare Point Values Across Major Hotel & Credit Card Programs</a></li>
     <li><a href="/en/calculators/points-vs-cash/">Flight Points vs Cash Decision Calculator</a></li>
   </ul>
 
@@ -319,12 +321,12 @@ breadcrumbs:
     inputMode: 'checkout-total',
     userHasCustomValuation: false,
     rawValues: {
-      totalCashPrice: 1500,
-      totalPointsRequired: 80000,
+      totalCashPrice: 0,
+      totalPointsRequired: 0,
       awardCashFees: 0,
-      personalValuation: 1.0,
-      nightlyCashPrice: 300,
-      pointsPerNight: 20000,
+      personalValuation: null,
+      nightlyCashPrice: 0,
+      pointsPerNight: 0,
       cashTaxes: 0,
       cashResortFees: 0,
       awardTaxes: 0,
@@ -367,7 +369,7 @@ breadcrumbs:
   function updateCurrencyLabels() {
     const isUSD = state.currency === 'USD';
     const sym = isUSD ? '$' : '¥';
-    const valHint = isUSD ? '¢/pt (Optional)' : '¥/pt (Optional)';
+    const valHint = isUSD ? '¢/pt (Optional baseline)' : '¥/pt (Optional baseline)';
     
     $('hintTotalCash').textContent = sym;
     $('hintAwardCashFees').textContent = sym;
@@ -387,6 +389,7 @@ breadcrumbs:
     const fBadge = $('policyFreeBadge');
     const pText = $('policyText');
     const pLink = $('policySourceLink');
+    const feeNotice = $('awardFeeNotice');
 
     if (prog.resortFeeEn.includes('Waived')) {
       rBadge.className = 'policy-badge waived';
@@ -420,8 +423,27 @@ breadcrumbs:
       pLink.removeAttribute('href');
     }
 
-    if (!state.userHasCustomValuation) {
-      const defaultVal = state.currency === 'USD' ? prog.usdCents : prog.cny;
+    if (feeNotice) {
+      if (progId === 'marriott') {
+        feeNotice.style.display = 'block';
+        feeNotice.innerHTML = '⚠️ <strong>Marriott Notice:</strong> Marriott award stays generally do NOT waive resort/destination fees. A value of 0 assumes you confirmed no fee applies, not that Marriott universally waives it; please enter any mandatory fees charged by the property.';
+      } else if (progId === 'hilton') {
+        feeNotice.style.display = 'block';
+        feeNotice.innerHTML = 'ℹ️ <strong>Hilton Notice:</strong> Official terms state standard room award stays waive resort fees (including 5th Night Free). Points & Cash or premium room awards may still incur fees.';
+      } else if (progId === 'hyatt') {
+        feeNotice.style.display = 'block';
+        feeNotice.innerHTML = 'ℹ️ <strong>World of Hyatt Notice:</strong> Official terms state resort and destination fees are waived for all members on award stays completed with points.';
+      } else if (progId === 'ihg') {
+        feeNotice.style.display = 'block';
+        feeNotice.innerHTML = '⚠️ <strong>IHG Notice:</strong> IHG generally does not waive resort fees on award stays. Please verify the checkout summary and enter any applicable fees.';
+      } else {
+        feeNotice.style.display = 'none';
+      }
+    }
+
+    const defaultVal = state.currency === 'USD' ? prog.usdCents : prog.cny;
+    $('personalValuation').placeholder = 'Optional, benchmark: ' + defaultVal + (state.currency === 'USD' ? ' ¢/pt' : ' ¥/pt');
+    if (!state.userHasCustomValuation && $('personalValuation').value !== '') {
       state.rawValues.personalValuation = defaultVal;
       $('personalValuation').value = defaultVal;
     }
@@ -447,7 +469,7 @@ breadcrumbs:
       costCompareEl.innerHTML = 'Points Equiv: -<br>Net Cash Cost: -';
       verdictTextEl.textContent = '—';
       verdictCodeEl.textContent = 'DIFF —';
-      explainEl.textContent = 'Enter cash rate and points required to see recommendation.';
+      explainEl.textContent = 'Please enter the cash price and points required to begin, or click a scenario above to load demo data.';
       tier2El.style.display = 'none';
       return;
     }
@@ -486,13 +508,14 @@ breadcrumbs:
 
     $('stepAwardCash').innerHTML = '3. Award Out-of-Pocket Cash Fees: <strong>' + sym + result.awardCashCost.toLocaleString() + '</strong>';
     $('stepNetSaved').innerHTML = '4. Net Avoided Cash Spend: <strong>' + sym + result.avoidedCashSpend.toLocaleString() + '</strong>';
-    $('stepPoints').innerHTML = '5. Actual Points Consumed: <strong>' + result.actualPointsUsed.toLocaleString() + ' points</strong> (' + result.nights + ' nights' + (result.freeNights > 0 ? ', including ' + result.freeNights + ' free night' : '') + ')';
+    const freeSaved = (result.pointsBeforeFreeNight && result.pointsBeforeFreeNight > result.actualPointsUsed) ? (result.pointsBeforeFreeNight - result.actualPointsUsed) : 0;
+    $('stepPoints').innerHTML = '5. Actual Points Consumed: <strong>' + result.actualPointsUsed.toLocaleString() + ' points</strong> (' + result.nights + ' nights' + (result.freeNights > 0 ? ', including ' + result.freeNights + ' free night' + (result.freeNights > 1 ? 's' : '') + ', saving ' + freeSaved.toLocaleString() + ' pts' : '') + ')';
 
     if (result.personalValuationDifference !== null) {
       const diffSign = result.personalValuationDifference >= 0 ? '+' : '';
       $('stepValuationComp').innerHTML = '6. Valuation Benchmark: Redemption value is <strong>' + diffSign + result.personalValuationDifference + '%</strong> vs your baseline (' + result.personalValuation + (isUSD ? '¢' : '¥') + ')';
     } else {
-      $('stepValuationComp').innerHTML = '6. Personal valuation not entered: Compare the calculated ' + displayCpp + ' against your personal acquisition cost.';
+      $('stepValuationComp').innerHTML = '6. Personal valuation not entered: Realized unit redemption value is <strong>' + displayCpp + '</strong>. Compare against your acquisition cost.';
     }
 
     if (result.calculationWarnings.includes('award_cash_exceeds_cash_price')) {
@@ -526,7 +549,7 @@ breadcrumbs:
       verdictTextEl.textContent = 'Evaluate CPP';
       verdictTextEl.className = 'verdict';
       verdictCodeEl.textContent = 'NO VAL';
-      explainEl.textContent = 'No personal valuation entered. Review the calculated CPP above against your personal target.';
+      explainEl.textContent = 'No personal valuation entered. Realized redemption rate is ' + displayCpp + ' with ' + sym + result.avoidedCashSpend.toLocaleString() + ' net avoided cash spend. Compare this against your acquisition cost to decide.';
     }
   }
 

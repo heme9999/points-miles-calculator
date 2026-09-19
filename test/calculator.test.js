@@ -428,5 +428,78 @@ test('Hotel Points vs Cash Engine Unit Tests', async (t) => {
     assert.strictEqual(res.personalValuation, null);
     assert.strictEqual(res.recommendation, 'insufficient');
   });
+
+  await t.test('6. 5 nights @ 20k pts: 5th night free (80k pts) vs standard without condition (100k pts)', () => {
+    const withFreeNight = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'nightly-breakdown',
+      currency: 'USD',
+      nightlyCashPrice: 300,
+      pointsPerNight: 20000,
+      nights: 5,
+      freeNightRule: '5th'
+    });
+    const withoutFreeNight = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'nightly-breakdown',
+      currency: 'USD',
+      nightlyCashPrice: 300,
+      pointsPerNight: 20000,
+      nights: 5,
+      freeNightRule: 'none'
+    });
+
+    assert.strictEqual(withFreeNight.actualPointsUsed, 80000);
+    assert.strictEqual(withFreeNight.freeNights, 1);
+    assert.strictEqual(withoutFreeNight.actualPointsUsed, 100000);
+    assert.strictEqual(withoutFreeNight.freeNights, 0);
+  });
+
+  await t.test('7. Resort Fee impact: Resort Fee > 0 reduces CPP and increases award cash cost', () => {
+    const noFee = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'checkout-total',
+      currency: 'USD',
+      totalCashPrice: 1500,
+      totalPointsRequired: 100000,
+      awardCashFees: 0
+    });
+    const withFee = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'checkout-total',
+      currency: 'USD',
+      totalCashPrice: 1500,
+      totalPointsRequired: 100000,
+      awardCashFees: 250 // $50/night for 5 nights
+    });
+
+    assert.strictEqual(noFee.cpp, 1.50);
+    assert.strictEqual(noFee.awardCashCost, 0);
+    assert.strictEqual(withFee.cpp, 1.25);
+    assert.strictEqual(withFee.awardCashCost, 250);
+    assert.ok(withFee.cpp < noFee.cpp);
+    assert.ok(withFee.awardCashCost > noFee.awardCashCost);
+  });
+
+  await t.test('8. Currency units: USD produces cents-per-point (cpp), CNY produces yuan-per-point (localPerPoint)', () => {
+    const usdRes = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'checkout-total',
+      currency: 'USD',
+      totalCashPrice: 1000,
+      totalPointsRequired: 50000,
+      awardCashFees: 0
+    });
+    const cnyRes = CalculatorCore.calculateHotelPointsVsCash({
+      inputMode: 'checkout-total',
+      currency: 'CNY',
+      totalCashPrice: 7000,
+      totalPointsRequired: 50000,
+      awardCashFees: 0
+    });
+
+    // In USD, avoidedCashSpend is $1000, cpp is (1000/50000)*100 = 2.0 ¢/pt
+    assert.strictEqual(usdRes.cpp, 2.0);
+    assert.strictEqual(usdRes.currency, 'USD');
+
+    // In CNY, avoidedCashSpend is ¥7000, localPerPoint is 7000/50000 = 0.14 ¥/点
+    assert.strictEqual(cnyRes.localPerPoint, 0.14);
+    assert.strictEqual(cnyRes.currency, 'CNY');
+  });
 });
 

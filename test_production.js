@@ -888,14 +888,24 @@ async function runTests() {
   const enHotelDom = new JSDOM(enHotelRes.data, { url: enHotelUrl, runScripts: 'dangerously', resources: 'usable' });
   const zhHotelDom = new JSDOM(zhHotelRes.data, { url: zhHotelUrl, runScripts: 'dangerously', resources: 'usable' });
 
-  // Wait for scripts to execute and initial calculation to populate
+  // Wait for scripts to execute and DOM initialization
   for (let i = 0; i < 30; i++) {
     await new Promise(r => setTimeout(r, 100));
-    const cpp = enHotelDom.window.document.getElementById('cppResult')?.textContent;
-    if (cpp && cpp !== '-') break;
+    if (enHotelDom.window.CalculatorCore && enHotelDom.window.document.getElementById('explain')?.textContent.includes('demo data')) break;
   }
 
-  // 6.2 Check Single H1 and Canonicals
+  // 6.2 Verify Initial On-Load State (Default Empty with Prompt)
+  const initialEnCpp = enHotelDom.window.document.getElementById('cppResult')?.textContent;
+  const initialEnCash = enHotelDom.window.document.getElementById('totalCashPrice')?.value;
+  const initialEnPoints = enHotelDom.window.document.getElementById('totalPointsRequired')?.value;
+  if (initialEnCpp !== '-' || initialEnCash !== '' || initialEnPoints !== '') {
+    console.error(`ERROR: Expected hotel calculator to start empty with '-', got cpp: ${initialEnCpp}, cash: ${initialEnCash}, points: ${initialEnPoints}`);
+    failures++;
+  } else {
+    console.log('Hotel calculator starts empty with placeholder and prompt (Passed)');
+  }
+
+  // 6.3 Check Single H1 and Canonicals
   const enH1s = enHotelDom.window.document.querySelectorAll('h1');
   const zhH1s = zhHotelDom.window.document.querySelectorAll('h1');
   if (enH1s.length !== 1 || enH1s[0].textContent.trim() !== 'Hotel Points vs Cash Calculator') {
@@ -911,7 +921,23 @@ async function runTests() {
     console.log('ZH Hotel H1 single and matches expected (Passed)');
   }
 
-  // 6.3 Verify 9 Hotel Program Presets
+  // 6.4 Verify Related Guides All Return HTTP 200 (No 404s)
+  const zhGuideLinks = Array.from(zhHotelDom.window.document.querySelectorAll('article.seo-content ul li a')).map(a => a.getAttribute('href'));
+  const enGuideLinks = Array.from(enHotelDom.window.document.querySelectorAll('article.seo-content ul li a')).map(a => a.getAttribute('href'));
+  const allGuideLinks = [...zhGuideLinks, ...enGuideLinks];
+
+  for (const link of allGuideLinks) {
+    if (!link.startsWith('/')) continue;
+    const fullUrl = `${baseUrl}${link}`;
+    const linkRes = await fetch(fullUrl);
+    if (linkRes.status !== 200) {
+      console.error(`ERROR: Related guide link ${link} returned HTTP ${linkRes.status}`);
+      failures++;
+    }
+  }
+  console.log(`All ${allGuideLinks.length} related guide links in hotel calculators return HTTP 200 OK (Passed)`);
+
+  // 6.5 Verify 9 Hotel Program Presets & Marriott Fee Notice
   const enProgOptions = enHotelDom.window.document.querySelectorAll('#programPreset option');
   if (enProgOptions.length !== 9) {
     console.error(`ERROR: Expected 9 hotel programs in preset dropdown, found ${enProgOptions.length}`);
@@ -920,8 +946,19 @@ async function runTests() {
     console.log('9 hotel programs confirmed in preset dropdown (Passed)');
   }
 
-  // 6.4 Scenario 1: Simple mode: Total cash $1,500, Points 100,000, Award fees $50 -> CPP 1.45 ¢/pt
+  // Test Marriott Notice
   const doc = enHotelDom.window.document;
+  doc.getElementById('programPreset').value = 'marriott';
+  doc.getElementById('programPreset').dispatchEvent(new enHotelDom.window.Event('change'));
+  const marriottNotice = doc.getElementById('awardFeeNotice');
+  if (!marriottNotice || marriottNotice.style.display === 'none' || !marriottNotice.textContent.includes('Marriott Notice')) {
+    console.error(`ERROR: Marriott fee notice failed to display: ${marriottNotice?.textContent}`);
+    failures++;
+  } else {
+    console.log('Marriott fee notice displayed correctly next to award cash fees (Passed)');
+  }
+
+  // 6.6 Scenario 1: Simple mode: Total cash $1,500, Points 100,000, Award fees $50 -> CPP 1.45 ¢/pt
   doc.getElementById('totalCashPrice').value = '1500';
   doc.getElementById('totalPointsRequired').value = '100000';
   doc.getElementById('awardCashFees').value = '50';

@@ -13,7 +13,7 @@ breadcrumbs:
 <p class="sub">30 秒评估酒店积分兑换是否划算。支持凯悦、希尔顿、万豪、洲际等 9 大国际酒店集团规则，综合税费、免房晚优惠与度假村费免除政策。</p>
 
 <div class="hotel-examples-wrapper">
-  <div class="hotel-examples-label">快速载入典型场景 (一键填入实测数据)</div>
+  <div class="hotel-examples-label">快速载入典型场景 (演示数据，不代表实时房价或官方估值)</div>
   <div class="hotel-examples-grid">
     <button type="button" class="btn-hotel-example" id="exampleHilton" data-example="hilton">
       <span>🏨 希尔顿 5 晚度假村</span>
@@ -80,12 +80,12 @@ breadcrumbs:
   <div class="row" style="margin-top: 16px;">
     <div class="field">
       <label for="totalCashPrice">现金预订总价 (含税费)<span class="hint" id="hintTotalCash">¥</span></label>
-      <input type="number" id="totalCashPrice" min="0" step="1" inputmode="decimal" placeholder="例如: 1500" value="1500">
+      <input type="number" id="totalCashPrice" min="0" step="1" inputmode="decimal" placeholder="例如: 1500" value="">
       <div class="unit">输入现金结账页面最终显示的应付总金额</div>
     </div>
     <div class="field">
       <label for="totalPointsRequired">积分兑换所需总积分<span class="hint" id="hintTotalPoints">积分</span></label>
-      <input type="number" id="totalPointsRequired" min="0" step="1" inputmode="numeric" placeholder="例如: 80000" value="80000">
+      <input type="number" id="totalPointsRequired" min="0" step="1" inputmode="numeric" placeholder="例如: 80000" value="">
       <div class="unit">输入积分结账页面最终扣减的总积分 (已扣免房)</div>
     </div>
   </div>
@@ -95,11 +95,12 @@ breadcrumbs:
       <label for="awardCashFees">积分房需另付现金税费<span class="hint" id="hintAwardCashFees">¥</span></label>
       <input type="number" id="awardCashFees" value="0" min="0" step="1" inputmode="decimal">
       <div class="unit">全积分房通常为 0；若酒店强制加收度假村费或城市税请填入</div>
+      <div id="awardFeeNotice" style="display: none; font-size: 12px; margin-top: 6px; padding: 6px 10px; border-radius: 4px; background: #fffbeb; border: 1px solid #fef3c7; color: #92400e; line-height: 1.4;"></div>
     </div>
     <div class="field">
-      <label for="personalValuation">你的积分个人估值<span class="hint" id="hintValuation">¥/点 (选填)</span></label>
-      <input type="number" id="personalValuation" value="0.070" min="0" step="0.0001" inputmode="decimal">
-      <div class="unit" id="unitValuationNote">预设为典型研究基准，非官方固定汇率，可自由修改</div>
+      <label for="personalValuation">你的积分个人估值<span class="hint" id="hintValuation">¥/点 (选填决策假设)</span></label>
+      <input type="number" id="personalValuation" value="" placeholder="选填，例如 0.070" min="0" step="0.0001" inputmode="decimal">
+      <div class="unit" id="unitValuationNote">选填决策假设。留空时计算器仍会计算实际每点价值（CPP）与净节省现金，但不输出“更划算/不如付现”的主观建议。</div>
     </div>
   </div>
 </div>
@@ -266,9 +267,10 @@ breadcrumbs:
   
   <h2>相关深度指南与对比</h2>
   <ul>
-    <li><a href="/compare/">各大酒店集团与信用卡常客计划积分价值横向对比</a></li>
-    <li><a href="/guides/free-night-awards/">酒店年度免房券 (FNC) 最佳兑换与使用策略</a></li>
+    <li><a href="/examples/hotel-fifth-night-free-calculation/">酒店住五付四 (5th Night Free) 实际节省案例分析</a></li>
     <li><a href="/guides/valuing-hotel-points/">酒店积分估值终极指南：动态定价与第五晚免费技巧</a></li>
+    <li><a href="/guides/free-night-awards/">酒店年度免房券 (FNC) 最佳兑换与使用策略</a></li>
+    <li><a href="/compare/">各大酒店集团与信用卡常客计划积分价值横向对比</a></li>
     <li><a href="/calculators/points-vs-cash/">机票积分 vs 现金兑换决策计算器</a></li>
   </ul>
 
@@ -319,12 +321,12 @@ breadcrumbs:
     inputMode: 'checkout-total',
     userHasCustomValuation: false,
     rawValues: {
-      totalCashPrice: 1500,
-      totalPointsRequired: 80000,
+      totalCashPrice: 0,
+      totalPointsRequired: 0,
       awardCashFees: 0,
-      personalValuation: 0.070,
-      nightlyCashPrice: 300,
-      pointsPerNight: 20000,
+      personalValuation: null,
+      nightlyCashPrice: 0,
+      pointsPerNight: 0,
       cashTaxes: 0,
       cashResortFees: 0,
       awardTaxes: 0,
@@ -367,7 +369,7 @@ breadcrumbs:
   function updateCurrencyLabels() {
     const isUSD = state.currency === 'USD';
     const sym = isUSD ? '$' : '¥';
-    const valHint = isUSD ? '美分/点 (选填)' : '¥/点 (选填)';
+    const valHint = isUSD ? '美分/点 (选填决策假设)' : '¥/点 (选填决策假设)';
     
     $('hintTotalCash').textContent = sym;
     $('hintAwardCashFees').textContent = sym;
@@ -387,6 +389,7 @@ breadcrumbs:
     const fBadge = $('policyFreeBadge');
     const pText = $('policyText');
     const pLink = $('policySourceLink');
+    const feeNotice = $('awardFeeNotice');
 
     if (prog.resortFeeZh.includes('免除') && !prog.resortFeeZh.includes('不免除')) {
       rBadge.className = 'policy-badge waived';
@@ -420,8 +423,27 @@ breadcrumbs:
       pLink.removeAttribute('href');
     }
 
-    if (!state.userHasCustomValuation) {
-      const defaultVal = state.currency === 'USD' ? prog.usdCents : prog.cny;
+    if (feeNotice) {
+      if (progId === 'marriott') {
+        feeNotice.style.display = 'block';
+        feeNotice.innerHTML = '⚠️ <strong>万豪提醒：</strong>万豪全积分房通常仍收取度假村费/设施费。此处默认 0 表示您已核实该酒店无需支付，不代表万豪普遍豁免；若酒店收取，请务必填入实际金额。';
+      } else if (progId === 'hilton') {
+        feeNotice.style.display = 'block';
+        feeNotice.innerHTML = 'ℹ️ <strong>希尔顿说明：</strong>官方条款规定标准房全积分兑换免收度假村费（含住五付四）。若为积分+现金或部分特殊预订，请核实并填入。';
+      } else if (progId === 'hyatt') {
+        feeNotice.style.display = 'block';
+        feeNotice.innerHTML = 'ℹ️ <strong>凯悦说明：</strong>官方条款规定全积分兑换免除度假村费/设施费（环球客会员现金入住亦可免除）。';
+      } else if (progId === 'ihg') {
+        feeNotice.style.display = 'block';
+        feeNotice.innerHTML = '⚠️ <strong>洲际说明：</strong>洲际全积分房通常不免除度假村费，具体视分店而定，请以结账页面明细填入。';
+      } else {
+        feeNotice.style.display = 'none';
+      }
+    }
+
+    const defaultVal = state.currency === 'USD' ? prog.usdCents : prog.cny;
+    $('personalValuation').placeholder = '选填，参考基准: ' + defaultVal + (state.currency === 'USD' ? ' ¢/点' : ' ¥/点');
+    if (!state.userHasCustomValuation && $('personalValuation').value !== '') {
       state.rawValues.personalValuation = defaultVal;
       $('personalValuation').value = defaultVal;
     }
@@ -447,7 +469,7 @@ breadcrumbs:
       costCompareEl.innerHTML = '积分等价: -<br>现金净成本: -';
       verdictTextEl.textContent = '—';
       verdictCodeEl.textContent = 'DIFF —';
-      explainEl.textContent = '请输入现金总价和兑换所需积分。';
+      explainEl.textContent = '请输入现金总价和兑换所需积分以开始计算；或点击上方场景快速载入演示数据。';
       tier2El.style.display = 'none';
       return;
     }
@@ -486,13 +508,14 @@ breadcrumbs:
 
     $('stepAwardCash').innerHTML = '3. 积分房自付现金税费: <strong>' + sym + result.awardCashCost.toLocaleString() + '</strong>';
     $('stepNetSaved').innerHTML = '4. 实际避免的现金支出: <strong>' + sym + result.avoidedCashSpend.toLocaleString() + '</strong>';
-    $('stepPoints').innerHTML = '5. 实际消耗积分: <strong>' + result.actualPointsUsed.toLocaleString() + ' 点</strong> (入住 ' + result.nights + ' 晚' + (result.freeNights > 0 ? '，含 ' + result.freeNights + ' 晚免费' : '') + ')';
+    const freeSaved = (result.pointsBeforeFreeNight && result.pointsBeforeFreeNight > result.actualPointsUsed) ? (result.pointsBeforeFreeNight - result.actualPointsUsed) : 0;
+    $('stepPoints').innerHTML = '5. 实际消耗积分: <strong>' + result.actualPointsUsed.toLocaleString() + ' 点</strong> (入住 ' + result.nights + ' 晚' + (result.freeNights > 0 ? '，含 ' + result.freeNights + ' 晚免费，连住节省 ' + freeSaved.toLocaleString() + ' 点' : '') + ')';
 
     if (result.personalValuationDifference !== null) {
       const diffSign = result.personalValuationDifference >= 0 ? '+' : '';
       $('stepValuationComp').innerHTML = '6. 与个人估值对比: 实际每点价值比你的基准估值 (' + result.personalValuation + (isUSD ? '¢' : '元') + ') <strong>' + diffSign + result.personalValuationDifference + '%</strong>';
     } else {
-      $('stepValuationComp').innerHTML = '6. 个人估值未填: 请根据实际兑出价值 (' + displayCpp + ') 结合你的积分获取成本综合决策。';
+      $('stepValuationComp').innerHTML = '6. 个人估值未填: 实际单点兑出价值为 <strong>' + displayCpp + '</strong>。请结合您的获取成本比对。';
     }
 
     if (result.calculationWarnings.includes('award_cash_exceeds_cash_price')) {
@@ -526,7 +549,7 @@ breadcrumbs:
       verdictTextEl.textContent = '自行判断';
       verdictTextEl.className = 'verdict';
       verdictCodeEl.textContent = 'NO VAL';
-      explainEl.textContent = '你未输入个人估值基准。实际兑出价值如上，请与你自己的心理估值或使用计划进行比对。';
+      explainEl.textContent = '未设定个人估值假设。本次兑换实际单点价值为 ' + displayCpp + '，净节省现金 ' + sym + result.avoidedCashSpend.toLocaleString() + '。请结合您个人的积分获取成本自行决定是否划算。';
     }
   }
 
