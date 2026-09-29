@@ -221,7 +221,7 @@ breadcrumbs:
       $('cppResult').textContent = (cpp * 100).toFixed(2) + ' 美分/点';
     } else {
       $('savedCash').textContent = '¥' + saved.toLocaleString('zh-CN', {maximumFractionDigits:0});
-      $('cppResult').textContent = '¥' + cpp.toFixed(4) + ' /点';
+      $('cppResult').textContent = '¥' + cpp.toFixed(4) + ' 元/点';
     }
     
     const explain = $('explain');

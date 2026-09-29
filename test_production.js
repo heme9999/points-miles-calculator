@@ -138,7 +138,7 @@ async function runTests() {
     { path: '/en/calculators/points-to-miles-converter/', expectedH1: 'Points to Miles Converter', expectedTitle: 'Points to Miles Converter | Points & Miles Calculator' },
     { path: '/calculators/points-to-miles-converter/', expectedH1: '积分转航空里程换算器', expectedTitle: '积分转航空里程换算器｜计算转点比例与加赠里程 | 里程账' },
     { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points to Miles & Award Calculators | Points & Miles Calculator' },
-    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Points to Dollars Calculator', expectedTitle: 'Miles to Dollars Calculator | Points & Miles Calculator' },
+    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Miles to Dollars Calculator', expectedTitle: 'Miles to Dollars Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
@@ -951,7 +951,7 @@ async function runTests() {
   doc.getElementById('programPreset').value = 'marriott';
   doc.getElementById('programPreset').dispatchEvent(new enHotelDom.window.Event('change'));
   const marriottNotice = doc.getElementById('awardFeeNotice');
-  if (!marriottNotice || marriottNotice.style.display === 'none' || !marriottNotice.textContent.includes('Marriott Notice')) {
+  if (!marriottNotice || marriottNotice.style.display === 'none' || !marriottNotice.textContent.includes('Fee Warning')) {
     console.error(`ERROR: Marriott fee notice failed to display: ${marriottNotice?.textContent}`);
     failures++;
   } else {

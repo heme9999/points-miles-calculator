@@ -1,10 +1,10 @@
 # Audit Warnings Report
 
-**Date**: 2026-09-19T11:58:49.459Z
+**Date**: 2026-09-29T01:21:09.960Z
 **Total URLs**: 106
 **Intentional Support Pages**: 8
 **Technical Blockers**: 0
-**Content/Link Warnings**: 28
+**Content/Link Warnings**: 27
 
 These warnings may reduce discovery or perceived page importance, but they do not prove that Google has excluded the URLs. Actual indexing status requires GSC validation.
 
@@ -43,10 +43,6 @@ These warnings may reduce discovery or perceived page importance, but they do no
   - Inbound Count: 0
   - Sources: []
 - **https://points-miles-calculator.pages.dev/en/guides/points-vs-cash/**
-  - Warning Type: `zero-contextual-inbound-links`
-  - Inbound Count: 0
-  - Sources: []
-- **https://points-miles-calculator.pages.dev/en/guides/what-is-cents-per-point/**
   - Warning Type: `zero-contextual-inbound-links`
   - Inbound Count: 0
   - Sources: []

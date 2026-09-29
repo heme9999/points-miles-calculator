@@ -196,6 +196,7 @@ breadcrumbs:
     </div>
 
     <div class="note" id="explain" style="margin-top: 14px;">Enter total cash price and points required to evaluate your booking.</div>
+    <div id="propertyFeeWarning" class="property-fee-warning" style="display: none; margin-top: 10px; padding: 10px 14px; background: rgba(234, 179, 8, 0.12); border-left: 3px solid #eab308; border-radius: 4px; font-size: 13px; color: var(--text); line-height: 1.5;"></div>
 
     <!-- Tier 2: Step-by-Step Mathematical Breakdown -->
     <div class="hotel-tier2-breakdown" id="tier2Breakdown" style="display: none;">
@@ -221,8 +222,8 @@ breadcrumbs:
 </div>
 
 <article class="seo-content" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
-  <h2>9 Major Hotel Loyalty Programs: Rules & Valuation Benchmarks</h2>
-  <p>Hotel loyalty programs differ fundamentally in whether they waive resort fees on award nights and how they structure consecutive free night promotions. Here is the verified policy matrix across major chains:</p>
+  <h2>8 Major Hotel Loyalty Programs: Rules & Valuation Benchmarks</h2>
+  <p>Covering verified award redemption rules, resort fee policies, and baseline valuation scenarios across 8 major hotel programs. Hotel loyalty programs differ fundamentally in whether they waive resort fees on award nights and how they structure consecutive free night promotions:</p>
 
   <div class="hotel-table-container">
     <table class="hotel-comparison-table">
@@ -237,15 +238,18 @@ breadcrumbs:
       </thead>
       <tbody>
         {% for prog in hotelPrograms %}
+        {% if prog.id != 'custom' %}
         <tr>
           <td><strong>{{ prog.nameEn }}</strong></td>
           <td>{{ prog.valuationScenarioUsdCents }}¢ (approx. ¥{{ prog.valuationScenarioCny }})</td>
           <td>{{ prog.eligibilityNoteEn }}</td>
           <td>
-            {% if "Waived" in prog.resortFeeNoteEn %}
+            {% if prog.resortFeeStatus == 'waived' %}
             <span class="policy-badge waived">Fully Waived</span>
-            {% elseif "Not waived" in prog.resortFeeNoteEn %}
+            {% elseif prog.resortFeeStatus == 'notWaived' %}
             <span class="policy-badge charged">Mandatory Cash</span>
+            {% elseif prog.resortFeeStatus == 'billCreditModel' %}
+            <span class="policy-badge varies">Bill Credit Model</span>
             {% else %}
             <span class="policy-badge varies">Property Dependent</span>
             {% endif %}
@@ -259,6 +263,7 @@ breadcrumbs:
             {% endif %}
           </td>
         </tr>
+        {% endif %}
         {% endfor %}
       </tbody>
     </table>
@@ -345,8 +350,10 @@ breadcrumbs:
       usdCents: {{ prog.valuationScenarioUsdCents }},
       cny: {{ prog.valuationScenarioCny }},
       freeNightRule: "{{ prog.freeNightRule }}",
+      resortFeeStatus: "{{ prog.resortFeeStatus }}",
       eligibilityEn: "{{ prog.eligibilityNoteEn | escape }}",
       resortFeeEn: "{{ prog.resortFeeNoteEn | escape }}",
+      resortFeeNoteEn: "{{ prog.resortFeeNoteEn | escape }}",
       officialSourceUrl: "{{ prog.officialSourceUrl }}",
       officialSourceName: "{{ prog.officialSourceName }}"
     }{% if not loop.last %},{% endif %}
@@ -424,18 +431,14 @@ breadcrumbs:
     }
 
     if (feeNotice) {
-      if (progId === 'marriott') {
+      const prog = programsData[progId];
+      if (prog && prog.id !== 'custom') {
         feeNotice.style.display = 'block';
-        feeNotice.innerHTML = '⚠️ <strong>Marriott Notice:</strong> Marriott award stays generally do NOT waive resort/destination fees. A value of 0 assumes you confirmed no fee applies, not that Marriott universally waives it; please enter any mandatory fees charged by the property.';
-      } else if (progId === 'hilton') {
-        feeNotice.style.display = 'block';
-        feeNotice.innerHTML = 'ℹ️ <strong>Hilton Notice:</strong> Official terms state standard room award stays waive resort fees (including 5th Night Free). Points & Cash or premium room awards may still incur fees.';
-      } else if (progId === 'hyatt') {
-        feeNotice.style.display = 'block';
-        feeNotice.innerHTML = 'ℹ️ <strong>World of Hyatt Notice:</strong> Official terms state resort and destination fees are waived for all members on award stays completed with points.';
-      } else if (progId === 'ihg') {
-        feeNotice.style.display = 'block';
-        feeNotice.innerHTML = '⚠️ <strong>IHG Notice:</strong> IHG generally does not waive resort fees on award stays. Please verify the checkout summary and enter any applicable fees.';
+        if (prog.resortFeeStatus === 'waived' || prog.resortFeeStatus === 'billCreditModel') {
+           feeNotice.innerHTML = 'ℹ️ <strong>Fee Notice:</strong> ' + prog.resortFeeNoteEn;
+        } else {
+           feeNotice.innerHTML = '⚠️ <strong>Fee Warning:</strong> ' + prog.resortFeeNoteEn;
+        }
       } else {
         feeNotice.style.display = 'none';
       }
@@ -471,6 +474,7 @@ breadcrumbs:
       verdictCodeEl.textContent = 'DIFF —';
       explainEl.textContent = 'Please enter the cash price and points required to begin, or click a scenario above to load demo data.';
       tier2El.style.display = 'none';
+      if ($('propertyFeeWarning')) $('propertyFeeWarning').style.display = 'none';
       return;
     }
 
@@ -496,26 +500,38 @@ breadcrumbs:
       Net Cash Cost: ${sym + Math.round(result.netCashCost).toLocaleString()}
     `;
 
+    let stepNum = 1;
     tier2El.style.display = 'block';
-    $('stepGrossCash').innerHTML = '1. Total Cash Booking: <strong>' + sym + result.grossCashCost.toLocaleString() + '</strong>';
+    $('stepGrossCash').innerHTML = (stepNum++) + '. Total Cash Booking: <strong>' + sym + result.grossCashCost.toLocaleString() + '</strong>';
     
+    $('stepForgone').style.display = 'block';
     if (result.hotelPointsEarnedValue > 0 || result.creditCardRewardsValue > 0) {
-      $('stepForgone').style.display = 'block';
-      $('stepForgone').innerHTML = '2. Less Forgone Cash Rewards: -' + sym + (result.hotelPointsEarnedValue + result.creditCardRewardsValue).toLocaleString() + ' (Net Cash: ' + sym + result.netCashCost.toLocaleString() + ')';
+      $('stepForgone').innerHTML = (stepNum++) + '. Less Forgone Cash Rewards: -' + sym + (result.hotelPointsEarnedValue + result.creditCardRewardsValue).toLocaleString() + ' (Net Cash: ' + sym + result.netCashCost.toLocaleString() + ')';
     } else {
-      $('stepForgone').style.display = 'none';
+      $('stepForgone').innerHTML = (stepNum++) + '. Less Forgone Cash Rewards: -' + sym + '0 (Not set)';
     }
 
-    $('stepAwardCash').innerHTML = '3. Award Out-of-Pocket Cash Fees: <strong>' + sym + result.awardCashCost.toLocaleString() + '</strong>';
-    $('stepNetSaved').innerHTML = '4. Net Avoided Cash Spend: <strong>' + sym + result.avoidedCashSpend.toLocaleString() + '</strong>';
+    $('stepAwardCash').innerHTML = (stepNum++) + '. Award Out-of-Pocket Cash Fees: <strong>' + sym + result.awardCashCost.toLocaleString() + '</strong>';
+    $('stepNetSaved').innerHTML = (stepNum++) + '. Net Avoided Cash Spend: <strong>' + sym + result.avoidedCashSpend.toLocaleString() + '</strong>';
     const freeSaved = (result.pointsBeforeFreeNight && result.pointsBeforeFreeNight > result.actualPointsUsed) ? (result.pointsBeforeFreeNight - result.actualPointsUsed) : 0;
-    $('stepPoints').innerHTML = '5. Actual Points Consumed: <strong>' + result.actualPointsUsed.toLocaleString() + ' points</strong> (' + result.nights + ' nights' + (result.freeNights > 0 ? ', including ' + result.freeNights + ' free night' + (result.freeNights > 1 ? 's' : '') + ', saving ' + freeSaved.toLocaleString() + ' pts' : '') + ')';
+    $('stepPoints').innerHTML = (stepNum++) + '. Actual Points Consumed: <strong>' + result.actualPointsUsed.toLocaleString() + ' points</strong> (' + result.nights + ' nights' + (result.freeNights > 0 ? ', including ' + result.freeNights + ' free night' + (result.freeNights > 1 ? 's' : '') + ', saving ' + freeSaved.toLocaleString() + ' pts' : '') + ')';
 
     if (result.personalValuationDifference !== null) {
       const diffSign = result.personalValuationDifference >= 0 ? '+' : '';
-      $('stepValuationComp').innerHTML = '6. Valuation Benchmark: Redemption value is <strong>' + diffSign + result.personalValuationDifference + '%</strong> vs your baseline (' + result.personalValuation + (isUSD ? '¢' : '¥') + ')';
+      $('stepValuationComp').innerHTML = (stepNum++) + '. Valuation Benchmark: Redemption value is <strong>' + diffSign + result.personalValuationDifference + '%</strong> vs your baseline (' + result.personalValuation + (isUSD ? '¢' : '¥') + ')';
     } else {
-      $('stepValuationComp').innerHTML = '6. Personal valuation not entered: Realized unit redemption value is <strong>' + displayCpp + '</strong>. Compare against your acquisition cost.';
+      $('stepValuationComp').innerHTML = (stepNum++) + '. Personal valuation not entered: Realized unit redemption value is <strong>' + displayCpp + '</strong>. Compare against your acquisition cost.';
+    }
+
+    const feeWarningEl = $('propertyFeeWarning');
+    if (feeWarningEl) {
+      const prog = programsData[state.programId];
+      if (prog && prog.id !== 'custom' && result.awardCashCost === 0 && (prog.resortFeeStatus === 'notWaived' || prog.resortFeeStatus === 'propertyDependent')) {
+        feeWarningEl.style.display = 'block';
+        feeWarningEl.innerHTML = '⚠️ <strong>Fee Warning:</strong> ' + prog.resortFeeNoteEn + ' Cash surcharge is currently ' + sym + '0; please verify on the hotel booking page and enter any mandatory fees in Advanced Settings.';
+      } else {
+        feeWarningEl.style.display = 'none';
+      }
     }
 
     if (result.calculationWarnings.includes('award_cash_exceeds_cash_price')) {

@@ -503,3 +503,136 @@ test('Hotel Points vs Cash Engine Unit Tests', async (t) => {
   });
 });
 
+test('Phase 9.10: SEO, Hotel Table Enum & Step Numbering Verification', async (t) => {
+  const hotelPrograms = require('../src/_data/hotelPrograms.js');
+  const zhHotelHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/hotel-points-vs-cash/index.html'), 'utf8');
+  const enHotelHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/hotel-points-vs-cash/index.html'), 'utf8');
+  const enCppHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/cents-per-point/index.html'), 'utf8');
+  const zhCalcIndexHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/index.html'), 'utf8');
+  const enCalcIndexHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/index.html'), 'utf8');
+
+  await t.test('1. Total hotel chains in table is exactly 8 (custom excluded from 8-chain comparison table)', () => {
+    const zhDom = new JSDOM(zhHotelHtml);
+    const enDom = new JSDOM(enHotelHtml);
+    const zhRows = zhDom.window.document.querySelectorAll('.hotel-comparison-table tbody tr');
+    const enRows = enDom.window.document.querySelectorAll('.hotel-comparison-table tbody tr');
+    assert.strictEqual(zhRows.length, 8, 'ZH hotel table should have exactly 8 rows');
+    assert.strictEqual(enRows.length, 8, 'EN hotel table should have exactly 8 rows');
+  });
+
+  await t.test('2. Resort fee status enum consistency and no false waived badges', () => {
+    const zhDom = new JSDOM(zhHotelHtml);
+    const enDom = new JSDOM(enHotelHtml);
+    
+    // Marriott must NOT be waived
+    assert.ok(zhHotelHtml.includes('不免除'), 'ZH hotel table must contain 不免除');
+    assert.ok(enHotelHtml.includes('Mandatory Cash'), 'EN hotel table must contain Mandatory Cash');
+    
+    const zhMarriottRow = Array.from(zhDom.window.document.querySelectorAll('.hotel-comparison-table tbody tr'))
+      .find(r => r.textContent.includes('万豪'));
+    assert.ok(zhMarriottRow, 'Marriott row must exist');
+    assert.ok(!zhMarriottRow.querySelector('.policy-badge').textContent.includes('全积分免除'), 'Marriott must NOT have 全积分免除 badge');
+    assert.ok(zhMarriottRow.querySelector('.policy-badge').textContent.includes('不免除'), 'Marriott must have 不免除 badge');
+
+    const enMarriottRow = Array.from(enDom.window.document.querySelectorAll('.hotel-comparison-table tbody tr'))
+      .find(r => r.textContent.includes('Marriott'));
+    assert.ok(enMarriottRow, 'EN Marriott row must exist');
+    assert.ok(!enMarriottRow.querySelector('.policy-badge').textContent.includes('Fully Waived'), 'EN Marriott must NOT have Fully Waived badge');
+    assert.ok(enMarriottRow.querySelector('.policy-badge').textContent.includes('Mandatory Cash'), 'EN Marriott must have Mandatory Cash badge');
+
+    // IHG and Best Western must be propertyDependent (视酒店而定 / Property Dependent), NOT waived
+    const zhIhgRow = Array.from(zhDom.window.document.querySelectorAll('.hotel-comparison-table tbody tr'))
+      .find(r => r.textContent.includes('洲际'));
+    assert.ok(zhIhgRow.querySelector('.policy-badge').textContent.includes('视酒店而定'), 'IHG must be 视酒店而定');
+    assert.ok(!zhIhgRow.querySelector('.policy-badge').textContent.includes('全积分免除'), 'IHG must NOT be 全积分免除');
+
+    const zhBwRow = Array.from(zhDom.window.document.querySelectorAll('.hotel-comparison-table tbody tr'))
+      .find(r => r.textContent.includes('最佳西方'));
+    assert.ok(zhBwRow.querySelector('.policy-badge').textContent.includes('视酒店而定'), 'Best Western must be 视酒店而定');
+    assert.ok(!zhBwRow.querySelector('.policy-badge').textContent.includes('全积分免除'), 'Best Western must NOT be 全积分免除');
+  });
+
+  await t.test('3. Step numbering continuity in all scenarios (no skipping numbers)', () => {
+    const coreJs = fs.readFileSync(path.resolve(__dirname, '../src/assets/calculator-core.js'), 'utf8');
+    const htmlWithCore = enHotelHtml.replace(/<script src="\/assets\/calculator-core\.js"[^>]*><\/script>/, () => `<script>${coreJs}</script>`);
+    const dom = new JSDOM(htmlWithCore, { runScripts: 'dangerously', url: 'http://localhost/en/calculators/hotel-points-vs-cash/' });
+    const doc = dom.window.document;
+
+    const checkContinuousSteps = (scenarioName) => {
+      const visibleSteps = Array.from(doc.querySelectorAll('.hotel-breakdown-step'))
+        .filter(el => el.style.display !== 'none' && el.textContent.trim().length > 0)
+        .map(el => {
+          const m = el.textContent.match(/^(\d+)\./);
+          return m ? parseInt(m[1], 10) : null;
+        });
+
+      assert.ok(visibleSteps.length >= 3, `${scenarioName}: Must have at least 3 visible steps`);
+      for (let i = 0; i < visibleSteps.length; i++) {
+        assert.strictEqual(visibleSteps[i], i + 1, `${scenarioName}: Step at index ${i} must be ${i+1}, got ${visibleSteps[i]}`);
+      }
+    };
+
+    // Scenario 1: Forgone = 0 (Hilton example)
+    doc.getElementById('exampleHilton').click();
+    checkContinuousSteps('Hilton (Forgone=0)');
+
+    // Scenario 2: Award fee > 0 (Marriott example)
+    doc.getElementById('exampleMarriott').click();
+    checkContinuousSteps('Marriott (All steps have value)');
+
+    // Scenario 3: Award fee = 0 (Hyatt example)
+    doc.getElementById('exampleHyatt').click();
+    checkContinuousSteps('Hyatt (Award fee=0)');
+
+    // Scenario 4: Both forgone = 0 and award fee = 0
+    doc.getElementById('totalCashPrice').value = '1000';
+    doc.getElementById('totalPointsRequired').value = '50000';
+    doc.getElementById('hotelPointsEarnedValue').value = '0';
+    doc.getElementById('creditCardRewardsValue').value = '0';
+    doc.getElementById('awardCashFees').value = '0';
+    doc.getElementById('totalCashPrice').dispatchEvent(new dom.window.Event('input'));
+    checkContinuousSteps('Both forgone=0 and award fee=0');
+  });
+
+  await t.test('4. Build output contains 0 links to /点 or /%E7%82%B9', () => {
+    const cp = require('child_process');
+    const htmlFiles = cp.execSync('find _site -name "*.html"').toString().trim().split('\n');
+    let badLinks = [];
+    htmlFiles.forEach(f => {
+      const html = fs.readFileSync(f, 'utf8');
+      const matches = [...html.matchAll(/href=["']([^"']*点[^"']*)["']/g)].map(m => m[1]);
+      const hexMatches = [...html.matchAll(/href=["']([^"']*%E7%82%B9[^"']*)["']/gi)].map(m => m[1]);
+      if (matches.length > 0 || hexMatches.length > 0) {
+        badLinks.push({ file: f, matches: [...matches, ...hexMatches] });
+      }
+    });
+    assert.strictEqual(badLinks.length, 0, `Found illegal 点 hrefs in: ${JSON.stringify(badLinks)}`);
+  });
+
+  await t.test('5. English CPP page contains direct answer, formula, 2 worked examples, distinction, and mislead section', () => {
+    assert.ok(enCppHtml.includes('What is cents per point and how do I calculate it?'), 'Direct answer question missing');
+    assert.ok(enCppHtml.includes('Flight Redemption Example'), 'Flight example missing');
+    assert.ok(enCppHtml.includes('Hotel Stay Example'), 'Hotel example missing');
+    assert.ok(enCppHtml.includes('Actual Redemption CPP vs. Estimated Point Valuation'), 'Distinction section missing');
+    assert.ok(enCppHtml.includes('When CPP Alone Can Mislead'), 'Misleading pitfalls section missing');
+    assert.ok(enCppHtml.includes('(Cash Price − Award Taxes and Fees) ÷ Points Required × 100'), 'Formula missing');
+  });
+
+  await t.test('6. Directory and high-potential page titles have no duplicate brands', () => {
+    const zhIndexDom = new JSDOM(zhCalcIndexHtml);
+    const enIndexDom = new JSDOM(enCalcIndexHtml);
+    
+    const zhTitle = zhIndexDom.window.document.title;
+    const enTitle = enIndexDom.window.document.title;
+    
+    assert.strictEqual(zhTitle, '积分与里程计算器大全 | 里程账');
+    assert.strictEqual(enTitle, 'All Calculators | Points & Miles Calculator');
+    
+    // Check brand count
+    const zhBrandOccurrences = (zhTitle.match(/里程账/g) || []).length;
+    const enBrandOccurrences = (enTitle.match(/Points & Miles Calculator/g) || []).length;
+    assert.strictEqual(zhBrandOccurrences, 1, 'ZH title must contain brand exactly once');
+    assert.strictEqual(enBrandOccurrences, 1, 'EN title must contain brand exactly once');
+  });
+});
+

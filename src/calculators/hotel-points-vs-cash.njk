@@ -10,7 +10,7 @@ breadcrumbs:
   - name: 酒店积分计算器
 ---
 <h1>酒店积分 vs 现金决策计算器</h1>
-<p class="sub">30 秒评估酒店积分兑换是否划算。支持凯悦、希尔顿、万豪、洲际等 9 大国际酒店集团规则，综合税费、免房晚优惠与度假村费免除政策。</p>
+<p class="sub">30 秒评估酒店积分兑换是否划算。支持凯悦、希尔顿、万豪、洲际等 8 大国际酒店集团规则，综合税费、免房晚优惠与度假村费免除政策。</p>
 
 <div class="hotel-examples-wrapper">
   <div class="hotel-examples-label">快速载入典型场景 (演示数据，不代表实时房价或官方估值)</div>
@@ -196,6 +196,7 @@ breadcrumbs:
     </div>
 
     <div class="note" id="explain" style="margin-top: 14px;">请输入现金总价和所需积分以开始计算。</div>
+    <div id="propertyFeeWarning" class="property-fee-warning" style="display: none; margin-top: 10px; padding: 10px 14px; background: rgba(234, 179, 8, 0.12); border-left: 3px solid #eab308; border-radius: 4px; font-size: 13px; color: var(--text); line-height: 1.5;"></div>
 
     <!-- Tier 2: 详细计算步骤与拆解 -->
     <div class="hotel-tier2-breakdown" id="tier2Breakdown" style="display: none;">
@@ -221,8 +222,8 @@ breadcrumbs:
 </div>
 
 <article class="seo-content" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
-  <h2>9 大国际连锁酒店集团积分规则与估值基准</h2>
-  <p>各集团在积分兑换规则、全积分房度假村费（Resort Fees）免除政策以及连住免费房晚机制上存在显著差异。以下为官方条款审核与典型研究基准：</p>
+  <h2>8 大国际连锁酒店集团积分规则与估值基准</h2>
+  <p>涵盖万豪、希尔顿、凯悦、洲际、温德姆、精选、雅高与最佳西方 8 大主流酒店集团的官方条款与兑换规则。各集团在积分兑换规则、全积分房度假村费（Resort Fees）免除政策以及连住免费房晚机制上存在显著差异：</p>
 
   <div class="hotel-table-container">
     <table class="hotel-comparison-table">
@@ -237,15 +238,18 @@ breadcrumbs:
       </thead>
       <tbody>
         {% for prog in hotelPrograms %}
+        {% if prog.id != 'custom' %}
         <tr>
           <td><strong>{{ prog.nameZh }}</strong></td>
           <td>{{ prog.valuationScenarioUsdCents }}¢ (约¥{{ prog.valuationScenarioCny }})</td>
           <td>{{ prog.eligibilityNoteZh }}</td>
           <td>
-            {% if "免除" in prog.resortFeeNoteZh %}
+            {% if prog.resortFeeStatus == 'waived' %}
             <span class="policy-badge waived">全积分免除</span>
-            {% elseif "不免除" in prog.resortFeeNoteZh %}
+            {% elseif prog.resortFeeStatus == 'notWaived' %}
             <span class="policy-badge charged">不免除</span>
+            {% elseif prog.resortFeeStatus == 'billCreditModel' %}
+            <span class="policy-badge varies">抵扣总账单</span>
             {% else %}
             <span class="policy-badge varies">视酒店而定</span>
             {% endif %}
@@ -259,6 +263,7 @@ breadcrumbs:
             {% endif %}
           </td>
         </tr>
+        {% endif %}
         {% endfor %}
       </tbody>
     </table>
@@ -345,8 +350,10 @@ breadcrumbs:
       usdCents: {{ prog.valuationScenarioUsdCents }},
       cny: {{ prog.valuationScenarioCny }},
       freeNightRule: "{{ prog.freeNightRule }}",
+      resortFeeStatus: "{{ prog.resortFeeStatus }}",
       eligibilityZh: "{{ prog.eligibilityNoteZh | escape }}",
       resortFeeZh: "{{ prog.resortFeeNoteZh | escape }}",
+      resortFeeNoteZh: "{{ prog.resortFeeNoteZh | escape }}",
       officialSourceUrl: "{{ prog.officialSourceUrl }}",
       officialSourceName: "{{ prog.officialSourceName }}"
     }{% if not loop.last %},{% endif %}
@@ -424,18 +431,14 @@ breadcrumbs:
     }
 
     if (feeNotice) {
-      if (progId === 'marriott') {
+      const prog = programsData[progId];
+      if (prog && prog.id !== 'custom') {
         feeNotice.style.display = 'block';
-        feeNotice.innerHTML = '⚠️ <strong>万豪提醒：</strong>万豪全积分房通常仍收取度假村费/设施费。此处默认 0 表示您已核实该酒店无需支付，不代表万豪普遍豁免；若酒店收取，请务必填入实际金额。';
-      } else if (progId === 'hilton') {
-        feeNotice.style.display = 'block';
-        feeNotice.innerHTML = 'ℹ️ <strong>希尔顿说明：</strong>官方条款规定标准房全积分兑换免收度假村费（含住五付四）。若为积分+现金或部分特殊预订，请核实并填入。';
-      } else if (progId === 'hyatt') {
-        feeNotice.style.display = 'block';
-        feeNotice.innerHTML = 'ℹ️ <strong>凯悦说明：</strong>官方条款规定全积分兑换免除度假村费/设施费（环球客会员现金入住亦可免除）。';
-      } else if (progId === 'ihg') {
-        feeNotice.style.display = 'block';
-        feeNotice.innerHTML = '⚠️ <strong>洲际说明：</strong>洲际全积分房通常不免除度假村费，具体视分店而定，请以结账页面明细填入。';
+        if (prog.resortFeeStatus === 'waived' || prog.resortFeeStatus === 'billCreditModel') {
+           feeNotice.innerHTML = 'ℹ️ <strong>费用说明：</strong>' + prog.resortFeeNoteZh;
+        } else {
+           feeNotice.innerHTML = '⚠️ <strong>费用提醒：</strong>' + prog.resortFeeNoteZh;
+        }
       } else {
         feeNotice.style.display = 'none';
       }
@@ -471,6 +474,7 @@ breadcrumbs:
       verdictCodeEl.textContent = 'DIFF —';
       explainEl.textContent = '请输入现金总价和兑换所需积分以开始计算；或点击上方场景快速载入演示数据。';
       tier2El.style.display = 'none';
+      if ($('propertyFeeWarning')) $('propertyFeeWarning').style.display = 'none';
       return;
     }
 
@@ -496,26 +500,38 @@ breadcrumbs:
       现金净成本: ${sym + Math.round(result.netCashCost).toLocaleString()}
     `;
 
+    let stepNum = 1;
     tier2El.style.display = 'block';
-    $('stepGrossCash').innerHTML = '1. 现金预订总支出: <strong>' + sym + result.grossCashCost.toLocaleString() + '</strong>';
+    $('stepGrossCash').innerHTML = (stepNum++) + '. 现金预订总支出: <strong>' + sym + result.grossCashCost.toLocaleString() + '</strong>';
     
+    $('stepForgone').style.display = 'block';
     if (result.hotelPointsEarnedValue > 0 || result.creditCardRewardsValue > 0) {
-      $('stepForgone').style.display = 'block';
-      $('stepForgone').innerHTML = '2. 扣除放弃的现金房回血: -' + sym + (result.hotelPointsEarnedValue + result.creditCardRewardsValue).toLocaleString() + ' (净现金: ' + sym + result.netCashCost.toLocaleString() + ')';
+      $('stepForgone').innerHTML = (stepNum++) + '. 扣除放弃的现金房回血: -' + sym + (result.hotelPointsEarnedValue + result.creditCardRewardsValue).toLocaleString() + ' (净现金: ' + sym + result.netCashCost.toLocaleString() + ')';
     } else {
-      $('stepForgone').style.display = 'none';
+      $('stepForgone').innerHTML = (stepNum++) + '. 扣除放弃的现金房回血: -' + sym + '0 (未设置)';
     }
 
-    $('stepAwardCash').innerHTML = '3. 积分房自付现金税费: <strong>' + sym + result.awardCashCost.toLocaleString() + '</strong>';
-    $('stepNetSaved').innerHTML = '4. 实际避免的现金支出: <strong>' + sym + result.avoidedCashSpend.toLocaleString() + '</strong>';
+    $('stepAwardCash').innerHTML = (stepNum++) + '. 积分房自付现金税费: <strong>' + sym + result.awardCashCost.toLocaleString() + '</strong>';
+    $('stepNetSaved').innerHTML = (stepNum++) + '. 实际避免的现金支出: <strong>' + sym + result.avoidedCashSpend.toLocaleString() + '</strong>';
     const freeSaved = (result.pointsBeforeFreeNight && result.pointsBeforeFreeNight > result.actualPointsUsed) ? (result.pointsBeforeFreeNight - result.actualPointsUsed) : 0;
-    $('stepPoints').innerHTML = '5. 实际消耗积分: <strong>' + result.actualPointsUsed.toLocaleString() + ' 点</strong> (入住 ' + result.nights + ' 晚' + (result.freeNights > 0 ? '，含 ' + result.freeNights + ' 晚免费，连住节省 ' + freeSaved.toLocaleString() + ' 点' : '') + ')';
+    $('stepPoints').innerHTML = (stepNum++) + '. 实际消耗积分: <strong>' + result.actualPointsUsed.toLocaleString() + ' 点</strong> (入住 ' + result.nights + ' 晚' + (result.freeNights > 0 ? '，含 ' + result.freeNights + ' 晚免费，连住节省 ' + freeSaved.toLocaleString() + ' 点' : '') + ')';
 
     if (result.personalValuationDifference !== null) {
       const diffSign = result.personalValuationDifference >= 0 ? '+' : '';
-      $('stepValuationComp').innerHTML = '6. 与个人估值对比: 实际每点价值比你的基准估值 (' + result.personalValuation + (isUSD ? '¢' : '元') + ') <strong>' + diffSign + result.personalValuationDifference + '%</strong>';
+      $('stepValuationComp').innerHTML = (stepNum++) + '. 与个人估值对比: 实际每点价值比你的基准估值 (' + result.personalValuation + (isUSD ? '¢' : '元') + ') <strong>' + diffSign + result.personalValuationDifference + '%</strong>';
     } else {
-      $('stepValuationComp').innerHTML = '6. 个人估值未填: 实际单点兑出价值为 <strong>' + displayCpp + '</strong>。请结合您的获取成本比对。';
+      $('stepValuationComp').innerHTML = (stepNum++) + '. 个人估值未填: 实际单点兑出价值为 <strong>' + displayCpp + '</strong>。请结合您的获取成本比对。';
+    }
+
+    const feeWarningEl = $('propertyFeeWarning');
+    if (feeWarningEl) {
+      const prog = programsData[state.programId];
+      if (prog && prog.id !== 'custom' && result.awardCashCost === 0 && (prog.resortFeeStatus === 'notWaived' || prog.resortFeeStatus === 'propertyDependent')) {
+        feeWarningEl.style.display = 'block';
+        feeWarningEl.innerHTML = '⚠️ <strong>费用确认提示：</strong>' + prog.resortFeeNoteZh + ' 当前自付现金为 ' + sym + '0；若预订页面显示有强制税费，请在高级设置中填入。';
+      } else {
+        feeWarningEl.style.display = 'none';
+      }
     }
 
     if (result.calculationWarnings.includes('award_cash_exceeds_cash_price')) {

@@ -12,15 +12,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 1.0,
     valuationScenarioCny: 0.070,
     freeNightRule: "none",
+    resortFeeStatus: "propertyDependent",
     eligibilityNoteZh: "根据你自己的实际预订情况输入每晚积分和减免规则。",
     eligibilityNoteEn: "Enter your own nightly points and custom discount rules based on your reservation.",
     resortFeeNoteZh: "根据具体酒店确认结账时是否收取度假村费。",
     resortFeeNoteEn: "Confirm with the specific property whether resort or destination fees are billed at checkout.",
     officialSourceUrl: "",
     officialSourceName: "User Custom Input",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   },
   {
     id: "hyatt",
@@ -29,15 +30,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 1.7,
     valuationScenarioCny: 0.119,
     freeNightRule: "none",
+    resortFeeStatus: "waived",
     eligibilityNoteZh: "凯悦无住五付四机制。所有会员纯积分房均免除度假村费；仅环球客（Globalist）会员积分房免指定酒店停车费。",
     eligibilityNoteEn: "No 5th night free benefit. Resort/destination fees are waived on all eligible award stays for all members. Parking is waived on award stays for Globalist tier members only.",
-    resortFeeNoteZh: "免除：凯悦官方条款明确规定，全积分预订免收度假村费与设施费。",
-    resortFeeNoteEn: "Waived: Official Hyatt terms explicitly waive resort/destination fees on all full points award stays.",
+    resortFeeNoteZh: "全额免除：凯悦官方条款明确规定，全积分预订免收度假村费与设施费。",
+    resortFeeNoteEn: "Fully waived: Official Hyatt terms explicitly waive resort/destination fees on all full points award stays.",
     officialSourceUrl: "https://world.hyatt.com/content/gp/en/terms/award-terms.html",
     officialSourceName: "World of Hyatt Official Terms & Conditions",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   },
   {
     id: "hilton",
@@ -46,15 +48,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 0.5,
     valuationScenarioCny: 0.035,
     freeNightRule: "5th",
+    resortFeeStatus: "waived",
     eligibilityNoteZh: "住五付四（第五晚免费）仅适用于银卡（Silver）、金卡（Gold）与钻石卡（Diamond）精英会员预订 5 晚及以上连续标准积分房（Standard Room Rewards），单次住宿最多减免 4 晚。",
     eligibilityNoteEn: "5th Night Free applies to Silver, Gold, and Diamond elite members booking 5 or more consecutive nights on Standard Room Rewards (up to 4 free nights per stay).",
-    resortFeeNoteZh: "免除：全积分预订免收度假村费（Resort Fees）。",
-    resortFeeNoteEn: "Waived: Hilton Honors waives resort fees on 100% points award reservations.",
+    resortFeeNoteZh: "标准房免除：全积分预订标准房免收度假村费（Resort Fees）。",
+    resortFeeNoteEn: "Waived on standard awards: Hilton Honors waives resort fees on 100% points standard room award reservations.",
     officialSourceUrl: "https://www.hilton.com/en/hilton-honors/terms/",
     officialSourceName: "Hilton Honors Loyalty Terms and Conditions",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   },
   {
     id: "marriott",
@@ -63,15 +66,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 0.7,
     valuationScenarioCny: 0.049,
     freeNightRule: "5th",
+    resortFeeStatus: "notWaived",
     eligibilityNoteZh: "所有会员连续预订 5 晚积分房均享‘住五付四（Stay for 5, Pay for 4）’，系统自动扣减所需积分最低的那一晚。不限精英等级。",
     eligibilityNoteEn: "'Stay for 5, Pay for 4' applies to all Marriott Bonvoy members booking 5 consecutive award redemption nights. The lowest point redemption night is deducted.",
-    resortFeeNoteZh: "不免除：万豪积分房通常不免除度假村费/目的地费，住客需在离店时以现金结清。",
+    resortFeeNoteZh: "不予免除：万豪积分房通常不免除度假村费/目的地费，住客需在离店时以现金结清。",
     resortFeeNoteEn: "Not waived: Marriott Bonvoy does not waive resort/destination fees on award nights; mandatory cash charges apply at checkout where property rules mandate.",
     officialSourceUrl: "https://www.marriott.com/loyalty/terms/default.mi",
     officialSourceName: "Marriott Bonvoy Terms & Conditions",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   },
   {
     id: "ihg",
@@ -80,15 +84,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 0.5,
     valuationScenarioCny: 0.035,
     freeNightRule: "none",
+    resortFeeStatus: "propertyDependent",
     eligibilityNoteZh: "普通会员无常态连住免费房晚。持有指定美国联名信用卡（如 Chase IHG Premier 主卡）在预订 4 晚及以上积分房时可享‘住四付三（4th Night Free）’。",
     eligibilityNoteEn: "Standard membership has no built-in free night rule. '4th Night Free' is available exclusively to primary cardholders of select co-branded cards (e.g. IHG One Rewards Premier Credit Card) on stays of 4+ consecutive award nights.",
-    resortFeeNoteZh: "视酒店而定：IHG 条款未统一免除度假村费，部分度假型酒店积分房入住时仍收取设施费。",
-    resortFeeNoteEn: "Varies: IHG does not uniformly waive resort/destination amenity fees on award stays; policies vary by individual property.",
+    resortFeeNoteZh: "视酒店而定：IHG 条款未统一强制免收度假村费，部分度假型酒店积分房入住时仍收取设施费。",
+    resortFeeNoteEn: "Property dependent: IHG does not uniformly waive resort/destination amenity fees on award stays; policies vary by individual property.",
     officialSourceUrl: "https://www.ihg.com/content/us/en/customer-care/member-tc",
     officialSourceName: "IHG One Rewards Terms & Conditions",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   },
   {
     id: "wyndham",
@@ -97,15 +102,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 0.9,
     valuationScenarioCny: 0.063,
     freeNightRule: "none",
+    resortFeeStatus: "propertyDependent",
     eligibilityNoteZh: "温德姆采用固定三档兑换机制（每卧室每晚 7,500 / 15,000 / 30,000 点），无连住免费房晚优惠。",
     eligibilityNoteEn: "Wyndham uses three flat redemption tiers (7,500, 15,000, or 30,000 points per bedroom per night). No consecutive night free award discounts.",
     resortFeeNoteZh: "视酒店而定：积分房是否收取度假村费及城市税依具体物业而定。",
-    resortFeeNoteEn: "Varies: Resort fees and mandatory service charges on award nights depend on local property policies.",
+    resortFeeNoteEn: "Property dependent: Resort fees and mandatory service charges on award nights depend on local property policies.",
     officialSourceUrl: "https://www.wyndhamhotels.com/wyndham-rewards/terms",
     officialSourceName: "Wyndham Rewards Program Terms",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   },
   {
     id: "choice",
@@ -114,15 +120,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 0.6,
     valuationScenarioCny: 0.042,
     freeNightRule: "none",
+    resortFeeStatus: "propertyDependent",
     eligibilityNoteZh: "积分房兑换主要在每晚 6,000 至 35,000 点之间，通常仅开放提前 100 天内的积分预订窗口，无免费房晚连住减免。",
     eligibilityNoteEn: "Reward nights generally range between 6,000 and 35,000 points per night with a 100-day forward booking window. No consecutive free night rules.",
     resortFeeNoteZh: "视酒店而定：绝大多数经济型品牌无额外费用，少数度假型物业杂费需现金自理。",
-    resortFeeNoteEn: "Varies: Most economy properties charge no fees; where resort/parking fees apply, guests must pay in cash.",
+    resortFeeNoteEn: "Property dependent: Most economy properties charge no fees; where resort/parking fees apply, guests must pay in cash.",
     officialSourceUrl: "https://www.choicehotels.com/choice-privileges/rules-regulations",
     officialSourceName: "Choice Privileges Rules & Regulations",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   },
   {
     id: "accor",
@@ -131,15 +138,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 2.1,
     valuationScenarioCny: 0.150,
     freeNightRule: "none",
+    resortFeeStatus: "billCreditModel",
     eligibilityNoteZh: "雅高奖励积分采用固定等额折抵制：每 2,000 点直接抵扣 40 欧元房费或挂账消费，无传统浮动积分兑换表，无连住赠晚。",
     eligibilityNoteEn: "Accor Reward points function as fixed cash discounts: 2,000 points = €40 discount toward eligible room rates or hotel charges. No dynamic redemption charts or free night promotions.",
-    resortFeeNoteZh: "计入总账单：积分为现金抵用券形式，度假村费随总房费账单一同参与抵扣或现金结付。",
-    resortFeeNoteEn: "Applied against folio: Points credit against the total bill; any mandatory fees are absorbed by points or paid in cash.",
+    resortFeeNoteZh: "抵扣总账单模式：积分为现金抵用券形式，度假村费随总房费账单一同参与抵扣或现金结付。",
+    resortFeeNoteEn: "Bill credit model: Points credit against the total bill; any mandatory fees are absorbed by points or paid in cash.",
     officialSourceUrl: "https://all.accor.com/loyalty-program/legal/terms-and-conditions-en.pdf",
     officialSourceName: "ALL - Accor Live Limitless Terms & Conditions",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   },
   {
     id: "bestwestern",
@@ -148,15 +156,16 @@ const hotelPrograms = [
     valuationScenarioUsdCents: 0.6,
     valuationScenarioCny: 0.042,
     freeNightRule: "none",
+    resortFeeStatus: "propertyDependent",
     eligibilityNoteZh: "兑换所需积分在每晚 5,000 至 70,000 点之间浮动，积分终身有效不过期，无连住免费房晚规则。",
     eligibilityNoteEn: "Free night awards vary between 5,000 and 70,000 points per night depending on hotel and season. Points never expire; no consecutive free night discounts.",
     resortFeeNoteZh: "视酒店而定：积分房免除基础房费，但适用税费及极少数度假村费由住客自行承担。",
-    resortFeeNoteEn: "Varies: Points cover basic room charges; mandatory local taxes and incidental resort fees remain guest responsibility.",
+    resortFeeNoteEn: "Property dependent: Points cover basic room charges; mandatory local taxes and incidental resort fees remain guest responsibility.",
     officialSourceUrl: "https://www.bestwestern.com/en_US/best-western-rewards/program-terms.html",
     officialSourceName: "Best Western Rewards Program Terms & Conditions",
-    factCheckedDate: "2026-09-14",
+    factCheckedDate: "2026-09-29",
     regionScope: "Global",
-    lastVerified: "2026-09-14"
+    lastVerified: "2026-09-29"
   }
 ];
 

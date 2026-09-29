@@ -1,7 +1,7 @@
 ---
 layout: base.njk
-title: Chase Ultimate Rewards (UR) Points Value Guide
-description: Learn how to maximize Chase Ultimate Rewards. Understand portal multipliers, transfer partners, and how your card product changes your points' value.
+title: How Much Are Chase Ultimate Rewards Points Worth? (UR Value Guide)
+description: Chase Ultimate Rewards points are worth 1.0¢ for cash back, up to 1.5¢–2.0¢ via Points Boost, and 2.0¢+ via airline/hotel partners. Learn exact valuations.
 schemaType: Article
 eyebrow: Valuations
 breadcrumbs:
@@ -11,6 +11,15 @@ breadcrumbs:
 ---
 <h1>Chase Ultimate Rewards (UR) Points Value Guide</h1>
 <p class="lead">Chase Ultimate Rewards (UR) is one of the most versatile and valuable credit card point currencies. Its unique structure means that the value of your points is heavily dependent on which specific Chase credit card you hold and which redemption path you choose.</p>
+
+<div class="direct-answer">
+  <strong>How much are Chase Ultimate Rewards points worth?</strong><br>
+  Chase Ultimate Rewards points are worth a baseline <strong>1.0¢ each</strong> when redeemed for cash back or statement credits. You can achieve <strong>1.5¢ to 2.0¢ per point</strong> with eligible Points Boost offers or when transferring to travel partners like World of Hyatt and United. The exact return depends on your card tier, active promotions, and chosen redemption route.
+</div>
+
+<p class="cta-banner" style="margin: 16px 0; padding: 12px 16px; background: #f1f5f9; border-radius: 6px; font-size: 0.95rem;">
+  💡 <strong>Have an existing Chase points balance?</strong> Use our <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a> to instantly convert your points into estimated dollar purchasing power.
+</p>
 
 <h2>How Your Card Product Impacts Value (Updated for 2026)</h2>
 <p>Historically, Chase offered fixed 1.25¢ and 1.5¢ multipliers across all travel booked in the portal. However, Chase's official rules have evolved. The base redemption value in Chase Travel is now typically <strong>1.0¢ per point</strong>, with dynamic <strong>Points Boost</strong> offers applying only to eligible, rotating hotel and flight bookings.</p>
