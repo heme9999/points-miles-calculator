@@ -1634,3 +1634,135 @@ h3 + .faq, h2 + .faq {
   }
 }
 
+/* Callout Links Contrast & Accessibility (Phase 9.11.2) */
+.callout a,
+.callout a:visited {
+  color: #7DD3FC;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.callout a:hover {
+  color: #BAE6FD;
+  text-decoration: underline;
+}
+
+.callout a:focus-visible {
+  outline: 2px solid #F4F0E6;
+  outline-offset: 2px;
+  color: #FFFFFF;
+}
+
+/* Accessible Preset Buttons (Phase 9.11.2) */
+.preset-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+}
+
+.btn-balance-preset,
+.btn-amex-preset {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 14px;
+  font-size: 14px;
+  line-height: 1.4;
+  font-family: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--ink-2);
+  color: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+.btn-balance-preset:hover,
+.btn-amex-preset:hover {
+  background: rgba(244, 240, 230, 0.12);
+  border-color: var(--gold);
+}
+
+.btn-balance-preset:active,
+.btn-amex-preset:active {
+  transform: translateY(1px);
+}
+
+.btn-balance-preset:focus-visible,
+.btn-amex-preset:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.btn-balance-preset[aria-pressed="true"],
+.btn-amex-preset[aria-pressed="true"] {
+  background: var(--gold);
+  color: var(--ink);
+  border-color: var(--gold);
+  font-weight: 700;
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+/* Chase UR Comparison Table & Mobile Cards (Phase 9.11.2) */
+.chase-cards-mobile {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .chase-table-desktop {
+    display: none;
+  }
+  .chase-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .chase-card {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  .chase-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .chase-card-row {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .chase-card-label {
+    font-weight: 600;
+    color: var(--paper);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .chase-card-value {
+    color: rgba(244, 240, 230, 0.85);
+  }
+}
+
+@media print {
+  .chase-table-desktop {
+    display: block !important;
+  }
+  .chase-cards-mobile {
+    display: none !important;
+  }
+}
+

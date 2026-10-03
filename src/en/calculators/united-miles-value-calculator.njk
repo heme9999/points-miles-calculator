@@ -29,13 +29,13 @@ breadcrumbs:
   <div class="field">
     <label for="unitedMiles">United MileagePlus Balance <span class="hint" id="hintMiles">Miles</span></label>
     <input type="number" id="unitedMiles" value="50000" min="0" step="1" inputmode="numeric" aria-describedby="hintMiles">
-    <div class="preset-buttons" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+    <div class="preset-buttons">
       <span style="font-size: 0.85rem; color: #64748b;">Quick balances:</span>
-      <button type="button" class="btn-balance-preset" data-miles="10000">10,000</button>
-      <button type="button" class="btn-balance-preset" data-miles="25000">25,000</button>
-      <button type="button" class="btn-balance-preset" data-miles="50000">50,000</button>
-      <button type="button" class="btn-balance-preset" data-miles="60000">60,000</button>
-      <button type="button" class="btn-balance-preset" data-miles="100000">100,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="10000" aria-pressed="false">10,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="25000" aria-pressed="false">25,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="50000" aria-pressed="true">50,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="60000" aria-pressed="false">60,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="100000" aria-pressed="false">100,000</button>
     </div>
   </div>
 
@@ -48,16 +48,16 @@ breadcrumbs:
     <div id="helpScenarioGuide" class="help-scenario-guide" style="display: none;">
       <h4>How to choose a cents-per-mile assumption:</h4>
       <div class="guide-step">
-        <strong>1. Evaluating an immediate redemption:</strong>
-        <p>Use your exact flight prices: <code>Realized CPP = [(Cash Ticket Price - Award Taxes) ÷ Miles Required] × 100</code>. Test your specific itinerary in our <a href="/en/calculators/cents-per-point/">CPP Calculator</a>.</p>
+        <strong>1. Evaluating a specific itinerary:</strong>
+        <p>Use the live cash fare, award taxes and miles required to calculate the actual CPP for the itinerary. The <a href="/en/calculators/cents-per-point/">Cents Per Point Calculator</a> is more appropriate for this task.</p>
       </div>
       <div class="guide-step">
-        <strong>2. Modeling domestic economy flights:</strong>
-        <p>A conservative benchmark of 1.0¢ to 1.2¢ reflects typical domestic routes subject to peak dynamic award pricing.</p>
+        <strong>2. Modeling a lower-value scenario:</strong>
+        <p>Use a lower illustrative assumption when you want a conservative planning estimate. This is a user-selected model, not a statement about typical United award pricing.</p>
       </div>
       <div class="guide-step">
-        <strong>3. Modeling international Polaris Business Class or partner sweet spots:</strong>
-        <p>Higher-tier redemptions frequently achieve 1.5¢ to 2.0¢+ per mile when Saver award seats are open.</p>
+        <strong>3. Modeling a higher-value scenario:</strong>
+        <p>Use a higher illustrative assumption only when it reflects a redemption you would realistically book. Verify the live mileage price, cash fare, taxes and availability before relying on the estimate.</p>
       </div>
     </div>
 
@@ -218,11 +218,20 @@ breadcrumbs:
     $('explain').textContent = `Miles balance: ${M.toLocaleString('en-US')} | Valuation: ${C}¢ CPM | Estimated travel value: $${total.toLocaleString('en-US', { maximumFractionDigits: 0 })}. Planning estimate, not guaranteed cashout value.`;
   }
 
+  function updatePresetButtonsAria(currentMiles) {
+    const targetStr = String(currentMiles);
+    document.querySelectorAll('.btn-balance-preset').forEach(btn => {
+      const isMatch = btn.getAttribute('data-miles') === targetStr;
+      btn.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+    });
+  }
+
   // Preset balance buttons
   document.querySelectorAll('.btn-balance-preset').forEach(btn => {
     btn.addEventListener('click', function() {
       const m = this.getAttribute('data-miles');
       $('unitedMiles').value = m;
+      updatePresetButtonsAria(m);
       calcUnited();
     });
   });
@@ -242,7 +251,12 @@ breadcrumbs:
     calcUnited();
   });
 
-  $('unitedMiles').addEventListener('input', calcUnited);
+  $('unitedMiles').addEventListener('input', () => {
+    updatePresetButtonsAria($('unitedMiles').value);
+    calcUnited();
+  });
+
+  updatePresetButtonsAria($('unitedMiles').value);
 
   // Help toggle
   const btnHelp = $('btnHelpScenario');

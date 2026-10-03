@@ -29,8 +29,8 @@ lastModified: "2026-08-22"
       <span>Calculate CPP redemption value for any award ticket</span>
     </a>
     <a href="/en/calculators/points-to-dollars/" class="calculator-link-card">
-      Convert points to dollars →
-      <span>Convert airline miles to an estimated total cash value</span>
+      Convert miles to dollars →
+      <span>Estimate the travel value of an airline-mile balance</span>
     </a>
     <a href="/en/calculators/transfer-bonus/" class="calculator-link-card">
       Calculate a transfer bonus →
@@ -192,18 +192,18 @@ lastModified: "2026-08-22"
     verdict.className = 'verdict';
 
     if(milesValue > cashValue * 1.05){
-      verdict.textContent = 'Transfer to Miles';
+      verdict.textContent = 'Potentially Higher Modeled Value';
       verdict.className = 'verdict good';
       $('milesOut').classList.add('win');
-      explain.textContent = `Transferring gives an estimated value ${ratio.toFixed(2)}x higher than cashout, assuming you find an award flight matching this valuation.`;
+      explain.textContent = 'Transferring may provide more estimated travel value under the selected assumptions. Confirm the live transfer ratio and award availability before moving points.';
     } else if(cashValue > milesValue * 1.05){
-      verdict.textContent = 'Cash Out';
+      verdict.textContent = 'Cashout Shows Higher Modeled Value';
       verdict.className = 'verdict bad';
       $('cashOut').classList.add('win');
-      explain.textContent = `Transferring is only worth ${(ratio*100).toFixed(0)}% of the cashout value based on your terms. Cash out unless you can find a significantly better award flight.`;
+      explain.textContent = 'Cashout provides more modeled value under the selected assumptions. Compare your real redemption options before deciding.';
     } else {
-      verdict.textContent = 'Toss-up';
-      explain.textContent = 'Both options offer similar value. Choose based on your actual travel needs.';
+      verdict.textContent = 'Results Are Close';
+      explain.textContent = 'Both options offer similar modeled value under the selected assumptions. Compare your actual travel plans before deciding.';
     }
     code.textContent = `RATIO ${ratio.toFixed(2)}×`;
   }

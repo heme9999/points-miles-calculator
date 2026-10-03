@@ -32,13 +32,13 @@ breadcrumbs:
   <div class="field" style="margin-bottom: 16px;">
     <label for="amexBalance">Membership Rewards Balance <span class="hint" id="hintAmexBalance">Points</span></label>
     <input type="number" id="amexBalance" value="50000" min="0" step="1" inputmode="numeric" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper);">
-    <div class="preset-buttons" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+    <div class="preset-buttons">
       <span style="font-size: 0.85rem; color: var(--muted);">Quick balances:</span>
-      <button type="button" class="btn-amex-preset" data-points="10000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">10,000</button>
-      <button type="button" class="btn-amex-preset" data-points="25000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">25,000</button>
-      <button type="button" class="btn-amex-preset" data-points="50000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">50,000</button>
-      <button type="button" class="btn-amex-preset" data-points="100000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">100,000</button>
-      <button type="button" class="btn-amex-preset" data-points="500000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">500,000</button>
+      <button type="button" class="btn-amex-preset" data-points="10000" aria-pressed="false">10,000</button>
+      <button type="button" class="btn-amex-preset" data-points="25000" aria-pressed="false">25,000</button>
+      <button type="button" class="btn-amex-preset" data-points="50000" aria-pressed="true">50,000</button>
+      <button type="button" class="btn-amex-preset" data-points="100000" aria-pressed="false">100,000</button>
+      <button type="button" class="btn-amex-preset" data-points="500000" aria-pressed="false">500,000</button>
     </div>
   </div>
 
@@ -240,15 +240,28 @@ breadcrumbs:
     calcAmex();
   });
 
-  bInput.addEventListener('input', calcAmex);
+  function updateAmexPresetAria(currentPoints) {
+    const targetStr = String(currentPoints);
+    document.querySelectorAll('.btn-amex-preset').forEach(btn => {
+      const isMatch = btn.getAttribute('data-points') === targetStr;
+      btn.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+    });
+  }
+
+  bInput.addEventListener('input', function() {
+    updateAmexPresetAria(bInput.value);
+    calcAmex();
+  });
 
   document.querySelectorAll('.btn-amex-preset').forEach(btn => {
     btn.addEventListener('click', function() {
       bInput.value = this.getAttribute('data-points');
+      updateAmexPresetAria(bInput.value);
       calcAmex();
     });
   });
 
+  updateAmexPresetAria(bInput.value);
   calcAmex();
 })();
 </script>

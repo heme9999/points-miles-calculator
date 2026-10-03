@@ -21,38 +21,68 @@ breadcrumbs:
   💡 <strong>Have an existing Chase points balance?</strong> Use our <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a> to instantly convert your points into estimated dollar purchasing power.
 </p>
 
-<div class="responsive-table-wrapper" style="margin: 20px 0;">
-  <table class="responsive-table">
-    <thead>
-      <tr>
-        <th style="text-align: left;">Redemption Method</th>
-        <th>Value Type</th>
-        <th>What to Verify</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="text-align: left; font-weight: 600;">Cash Back</td>
-        <td>Cash-equivalent baseline (typically 1.0¢)</td>
-        <td>Check current account terms and eligible statement credit or direct deposit options.</td>
-      </tr>
-      <tr>
-        <td style="text-align: left; font-weight: 600;">Chase Travel</td>
-        <td>Portal-based value (1.0¢ base)</td>
-        <td>Verify card tier, live portal pricing, and specific ticket or hotel rules.</td>
-      </tr>
-      <tr>
-        <td style="text-align: left; font-weight: 600;">Points Boost</td>
-        <td>Conditional enhanced value (up to 1.5¢–2.0¢)</td>
-        <td>Confirm eligible rotating promotions in your portal; not all bookings or itineraries qualify.</td>
-      </tr>
-      <tr>
-        <td style="text-align: left; font-weight: 600;">Transfer Partners</td>
-        <td>Redemption-dependent (variable)</td>
-        <td>Confirm the live transfer ratio in your rewards portal. Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1.</td>
-      </tr>
-    </tbody>
-  </table>
+{% set chaseRows = [
+  {
+    method: "Cash Back",
+    valueType: "Cash-equivalent baseline (typically 1.0¢)",
+    verify: "Check current account terms and eligible statement credit or direct deposit options."
+  },
+  {
+    method: "Chase Travel",
+    valueType: "Portal-based value (1.0¢ base)",
+    verify: "Verify card tier, live portal pricing, and specific ticket or hotel rules."
+  },
+  {
+    method: "Points Boost",
+    valueType: "Conditional enhanced value (up to 1.5¢–2.0¢)",
+    verify: "Confirm eligible rotating promotions in your portal; not all bookings or itineraries qualify."
+  },
+  {
+    method: "Transfer Partners",
+    valueType: "Redemption-dependent (variable)",
+    verify: "Confirm the live transfer ratio in your rewards portal. Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1."
+  }
+] %}
+
+<div class="chase-table-desktop">
+  <div class="responsive-table-wrapper" style="margin: 20px 0;">
+    <table class="responsive-table">
+      <thead>
+        <tr>
+          <th style="text-align: left;">Redemption Method</th>
+          <th>Value Type</th>
+          <th>What to Verify</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in chaseRows %}
+        <tr>
+          <td style="text-align: left; font-weight: 600;">{{ row.method }}</td>
+          <td>{{ row.valueType }}</td>
+          <td>{{ row.verify }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="chase-cards-mobile">
+  {% for row in chaseRows %}
+  <div class="chase-card">
+    <div class="chase-card-header">
+      <span class="chase-card-title">{{ row.method }}</span>
+    </div>
+    <div class="chase-card-row">
+      <span class="chase-card-label">Value Type:</span>
+      <span class="chase-card-value">{{ row.valueType }}</span>
+    </div>
+    <div class="chase-card-row">
+      <span class="chase-card-label">What to Verify:</span>
+      <span class="chase-card-value">{{ row.verify }}</span>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 
 <h2>How Your Card Product Impacts Value (Updated for 2026)</h2>

@@ -937,3 +937,224 @@ test('Phase 9.11.1: United Factual Tightening and Chase Scope Expansion', async 
   });
 });
 
+test('Phase 9.11.2: United CNY Initialization, Collapsible Help, Button Accessibility, Chase Mobile Cards & Homepage Verdicts', async (t) => {
+  const zhUnitedHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/united-miles-value-calculator/index.html'), 'utf8');
+  const enUnitedHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/united-miles-value-calculator/index.html'), 'utf8');
+  const zhChaseHtml = fs.readFileSync(path.resolve(__dirname, '../_site/values/chase-ultimate-rewards/index.html'), 'utf8');
+  const enChaseHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/values/chase-ultimate-rewards/index.html'), 'utf8');
+  const enHomeHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/index.html'), 'utf8');
+  const zhHomeHtml = fs.readFileSync(path.resolve(__dirname, '../_site/index.html'), 'utf8');
+  const styleCss = fs.readFileSync(path.resolve(__dirname, '../_site/assets/style.css'), 'utf8');
+
+  await t.test('A. CNY Initialization & Priority Scenarios', () => {
+    // 1. localStorage = USD, no URL params -> $600
+    const dom1 = new JSDOM(zhUnitedHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/united-miles-value-calculator/',
+      beforeParse(window) {
+        window.localStorage.setItem('preferredCurrency', 'USD');
+      }
+    });
+    const doc1 = dom1.window.document;
+    assert.strictEqual(doc1.getElementById('currency').value, 'USD', 'Scenario 1: Currency should be USD');
+    assert.strictEqual(doc1.getElementById('cppValue').value, '1.2', 'Scenario 1: cppValue should be 1.2');
+    assert.strictEqual(doc1.getElementById('dollarValue').textContent, '$600', 'Scenario 1: Result should be $600');
+
+    // 2. localStorage = CNY, no URL params -> ¥4,200
+    const dom2 = new JSDOM(zhUnitedHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/united-miles-value-calculator/',
+      beforeParse(window) {
+        window.localStorage.setItem('preferredCurrency', 'CNY');
+      }
+    });
+    const doc2 = dom2.window.document;
+    assert.strictEqual(doc2.getElementById('currency').value, 'CNY', 'Scenario 2: Currency should be CNY');
+    assert.strictEqual(doc2.getElementById('cppValue').value, '0.084', 'Scenario 2: cppValue should be 0.084');
+    assert.strictEqual(doc2.getElementById('dollarValue').textContent, '¥4,200', 'Scenario 2: Result should be ¥4,200');
+
+    // 3. localStorage = CNY, but URL ?currency=USD&miles=50000&cpp=1.5 -> $750 (URL wins)
+    const dom3 = new JSDOM(zhUnitedHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/united-miles-value-calculator/?currency=USD&miles=50000&cpp=1.5',
+      beforeParse(window) {
+        window.localStorage.setItem('preferredCurrency', 'CNY');
+      }
+    });
+    const doc3 = dom3.window.document;
+    assert.strictEqual(doc3.getElementById('currency').value, 'USD', 'Scenario 3: URL param USD must override localStorage CNY');
+    assert.strictEqual(doc3.getElementById('cppValue').value, '1.5', 'Scenario 3: cppValue should be 1.5');
+    assert.strictEqual(doc3.getElementById('dollarValue').textContent, '$750', 'Scenario 3: Result should be $750');
+
+    // 4. localStorage = USD, but URL ?currency=CNY&miles=50000&cpp=0.105 -> ¥5,250 (URL wins)
+    const dom4 = new JSDOM(zhUnitedHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/united-miles-value-calculator/?currency=CNY&miles=50000&cpp=0.105',
+      beforeParse(window) {
+        window.localStorage.setItem('preferredCurrency', 'USD');
+      }
+    });
+    const doc4 = dom4.window.document;
+    assert.strictEqual(doc4.getElementById('currency').value, 'CNY', 'Scenario 4: URL param CNY must override localStorage USD');
+    assert.strictEqual(doc4.getElementById('cppValue').value, '0.105', 'Scenario 4: cppValue should be 0.105');
+    assert.strictEqual(doc4.getElementById('dollarValue').textContent, '¥5,250', 'Scenario 4: Result should be ¥5,250');
+
+    // 5. USD <-> CNY 10 Consecutive Switches without Drift
+    const dom5 = new JSDOM(zhUnitedHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/united-miles-value-calculator/',
+      beforeParse(window) {
+        window.localStorage.setItem('preferredCurrency', 'USD');
+      }
+    });
+    const doc5 = dom5.window.document;
+    const currSelect = doc5.getElementById('currency');
+    for (let i = 0; i < 10; i++) {
+      currSelect.value = 'CNY';
+      currSelect.dispatchEvent(new dom5.window.Event('change'));
+      assert.strictEqual(doc5.getElementById('cppValue').value, '0.084', `Iteration ${i+1} CNY cppValue must be 0.084`);
+      assert.strictEqual(doc5.getElementById('dollarValue').textContent, '¥4,200', `Iteration ${i+1} CNY result must be ¥4,200`);
+
+      currSelect.value = 'USD';
+      currSelect.dispatchEvent(new dom5.window.Event('change'));
+      assert.strictEqual(doc5.getElementById('cppValue').value, '1.2', `Iteration ${i+1} USD cppValue must be 1.2`);
+      assert.strictEqual(doc5.getElementById('dollarValue').textContent, '$600', `Iteration ${i+1} USD result must be $600`);
+    }
+  });
+
+  await t.test('B. Collapsible Help Phrasing Verification', () => {
+    const bannedHelp = [
+      'reflects typical domestic routes',
+      'frequently achieve',
+      '1.5¢ to 2.0¢+',
+      'when Saver award seats are open',
+      '普遍兑换底线',
+      '往往能兑出',
+      '甚至更高价值',
+      'Saver 奖励票仓位开放'
+    ];
+
+    bannedHelp.forEach(phrase => {
+      assert.ok(!enUnitedHtml.includes(phrase), `EN United must not contain: ${phrase}`);
+      assert.ok(!zhUnitedHtml.includes(phrase), `ZH United must not contain: ${phrase}`);
+    });
+
+    // Required replacements in EN
+    assert.ok(enUnitedHtml.includes('Use the live cash fare, award taxes and miles required to calculate the actual CPP'), 'EN help step 1');
+    assert.ok(enUnitedHtml.includes('Use a lower illustrative assumption when you want a conservative planning estimate'), 'EN help step 2');
+    assert.ok(enUnitedHtml.includes('Use a higher illustrative assumption only when it reflects a redemption you would realistically book'), 'EN help step 3');
+
+    // Required replacements in ZH
+    assert.ok(zhUnitedHtml.includes('请使用实际现金票价、奖励票税费和所需里程计算该行程的真实 CPP'), 'ZH help step 1');
+    assert.ok(zhUnitedHtml.includes('如果希望采用谨慎的旅行预算假设，可选择较低的估值示例'), 'ZH help step 2');
+    assert.ok(zhUnitedHtml.includes('只有当较高估值与您确实会预订的兑换相符时才应采用'), 'ZH help step 3');
+  });
+
+  await t.test('C. Callout Link Contrast Verification (WCAG AA >= 4.5:1)', () => {
+    function getLuminance(r, g, b) {
+      const a = [r, g, b].map(v => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+    }
+    function getContrast(rgb1, rgb2) {
+      const lum1 = getLuminance(rgb1[0], rgb1[1], rgb1[2]);
+      const lum2 = getLuminance(rgb2[0], rgb2[1], rgb2[2]);
+      const brightest = Math.max(lum1, lum2);
+      const darkest = Math.min(lum1, lum2);
+      return (brightest + 0.05) / (darkest + 0.05);
+    }
+
+    const bgRgb = [22, 39, 61]; // #16273D (--ink-2)
+    const linkRgb = [125, 211, 252]; // #7DD3FC
+    const hoverRgb = [186, 230, 253]; // #BAE6FD
+    const outlineRgb = [244, 240, 230]; // #F4F0E6
+
+    const linkContrast = getContrast(linkRgb, bgRgb);
+    const hoverContrast = getContrast(hoverRgb, bgRgb);
+    const outlineContrast = getContrast(outlineRgb, bgRgb);
+
+    assert.ok(linkContrast >= 4.5, `Default link contrast ${linkContrast.toFixed(2)} must be >= 4.5:1`);
+    assert.ok(hoverContrast >= 4.5, `Hover link contrast ${hoverContrast.toFixed(2)} must be >= 4.5:1`);
+    assert.ok(outlineContrast >= 3.0, `Outline contrast ${outlineContrast.toFixed(2)} must be >= 3.0:1`);
+
+    assert.ok(styleCss.includes('.callout a'), 'style.css must define .callout a');
+    assert.ok(styleCss.includes('.callout a:visited'), 'style.css must define .callout a:visited');
+    assert.ok(styleCss.includes('.callout a:focus-visible'), 'style.css must define .callout a:focus-visible');
+  });
+
+  await t.test('D. Quick Balance Buttons Accessibility & aria-pressed Sync', () => {
+    // Assert CSS styling in style.css
+    assert.ok(styleCss.includes('min-height: 44px;'), 'Must have min-height: 44px');
+    assert.ok(styleCss.includes('min-width: 44px;'), 'Must have min-width: 44px');
+    assert.ok(styleCss.includes('font-size: 14px;'), 'Must have font-size: 14px');
+    assert.ok(styleCss.includes('aria-pressed="true"'), 'Must have styling for aria-pressed="true"');
+
+    // Test JSDOM interactivity and aria-pressed sync on United ZH
+    const dom = new JSDOM(zhUnitedHtml, { runScripts: 'dangerously', url: 'http://localhost/calculators/united-miles-value-calculator/' });
+    const doc = dom.window.document;
+    const btn50k = doc.querySelector('.btn-balance-preset[data-miles="50000"]');
+    const btn25k = doc.querySelector('.btn-balance-preset[data-miles="25000"]');
+
+    assert.strictEqual(btn50k.getAttribute('aria-pressed'), 'true', 'Initial 50k button must be aria-pressed=true');
+    assert.strictEqual(btn25k.getAttribute('aria-pressed'), 'false', 'Initial 25k button must be aria-pressed=false');
+
+    // Click 25,000
+    btn25k.click();
+    assert.strictEqual(doc.getElementById('unitedMiles').value, '25000', 'Input must update to 25000');
+    assert.strictEqual(btn25k.getAttribute('aria-pressed'), 'true', '25k button must now be aria-pressed=true');
+    assert.strictEqual(btn50k.getAttribute('aria-pressed'), 'false', '50k button must now be aria-pressed=false');
+  });
+
+  await t.test('E. Chase Mobile Cards & Shared Data Consistency', () => {
+    const enDom = new JSDOM(enChaseHtml);
+    const zhDom = new JSDOM(zhChaseHtml);
+
+    // Desktop table exists
+    assert.ok(enDom.window.document.querySelector('.chase-table-desktop'), 'EN must have .chase-table-desktop');
+    assert.ok(zhDom.window.document.querySelector('.chase-table-desktop'), 'ZH must have .chase-table-desktop');
+
+    // Mobile cards exist and count = 4
+    const enCards = enDom.window.document.querySelectorAll('.chase-cards-mobile .chase-card');
+    const zhCards = zhDom.window.document.querySelectorAll('.chase-cards-mobile .chase-card');
+    assert.strictEqual(enCards.length, 4, 'EN must have 4 mobile cards');
+    assert.strictEqual(zhCards.length, 4, 'ZH must have 4 mobile cards');
+
+    // Verify card content matches table rows
+    const enTableRows = Array.from(enDom.window.document.querySelectorAll('.chase-table-desktop tbody tr'));
+    assert.strictEqual(enTableRows.length, 4, 'EN must have 4 table rows');
+    for (let i = 0; i < 4; i++) {
+      const rowMethod = enTableRows[i].children[0].textContent.trim();
+      const cardTitle = enCards[i].querySelector('.chase-card-title').textContent.trim();
+      assert.strictEqual(cardTitle, rowMethod, `Card ${i+1} title must match table method`);
+    }
+
+    // Verify CSS media queries in style.css
+    assert.ok(styleCss.includes('@media (max-width: 640px)'), 'Must contain max-width: 640px media query');
+    assert.ok(styleCss.includes('.chase-cards-mobile'), 'Must style .chase-cards-mobile');
+    assert.ok(styleCss.includes('.chase-table-desktop'), 'Must style .chase-table-desktop');
+    assert.ok(styleCss.includes('@media print'), 'Must include print media query');
+  });
+
+  await t.test('F. Homepage Task Card & Verdict Phrasing', () => {
+    // EN homepage task card
+    assert.ok(enHomeHtml.includes('Convert miles to dollars'), 'EN home must contain Convert miles to dollars');
+    assert.ok(!enHomeHtml.includes('Convert points to dollars →'), 'EN home must not have old task card title');
+    assert.ok(enHomeHtml.includes('Estimate the travel value of an airline-mile balance'), 'EN home must have updated description');
+
+    // EN homepage quick calculator verdict
+    assert.ok(!enHomeHtml.includes('Transfer to Miles'), 'EN home must not have Transfer to Miles verdict');
+    assert.ok(enHomeHtml.includes('Potentially Higher Modeled Value'), 'EN home must have Potentially Higher Modeled Value');
+    assert.ok(enHomeHtml.includes('Cashout Shows Higher Modeled Value'), 'EN home must have Cashout Shows Higher Modeled Value');
+    assert.ok(enHomeHtml.includes('Results Are Close'), 'EN home must have Results Are Close');
+
+    // ZH homepage quick calculator verdict
+    assert.ok(!zhHomeHtml.includes('转里程更划算'), 'ZH home must not have old verdict');
+    assert.ok(zhHomeHtml.includes('模型测算转点价值较高'), 'ZH home must have updated verdict');
+    assert.ok(zhHomeHtml.includes('模型测算直接抵现价值较高'), 'ZH home must have updated verdict');
+    assert.ok(zhHomeHtml.includes('测算结果大致持平'), 'ZH home must have updated verdict');
+  });
+});
+
+

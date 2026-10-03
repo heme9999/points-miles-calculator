@@ -35,13 +35,13 @@ breadcrumbs:
   <div class="field">
     <label for="unitedMiles">美联航 MileagePlus 里程余额<span class="hint" id="hintMiles">里</span></label>
     <input type="number" id="unitedMiles" value="50000" min="0" step="1" inputmode="numeric" aria-describedby="hintMiles">
-    <div class="preset-buttons" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+    <div class="preset-buttons">
       <span style="font-size: 0.85rem; color: #64748b;">快捷填入：</span>
-      <button type="button" class="btn-balance-preset" data-miles="10000">10,000</button>
-      <button type="button" class="btn-balance-preset" data-miles="25000">25,000</button>
-      <button type="button" class="btn-balance-preset" data-miles="50000">50,000</button>
-      <button type="button" class="btn-balance-preset" data-miles="60000">60,000</button>
-      <button type="button" class="btn-balance-preset" data-miles="100000">100,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="10000" aria-pressed="false">10,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="25000" aria-pressed="false">25,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="50000" aria-pressed="true">50,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="60000" aria-pressed="false">60,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="100000" aria-pressed="false">100,000</button>
     </div>
   </div>
 
@@ -60,16 +60,16 @@ breadcrumbs:
     <div id="helpScenarioGuide" class="help-scenario-guide" style="display: none;">
       <h4>如何选择合适的美联航每里估值假设：</h4>
       <div class="guide-step">
-        <strong>1. 评估具体已知行程：</strong>
-        <p>直接计算实际单次兑出价值：<code>实际CPP =（现金票价 − 奖励票税费）÷ 所需里程 × 100</code>。可以在我们的 <a href="/calculators/cents-per-point/">单点价值 (CPP) 计算器</a> 中输入具体数据验证。</p>
+        <strong>1. 评估具体行程：</strong>
+        <p>请使用实际现金票价、奖励票税费和所需里程计算该行程的真实 CPP。此类情况更适合使用 <a href="/calculators/cents-per-point/">单点价值（CPP）计算器</a>。</p>
       </div>
       <div class="guide-step">
-        <strong>2. 测算美国境内或短途经济舱：</strong>
-        <p>建议使用 1.0 至 1.2 美分/里作为保守评估基准，反映动态定价下的普遍兑换底线。</p>
+        <strong>2. 测算较保守的估值情景：</strong>
+        <p>如果希望采用谨慎的旅行预算假设，可选择较低的估值示例。这是用户选择的测算模型，不代表美联航奖励票的普遍价格。</p>
       </div>
       <div class="guide-step">
-        <strong>3. 测算跨洋 Polaris 商务舱或星空联盟伙伴航线：</strong>
-        <p>在 Saver 奖励票仓位开放时，往往能兑出 1.5 美分至 2.0 美分/里甚至更高价值。</p>
+        <strong>3. 测算较高的估值情景：</strong>
+        <p>只有当较高估值与您确实会预订的兑换相符时才应采用。依赖结果前，请核对实时所需里程、现金票价、税费与奖励座位房态。</p>
       </div>
     </div>
 
@@ -173,6 +173,7 @@ breadcrumbs:
 
   let currentCurrency = 'USD';
   let defaultFx = 7.0;
+  let internalUsdCents = 1.2;
 
   function getActiveFx() {
     const fxInput = $('fxRate');
@@ -188,47 +189,22 @@ breadcrumbs:
     return 1.2;
   }
 
-  const parseParam = (key, elId, maxVal = 1000000000) => {
-    const params = new URLSearchParams(window.location.search);
-    let val = parseFloat(params.get(key));
-    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
-      const el = $(elId);
-      if (el) el.value = val;
+  function formatCppDisplay(usdCents, curr, fx = 7.0) {
+    if (curr === 'USD') {
+      return +(parseFloat(usdCents.toFixed(4))).toString();
+    } else {
+      const cnyVal = (usdCents / 100) * fx;
+      return +(parseFloat(cnyVal.toFixed(4))).toString();
     }
-  };
-
-  parseParam('miles', 'unitedMiles');
-  parseParam('points', 'unitedMiles');
-  parseParam('cpp', 'cppValue');
-  parseParam('valuation', 'cppValue');
-
-  const params = new URLSearchParams(window.location.search);
-  const currParam = params.get('currency') || params.get('curr');
-  if (currParam && ['USD', 'CNY'].includes(currParam.toUpperCase())) {
-    currentCurrency = currParam.toUpperCase();
-  } else {
-    try {
-      const saved = localStorage.getItem('preferredCurrency');
-      if (saved && ['USD', 'CNY'].includes(saved)) currentCurrency = saved;
-    } catch(e) {}
   }
-  if ($('currency')) $('currency').value = currentCurrency;
 
-  const parseScenarioParam = () => {
-    const scen = params.get('scenario') || params.get('presetValuation');
-    if (scen && $('presetValuation')) {
-      const validOptions = ['custom', '1.0', '1.2', '1.5'];
-      if (validOptions.includes(scen)) {
-        $('presetValuation').value = scen;
-        if (scen !== 'custom') {
-          const usdCpp = getScenarioUsdCpp(scen);
-          const fx = getActiveFx();
-          $('cppValue').value = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * fx).toFixed(4));
-        }
-      }
-    }
-  };
-  parseScenarioParam();
+  function updatePresetButtonsAria(currentMiles) {
+    const targetStr = String(currentMiles);
+    document.querySelectorAll('.btn-balance-preset').forEach(btn => {
+      const isMatch = btn.getAttribute('data-miles') === targetStr;
+      btn.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+    });
+  }
 
   function updateCurrencyUI() {
     const isUSD = currentCurrency === 'USD';
@@ -281,29 +257,87 @@ breadcrumbs:
     $('dollarValue').classList.add('win');
   }
 
+  // --- Strict Sequential Initialization (Phase 9.11.2) ---
+  const params = new URLSearchParams(window.location.search);
+  const currParam = params.get('currency') || params.get('curr');
+  const milesParam = params.get('miles') || params.get('points');
+  const cppParam = params.get('cpp') || params.get('valuation');
+  const scenParam = params.get('scenario') || params.get('presetValuation');
+  const fxParam = params.get('fx') || params.get('fxRate');
+
+  // 1. Currency determination (URL > localStorage > default)
+  if (currParam && ['USD', 'CNY'].includes(currParam.toUpperCase())) {
+    currentCurrency = currParam.toUpperCase();
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && ['USD', 'CNY'].includes(saved)) currentCurrency = saved;
+    } catch(e) {}
+  }
+  if ($('currency')) $('currency').value = currentCurrency;
+
+  // 2. Fx determination
+  if (fxParam !== null) {
+    const parsedFx = parseFloat(fxParam);
+    if (!isNaN(parsedFx) && isFinite(parsedFx) && parsedFx > 0) {
+      if ($('fxRate')) $('fxRate').value = parsedFx;
+    }
+  }
+  const fx = getActiveFx();
+
+  // 3. Miles determination
+  if (milesParam !== null) {
+    const parsedM = parseFloat(milesParam);
+    if (!isNaN(parsedM) && isFinite(parsedM) && parsedM >= 0) {
+      $('unitedMiles').value = parsedM;
+    }
+  }
+
+  // 4. Valuation scenario & internal CPM determination
+  let initialPreset = '1.2';
+  if (cppParam !== null) {
+    const parsedCpp = parseFloat(cppParam);
+    if (!isNaN(parsedCpp) && isFinite(parsedCpp) && parsedCpp > 0) {
+      if (currentCurrency === 'USD') {
+        internalUsdCents = parsedCpp;
+      } else {
+        internalUsdCents = (parsedCpp / fx) * 100;
+      }
+      if (Math.abs(internalUsdCents - 1.0) < 0.0001) initialPreset = '1.0';
+      else if (Math.abs(internalUsdCents - 1.2) < 0.0001) initialPreset = '1.2';
+      else if (Math.abs(internalUsdCents - 1.5) < 0.0001) initialPreset = '1.5';
+      else initialPreset = 'custom';
+    }
+  } else if (scenParam && ['custom', '1.0', '1.2', '1.5'].includes(scenParam)) {
+    initialPreset = scenParam;
+    if (scenParam !== 'custom') {
+      internalUsdCents = getScenarioUsdCpp(scenParam);
+    }
+  } else {
+    initialPreset = '1.2';
+    internalUsdCents = 1.2;
+  }
+
+  if ($('presetValuation')) $('presetValuation').value = initialPreset;
+  if ($('cppValue')) $('cppValue').value = formatCppDisplay(internalUsdCents, currentCurrency, fx);
+
+  updateCurrencyUI();
+  updatePresetButtonsAria($('unitedMiles').value);
+  calcUnited();
+
+  // --- Event Handlers ---
   if ($('currency')) {
     $('currency').addEventListener('change', e => {
-      const oldCurrency = currentCurrency;
       currentCurrency = e.target.value;
-      const fx = getActiveFx();
+      const activeFx = getActiveFx();
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+
       const select = $('presetValuation');
       const curScen = select ? select.value : 'custom';
-
       if (curScen !== 'custom') {
-        const usdCpp = getScenarioUsdCpp(curScen);
-        $('cppValue').value = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * fx).toFixed(4));
-      } else {
-        const oldVal = parseFloat($('cppValue').value) || 0;
-        if (oldVal > 0) {
-          if (currentCurrency === 'USD' && oldCurrency === 'CNY') {
-            $('cppValue').value = parseFloat((oldVal / fx * 100).toFixed(2));
-          } else if (currentCurrency === 'CNY' && oldCurrency === 'USD') {
-            $('cppValue').value = parseFloat((oldVal / 100 * fx).toFixed(4));
-          }
-        }
+        internalUsdCents = getScenarioUsdCpp(curScen);
       }
-
-      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      $('cppValue').value = formatCppDisplay(internalUsdCents, currentCurrency, activeFx);
       updateCurrencyUI();
       calcUnited();
     });
@@ -312,12 +346,14 @@ breadcrumbs:
   if ($('fxRate')) {
     $('fxRate').addEventListener('input', () => {
       updateCurrencyUI();
+      const activeFx = getActiveFx();
       const select = $('presetValuation');
       const curScen = select ? select.value : 'custom';
-      const fx = getActiveFx();
-      if (curScen !== 'custom' && currentCurrency === 'CNY') {
-        const usdCpp = getScenarioUsdCpp(curScen);
-        $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
+      if (curScen !== 'custom') {
+        internalUsdCents = getScenarioUsdCpp(curScen);
+      }
+      if (currentCurrency === 'CNY') {
+        $('cppValue').value = formatCppDisplay(internalUsdCents, 'CNY', activeFx);
       }
       calcUnited();
     });
@@ -325,26 +361,46 @@ breadcrumbs:
 
   document.querySelectorAll('.btn-balance-preset').forEach(btn => {
     btn.addEventListener('click', function() {
-      $('unitedMiles').value = this.getAttribute('data-miles');
+      const m = this.getAttribute('data-miles');
+      $('unitedMiles').value = m;
+      updatePresetButtonsAria(m);
       calcUnited();
     });
   });
 
   $('presetValuation').addEventListener('change', e => {
-    if (e.target.value !== 'custom') {
-      const usdCpp = getScenarioUsdCpp(e.target.value);
-      const fx = getActiveFx();
-      $('cppValue').value = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * fx).toFixed(4));
+    const val = e.target.value;
+    if (val !== 'custom') {
+      internalUsdCents = getScenarioUsdCpp(val);
+      const activeFx = getActiveFx();
+      $('cppValue').value = formatCppDisplay(internalUsdCents, currentCurrency, activeFx);
       calcUnited();
     }
   });
 
   $('cppValue').addEventListener('input', () => {
-    $('presetValuation').value = 'custom';
+    const v = parseFloat($('cppValue').value);
+    const activeFx = getActiveFx();
+    if (!isNaN(v) && isFinite(v) && v > 0) {
+      if (currentCurrency === 'USD') {
+        internalUsdCents = v;
+      } else {
+        internalUsdCents = (v / activeFx) * 100;
+      }
+      if (Math.abs(internalUsdCents - 1.0) < 0.0001) $('presetValuation').value = '1.0';
+      else if (Math.abs(internalUsdCents - 1.2) < 0.0001) $('presetValuation').value = '1.2';
+      else if (Math.abs(internalUsdCents - 1.5) < 0.0001) $('presetValuation').value = '1.5';
+      else $('presetValuation').value = 'custom';
+    } else {
+      $('presetValuation').value = 'custom';
+    }
     calcUnited();
   });
 
-  $('unitedMiles').addEventListener('input', calcUnited);
+  $('unitedMiles').addEventListener('input', () => {
+    updatePresetButtonsAria($('unitedMiles').value);
+    calcUnited();
+  });
 
   const btnHelp = $('btnHelpScenario');
   const guideBox = $('helpScenarioGuide');
@@ -374,8 +430,5 @@ breadcrumbs:
       });
     });
   }
-
-  updateCurrencyUI();
-  calcUnited();
 })();
 </script>

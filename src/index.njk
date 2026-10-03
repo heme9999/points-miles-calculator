@@ -126,7 +126,7 @@ lastModified: "2026-09-29"
   <h3>真实计算案例</h3>
   <div class="example-box">
     <h4>案例 1：转点里程与直接折现对比（估值示例）</h4>
-    <p>假设你手头有 100,000 信用卡积分。如果直接在 App 抵扣账单，可能只值 1,000 元（按 100:1 折现）。这是另一种积分体系的 10:1 演示情景，如果按 10:1 转入航空常客计划，可获得 10,000 里程（请以银行或积分计划转点页面当日显示的比例为准）。若采用中性航空里程估值假设 1.5 美分/里（按汇率 1 USD = 7.0 CNY 演示，每里折合 0.105 元），这 10,000 里程的估值示例约为 1,050 元（注：此为估值示例，非实时或保证价值）。<strong>结论：在该估值情景下转为里程价值略高于直接折现（1,050 元 vs 1,000 元），若有明确出行需求转里程更划算；若近期无出行计划，直接抵扣现金可避免里程过期贬值。</strong></p>
+    <p>假设你手头有 100,000 信用卡积分。如果直接在 App 抵扣账单，可能只值 1,000 元（按 100:1 折现）。这是另一种积分体系的 10:1 演示情景，如果按 10:1 转入航空常客计划，可获得 10,000 里程（请以银行或积分计划转点页面当日显示的比例为准）。若采用中性航空里程估值假设 1.5 美分/里（按汇率 1 USD = 7.0 CNY 演示，每里折合 0.105 元），这 10,000 里程的估值示例约为 1,050 元（注：此为估值示例，非实时或保证价值）。<strong>结论：在该估值情景下转为里程价值略高于直接折现（1,050 元 vs 1,000 元），若有明确出行需求，转里程的测算价值较高；若近期无出行计划，直接抵扣现金可避免里程过期贬值。</strong></p>
   </div>
 
   <h3>常见问题 (FAQ)</h3>
@@ -348,18 +348,18 @@ lastModified: "2026-09-29"
     verdict.className = 'verdict';
 
     if(milesValue > cashValue * 1.05){
-      verdict.textContent = '转里程更划算';
+      verdict.textContent = '模型测算转点价值较高';
       verdict.className = 'verdict good';
       $('milesOut').classList.add('win');
-      explain.textContent = `转成${miles.toLocaleString('zh-CN',{maximumFractionDigits:0})}英里后估值约为直接抵现的 ${ratio.toFixed(2)} 倍,前提是你能订到接近参考价值区间的舱位。`;
+      explain.textContent = '在当前选定的假设下，转里程可能提供更高的测算旅行价值。在转移积分前，请核实实时转点比例与奖励机票可用房态/票态。';
     } else if(cashValue > milesValue * 1.05){
-      verdict.textContent = '不如直接抵现';
+      verdict.textContent = '模型测算直接抵现价值较高';
       verdict.className = 'verdict bad';
       $('cashOut').classList.add('win');
-      explain.textContent = `按你输入的兑换条款,转里程的估值只有直接抵现的 ${(ratio*100).toFixed(0)}%,除非能订到更高舱位或稀缺航线,否则直接抵现更稳妥。`;
+      explain.textContent = '在当前选定的假设下，直接抵现提供更高的测算价值。在做决定前，请对比您的实际兑换选项。';
     } else {
-      verdict.textContent = '大致持平';
-      explain.textContent = '两种方式价值接近,可以根据你是否真的会用这些里程出行来决定。';
+      verdict.textContent = '测算结果大致持平';
+      explain.textContent = '在当前选定的假设下，两种方式测算价值接近。请根据您的实际旅行计划与需求进行选择。';
     }
     code.textContent = `RATIO ${ratio.toFixed(2)}×`;
   }

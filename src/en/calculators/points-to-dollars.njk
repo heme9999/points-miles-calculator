@@ -27,12 +27,12 @@ breadcrumbs:
   <div class="field">
     <label for="totalPoints">Total points / miles in your account<span class="hint" id="hintTotal">Points</span></label>
     <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal">
-    <div class="preset-buttons" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+    <div class="preset-buttons">
       <span style="font-size: 0.85rem; color: #64748b;">Quick balances:</span>
-      <button type="button" class="btn-balance-preset" data-points="10000">10,000</button>
-      <button type="button" class="btn-balance-preset" data-points="25000">25,000</button>
-      <button type="button" class="btn-balance-preset" data-points="50000">50,000</button>
-      <button type="button" class="btn-balance-preset" data-points="100000">100,000</button>
+      <button type="button" class="btn-balance-preset" data-points="10000" aria-pressed="false">10,000</button>
+      <button type="button" class="btn-balance-preset" data-points="25000" aria-pressed="false">25,000</button>
+      <button type="button" class="btn-balance-preset" data-points="50000" aria-pressed="false">50,000</button>
+      <button type="button" class="btn-balance-preset" data-points="100000" aria-pressed="false">100,000</button>
     </div>
   </div>
   
@@ -278,25 +278,16 @@ breadcrumbs:
   </div>
 </div>
 
-<style>
-  .btn-balance-preset {
-    padding: 4px 10px;
-    font-size: 0.85rem;
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-    cursor: pointer;
-    color: #334155;
-    transition: all 0.15s ease;
-  }
-  .btn-balance-preset:hover {
-    background: #e2e8f0;
-    border-color: #94a3b8;
-  }
-</style>
-
 <script>
   const $ = id => document.getElementById(id);
+
+  function updatePresetButtonsAria(currentPoints) {
+    const targetStr = String(currentPoints);
+    document.querySelectorAll('.btn-balance-preset').forEach(btn => {
+      const isMatch = btn.getAttribute('data-points') === targetStr;
+      btn.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+    });
+  }
 
   // Help toggle accessible interaction
   const btnHelp = $('btnHelpScenario');
@@ -364,6 +355,7 @@ breadcrumbs:
     btn.addEventListener('click', () => {
       const pts = btn.getAttribute('data-points');
       $('totalPoints').value = pts;
+      updatePresetButtonsAria(pts);
       calcDollars();
     });
   });
@@ -386,7 +378,12 @@ breadcrumbs:
     calcDollars();
   });
 
-  $('totalPoints').addEventListener('input', calcDollars);
+  $('totalPoints').addEventListener('input', () => {
+    updatePresetButtonsAria($('totalPoints').value);
+    calcDollars();
+  });
+
+  updatePresetButtonsAria($('totalPoints').value);
 
   if ($('btnShare')) {
     $('btnShare').addEventListener('click', () => {
