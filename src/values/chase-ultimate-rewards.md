@@ -17,8 +17,43 @@ breadcrumbs:
 
 <h2>行业基准参考估值 (CPP)</h2>
 <div class="callout">
-  <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了英文媒体与常旅客圈的行业参考（美元原值按汇率 约 7.00 概算为人民币），仅供参考。
+  <strong>核心声明：</strong> 常客计划的积分和里程不具备法定的固定价值。以下估值区间综合了常旅客圈的行业参考（美元原值按 1 USD = 7.00 CNY 演示汇率概算为人民币），仅供参考。
 </div>
+
+<div class="responsive-table-wrapper" style="margin: 20px 0;">
+  <table class="responsive-table">
+    <thead>
+      <tr>
+        <th style="text-align: left;">兑换方式</th>
+        <th>价值类型</th>
+        <th>核对与适用范围要点</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align: left; font-weight: 600;">现金返还 / 账单抵扣</td>
+        <td>现金等价基准（通常为 1.0¢）</td>
+        <td>查阅当前账户条款及合格的账单抵扣或直接存入账户选项。</td>
+      </tr>
+      <tr>
+        <td style="text-align: left; font-weight: 600;">Chase Travel 旅行门户</td>
+        <td>门户预订价值（1.0¢ 基础）</td>
+        <td>核对持卡卡种、门户实时票价及具体机票酒店限制规则。</td>
+      </tr>
+      <tr>
+        <td style="text-align: left; font-weight: 600;">Points Boost 动态增值</td>
+        <td>条件性增值（可达 1.5¢–2.0¢）</td>
+        <td>以账户内当前可见的轮换促销为准；并非所有航线或酒店都适用。</td>
+      </tr>
+      <tr>
+        <td style="text-align: left; font-weight: 600;">合作伙伴转点</td>
+        <td>视兑换而定（浮动区间）</td>
+        <td>请以奖励后台实时显示的转点比例为准。比例可能因符合条件的 Chase 卡种、合作伙伴、账户过渡规则及生效日期而不同；例如，部分符合条件的卡种对 Hyatt 采用 4:3，而许多其他伙伴仍为 1:1。</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p>在业界普遍参考中，Chase Ultimate Rewards (UR) 的基准估值约为 <strong>0.13 - 0.15 元/点</strong>。</p>
 <p>你在实际使用中，价值（CPP, Cents Per Point）会呈现明显的差异：</p>
 <ul>
@@ -29,7 +64,7 @@ breadcrumbs:
 
 <h2>常见高价值兑换方式与示例</h2>
 <p>Chase Ultimate Rewards (UR) 玩家公认的常见用法通常包括：</p>
-<p><em>1:1 转入 <a href="/values/hyatt-points/">World of Hyatt 凯悦酒店</a> 兑换高端奢华酒店，或转入美联航 (United Airlines) 兑换星空联盟网络。如果您需要规划不同比例下的兑换，可以使用我们的<a href="/calculators/points-to-miles-converter/">积分转航空里程工具</a>来计算准确的转换结果。</em></p>
+<p><em>转入 <a href="/values/hyatt-points/">World of Hyatt 凯悦酒店</a> 兑换酒店，或转入美联航 (United Airlines) 兑换星空联盟航班网络。请以奖励后台实时显示的转点比例为准。比例可能因符合条件的 Chase 卡种、合作伙伴、账户过渡规则及生效日期而不同；例如，部分符合条件的卡种对 Hyatt 采用 4:3，而许多其他伙伴仍为 1:1。如果您需要规划不同比例下的兑换，可以使用我们的<a href="/calculators/points-to-miles-converter/">积分转航空里程工具</a>来计算准确的转换结果。</em></p>
 
 <h3>如何自行验证是否划算？</h3>
 <p>当你准备兑换时，请按照以下步骤自行验证：</p>
@@ -53,9 +88,10 @@ breadcrumbs:
 
 <h2>数据来源与最后事实核查</h2>
 <ul>
-  <li><strong>[Editorial] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Baseline Value (2.05¢)</a> (Last checked: 2026-08-11)</li>
-  <li><strong>[Editorial] OMAAT Value Guide</strong>: <a href="https://onemileatatime.com/guides/value-frequent-flyer-miles/" target="_blank" rel="noopener">Baseline Value (1.7¢)</a> (Last checked: 2026-08-11)</li>
-  <li><strong>[Official] Chase Ultimate Rewards Portal</strong>: <a href="https://ultimaterewardspoints.chase.com/" target="_blank" rel="noopener">Program Rules</a> (Last checked: 2026-08-11)</li>
-  <li><strong>数据汇率折算</strong>：按美元基准参考价估算，当前参考汇率 约 7.00</li>
+  <li><strong>[官方来源] Chase 蓝宝石卡官方权益页面</strong>: <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred" target="_blank" rel="noopener">Chase Sapphire Preferred 权益说明</a></li>
+  <li><strong>[官方来源] Chase Sapphire Reserve 官方权益页面</strong>: <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve" target="_blank" rel="noopener">Chase Sapphire Reserve 权益说明</a></li>
+  <li><strong>[官方来源] Chase Ultimate Rewards 积分中心</strong>: <a href="https://ultimaterewardspoints.chase.com/" target="_blank" rel="noopener">官方计划规则与兑换条款</a></li>
+  <li><strong>[行业参考] TPG 估值基准</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">通常约 2.0¢/点</a></li>
+  <li><strong>数据汇率折算</strong>：按美元基准参考价估算，当前参考汇率假设为 1 USD = 7.00 CNY</li>
 </ul>
-<p class="disclaimer"><em>最后事实核查时间：2026-08-11。免责声明：本站提供的估值与计算结果仅供参考，不构成任何财务建议。</em></p>
+<p class="disclaimer"><em>最后事实核查时间：2026年10月。免责声明：本站提供的估值与计算结果仅供参考，不构成任何财务建议。第三方估值非实时且不保证。</em></p>

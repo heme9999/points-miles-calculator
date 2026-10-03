@@ -49,7 +49,7 @@ breadcrumbs:
       <tr>
         <td style="text-align: left; font-weight: 600;">Transfer Partners</td>
         <td>Redemption-dependent (variable)</td>
-        <td>Confirm live transfer ratios (e.g. 1:1 or 4:3), partner award space, and cash taxes.</td>
+        <td>Confirm the live transfer ratio in your rewards portal. Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1.</td>
       </tr>
     </tbody>
   </table>
@@ -70,7 +70,7 @@ breadcrumbs:
 <ol>
   <li><strong>The Cash Equivalent (1.0¢)</strong>: Redeeming for statement credits or cash back provides a floor value of 1.0¢. This is a common cash-equivalent baseline.</li>
   <li><strong>The Chase Travel Portal & Points Boost</strong>: Before transferring points to a partner, check the cash price of the flight or hotel in the Chase Portal. Look for active Points Boost offers on your account. If a flight or hotel is eligible for a 1.5¢ or 2.0¢ boost, booking it directly might cost fewer points than using a transfer partner's award chart. (Use our <a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a> to verify the math).</li>
-  <li><strong>Airline & Hotel Transfer Partners (Potentially 2.0¢+)</strong>: Transferring to partners like United MileagePlus, Air France/KLM Flying Blue, or <a href="/en/values/hyatt-points/">World of Hyatt</a> is typically how you unlock outsized value. Note that while historically all transfers were 1:1, recent changes mean some transfers (like Hyatt for certain newer accounts) may operate on a 4:3 ratio. Always verify the exact transfer ratio in your Chase portal before proceeding.</li>
+  <li><strong>Airline & Hotel Transfer Partners (Potentially 2.0¢+)</strong>: Transferring to partners like United MileagePlus, Air France/KLM Flying Blue, or <a href="/en/values/hyatt-points/">World of Hyatt</a> can unlock enhanced value for high-demand bookings. Confirm the live transfer ratio in your rewards portal. Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1. Always verify the exact transfer ratio and award availability in your account before proceeding.</li>
 </ol>
 <p>For a detailed breakdown of how this ecosystem compares to its main competitor, read our guide on <a href="/en/compare/capital-one-vs-chase/">Capital One Miles vs Chase Ultimate Rewards</a>.</p>
 
@@ -84,7 +84,9 @@ breadcrumbs:
 
 <h2>Reference Data and Fact-Checking</h2>
 <ul>
+  <li><strong>Official Chase Sapphire Preferred Benefits</strong>: <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred" target="_blank" rel="noopener">Chase Sapphire Preferred Card Details</a></li>
+  <li><strong>Official Chase Sapphire Reserve Benefits</strong>: <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve" target="_blank" rel="noopener">Chase Sapphire Reserve Card Details</a></li>
+  <li><strong>Official Chase Ultimate Rewards Portal</strong>: <a href="https://ultimaterewardspoints.chase.com/" target="_blank" rel="noopener">Direct from Chase</a></li>
   <li><strong>Editorial Estimates (e.g. TPG)</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Usually around 2.0¢ per point</a></li>
-  <li><strong>Official Portal Information</strong>: <a href="https://ultimaterewardspoints.chase.com/" target="_blank" rel="noopener">Direct from Chase</a></li>
 </ul>
 <p class="disclaimer"><em>Last Fact-Checked: October 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice. Third-party valuations are not real-time or guaranteed.</em></p>

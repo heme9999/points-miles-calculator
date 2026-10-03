@@ -828,3 +828,112 @@ test('Phase 9.11: High-potential page CTR, United Miles Value Calculator, and Am
   });
 });
 
+test('Phase 9.11.1: United Factual Tightening and Chase Scope Expansion', async (t) => {
+  const enUnitedHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/united-miles-value-calculator/index.html'), 'utf8');
+  const zhUnitedHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/united-miles-value-calculator/index.html'), 'utf8');
+  const enChaseHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/values/chase-ultimate-rewards/index.html'), 'utf8');
+  const zhChaseHtml = fs.readFileSync(path.resolve(__dirname, '../_site/values/chase-ultimate-rewards/index.html'), 'utf8');
+
+  await t.test('1. United EN: Factual tightening and second example unification', () => {
+    assert.ok(enUnitedHtml.includes('illustrative scenarios'), 'Must contain illustrative scenarios');
+    assert.ok(enUnitedHtml.includes('not official United valuations'), 'Must contain not official United valuations');
+    assert.ok(!enUnitedHtml.includes('1.6¢'), 'Must NOT contain 1.6¢');
+    assert.ok(!enUnitedHtml.includes('$1,280'), 'Must NOT contain $1,280');
+    assert.ok(enUnitedHtml.includes('80,000') && enUnitedHtml.includes('1.5¢') && enUnitedHtml.includes('$1,200'), 'Must contain 80k @ 1.5¢ = $1,200');
+    assert.ok(enUnitedHtml.includes('The 1.5¢ figure is an illustrative user-selected assumption, not an official United redemption rate.'), 'Must contain explicit assumption disclaimer');
+    assert.ok(!enUnitedHtml.includes('2x to 3x'), 'Must NOT contain 2x to 3x');
+    assert.ok(!enUnitedHtml.includes('$150–$300'), 'Must NOT contain $150–$300');
+    assert.ok(!enUnitedHtml.includes('1–2 weeks'), 'Must NOT contain 1–2 weeks');
+    assert.ok(!enUnitedHtml.includes('$2,500+'), 'Must NOT contain $2,500+');
+    assert.ok(!enUnitedHtml.includes('Saver awards offer the highest'), 'Must NOT contain Saver awards offer the highest');
+    assert.ok(!enUnitedHtml.includes('travelers commonly model United miles between 1.0¢ and 1.5¢ each'), 'Must NOT contain old commonly model phrase');
+  });
+
+  await t.test('2. United ZH: Factual tightening and second example unification', () => {
+    assert.ok(zhUnitedHtml.includes('估值示例'), 'Must contain 估值示例');
+    assert.ok(zhUnitedHtml.includes('并非美联航官方'), 'Must contain 并非美联航官方');
+    assert.ok(!zhUnitedHtml.includes('1.6¢') && !zhUnitedHtml.includes('1.6 美分'), 'Must NOT contain 1.6');
+    assert.ok(!zhUnitedHtml.includes('1,280') && !zhUnitedHtml.includes('$1,280'), 'Must NOT contain 1,280');
+    assert.ok(zhUnitedHtml.includes('80,000') && zhUnitedHtml.includes('1.5') && zhUnitedHtml.includes('1,200'), 'Must contain 80k @ 1.5¢ = $1,200');
+    assert.ok(zhUnitedHtml.includes('每里 1.5 美分仅为用户选择的估值示例，并非美联航官方兑换比率。'), 'Must contain ZH assumption disclaimer');
+    assert.ok(!zhUnitedHtml.includes('平季的数倍'), 'Must NOT contain 平季的数倍');
+    assert.ok(!zhUnitedHtml.includes('$150 至 $300'), 'Must NOT contain $150 至 $300');
+    assert.ok(!zhUnitedHtml.includes('在常规旅行规划中，美联航里程的参考兑换价值通常'), 'Must NOT contain old phrase');
+  });
+
+  await t.test('3. Chase Scope Expansion and Official Sources (EN & ZH)', () => {
+    // EN assertions
+    assert.ok(enChaseHtml.includes('Confirm the live transfer ratio in your rewards portal.'), 'EN table must contain live transfer ratio prompt');
+    assert.ok(enChaseHtml.includes('Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1.'), 'EN table must explain scope of ratios');
+    assert.ok(!enChaseHtml.includes('all Chase cards use 4:3'), 'Must NOT claim uniform 4:3');
+    assert.ok(!enChaseHtml.includes('all partners use 1:1'), 'Must NOT claim uniform 1:1');
+    assert.ok(enChaseHtml.includes('creditcards.chase.com'), 'Must link official Chase source');
+
+    // ZH assertions
+    assert.ok(zhChaseHtml.includes('请以奖励后台实时显示的转点比例为准。'), 'ZH table must contain live transfer ratio prompt');
+    assert.ok(zhChaseHtml.includes('比例可能因符合条件的 Chase 卡种、合作伙伴、账户过渡规则及生效日期而不同；例如，部分符合条件的卡种对 Hyatt 采用 4:3，而许多其他伙伴仍为 1:1。'), 'ZH table must explain scope of ratios');
+    assert.ok(!zhChaseHtml.includes('所有 Chase 卡统一 4:3'), 'Must NOT claim uniform 4:3');
+    assert.ok(!zhChaseHtml.includes('所有合作伙伴统一 1:1'), 'Must NOT claim uniform 1:1');
+    assert.ok(zhChaseHtml.includes('creditcards.chase.com'), 'Must link official Chase source');
+  });
+
+  await t.test('4. Tone & Fact Scanning across 4 pages (no banned absolute claims)', () => {
+    const pages = [
+      { name: 'United EN', text: enUnitedHtml, lang: 'en' },
+      { name: 'Chase EN', text: enChaseHtml, lang: 'en' },
+      { name: 'United ZH', text: zhUnitedHtml, lang: 'zh' },
+      { name: 'Chase ZH', text: zhChaseHtml, lang: 'zh' }
+    ];
+
+    const bannedEn = [
+      'guaranteed value', 'always best', 'highest cpp', 'most lucrative',
+      'commonly worth', 'industry standard', 'always transfer', 'strictly 1:1',
+      'all chase cards', 'all partners', 'impossible to reverse', 'guaranteed availability'
+    ];
+    const bannedZh = [
+      '保证价值', '最高价值', '一定最划算', '行业统一标准',
+      '所有 chase 卡', '所有合作伙伴', '绝对不可撤销', '保证有票'
+    ];
+
+    pages.forEach(p => {
+      const lower = p.text.toLowerCase();
+      // Remove permissible disclaimers like "not guaranteed", "no guaranteed"
+      const cleaned = lower.replace(/not guaranteed|no guarantee|not guaranteed cashout|neither guaranteed/g, '');
+      if (p.lang === 'en') {
+        bannedEn.forEach(phrase => {
+          assert.ok(!cleaned.includes(phrase), `${p.name} contains banned phrase: "${phrase}"`);
+        });
+      } else {
+        bannedZh.forEach(phrase => {
+          assert.ok(!cleaned.includes(phrase), `${p.name} contains banned phrase: "${phrase}"`);
+        });
+      }
+    });
+  });
+
+  await t.test('5. SEO Freeze and Metadata Invariance', () => {
+    const enUDom = new JSDOM(enUnitedHtml);
+    const zhUDom = new JSDOM(zhUnitedHtml);
+    const enCDom = new JSDOM(enChaseHtml);
+    const zhCDom = new JSDOM(zhChaseHtml);
+
+    assert.strictEqual(enUDom.window.document.title, 'United Miles Value Calculator – MileagePlus Worth');
+    assert.strictEqual(zhUDom.window.document.title, '美联航里程价值计算器 | 里程账');
+    assert.strictEqual(enCDom.window.document.title, 'Chase Points Value: How Much Are UR Points Worth?');
+    assert.strictEqual(zhCDom.window.document.title, 'Chase Ultimate Rewards (UR) 积分估值与使用攻略 | 里程账');
+
+    assert.strictEqual(enUDom.window.document.querySelector('h1').textContent.trim(), 'United MileagePlus Miles Value Calculator');
+    assert.strictEqual(zhUDom.window.document.querySelector('h1').textContent.trim(), '美联航 MileagePlus 里程价值计算器');
+    assert.strictEqual(enCDom.window.document.querySelector('h1').textContent.trim(), 'Chase Ultimate Rewards (UR) Points Value Guide');
+    assert.strictEqual(zhCDom.window.document.querySelector('h1').textContent.trim(), 'Chase Ultimate Rewards (UR) 积分估值与使用攻略');
+
+    // JSON-LD parsing
+    [enUDom, zhUDom, enCDom, zhCDom].forEach(d => {
+      const jsonLd = d.window.document.querySelector('script[type="application/ld+json"]');
+      if (jsonLd) {
+        assert.doesNotThrow(() => JSON.parse(jsonLd.textContent), 'JSON-LD must be valid JSON');
+      }
+    });
+  });
+});
+

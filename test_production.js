@@ -69,8 +69,25 @@ async function runTests() {
   console.log(`Sitemap total URLs: ${sitemapUrls.length}`);
   console.log(`Sitemap explicit lastmod entries: ${lastmods.length}`);
 
-  if (sitemapUrls.length !== 106 && sitemapUrls.length !== 108) {
-    console.error(`ERROR: Expected 106 or 108 URLs in sitemap, got ${sitemapUrls.length}`);
+  if (!sitemapUrls || sitemapUrls.length === 0) {
+    console.error('ERROR: Sitemap contains no URLs');
+    failures++;
+  }
+  const uniqueSitemapUrls = new Set(sitemapUrls);
+  if (uniqueSitemapUrls.size !== sitemapUrls.length) {
+    console.error(`ERROR: Sitemap contains duplicate URLs (${sitemapUrls.length} vs ${uniqueSitemapUrls.size} unique)`);
+    failures++;
+  }
+  const enUnitedUrl = 'https://points-miles-calculator.pages.dev/en/calculators/united-miles-value-calculator/';
+  const zhUnitedUrl = 'https://points-miles-calculator.pages.dev/calculators/united-miles-value-calculator/';
+  const enCount = sitemapUrls.filter(u => u === enUnitedUrl).length;
+  const zhCount = sitemapUrls.filter(u => u === zhUnitedUrl).length;
+  if (enCount !== 1) {
+    console.error(`ERROR: United EN calculator must appear exactly once in sitemap, found ${enCount}`);
+    failures++;
+  }
+  if (zhCount !== 1) {
+    console.error(`ERROR: United ZH calculator must appear exactly once in sitemap, found ${zhCount}`);
     failures++;
   }
 

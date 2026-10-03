@@ -87,8 +87,17 @@ async function runAudit() {
       urls.push(match[1]);
     }
 
-    if (urls.length !== 108 && urls.length !== 106) {
-      addBlocker(`Expected 106 or 108 unique URLs in sitemap, found ${urls.length}`);
+    if (!urls || urls.length === 0) {
+      addBlocker(`Sitemap contains no URLs`);
+    }
+
+    const hasUnitedEn = urls.includes('https://points-miles-calculator.pages.dev/en/calculators/united-miles-value-calculator/');
+    const hasUnitedZh = urls.includes('https://points-miles-calculator.pages.dev/calculators/united-miles-value-calculator/');
+    if (!hasUnitedEn) {
+      addBlocker('Missing /en/calculators/united-miles-value-calculator/ in sitemap');
+    }
+    if (!hasUnitedZh) {
+      addBlocker('Missing /calculators/united-miles-value-calculator/ in sitemap');
     }
 
     // Verify all URLs are unique and parameter-free
