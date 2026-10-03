@@ -1,0 +1,380 @@
+---
+layout: base.njk
+title: 美联航里程价值计算器
+description: 输入美联航 MileagePlus 里程余额和每里程估值假设，测算其旅行价值，并比较不同兑换场景。
+schemaType: WebApplication
+eyebrow: 里程账 · 工具 08
+datePublished: "2026-10-03"
+dateModified: "2026-10-03"
+lastModified: "2026-10-03"
+breadcrumbs:
+  - name: 计算器
+    url: /calculators/
+  - name: 美联航里程价值计算器
+---
+<h1>美联航 MileagePlus 里程价值计算器</h1>
+<p class="sub">测算美联航（United MileagePlus）里程的潜在旅行购买力。选择基准估值情景或输入自定义单点价值，评估您的里程资产规模。</p>
+
+<div class="direct-answer" id="directAnswerBox">
+  美联航（United MileagePlus）里程采用动态里程定价机制，没有固定的官方现金兑现价值。在常规旅行规划中，美联航里程的参考兑换价值通常在每里 1.0 美分至 1.5 美分（约合人民币 0.07 至 0.105 元/里）之间。计算旅行价值的公式为：里程余额 × 每里估值(美分) ÷ 100。实际单次兑换价值取决于具体航班的动态定价与税费。
+</div>
+
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+  <button id="btnShare" class="btn-share">分享此计算</button>
+  <div>
+    <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
+    <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <option value="USD" selected>美元（USD $）</option>
+      <option value="CNY">人民币（CNY ¥）</option>
+    </select>
+  </div>
+</div>
+<div id="toast" class="toast">已复制分享链接！</div>
+
+<div class="panel">
+  <div class="field">
+    <label for="unitedMiles">美联航 MileagePlus 里程余额<span class="hint" id="hintMiles">里</span></label>
+    <input type="number" id="unitedMiles" value="50000" min="0" step="1" inputmode="numeric" aria-describedby="hintMiles">
+    <div class="preset-buttons" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+      <span style="font-size: 0.85rem; color: #64748b;">快捷填入：</span>
+      <button type="button" class="btn-balance-preset" data-miles="10000">10,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="25000">25,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="50000">50,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="60000">60,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="100000">100,000</button>
+    </div>
+  </div>
+
+  <div class="field" id="fieldFx" style="display: none;">
+    <label for="fxRate">美元兑人民币汇率假设<span class="hint" id="hintFx">1 USD = ? CNY</span></label>
+    <input type="number" id="fxRate" value="7.0" min="0.1" max="20" step="0.01" inputmode="decimal" aria-describedby="hintFx unitFx">
+    <div class="unit" id="unitFx">默认汇率仅用于换算演示，请按实际需求调整</div>
+  </div>
+
+  <div class="field">
+    <label for="presetValuation">
+      <span>估值情景（CPM / CPP）<button type="button" class="btn-help-toggle" id="btnHelpScenario" aria-expanded="false" aria-controls="helpScenarioGuide">我该选哪个？</button></span>
+      <span class="hint" id="hintValuation">美分/里</span>
+    </label>
+
+    <div id="helpScenarioGuide" class="help-scenario-guide" style="display: none;">
+      <h4>如何选择合适的美联航每里估值假设：</h4>
+      <div class="guide-step">
+        <strong>1. 评估具体已知行程：</strong>
+        <p>直接计算实际单次兑出价值：<code>实际CPP =（现金票价 − 奖励票税费）÷ 所需里程 × 100</code>。可以在我们的 <a href="/calculators/cents-per-point/">单点价值 (CPP) 计算器</a> 中输入具体数据验证。</p>
+      </div>
+      <div class="guide-step">
+        <strong>2. 测算美国境内或短途经济舱：</strong>
+        <p>建议使用 1.0 至 1.2 美分/里作为保守评估基准，反映动态定价下的普遍兑换底线。</p>
+      </div>
+      <div class="guide-step">
+        <strong>3. 测算跨洋 Polaris 商务舱或星空联盟伙伴航线：</strong>
+        <p>在 Saver 奖励票仓位开放时，往往能兑出 1.5 美分至 2.0 美分/里甚至更高价值。</p>
+      </div>
+    </div>
+
+    <select id="presetValuation" aria-describedby="hintValuation unitValuation">
+      <option value="custom">自定义单点估值</option>
+      <option value="1.0">保守情景：1.0 美分/里（短途经济舱底线）</option>
+      <option value="1.2" selected>典型情景：1.2 美分/里（标准经济舱兑换）</option>
+      <option value="1.5">高价值情景：1.5 美分/里（商务舱或伙伴甜点）</option>
+    </select>
+    <input type="number" id="cppValue" value="1.2" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
+    <div class="unit" id="unitValuation">此处 CPM 数值均为模型测算参考，非美联航官方兑换牌价，亦非保底退现金承诺。</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">测算旅行购买力</div>
+        <div class="v" id="dollarValue" style="word-break: break-word; overflow-wrap: anywhere;">$600</div>
+      </div>
+    </div>
+    <div class="note" id="explain">里程余额：50,000 | 估值：1.2 美分/里 | 测算旅行价值：$600。该数值为规划参考，非现金回购价值。</div>
+  </div>
+</div>
+
+<div class="callout" style="margin-top: 24px;">
+  <strong>探索更多里程决策工具：</strong> 在确定使用里程前，请使用 <a href="/calculators/points-vs-cash/">积分与现金决策计算器</a> 对比直接买票是否更划算；使用 <a href="/calculators/cents-per-point/">单点价值 (CPP) 计算器</a> 核算具体机票兑出收益；或使用通用的 <a href="/calculators/points-to-dollars/">积分换算现金价值计算器</a> 换算其他航空或酒店计划。
+</div>
+
+<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>美联航里程价值计算公式</h2>
+  <p>要将您的美联航 MileagePlus 里程换算为美元或人民币旅行购买力，采用如下基础乘法公式：</p>
+  <div class="formula-box">
+    <span class="formula-name">测算旅行价值 =</span>
+    <span class="formula-expression">美联航里程余额 × (每里估值美分 ÷ 100)</span>
+  </div>
+
+  <h3>可复算案例参考</h3>
+  <div class="example-box">
+    <h4>案例一：美国境内往返经济舱机票</h4>
+    <p>持有信用卡转点获得的 25,000 美联航里程，计划兑换美国境内经济舱机票。按 1.2 美分/里的典型情景估算：</p>
+    <ul>
+      <li><strong>里程余额：</strong> 25,000 美联航里程</li>
+      <li><strong>估值假设：</strong> 1.2 美分/里（约合 ¥0.084/里）</li>
+      <li><strong>计算过程：</strong> <code>25,000 里程 × (1.2¢ ÷ 100) = $300</code>（约合人民币 ¥2,100）</li>
+      <li><strong>测算旅行价值：</strong> <strong>$300</strong></li>
+    </ul>
+    <p><em>决策指引：如果该航班全款现金票价扣除 $11.20 机场税费后高于 $300，则使用里程兑换更为合适。</em></p>
+  </div>
+
+  <div class="example-box" style="margin-top: 16px;">
+    <h4>案例二：跨洋长途 Polaris 商务舱机票</h4>
+    <p>账户积累了 80,000 美联航里程，用于兑换中美或跨大西洋单程 Polaris 商务舱。按高价值兑换情景 1.6 美分/里测算：</p>
+    <ul>
+      <li><strong>里程余额：</strong> 80,000 美联航里程</li>
+      <li><strong>估值假设：</strong> 1.6 美分/里（约合 ¥0.112/里）</li>
+      <li><strong>计算过程：</strong> <code>80,000 里程 × (1.6¢ ÷ 100) = $1,280</code>（约合人民币 ¥8,960）</li>
+      <li><strong>测算旅行价值：</strong> <strong>$1,280</strong></li>
+    </ul>
+    <p><em>决策指引：长途跨洋两舱往往能实现超额兑出价值，但 Saver 低价奖励票舱位通常需要提前多月规划或临近出发时捡漏。</em></p>
+  </div>
+
+  <h2>测算价值与单次实际兑出价值的区别</h2>
+  <p>理解里程价值时，必须严格区分“账户综合估值”与“单次航班实际兑换 CPP”：</p>
+  <ul>
+    <li><strong>综合资产测算（本计算器）：</strong> 用于宏观评估账户整体剩余资产的旅行效用，防止因盲目囤积积分而忽视通胀贬值风险。</li>
+    <li><strong>单次兑换净价值（实际CPP）：</strong> 针对具体某一次航班的现金票价与里程票税费进行比对：
+      <br>
+      <code>实际CPP =（现金票价 − 奖励票税费与附加费）÷ 所需里程 × 100</code>
+      <br>
+      在实际购票前，建议通过我们的 <a href="/calculators/cents-per-point/">单点价值 (CPP) 计算器</a> 和 <a href="/guides/airline-miles-value/">航空里程价值指南</a> 验证具体班次的净回报率。
+    </li>
+  </ul>
+
+  <h2>影响美联航里程兑换价值的 5 大关键因素</h2>
+  <p>美联航自取消固定兑换表格以来全面转向动态定价，以下因素直接决定您的实际兑换收益：</p>
+  <ol>
+    <li><strong>动态定价机制：</strong> 奖励机票所需里程随出行旺季、航班上座率和预订提前量剧烈波动。热门节假日航线的所需里程可能是平季的数倍。</li>
+    <li><strong>强制性机场税费：</strong> 美联航自身承运航班不收取昂贵的燃油附加费，但美国境内需自付每程 $5.60 的 9/11 安检费；国际航班（如伦敦希思罗出发）的离境税费可能达到 $150 至 $300 以上。</li>
+    <li><strong>Saver 舱位与 Everyday 舱位差异：</strong> Saver 奖励票提供最高的单点价值（兑换比例优厚），但每个航班名额极其有限；Everyday 奖励票随时可兑，但所需里程数大幅上升。</li>
+    <li><strong>航线与舱位等级：</strong> 跨大西洋、跨太平洋长途两舱（Polaris 商务舱）由于现金全价极高，通常比短途经济舱能兑换出更高的单点 CPP。</li>
+    <li><strong>出票时机与行程规划：</strong> 利用美联航独特的“Excursionist Perk”（单程接驳免费停留权益）在往返行程中增加免费中途停留，可以显著提升单次里程的使用效率。</li>
+  </ol>
+
+  <h2>官方条款与权威来源</h2>
+  <ul>
+    <li><strong>[官方来源] 美联航 MileagePlus 计划主页：</strong> <a href="https://www.united.com/zh-hans/cn/fly/mileageplus.html" target="_blank" rel="noopener noreferrer">美联航 MileagePlus 官方介绍</a></li>
+    <li><strong>[官方来源] 美联航奖励旅行与兑换规则：</strong> <a href="https://www.united.com/zh-hans/cn/fly/mileageplus/awards.html" target="_blank" rel="noopener noreferrer">美联航奖励客票条款</a></li>
+  </ul>
+
+  <p class="disclaimer" style="margin-top: 24px; font-size: 0.85em; color: #64748b;">
+    <em>最后核实日期：2026年10月。免责声明：本工具为第三方独立教育与测算计算器，与美联航（United Airlines, Inc.）或星空联盟（Star Alliance）无任何官方关联、赞助或背书关系。MileagePlus 为美联航注册商标。页面展示的估值基准均为情景测算模型，非官方现金回购牌价或收益承诺。</em>
+  </p>
+</div>
+
+<script>
+(function() {
+  const $ = id => document.getElementById(id);
+
+  let currentCurrency = 'USD';
+  let defaultFx = 7.0;
+
+  function getActiveFx() {
+    const fxInput = $('fxRate');
+    if (!fxInput) return defaultFx;
+    const v = parseFloat(fxInput.value);
+    return (!isNaN(v) && isFinite(v) && v > 0) ? v : defaultFx;
+  }
+
+  function getScenarioUsdCpp(scen) {
+    if (scen === '1.0') return 1.0;
+    if (scen === '1.2') return 1.2;
+    if (scen === '1.5') return 1.5;
+    return 1.2;
+  }
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    const params = new URLSearchParams(window.location.search);
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+
+  parseParam('miles', 'unitedMiles');
+  parseParam('points', 'unitedMiles');
+  parseParam('cpp', 'cppValue');
+  parseParam('valuation', 'cppValue');
+
+  const params = new URLSearchParams(window.location.search);
+  const currParam = params.get('currency') || params.get('curr');
+  if (currParam && ['USD', 'CNY'].includes(currParam.toUpperCase())) {
+    currentCurrency = currParam.toUpperCase();
+  } else {
+    try {
+      const saved = localStorage.getItem('preferredCurrency');
+      if (saved && ['USD', 'CNY'].includes(saved)) currentCurrency = saved;
+    } catch(e) {}
+  }
+  if ($('currency')) $('currency').value = currentCurrency;
+
+  const parseScenarioParam = () => {
+    const scen = params.get('scenario') || params.get('presetValuation');
+    if (scen && $('presetValuation')) {
+      const validOptions = ['custom', '1.0', '1.2', '1.5'];
+      if (validOptions.includes(scen)) {
+        $('presetValuation').value = scen;
+        if (scen !== 'custom') {
+          const usdCpp = getScenarioUsdCpp(scen);
+          const fx = getActiveFx();
+          $('cppValue').value = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * fx).toFixed(4));
+        }
+      }
+    }
+  };
+  parseScenarioParam();
+
+  function updateCurrencyUI() {
+    const isUSD = currentCurrency === 'USD';
+    $('hintValuation').textContent = isUSD ? '美分/里' : '元/里';
+    $('fieldFx').style.display = isUSD ? 'none' : 'block';
+
+    const select = $('presetValuation');
+    if (select) {
+      const fx = getActiveFx();
+      select.options[1].text = isUSD ? '保守情景：1.0 美分/里（短途经济舱底线）' : `保守情景：¥${(0.01 * fx).toFixed(3)}/里（短途底线）`;
+      select.options[2].text = isUSD ? '典型情景：1.2 美分/里（标准经济舱兑换）' : `典型情景：¥${(0.012 * fx).toFixed(3)}/里（标准兑换）`;
+      select.options[3].text = isUSD ? '高价值情景：1.5 美分/里（商务舱或伙伴甜点）' : `高价值情景：¥${(0.015 * fx).toFixed(3)}/里（商务舱/甜点）`;
+    }
+  }
+
+  function calcUnited() {
+    const rawM = $('unitedMiles').value.trim();
+    const rawC = $('cppValue').value.trim();
+    const M = parseFloat(rawM);
+    const C = parseFloat(rawC);
+
+    const resetState = (msg = '请输入有效的数值。') => {
+      $('dollarValue').textContent = '-';
+      $('explain').textContent = msg;
+      $('dollarValue').classList.remove('win');
+    };
+
+    if (rawM === '' || rawC === '' || isNaN(M) || isNaN(C) || !isFinite(M) || !isFinite(C) || M < 0 || C < 0) {
+      resetState((M < 0 || C < 0) ? '输入不能为负数。' : '请输入里程余额和估值。');
+      return;
+    }
+
+    if (M === 0 || C === 0) {
+      $('dollarValue').textContent = currentCurrency === 'USD' ? '$0' : '¥0';
+      $('dollarValue').classList.add('win');
+      $('explain').textContent = `里程余额：${M.toLocaleString('zh-CN')} | 测算旅行价值：${currentCurrency === 'USD' ? '$0' : '¥0'}。规划参考，非现金回购价值。`;
+      return;
+    }
+
+    let total = 0;
+    if (currentCurrency === 'USD') {
+      total = M * (C / 100);
+      $('dollarValue').textContent = '$' + total.toLocaleString('en-US', { maximumFractionDigits: 0 });
+      $('explain').textContent = `里程余额：${M.toLocaleString('zh-CN')} | 估值：${C} 美分/里 | 测算旅行价值：$${total.toLocaleString('en-US', { maximumFractionDigits: 0 })}。规划参考，非现金回购价值。`;
+    } else {
+      total = M * C;
+      $('dollarValue').textContent = '¥' + total.toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+      $('explain').textContent = `里程余额：${M.toLocaleString('zh-CN')} | 估值：¥${C} 元/里 | 测算旅行价值：¥${total.toLocaleString('zh-CN', { maximumFractionDigits: 0 })}。规划参考，非现金回购价值。`;
+    }
+    $('dollarValue').classList.add('win');
+  }
+
+  if ($('currency')) {
+    $('currency').addEventListener('change', e => {
+      const oldCurrency = currentCurrency;
+      currentCurrency = e.target.value;
+      const fx = getActiveFx();
+      const select = $('presetValuation');
+      const curScen = select ? select.value : 'custom';
+
+      if (curScen !== 'custom') {
+        const usdCpp = getScenarioUsdCpp(curScen);
+        $('cppValue').value = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * fx).toFixed(4));
+      } else {
+        const oldVal = parseFloat($('cppValue').value) || 0;
+        if (oldVal > 0) {
+          if (currentCurrency === 'USD' && oldCurrency === 'CNY') {
+            $('cppValue').value = parseFloat((oldVal / fx * 100).toFixed(2));
+          } else if (currentCurrency === 'CNY' && oldCurrency === 'USD') {
+            $('cppValue').value = parseFloat((oldVal / 100 * fx).toFixed(4));
+          }
+        }
+      }
+
+      try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
+      updateCurrencyUI();
+      calcUnited();
+    });
+  }
+
+  if ($('fxRate')) {
+    $('fxRate').addEventListener('input', () => {
+      updateCurrencyUI();
+      const select = $('presetValuation');
+      const curScen = select ? select.value : 'custom';
+      const fx = getActiveFx();
+      if (curScen !== 'custom' && currentCurrency === 'CNY') {
+        const usdCpp = getScenarioUsdCpp(curScen);
+        $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
+      }
+      calcUnited();
+    });
+  }
+
+  document.querySelectorAll('.btn-balance-preset').forEach(btn => {
+    btn.addEventListener('click', function() {
+      $('unitedMiles').value = this.getAttribute('data-miles');
+      calcUnited();
+    });
+  });
+
+  $('presetValuation').addEventListener('change', e => {
+    if (e.target.value !== 'custom') {
+      const usdCpp = getScenarioUsdCpp(e.target.value);
+      const fx = getActiveFx();
+      $('cppValue').value = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * fx).toFixed(4));
+      calcUnited();
+    }
+  });
+
+  $('cppValue').addEventListener('input', () => {
+    $('presetValuation').value = 'custom';
+    calcUnited();
+  });
+
+  $('unitedMiles').addEventListener('input', calcUnited);
+
+  const btnHelp = $('btnHelpScenario');
+  const guideBox = $('helpScenarioGuide');
+  if (btnHelp && guideBox) {
+    btnHelp.addEventListener('click', () => {
+      const isExpanded = btnHelp.getAttribute('aria-expanded') === 'true';
+      btnHelp.setAttribute('aria-expanded', !isExpanded);
+      guideBox.style.display = isExpanded ? 'none' : 'block';
+    });
+  }
+
+  if ($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const url = new URL('{{ site.url }}/calculators/united-miles-value-calculator/');
+      const m = parseFloat($('unitedMiles').value) || 0;
+      const c = parseFloat($('cppValue').value) || 0;
+      if (m > 0) url.searchParams.set('miles', m);
+      if (c > 0) url.searchParams.set('cpp', c);
+      if (currentCurrency) url.searchParams.set('currency', currentCurrency);
+      const scen = $('presetValuation').value;
+      if (scen && scen !== 'custom') url.searchParams.set('scenario', scen);
+
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const toast = $('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      });
+    });
+  }
+
+  updateCurrencyUI();
+  calcUnited();
+})();
+</script>

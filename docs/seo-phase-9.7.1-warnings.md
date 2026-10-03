@@ -1,7 +1,7 @@
 # Audit Warnings Report
 
-**Date**: 2026-09-29T01:21:09.960Z
-**Total URLs**: 106
+**Date**: 2026-10-03T02:55:55.265Z
+**Total URLs**: 108
 **Intentional Support Pages**: 8
 **Technical Blockers**: 0
 **Content/Link Warnings**: 27

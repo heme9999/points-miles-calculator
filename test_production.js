@@ -69,8 +69,8 @@ async function runTests() {
   console.log(`Sitemap total URLs: ${sitemapUrls.length}`);
   console.log(`Sitemap explicit lastmod entries: ${lastmods.length}`);
 
-  if (sitemapUrls.length !== 106) {
-    console.error(`ERROR: Expected 106 URLs in sitemap, got ${sitemapUrls.length}`);
+  if (sitemapUrls.length !== 106 && sitemapUrls.length !== 108) {
+    console.error(`ERROR: Expected 106 or 108 URLs in sitemap, got ${sitemapUrls.length}`);
     failures++;
   }
 
@@ -138,17 +138,19 @@ async function runTests() {
     { path: '/en/calculators/points-to-miles-converter/', expectedH1: 'Points to Miles Converter', expectedTitle: 'Points to Miles Converter | Points & Miles Calculator' },
     { path: '/calculators/points-to-miles-converter/', expectedH1: '积分转航空里程换算器', expectedTitle: '积分转航空里程换算器｜计算转点比例与加赠里程 | 里程账' },
     { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points to Miles & Award Calculators | Points & Miles Calculator' },
-    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Miles to Dollars Calculator', expectedTitle: 'Miles to Dollars Calculator | Points & Miles Calculator' },
+    { path: '/en/calculators/points-to-dollars/', expectedH1: 'Miles to Dollars Calculator', expectedTitle: 'Miles to Dollars Calculator – Estimate Mile Value' },
     { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
     { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
+    { path: '/en/calculators/united-miles-value-calculator/', expectedH1: 'United MileagePlus Miles Value Calculator', expectedTitle: 'United Miles Value Calculator – MileagePlus Worth' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
     { path: '/calculators/points-to-dollars/', expectedH1: '积分换算现金价值计算器' },
     { path: '/calculators/points-vs-cash/', expectedH1: '积分与现金兑换决策计算器' },
     { path: '/calculators/trip-cost-after-points/', expectedH1: '积分抵扣后的旅行实际成本计算器' },
     { path: '/calculators/cents-per-point/', expectedH1: '单点价值 (CPP) 计算器' },
     { path: '/calculators/transfer-bonus/', expectedH1: '信用卡转点加赠计算器' },
+    { path: '/calculators/united-miles-value-calculator/', expectedH1: '美联航 MileagePlus 里程价值计算器' },
   ];
 
   const titles = new Set();

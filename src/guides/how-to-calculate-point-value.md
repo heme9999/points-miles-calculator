@@ -64,6 +64,8 @@ breadcrumbs:
 
 别再拿计算器手动敲公式了，你可以直接使用我们开发的免费工具：
 
-- 🧮 [进阶版：积分还是现金买票计算器 (Advanced Points vs Cash)](/calculators/points-vs-cash/)：自动处理税费、回血、甚至银行转点加赠活动。
+- 💵 [积分换算现金价值计算器 (Miles to Dollars)](/calculators/points-to-dollars/)：估算手头积分与里程的总资产折现。
+- ✈️ [美联航里程价值计算器 (United Miles Value)](/calculators/united-miles-value-calculator/)：针对美联航动态定价和常用兑换场景，快速折算手头里程价值。
+- 🧮 [进阶版：机票积分还是现金买票计算器 (Advanced Points vs Cash)](/calculators/points-vs-cash/)：自动处理税费、回血、甚至银行转点加赠活动。
 - 📊 [大通银行 Chase UR 估值解析](/values/chase-ultimate-rewards/)：查看 Chase 体系最划算的兑换路子。
 - 📊 [美国运通 Amex MR 估值解析](/values/amex-membership-rewards/)：了解为何大家都在用 Amex 换全日空。

@@ -11,7 +11,7 @@
 {% set zhUrl = site.url ~ (page.url | replace('/en/', '/')) %}
 {% set enUrl = site.url ~ ('/en' ~ page.url if not isEnglish else page.url) %}
 
-<title>{{ title }} | {{ siteName }}</title>
+<title>{{ seoTitle or (title ~ ' | ' ~ siteName) }}</title>
 <meta name="description" content="{{ description or site.description }}">
 <meta name="google-site-verification" content="wMz2VDeMwD8R6yiCgJIqFD_wM2wSzrSEauzvCtzKHyw" />
 
@@ -22,7 +22,7 @@
 <link rel="alternate" hreflang="zh-CN" href="{{ zhUrl }}">
 <link rel="alternate" hreflang="en" href="{{ enUrl }}">
 <link rel="alternate" hreflang="x-default" href="{{ enUrl }}">
-<meta property="og:title" content="{{ title }} | {{ siteName }}">
+<meta property="og:title" content="{{ seoTitle or (title ~ ' | ' ~ siteName) }}">
 <meta property="og:description" content="{{ description or site.description }}">
 <meta property="og:url" content="{{ site.url }}{{ page.url }}">
 <meta property="og:type" content="website">

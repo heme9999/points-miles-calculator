@@ -636,3 +636,195 @@ test('Phase 9.10: SEO, Hotel Table Enum & Step Numbering Verification', async (t
   });
 });
 
+test('Phase 9.11: High-potential page CTR, United Miles Value Calculator, and Amex MR Interactive Tooling', async (t) => {
+  const p2dHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/points-to-dollars/index.html'), 'utf8');
+  const chaseHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/values/chase-ultimate-rewards/index.html'), 'utf8');
+  const amexHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/values/amex-membership-rewards/index.html'), 'utf8');
+  const enUnitedHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/united-miles-value-calculator/index.html'), 'utf8');
+  const zhUnitedHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/united-miles-value-calculator/index.html'), 'utf8');
+
+  await t.test('1. Miles to Dollars Calculator: SEO title, meta description, direct answer, and United link', () => {
+    const dom = new JSDOM(p2dHtml);
+    const doc = dom.window.document;
+    const title = doc.querySelector('title').textContent.trim();
+    const desc = doc.querySelector('meta[name="description"]').getAttribute('content').trim();
+    const h1 = doc.querySelector('h1').textContent.trim();
+    const directAnswer = doc.querySelector('.direct-answer').textContent.trim();
+
+    assert.strictEqual(title, 'Miles to Dollars Calculator – Estimate Mile Value');
+    assert.ok(title.length <= 60, `Title too long: ${title.length}`);
+    assert.strictEqual(h1, 'Miles to Dollars Calculator');
+    assert.strictEqual(desc, 'Estimate the travel value of airline miles in seconds. Enter your mileage balance and value per mile to compare low, typical, and high redemption scenarios.');
+    assert.ok(desc.length >= 140 && desc.length <= 165, `Meta description length ${desc.length} out of bounds`);
+    assert.ok(directAnswer.includes('Enter any mileage balance to instantly estimate its travel value—no signup required.'));
+    assert.ok(!p2dHtml.includes('cash equivalent'), 'Should not contain misleading cash equivalent');
+
+    // Contextual link to United calculator
+    const unitedLink = Array.from(doc.querySelectorAll('a')).find(a => a.getAttribute('href') === '/en/calculators/united-miles-value-calculator/');
+    assert.ok(unitedLink, 'Link to United calculator missing');
+  });
+
+  await t.test('2. Chase UR Page: SEO title, meta description, direct answer, and 4-row comparison table', () => {
+    const dom = new JSDOM(chaseHtml);
+    const doc = dom.window.document;
+    const title = doc.querySelector('title').textContent.trim();
+    const desc = doc.querySelector('meta[name="description"]').getAttribute('content').trim();
+    const directAnswer = doc.querySelector('.direct-answer').textContent.trim();
+
+    assert.strictEqual(title, 'Chase Points Value: How Much Are UR Points Worth?');
+    assert.ok(title.length <= 60, `Title too long: ${title.length}`);
+    assert.strictEqual(desc, 'Estimate Chase Ultimate Rewards points value by redemption method, including cash back, Chase Travel, Points Boost and transfer partners.');
+    
+    const wordCount = directAnswer.split(/\s+/).length;
+    assert.ok(wordCount >= 45 && wordCount <= 75, `Direct answer word count is ${wordCount} (expected 45-70)`);
+
+    const tableRows = doc.querySelectorAll('table tbody tr');
+    assert.strictEqual(tableRows.length, 4, 'Expected exactly 4 comparison table rows');
+    const tableText = doc.querySelector('table').textContent;
+    assert.ok(tableText.includes('Cash Back'));
+    assert.ok(tableText.includes('Chase Travel'));
+    assert.ok(tableText.includes('Points Boost'));
+    assert.ok(tableText.includes('Transfer Partners'));
+    assert.ok(!chaseHtml.includes('fixed 1.5¢'), 'Must not claim fixed 1.5¢');
+  });
+
+  await t.test('3. Amex MR Page: SEO title, meta description, and interactive balance calculator', () => {
+    const dom = new JSDOM(amexHtml, { runScripts: 'dangerously' });
+    const doc = dom.window.document;
+    const title = doc.querySelector('title').textContent.trim();
+    const desc = doc.querySelector('meta[name="description"]').getAttribute('content').trim();
+
+    assert.strictEqual(title, 'Amex Points Value Calculator & MR Guide');
+    assert.ok(title.length <= 60, `Title too long: ${title.length}`);
+    assert.strictEqual(desc, 'Estimate the value of Amex Membership Rewards points across cash, travel and transfer-partner scenarios, with examples for common point balances.');
+
+    const balanceInput = doc.getElementById('amexBalance');
+    const scenarioSelect = doc.getElementById('amexScenario');
+    const resultVal = doc.getElementById('amexResultValue');
+    assert.ok(balanceInput && scenarioSelect && resultVal, 'Amex calculator elements missing');
+
+    // Test 50,000 MR @ 1.5¢ = $750
+    balanceInput.value = '50000';
+    scenarioSelect.value = '1.5';
+    scenarioSelect.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(resultVal.textContent.trim(), '$750');
+
+    // Test 100,000 MR @ custom 1.2¢ = $1,200
+    balanceInput.value = '100000';
+    scenarioSelect.value = 'custom';
+    scenarioSelect.dispatchEvent(new dom.window.Event('change'));
+    const amexCppInput = doc.getElementById('amexCpp');
+    amexCppInput.value = '1.2';
+    amexCppInput.dispatchEvent(new dom.window.Event('input'));
+    assert.strictEqual(resultVal.textContent.trim(), '$1,200');
+
+    // Test invalid/negative balance resets cleanly
+    balanceInput.value = '-5000';
+    balanceInput.dispatchEvent(new dom.window.Event('input'));
+    assert.strictEqual(resultVal.textContent.trim(), '-');
+  });
+
+  await t.test('4. United Miles Value Calculator EN: Functional calculation, quick balances, share params, and outbound links', () => {
+    const dom = new JSDOM(enUnitedHtml, { runScripts: 'dangerously', url: 'http://localhost/en/calculators/united-miles-value-calculator/?miles=60000&cpp=1.2' });
+    const doc = dom.window.document;
+    const title = doc.querySelector('title').textContent.trim();
+    assert.strictEqual(title, 'United Miles Value Calculator – MileagePlus Worth');
+    assert.ok(title.length <= 60, `Title too long: ${title.length}`);
+
+    const milesInput = doc.getElementById('unitedMiles');
+    const scenarioSelect = doc.getElementById('presetValuation');
+    const dollarVal = doc.getElementById('dollarValue');
+    assert.ok(milesInput && scenarioSelect && dollarVal, 'United calculator elements missing');
+
+    // Check pre-filled share params: 60,000 @ 1.2 = $720
+    assert.strictEqual(milesInput.value, '60000');
+    assert.strictEqual(scenarioSelect.value, '1.2');
+    assert.strictEqual(dollarVal.textContent.trim(), '$720');
+
+    // Test 50,000 @ 1.5 = $750
+    milesInput.value = '50000';
+    scenarioSelect.value = '1.5';
+    scenarioSelect.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(dollarVal.textContent.trim(), '$750');
+
+    // Test negative handling
+    milesInput.value = '-10000';
+    milesInput.dispatchEvent(new dom.window.Event('input'));
+    assert.strictEqual(dollarVal.textContent.trim(), '-');
+
+    // Check outbound links
+    const outboundHrefs = Array.from(doc.querySelectorAll('a')).map(a => a.getAttribute('href'));
+    assert.ok(outboundHrefs.includes('/en/calculators/points-vs-cash/'), 'Points vs cash link missing');
+    assert.ok(outboundHrefs.includes('/en/calculators/points-to-dollars/'), 'Points to dollars link missing');
+    assert.ok(outboundHrefs.includes('/en/calculators/cents-per-point/'), 'CPP calculator link missing');
+    assert.ok(outboundHrefs.includes('/en/guides/airline-miles-value/'), 'Airline miles guide link missing');
+    assert.ok(outboundHrefs.some(h => h && h.includes('united.com')), 'Official United link missing');
+  });
+
+  await t.test('5. United Miles Value Calculator ZH: USD/CNY toggle, calculation, and outbound links', () => {
+    const dom = new JSDOM(zhUnitedHtml, { runScripts: 'dangerously', url: 'http://localhost/calculators/united-miles-value-calculator/' });
+    const doc = dom.window.document;
+    const title = doc.querySelector('title').textContent.trim();
+    assert.ok(title.includes('美联航里程价值计算器'));
+
+    const milesInput = doc.getElementById('unitedMiles');
+    const scenarioSelect = doc.getElementById('presetValuation');
+    const dollarVal = doc.getElementById('dollarValue');
+    const currSelect = doc.getElementById('currency');
+
+    // 50,000 @ 1.5¢ USD = $750, CNY @ 7.0 FX = ¥5,250
+    milesInput.value = '50000';
+    scenarioSelect.value = '1.5';
+    scenarioSelect.dispatchEvent(new dom.window.Event('change'));
+    
+    // In USD mode (default)
+    assert.strictEqual(dollarVal.textContent.trim(), '$750');
+
+    // Switch to CNY mode
+    currSelect.value = 'CNY';
+    currSelect.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(dollarVal.textContent.trim(), '¥5,250');
+
+    // Switch back to USD mode
+    currSelect.value = 'USD';
+    currSelect.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(dollarVal.textContent.trim(), '$750');
+
+    // Check outbound links
+    const outboundHrefs = Array.from(doc.querySelectorAll('a')).map(a => a.getAttribute('href'));
+    assert.ok(outboundHrefs.includes('/calculators/points-vs-cash/'), 'ZH Points vs cash link missing');
+    assert.ok(outboundHrefs.includes('/calculators/points-to-dollars/'), 'ZH Points to dollars link missing');
+    assert.ok(outboundHrefs.includes('/calculators/cents-per-point/'), 'ZH CPP calculator link missing');
+    assert.ok(outboundHrefs.includes('/guides/airline-miles-value/'), 'ZH Airline miles guide link missing');
+  });
+
+  await t.test('6. Inbound contextual link counts for United Calculator (>= 5 EN, >= 5 ZH)', () => {
+    const cp = require('child_process');
+    const htmlFiles = cp.execSync('find _site -name "*.html"').toString().trim().split('\n');
+
+    let enCount = 0;
+    let zhCount = 0;
+
+    htmlFiles.forEach(f => {
+      const html = fs.readFileSync(f, 'utf8');
+      const dom = new JSDOM(html);
+      const doc = dom.window.document;
+      const main = doc.querySelector('main') || doc.body;
+
+      // Exclude nav, footer
+      main.querySelectorAll('nav, footer, .nav, .footer, header').forEach(el => el.remove());
+
+      const links = Array.from(main.querySelectorAll('a[href]')).map(a => a.getAttribute('href'));
+      if (links.includes('/en/calculators/united-miles-value-calculator/')) {
+        enCount++;
+      }
+      if (links.includes('/calculators/united-miles-value-calculator/')) {
+        zhCount++;
+      }
+    });
+
+    assert.ok(enCount >= 5, `Expected >= 5 EN inbound links, found ${enCount}`);
+    assert.ok(zhCount >= 5, `Expected >= 5 ZH inbound links, found ${zhCount}`);
+  });
+});
+

@@ -1,0 +1,278 @@
+---
+layout: base.njk
+title: United Miles Value Calculator
+seoTitle: United Miles Value Calculator – MileagePlus Worth
+description: Estimate the travel value of United MileagePlus miles using your own cents-per-mile assumption. Compare common mileage balances and award scenarios.
+schemaType: WebApplication
+eyebrow: Tools · 08
+datePublished: "2026-10-03"
+dateModified: "2026-10-03"
+lastModified: "2026-10-03"
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: United Miles Value Calculator
+---
+<h1>United MileagePlus Miles Value Calculator</h1>
+<p class="sub">Estimate the travel purchasing power of your United MileagePlus miles. Choose an illustrative valuation benchmark or input a custom cents-per-mile assumption to evaluate your mileage portfolio.</p>
+
+<div class="direct-answer">
+  United MileagePlus miles do not possess a fixed cash value because United utilizes dynamic award pricing without fixed award charts. For general planning, travelers commonly model United miles between 1.0¢ and 1.5¢ each. To estimate your portfolio's travel purchasing power, multiply your mileage balance by your estimated cents-per-mile assumption and divide by 100.
+</div>
+
+<div class="currency-selector" style="margin-bottom: 20px; text-align: right;">
+  <button id="btnShare" class="btn-share">Share this calculation</button>
+</div>
+<div id="toast" class="toast">Link copied to clipboard!</div>
+
+<div class="panel">
+  <div class="field">
+    <label for="unitedMiles">United MileagePlus Balance <span class="hint" id="hintMiles">Miles</span></label>
+    <input type="number" id="unitedMiles" value="50000" min="0" step="1" inputmode="numeric" aria-describedby="hintMiles">
+    <div class="preset-buttons" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+      <span style="font-size: 0.85rem; color: #64748b;">Quick balances:</span>
+      <button type="button" class="btn-balance-preset" data-miles="10000">10,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="25000">25,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="50000">50,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="60000">60,000</button>
+      <button type="button" class="btn-balance-preset" data-miles="100000">100,000</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="presetValuation">
+      <span>Valuation Scenario (CPM / CPP)<button type="button" class="btn-help-toggle" id="btnHelpScenario" aria-expanded="false" aria-controls="helpScenarioGuide">How do I choose?</button></span>
+      <span class="hint" id="hintValuation">¢ / Mile</span>
+    </label>
+
+    <div id="helpScenarioGuide" class="help-scenario-guide" style="display: none;">
+      <h4>How to choose a cents-per-mile assumption:</h4>
+      <div class="guide-step">
+        <strong>1. Evaluating an immediate redemption:</strong>
+        <p>Use your exact flight prices: <code>Realized CPP = [(Cash Ticket Price - Award Taxes) ÷ Miles Required] × 100</code>. Test your specific itinerary in our <a href="/en/calculators/cents-per-point/">CPP Calculator</a>.</p>
+      </div>
+      <div class="guide-step">
+        <strong>2. Modeling domestic economy flights:</strong>
+        <p>A conservative benchmark of 1.0¢ to 1.2¢ reflects typical domestic routes subject to peak dynamic award pricing.</p>
+      </div>
+      <div class="guide-step">
+        <strong>3. Modeling international Polaris Business Class or partner sweet spots:</strong>
+        <p>Higher-tier redemptions frequently achieve 1.5¢ to 2.0¢+ per mile when Saver award seats are open.</p>
+      </div>
+    </div>
+
+    <select id="presetValuation" aria-describedby="hintValuation unitValuation">
+      <option value="custom">Custom cents-per-mile assumption</option>
+      <option value="1.0">Conservative scenario: 1.0¢ per mile (Domestic short-haul baseline)</option>
+      <option value="1.2" selected>Typical airline scenario: 1.2¢ per mile (Standard economy award)</option>
+      <option value="1.5">Higher-value scenario: 1.5¢ per mile (Partner award or premium cabin)</option>
+    </select>
+    <input type="number" id="cppValue" value="1.2" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
+    <div class="unit" id="unitValuation">These CPM values represent educational modeling benchmarks, not official buyback rates or cash guarantee quotes from United Airlines.</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Estimated Travel Value</div>
+        <div class="v" id="dollarValue" style="word-break: break-word; overflow-wrap: anywhere;">$600</div>
+      </div>
+    </div>
+    <div class="note" id="explain">Miles balance: 50,000 | Valuation: 1.2¢ CPM | Estimated travel value: $600. Planning estimate, not guaranteed cashout value.</div>
+  </div>
+</div>
+
+<div class="callout" style="margin-top: 24px;">
+  <strong>Explore Related Award Decision Tools:</strong> Before moving or spending miles, compare paying cash vs redeeming points with our <a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>, calculate exact redemption value with the <a href="/en/calculators/cents-per-point/">Cents Per Point Calculator</a>, or convert broader balances with the general <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a>.
+</div>
+
+<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>The United Miles Valuation Formula</h2>
+  <p>To convert your United MileagePlus balance into an estimated dollar purchasing power, apply this straightforward formula:</p>
+  <div class="formula-box">
+    <span class="formula-name">Estimated Travel Value =</span>
+    <span class="formula-expression">United Miles Balance × (Valuation in Cents ÷ 100)</span>
+  </div>
+
+  <h3>Worked Recalculable Examples</h3>
+  <div class="example-box">
+    <h4>Example 1: Domestic Economy Award Flight</h4>
+    <p>A traveler accumulates 25,000 United miles from credit card spending and plans a domestic round-trip flight. Using a typical 1.2¢ per mile valuation assumption:</p>
+    <ul>
+      <li><strong>Miles balance:</strong> 25,000 United miles</li>
+      <li><strong>Valuation assumption:</strong> 1.2¢ per mile</li>
+      <li><strong>Formula:</strong> <code>25,000 miles × (1.2¢ ÷ 100) = $300</code></li>
+      <li><strong>Estimated travel value:</strong> <strong>$300</strong></li>
+    </ul>
+    <p><em>Planning takeaway: If the cash ticket costs $350 (minus $11.20 in 9/11 security fees), redeeming 25,000 miles yields 1.36¢ CPP—exceeding this baseline benchmark.</em></p>
+  </div>
+
+  <div class="example-box" style="margin-top: 16px;">
+    <h4>Example 2: Long-Haul Polaris Business Class Award</h4>
+    <p>A traveler holds 80,000 United miles targeted for a transatlantic flight in United Polaris business class. Applying a higher-value redemption scenario of 1.6¢ per mile:</p>
+    <ul>
+      <li><strong>Miles balance:</strong> 80,000 United miles</li>
+      <li><strong>Valuation assumption:</strong> 1.6¢ per mile</li>
+      <li><strong>Formula:</strong> <code>80,000 miles × (1.6¢ ÷ 100) = $1,280</code></li>
+      <li><strong>Estimated travel value:</strong> <strong>$1,280</strong></li>
+    </ul>
+    <p><em>Planning takeaway: Premium international cabin redemptions often yield $2,500+ in retail cash fare replacement, though Saver award seats require flexible schedule planning.</em></p>
+  </div>
+
+  <h2>Estimated Portfolio Value vs. Actual Redemption CPP</h2>
+  <p>There is a fundamental difference between evaluating your accumulated mileage balance and assessing a single flight booking:</p>
+  <ul>
+    <li><strong>Modeled Portfolio Value (This Calculator):</strong> Provides a top-level estimate of what your miles could buy across reasonable travel opportunities. It prevents you from either neglecting your miles as worthless or assuming they represent guaranteed liquid cash.</li>
+    <li><strong>Actual Redemption CPP (Specific Flight):</strong> Measures the exact mathematical savings on an individual reservation:
+      <br>
+      <code>Actual CPP = [(Cash Price − Award Taxes & Surcharges) ÷ Miles Required] × 100</code>
+      <br>
+      Always calculate actual CPP before booking using our <a href="/en/calculators/cents-per-point/">Cents Per Point Calculator</a> or read our <a href="/en/guides/airline-miles-value/">Airline Miles Value Guide</a>.
+    </li>
+  </ul>
+
+  <h2>5 Critical Factors That Dictate United MileagePlus Value</h2>
+  <p>Because United Airlines removed published award charts in favor of dynamic award pricing, several variables drive your actual return:</p>
+  <ol>
+    <li><strong>Dynamic Award Pricing:</strong> Award rates vary based on seasonal demand, remaining seat inventory, and proximity to departure. Popular holiday routes may demand 2x to 3x the miles of an off-peak flight.</li>
+    <li><strong>Mandatory Award Taxes and Surcharges:</strong> While United does not impose carrier-imposed fuel surcharges on its own flights, all tickets require cash taxes (starting at $5.60 for domestic one-ways and up to $150–$300 on international partner departures, such as flights out of London Heathrow).</li>
+    <li><strong>Saver vs. Everyday Award Availability:</strong> Saver awards offer the highest redemption CPP but strictly limited seat quotas. Everyday awards provide broader access at elevated mileage prices.</li>
+    <li><strong>Route and Cabin Class:</strong> International business class (Polaris) generally yields significantly higher CPP than short-haul domestic economy, though economy awards require fewer total miles.</li>
+    <li><strong>Booking Lead Time:</strong> Booking months in advance when Saver inventory opens—or monitoring last-minute seat releases 1–2 weeks before departure—typically unlocks the most lucrative redemptions.</li>
+  </ol>
+
+  <h2>Official Terms and Program Disclaimer</h2>
+  <ul>
+    <li><strong>[Official] United MileagePlus Program Homepage:</strong> <a href="https://www.united.com/en/us/fly/mileageplus.html" target="_blank" rel="noopener noreferrer">United MileagePlus Information</a></li>
+    <li><strong>[Official] United Award Travel Terms & Rules:</strong> <a href="https://www.united.com/en/us/fly/mileageplus/awards.html" target="_blank" rel="noopener noreferrer">United Award Booking Rules</a></li>
+  </ul>
+
+  <p class="disclaimer" style="margin-top: 24px; font-size: 0.85em; color: #64748b;">
+    <em>Last Fact-Checked: October 2026. Editorial Disclaimer: This tool is an independent educational calculator and is not affiliated with, sponsored by, or endorsed by United Airlines, Inc. or Star Alliance. MileagePlus is a registered trademark of United Airlines, Inc. Valuation benchmarks are illustrative modeling figures, not official exchange rates or guaranteed cash buyback values.</em>
+  </p>
+</div>
+
+<script>
+(function() {
+  const $ = id => document.getElementById(id);
+
+  const parseParam = (key, elId, maxVal = 1000000000) => {
+    const params = new URLSearchParams(window.location.search);
+    let val = parseFloat(params.get(key));
+    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
+      const el = $(elId);
+      if (el) el.value = val;
+    }
+  };
+
+  parseParam('miles', 'unitedMiles');
+  parseParam('points', 'unitedMiles');
+  parseParam('cpp', 'cppValue');
+  parseParam('valuation', 'cppValue');
+
+  const parseScenarioParam = () => {
+    const params = new URLSearchParams(window.location.search);
+    const scen = params.get('scenario') || params.get('presetValuation');
+    if (scen && $('presetValuation')) {
+      const validOptions = ['custom', '1.0', '1.2', '1.5'];
+      if (validOptions.includes(scen)) {
+        $('presetValuation').value = scen;
+        if (scen !== 'custom') {
+          $('cppValue').value = scen;
+        }
+      }
+    }
+  };
+  parseScenarioParam();
+
+  function calcUnited() {
+    const rawM = $('unitedMiles').value.trim();
+    const rawC = $('cppValue').value.trim();
+    const M = parseFloat(rawM);
+    const C = parseFloat(rawC);
+
+    const resetState = (msg = 'Please enter valid numbers.') => {
+      $('dollarValue').textContent = '-';
+      $('explain').textContent = msg;
+      $('dollarValue').classList.remove('win');
+    };
+
+    if (rawM === '' || rawC === '' || isNaN(M) || isNaN(C) || !isFinite(M) || !isFinite(C) || M < 0 || C < 0) {
+      resetState((M < 0 || C < 0) ? 'Inputs cannot be negative.' : 'Please enter your miles balance and cents-per-mile assumption.');
+      return;
+    }
+
+    if (M === 0 || C === 0) {
+      $('dollarValue').textContent = '$0';
+      $('dollarValue').classList.add('win');
+      $('explain').textContent = `Miles balance: ${M.toLocaleString('en-US')} | Valuation: ${C}¢ CPM | Estimated travel value: $0. Planning estimate, not guaranteed cashout value.`;
+      return;
+    }
+
+    const total = M * (C / 100);
+    $('dollarValue').textContent = '$' + total.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    $('dollarValue').classList.add('win');
+    $('explain').textContent = `Miles balance: ${M.toLocaleString('en-US')} | Valuation: ${C}¢ CPM | Estimated travel value: $${total.toLocaleString('en-US', { maximumFractionDigits: 0 })}. Planning estimate, not guaranteed cashout value.`;
+  }
+
+  // Preset balance buttons
+  document.querySelectorAll('.btn-balance-preset').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const m = this.getAttribute('data-miles');
+      $('unitedMiles').value = m;
+      calcUnited();
+    });
+  });
+
+  // Scenario dropdown
+  $('presetValuation').addEventListener('change', e => {
+    if (e.target.value !== 'custom') {
+      $('cppValue').value = e.target.value;
+      calcUnited();
+    }
+  });
+
+  $('cppValue').addEventListener('input', () => {
+    const val = $('cppValue').value;
+    const matched = ['1.0', '1.2', '1.5'].includes(val);
+    $('presetValuation').value = matched ? val : 'custom';
+    calcUnited();
+  });
+
+  $('unitedMiles').addEventListener('input', calcUnited);
+
+  // Help toggle
+  const btnHelp = $('btnHelpScenario');
+  const guideBox = $('helpScenarioGuide');
+  if (btnHelp && guideBox) {
+    btnHelp.addEventListener('click', () => {
+      const isExpanded = btnHelp.getAttribute('aria-expanded') === 'true';
+      btnHelp.setAttribute('aria-expanded', !isExpanded);
+      guideBox.style.display = isExpanded ? 'none' : 'block';
+    });
+  }
+
+  // Share calculation
+  if ($('btnShare')) {
+    $('btnShare').addEventListener('click', () => {
+      const url = new URL('{{ site.url }}/en/calculators/united-miles-value-calculator/');
+      const m = parseFloat($('unitedMiles').value) || 0;
+      const c = parseFloat($('cppValue').value) || 0;
+      if (m > 0) url.searchParams.set('miles', m);
+      if (c > 0) url.searchParams.set('cpp', c);
+      const scen = $('presetValuation').value;
+      if (scen && scen !== 'custom') url.searchParams.set('scenario', scen);
+
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const toast = $('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      });
+    });
+  }
+
+  calcUnited();
+})();
+</script>

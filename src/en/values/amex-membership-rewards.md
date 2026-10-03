@@ -1,12 +1,13 @@
 ---
 layout: base.njk
 title: Amex Membership Rewards (MR) Points Value Guide
-description: Maximize your Amex Membership Rewards points. Learn the best transfer partners, airline vs hotel valuations, and how to avoid the excise tax.
+seoTitle: Amex Points Value Calculator & MR Guide
+description: Estimate the value of Amex Membership Rewards points across cash, travel and transfer-partner scenarios, with examples for common point balances.
 schemaType: Article
 eyebrow: Valuations
 datePublished: "2026-08-11"
-dateModified: "2026-09-14"
-lastModified: "2026-09-14"
+dateModified: "2026-10-03"
+lastModified: "2026-10-03"
 breadcrumbs:
   - name: Points Valuations
     url: /en/values/
@@ -22,6 +23,76 @@ breadcrumbs:
 
 <div class="callout" style="margin-bottom: 1.5rem;">
   <strong>Geographic Scope:</strong> This page primarily discusses U.S. Membership Rewards accounts. Redemption options and transfer partners may differ by country.
+</div>
+
+<h2>Interactive Amex Points Value Calculator</h2>
+<p>Estimate the travel value of your American Express Membership Rewards points based on your balance and redemption approach:</p>
+
+<div class="panel" id="amexCalculator" style="margin: 20px 0; padding: 20px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 6px;">
+  <div class="field" style="margin-bottom: 16px;">
+    <label for="amexBalance">Membership Rewards Balance <span class="hint" id="hintAmexBalance">Points</span></label>
+    <input type="number" id="amexBalance" value="50000" min="0" step="1" inputmode="numeric" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper);">
+    <div class="preset-buttons" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+      <span style="font-size: 0.85rem; color: var(--muted);">Quick balances:</span>
+      <button type="button" class="btn-amex-preset" data-points="10000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">10,000</button>
+      <button type="button" class="btn-amex-preset" data-points="25000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">25,000</button>
+      <button type="button" class="btn-amex-preset" data-points="50000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">50,000</button>
+      <button type="button" class="btn-amex-preset" data-points="100000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">100,000</button>
+      <button type="button" class="btn-amex-preset" data-points="500000" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper); cursor: pointer; font-size: 13px;">500,000</button>
+    </div>
+  </div>
+
+  <div class="field" style="margin-bottom: 16px;">
+    <label for="amexScenario">Valuation Scenario <span class="hint" id="hintAmexScenario">Illustrative Benchmark</span></label>
+    <select id="amexScenario" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper);">
+      <option value="custom">Custom assumption</option>
+      <option value="0.6">Cash-style baseline scenario: 0.6¢ per point (Statement credits / checkout)</option>
+      <option value="1.0">Travel booking scenario: 1.0¢ per point (Amex Travel flights)</option>
+      <option value="1.5" selected>Transfer-partner redemption scenario: 1.5¢ per point (Typical airline partner)</option>
+      <option value="2.0">Transfer-partner high-value scenario: 2.0¢ per point (Premium cabin sweet spot)</option>
+    </select>
+    <input type="number" id="amexCpp" value="1.5" min="0.01" step="0.01" inputmode="decimal" style="width: 100%; padding: 10px; margin-top: 8px; border-radius: 4px; border: 1px solid var(--line); background: var(--ink); color: var(--paper);">
+    <div style="font-size: 12px; color: var(--muted); margin-top: 6px;">
+      <em>Note: These scenarios are illustrative models, not Amex official conversion rates or guaranteed cashouts. Transfer ratios and partner sweet spots vary by program and availability.</em>
+    </div>
+  </div>
+
+  <div class="ticket" style="margin-top: 16px;" aria-live="polite">
+    <div class="main" style="padding: 16px; background: var(--ink); border: 1px solid var(--line); border-radius: 4px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+        <span style="font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Estimated Travel Value</span>
+        <span id="amexResultValue" style="font-size: 28px; font-weight: 700; color: #10b981; font-family: 'IBM Plex Mono', monospace;">$750</span>
+      </div>
+      <div id="amexResultExplain" style="font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5;">
+        Points balance: 50,000 | Valuation: 1.5¢ CPP | Estimated travel value: $750. Modeled estimate, not guaranteed cash value.
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>Worked Calculation Examples</h3>
+<div class="example-box" style="margin-bottom: 16px; padding: 16px; background: rgba(2, 132, 199, 0.05); border: 1px solid rgba(2, 132, 199, 0.2); border-radius: 6px;">
+  <h4 style="margin-top: 0;">Example 1: 50,000 MR Points (Airline Transfer Scenario)</h4>
+  <p>If you redeem 50,000 Membership Rewards points via an airline transfer partner (such as Air Canada Aeroplan or British Airways Avios) with an illustrative assumption of 1.5¢ per point:</p>
+  <ul>
+    <li><strong>Points balance:</strong> 50,000 MR points</li>
+    <li><strong>Valuation assumption:</strong> 1.5¢ per point</li>
+    <li><strong>Formula:</strong> <code>50,000 points × (1.5¢ ÷ 100) = $750</code></li>
+    <li><strong>Estimated travel value:</strong> <strong>$750</strong></li>
+  </ul>
+  <p style="font-size: 0.85em; color: var(--muted); margin-bottom: 0;"><em>Disclaimer: This represents modeled travel savings on an award flight, not guaranteed cashout value.</em></p>
+</div>
+
+<div class="example-box" style="margin-bottom: 24px; padding: 16px; background: rgba(2, 132, 199, 0.05); border: 1px solid rgba(2, 132, 199, 0.2); border-radius: 6px;">
+  <h4 style="margin-top: 0;">Example 2: 100,000 MR Points (Conservative Travel Scenario)</h4>
+  <p>If you evaluate 100,000 Membership Rewards points with a conservative assumption of 1.2¢ per point:</p>
+  <ul>
+    <li><strong>Points balance:</strong> 100,000 MR points</li>
+    <li><strong>Valuation assumption:</strong> 1.2¢ per point</li>
+    <li><strong>Formula:</strong> <code>100,000 points × (1.2¢ ÷ 100) = $1,200</code></li>
+    <li><strong>Estimated travel value:</strong> <strong>$1,200</strong></li>
+  </ul>
+  <p style="font-size: 0.85em; color: var(--muted); margin-bottom: 0;"><em>Disclaimer: This represents modeled travel savings, not guaranteed cashout value.</em></p>
 </div>
 
 <h2>Illustrative Amex Points Balance Values</h2>
@@ -120,7 +191,64 @@ breadcrumbs:
 <h2>Data Sources and Last Fact-Checked</h2>
 <ul>
   <li><strong>[Editorial] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Baseline Value (2.0¢)</a></li>
-  <li><strong>[Editorial] OMAAT Value Guide</strong>: <a href="https://onemileatatime.com/guides/value-frequent-flyer-miles/" target="_blank" rel="noopener">Baseline Value (1.7¢)</a></li>
   <li><strong>[Official] Amex Official Rules</strong>: <a href="https://www.americanexpress.com/en-us/rewards/membership-rewards/" target="_blank" rel="noopener">Transfer Ratios</a></li>
 </ul>
-<p class="disclaimer"><em>Last Fact-Checked: September 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice. Third-party valuations are not real-time or guaranteed.</em></p>
+<p class="disclaimer"><em>Last Fact-Checked: October 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice. Third-party valuations are not real-time or guaranteed.</em></p>
+
+<script>
+(function() {
+  const bInput = document.getElementById('amexBalance');
+  const sSelect = document.getElementById('amexScenario');
+  const cInput = document.getElementById('amexCpp');
+  const rVal = document.getElementById('amexResultValue');
+  const rExp = document.getElementById('amexResultExplain');
+
+  if (!bInput || !sSelect || !cInput || !rVal || !rExp) return;
+
+  function calcAmex() {
+    const rawB = bInput.value.trim();
+    const rawC = cInput.value.trim();
+    const b = parseFloat(rawB);
+    const c = parseFloat(rawC);
+
+    if (rawB === '' || rawC === '' || isNaN(b) || isNaN(c) || b < 0 || c < 0 || !isFinite(b) || !isFinite(c)) {
+      rVal.textContent = '-';
+      rExp.textContent = (b < 0 || c < 0) ? 'Inputs cannot be negative.' : 'Please enter valid points and CPP values.';
+      return;
+    }
+
+    if (b === 0 || c === 0) {
+      rVal.textContent = '$0';
+      rExp.textContent = `Points balance: ${b.toLocaleString('en-US')} | Valuation: ${c}¢ CPP | Estimated travel value: $0. Modeled estimate, not guaranteed cash value.`;
+      return;
+    }
+
+    const total = b * (c / 100);
+    rVal.textContent = '$' + total.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    rExp.textContent = `Points balance: ${b.toLocaleString('en-US')} | Valuation: ${c}¢ CPP | Estimated travel value: $${total.toLocaleString('en-US', { maximumFractionDigits: 0 })}. Modeled estimate, not guaranteed cash value.`;
+  }
+
+  sSelect.addEventListener('change', function() {
+    if (this.value !== 'custom') {
+      cInput.value = this.value;
+    }
+    calcAmex();
+  });
+
+  cInput.addEventListener('input', function() {
+    sSelect.value = 'custom';
+    calcAmex();
+  });
+
+  bInput.addEventListener('input', calcAmex);
+
+  document.querySelectorAll('.btn-amex-preset').forEach(btn => {
+    btn.addEventListener('click', function() {
+      bInput.value = this.getAttribute('data-points');
+      calcAmex();
+    });
+  });
+
+  calcAmex();
+})();
+</script>
