@@ -13,10 +13,10 @@ breadcrumbs:
   - name: 积分换算现金价值计算器
 ---
 <h1>积分换算现金价值计算器</h1>
-<p class="sub">别把积分当欢乐豆，它们代表真实的消费力。选择估值情景或输入自定义单点价值（CPP），测算手头积分与里程的等价现金估值。</p>
+<p class="sub">别把积分当欢乐豆，它们代表真实的消费力。选择估值情景或输入自定义单点价值（CPP），测算手头积分与里程的等价旅行估值。</p>
 
 <div class="direct-answer" id="directAnswerBox">
-  <strong>直接折现规则：</strong> 按中性航空里程情景 1.5 美分/点测算；人民币金额采用页面显示的汇率假设（1.5美分 = 0.015美元；0.015美元 × <span id="spanFxEcho">7.0</span> = <span id="spanCnyCppEcho">0.105</span>元/点）。例如：持有 50,000 里程约折合 <span id="spanEgCny">¥5,250</span>（或 $750）。该数值仅用于演示，不代表具体积分计划的实时价值。
+  <strong>直接折现规则：</strong> 按演示中性航空里程情景 1.5 美分/点测算；人民币金额采用页面显示的汇率假设（1.5美分 = 0.015美元；0.015美元 × <span id="spanFxEcho">7.0</span> = <span id="spanCnyCppEcho">0.105</span>元/点）。例如：持有 50,000 里程约折合 <span id="spanEgCny">¥5,250</span>（或 $750 旅行价值）。该数值仅用于演示建模，不是官方实时价值或提现兑现承诺。
 </div>
 
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
@@ -33,8 +33,19 @@ breadcrumbs:
 
 <div class="panel">
   <div class="field">
-    <label for="totalPoints">你账户里的总积分/里程<span class="hint" id="hintTotal">点</span></label>
-    <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal">
+    <label for="totalPoints">你账户里的总积分/里程（演示输入）<span class="hint" id="hintTotal">点/里程</span></label>
+    <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal unitTotal">
+    <div class="unit" id="unitTotal" style="margin-bottom: 8px;">默认 150,000 为可修改的演示数值，非自动读取真实账户余额。可直接手动输入或点击下方快速填入：</div>
+    <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+      <span style="font-size: 0.85rem; color: #64748b; font-weight: 500;">常用额度：</span>
+      <button type="button" class="btn-balance-preset" data-points="1000" aria-pressed="false">1,000</button>
+      <button type="button" class="btn-balance-preset" data-points="5000" aria-pressed="false">5,000</button>
+      <button type="button" class="btn-balance-preset" data-points="10000" aria-pressed="false">10,000</button>
+      <button type="button" class="btn-balance-preset" data-points="25000" aria-pressed="false">25,000</button>
+      <button type="button" class="btn-balance-preset" data-points="30000" aria-pressed="false">30,000</button>
+      <button type="button" class="btn-balance-preset" data-points="50000" aria-pressed="false">50,000</button>
+      <button type="button" class="btn-balance-preset" data-points="100000" aria-pressed="false">100,000</button>
+    </div>
   </div>
 
   <div class="field" id="fieldFx">
@@ -70,14 +81,17 @@ breadcrumbs:
     </div>
 
     <select id="presetValuation" aria-describedby="hintValuation unitValuation">
-      <option value="custom">自定义CPP</option>
+      <option value="custom">自定义单点价值（随时可直接输入修改）</option>
       <option value="0.6">低面值积分情景：0.6美分/点 (约0.042元/点)</option>
       <option value="1.2">保守估值情景：1.2美分/点 (约0.084元/点)</option>
-      <option value="1.5" selected>中性航空里程情景：1.5美分/点 (约0.105元/点)</option>
+      <option value="1.5" selected>中性航空里程演示情景：1.5美分/点 (约0.105元/点)</option>
       <option value="2.0">较高价值兑换情景：2.0美分/点 (约0.140元/点)</option>
     </select>
-    <input type="number" id="cppValue" value="0.105" min="0.001" step="0.001" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
-    <div class="unit" id="unitValuation">这些CPP仅用于比较不同估值情景，不是官方兑换比例、实时估值或保证价值。最可靠的输入来自您计划兑换项目的实际现金价格、税费和所需积分。</div>
+    <div style="margin-top: 10px;">
+      <label for="cppValue" style="font-size: 0.85rem; color: #475569; font-weight: 500; display: block; margin-bottom: 4px;">自定义单点价值：</label>
+      <input type="number" id="cppValue" value="0.105" min="0.001" step="0.001" inputmode="decimal" aria-describedby="hintValuation unitValuation">
+    </div>
+    <div class="unit" id="unitValuation">这些CPP仅用于比较不同估值情景，不是官方兑换比例、实时估值或保证价值。默认 1.5 美分（约 0.105 元）为可修改的演示估值，不是官方兑换比例、实时牌价或提现保证。最准确的估值应依据你打算兑换的真实机票或酒店行程。</div>
   </div>
 </div>
 
@@ -85,7 +99,7 @@ breadcrumbs:
   <div class="main">
     <div class="compare">
       <div class="item">
-        <div class="k">折合资产估值约</div>
+        <div class="k">预估旅行折合价值</div>
         <div class="v" id="dollarValue" style="word-break: break-word; overflow-wrap: anywhere;">¥0</div>
       </div>
     </div>
@@ -98,10 +112,47 @@ breadcrumbs:
 </div>
 
 <div class="callout" style="margin-top: 24px;">
-  <strong>核心考量：</strong> 长期持有积分可能因计划贬值而降低购买力。较稳妥的做法是围绕明确兑换计划积累积分，避免长期持有不必要的大额余额。
+  <strong>核心考量：</strong> 长期持有积分可能因计划贬值而降低购买力。较稳妥的做法是围绕明确兑换计划积累积分，避免长期持有不必要的大额余额。积分不具备法定现金兜底，不能视作银行存款。
 </div>
 
-<div class="article-content prose" style="margin-top: 40px;">
+<div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
+  <h2>折算计算公式 (Conversion Formula)</h2>
+  <p>将积分或里程折算为估计旅行价值，采用基础乘法公式：</p>
+  <div class="formula-box">
+    <span class="formula-name">预估旅行价值 =</span>
+    <span class="formula-expression">总点数/里程 × 单点价值（元/点 或 美元/点）</span>
+  </div>
+
+  <h3>测算示例</h3>
+  <div class="example-box">
+    <h4>示例 1：航空里程折合旅行价值</h4>
+    <p>账户中累计有 60,000 航空里程，计划在订奖励机票前评估其大致价值规模。</p>
+    <ul>
+      <li><strong>里程数量：</strong> 60,000 里程</li>
+      <li><strong>假设每里价值：</strong> 1.5 美分/里（演示估值，USD $0.015/里；按 7.0 汇率折合约 ¥0.105/里）</li>
+      <li><strong>计算过程：</strong> <code>60,000 里程 × (1.5¢ ÷ 100) = $900</code>（折合 <code>$900 × 7.0 = ¥6,300</code>）</li>
+      <li><strong>预估旅行价值：</strong> <strong>$900（约 ¥6,300）</strong></li>
+    </ul>
+    <p><em>局限性说明：该金额代表用于旅行兑换时的估算购买力，并非航司现金回收价，也不能直接从银行提现。</em></p>
+  </div>
+
+  <div class="example-box" style="margin-top: 16px;">
+    <h4>示例 2：银行信用卡积分转入合作伙伴（Chase UR → 凯悦 Hyatt）</h4>
+    <p>当把银行多功能积分转至航司或酒店常客计划时，必须<strong>严格区分为两步核算</strong>。切勿将银行积分价值与合作伙伴积分价值混为一谈，也不要将银行积分直接乘以伙伴单点价值而忽略转点比例：</p>
+    <p><em>情景设定：持有 50,000 Chase Ultimate Rewards 积分，计划转入凯悦天地（World of Hyatt），并假设凯悦积分在目标酒店兑换中实现每点 1.5 美分（约 0.105 元/点）的旅行价值。</em></p>
+    <ul>
+      <li><strong>步骤一：积分转入兑换</strong><br>
+        <code>50,000 Chase 积分 × 1.0（演示比例）= 50,000 凯悦 Hyatt 积分</code><br>
+        <em>注意：1:1 比例为符合资格的高端信用卡常见演示输入。不同卡种、账户状态或限时加赠活动比例各异，转点前必须在发卡行网银后台核实不可撤销的实时比例。</em>
+      </li>
+      <li><strong>步骤二：按伙伴积分价值计算旅行价值</strong><br>
+        <code>50,000 凯悦积分 × (1.5¢ ÷ 100) = $750</code>（按 7.0 汇率折合约 <code>¥5,250</code>）
+      </li>
+      <li><strong>预估旅行价值：</strong> <strong>$750（约 ¥5,250）</strong>（在 1:1 比例下相当于每 Chase 积分贡献 $0.015 旅行价值）。</li>
+    </ul>
+    <p><em>不同比例影响：如果因账户级别或伙伴调整导致转点比例为 4:3（50,000 Chase 积分转为 37,500 凯悦积分），则旅行价值为 <code>37,500 × $0.015 = $562.50（约 ¥3,937.50）</code>，相当于每 Chase 积分仅贡献 $0.01125。两步必须独立计算。</em></p>
+  </div>
+
   <h2>估值情景说明表 (Valuation Scenarios)</h2>
   <p>为了帮助您更理性地进行资产模型测算，下表说明了常见预设情景的适用范围与边界：</p>
   
@@ -129,7 +180,7 @@ breadcrumbs:
           <td>不代表官方保底回收价格</td>
         </tr>
         <tr>
-          <td style="font-weight: 600; color: #0f172a;">中性航空里程情景</td>
+          <td style="font-weight: 600; color: #0f172a;">中性航空里程演示情景</td>
           <td>1.5¢ / 点</td>
           <td>普通航空里程兑换的演示情景</td>
           <td>不代表所有航司统一固定比例</td>
@@ -145,7 +196,7 @@ breadcrumbs:
   </div>
 
   <h2>常见里程与积分折现参考表</h2>
-  <p>下表整理了常见里程数量在不同情景下的参考对照金额（人民币金额按 7.0 演示汇率换算）：</p>
+  <p>下表整理了常见里程数量在不同情景下的参考对照金额（美元以 <code>数量 × [美分 ÷ 100]</code> 计算，人民币金额按 7.0 演示汇率换算）：</p>
   
   <div class="responsive-table-wrapper">
     <table class="responsive-table">
@@ -159,6 +210,13 @@ breadcrumbs:
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">1,000 里程</td>
+          <td>¥42 ($6)</td>
+          <td>¥84 ($12)</td>
+          <td>¥105 ($15)</td>
+          <td>¥140 ($20)</td>
+        </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">2,000 里程</td>
           <td>¥84 ($12)</td>
@@ -181,11 +239,25 @@ breadcrumbs:
           <td>¥1,120 ($160)</td>
         </tr>
         <tr>
-          <td style="text-align: left; font-weight: 600; color: #0f172a;">17,000 里程</td>
-          <td>¥714 ($102)</td>
-          <td>¥1,428 ($204)</td>
-          <td>¥1,785 ($255)</td>
-          <td>¥2,380 ($340)</td>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">10,000 里程</td>
+          <td>¥420 ($60)</td>
+          <td>¥840 ($120)</td>
+          <td>¥1,050 ($150)</td>
+          <td>¥1,400 ($200)</td>
+        </tr>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">25,000 里程</td>
+          <td>¥1,050 ($150)</td>
+          <td>¥2,100 ($300)</td>
+          <td>¥2,625 ($375)</td>
+          <td>¥3,500 ($500)</td>
+        </tr>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">30,000 里程</td>
+          <td>¥1,260 ($180)</td>
+          <td>¥2,520 ($360)</td>
+          <td>¥3,150 ($450)</td>
+          <td>¥4,200 ($600)</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">50,000 里程</td>
@@ -195,11 +267,11 @@ breadcrumbs:
           <td>¥7,000 ($1,000)</td>
         </tr>
         <tr>
-          <td style="text-align: left; font-weight: 600; color: #0f172a;">60,000 里程</td>
-          <td>¥2,520 ($360)</td>
-          <td>¥5,040 ($720)</td>
-          <td>¥6,300 ($900)</td>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">100,000 里程</td>
+          <td>¥4,200 ($600)</td>
           <td>¥8,400 ($1,200)</td>
+          <td>¥10,500 ($1,500)</td>
+          <td>¥14,000 ($2,000)</td>
         </tr>
       </tbody>
     </table>
@@ -441,6 +513,14 @@ breadcrumbs:
     });
   }
 
+  function updatePresetButtonsAria(currentPoints) {
+    const targetStr = String(currentPoints);
+    document.querySelectorAll('.btn-balance-preset').forEach(btn => {
+      const isMatch = btn.getAttribute('data-points') === targetStr;
+      btn.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+    });
+  }
+
   function calcDollars(){
     let P = parseFloat($('totalPoints').value) || 0;
     let V = parseFloat($('cppValue').value) || 0;
@@ -460,14 +540,24 @@ breadcrumbs:
     if (currentCurrency === 'USD') {
       total = P * (V / 100);
       $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:2});
-      $('explain').textContent = `按 ${V} 美分/点的估值情景计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 $${total.toLocaleString('en-US', {maximumFractionDigits:2})} 的测算购买力。该数值为情景演示，非官方保底兑现。`;
+      $('explain').textContent = `积分/里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} | 估值：${V}美分/点（演示假设）| 预估折合旅行价值：$${total.toLocaleString('en-US', {maximumFractionDigits:2})}。该数值为测算购买力演示，非官方保底提现金额。`;
     } else {
       total = P * V;
       $('dollarValue').textContent = '¥' + total.toLocaleString('zh-CN', {maximumFractionDigits:0});
-      $('explain').textContent = `按 ${V} 元/点的估值情景计算，你账户里的 ${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 积分相当于 ¥${total.toLocaleString('zh-CN', {maximumFractionDigits:0})} 的测算购买力。该数值为情景演示，非官方保底兑现。`;
+      $('explain').textContent = `积分/里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} | 估值：${V}元/点（演示假设）| 预估折合旅行价值：¥${total.toLocaleString('zh-CN', {maximumFractionDigits:0})}。该数值为测算购买力演示，非官方保底提现金额。`;
     }
     $('dollarValue').classList.add('win');
   }
+
+  // Preset balance buttons
+  document.querySelectorAll('.btn-balance-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pts = btn.getAttribute('data-points');
+      $('totalPoints').value = pts;
+      updatePresetButtonsAria(pts);
+      calcDollars();
+    });
+  });
 
   $('presetValuation').addEventListener('change', e => {
     const scen = e.target.value;
@@ -498,7 +588,12 @@ breadcrumbs:
     calcDollars();
   });
 
-  $('totalPoints').addEventListener('input', calcDollars);
+  $('totalPoints').addEventListener('input', () => {
+    updatePresetButtonsAria($('totalPoints').value);
+    calcDollars();
+  });
+
+  updatePresetButtonsAria($('totalPoints').value);
   
   if ($('btnShare')) {
     $('btnShare').addEventListener('click', () => {

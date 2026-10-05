@@ -25,12 +25,16 @@ breadcrumbs:
 
 <div class="panel">
   <div class="field">
-    <label for="totalPoints">Total points / miles in your account<span class="hint" id="hintTotal">Points</span></label>
-    <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal">
-    <div class="preset-buttons">
-      <span style="font-size: 0.85rem; color: #64748b;">Quick balances:</span>
+    <label for="totalPoints">Airline miles balance (demo input)<span class="hint" id="hintTotal">Miles</span></label>
+    <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal unitTotal">
+    <div class="unit" id="unitTotal" style="margin-bottom: 8px;">Default 150,000 miles is an editable example, not an auto-detected balance. Type your own balance or pick a preset below:</div>
+    <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+      <span style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Quick balances:</span>
+      <button type="button" class="btn-balance-preset" data-points="1000" aria-pressed="false">1,000</button>
+      <button type="button" class="btn-balance-preset" data-points="5000" aria-pressed="false">5,000</button>
       <button type="button" class="btn-balance-preset" data-points="10000" aria-pressed="false">10,000</button>
       <button type="button" class="btn-balance-preset" data-points="25000" aria-pressed="false">25,000</button>
+      <button type="button" class="btn-balance-preset" data-points="30000" aria-pressed="false">30,000</button>
       <button type="button" class="btn-balance-preset" data-points="50000" aria-pressed="false">50,000</button>
       <button type="button" class="btn-balance-preset" data-points="100000" aria-pressed="false">100,000</button>
     </div>
@@ -39,7 +43,7 @@ breadcrumbs:
   <div class="field">
     <label for="presetValuation">
       <span>Choose a valuation scenario (CPP)<button type="button" class="btn-help-toggle" id="btnHelpScenario" aria-expanded="false" aria-controls="helpScenarioGuide">How do I choose?</button></span>
-      <span class="hint" id="hintValuation">¢ / Point</span>
+      <span class="hint" id="hintValuation">¢ / Mile</span>
     </label>
     
     <div id="helpScenarioGuide" class="help-scenario-guide" style="display: none;">
@@ -63,14 +67,17 @@ breadcrumbs:
     </div>
 
     <select id="presetValuation" aria-describedby="hintValuation unitValuation">
-      <option value="custom">Custom CPP</option>
-      <option value="0.6">Low-value points scenario: 0.6¢ per point</option>
-      <option value="1.2">Conservative scenario: 1.2¢ per point</option>
-      <option value="1.5" selected>Typical airline-mile scenario: 1.5¢ per point</option>
-      <option value="2.0">Higher-value redemption scenario: 2.0¢ per point</option>
+      <option value="custom">Custom value per mile (always editable)</option>
+      <option value="0.6">Low-value points scenario: 0.6¢ per mile</option>
+      <option value="1.2">Conservative scenario: 1.2¢ per mile</option>
+      <option value="1.5" selected>Illustrative editable scenario: 1.5¢ per mile</option>
+      <option value="2.0">Higher-value redemption scenario: 2.0¢ per mile</option>
     </select>
-    <input type="number" id="cppValue" value="1.5" min="0.01" step="0.01" style="margin-top:10px;" inputmode="decimal" aria-describedby="hintValuation unitValuation">
-    <div class="unit" id="unitValuation">These CPP values are illustrative scenarios, not official conversion rates, live valuations, or guaranteed redemption values. The most reliable input comes from the cash price, taxes, fees, and points required for the redemption you are considering.</div>
+    <div style="margin-top: 10px;">
+      <label for="cppValue" style="font-size: 0.85rem; color: #475569; font-weight: 500; display: block; margin-bottom: 4px;">Custom value per mile (¢ / mile):</label>
+      <input type="number" id="cppValue" value="1.5" min="0.01" step="0.01" inputmode="decimal" aria-describedby="hintValuation unitValuation">
+    </div>
+    <div class="unit" id="unitValuation">These CPP values are illustrative scenarios, not official conversion rates, live valuations, or guaranteed redemption values. The default 1.5¢ is an illustrative editable valuation, not a live airline valuation or cashout guarantee. Type any custom value to match your redemption.</div>
   </div>
 </div>
 
@@ -78,7 +85,7 @@ breadcrumbs:
   <div class="main">
     <div class="compare">
       <div class="item">
-        <div class="k">Estimated Portfolio Value</div>
+        <div class="k">Estimated Travel Value</div>
         <div class="v" id="dollarValue" style="word-break: break-word; overflow-wrap: anywhere;">$0</div>
       </div>
     </div>
@@ -100,33 +107,40 @@ breadcrumbs:
 
 <div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
 <h2>The Conversion Formula</h2>
-<p>To convert your points balance into an estimated travel value, we use a simple multiplication formula based on the Cents Per Point (CPP) valuation you select:</p>
+<p>To convert your airline miles or points balance into an estimated travel value, we use a simple multiplication formula based on the Cents Per Point/Mile (CPP) valuation you select:</p>
 <div class="formula-box">
   <span class="formula-name">Estimated Travel Value =</span>
-  <span class="formula-expression">Total Points × (Valuation in Cents ÷ 100)</span>
+  <span class="formula-expression">Total Miles × (Valuation in Cents ÷ 100)</span>
 </div>
 
 <h3>Calculation Examples</h3>
 <div class="example-box">
-  <h4>Worked Example: Airline Miles to Dollars</h4>
-  <p>You have an accumulated miles balance of 60,000 airline miles and want to estimate their dollar value before booking an award flight.</p>
+  <h4>Worked Example 1: Airline Miles to Dollars</h4>
+  <p>You have an accumulated miles balance of 60,000 airline miles and want to estimate their travel purchasing power before booking an award flight.</p>
   <ul>
     <li><strong>Miles balance:</strong> 60,000 miles</li>
-    <li><strong>Value per mile:</strong> 1.5¢ per mile</li>
+    <li><strong>Assumed value per mile:</strong> 1.5¢ per mile (editable demo assumption)</li>
     <li><strong>Calculation:</strong> <code>60,000 miles × (1.5¢ ÷ 100) = $900</code></li>
-    <li><strong>Estimated dollar value:</strong> <strong>$900</strong></li>
+    <li><strong>Estimated travel value:</strong> <strong>$900</strong></li>
   </ul>
-  <p><em>Limitation: This represents modeled travel purchasing power, not an official cash buyout or live ticket quote.</em></p>
+  <p><em>Limitation: This represents modeled travel purchasing power, not an official cash buyout, cash withdrawal, or live airline ticket quote.</em></p>
 </div>
 
 <div class="example-box" style="margin-top: 16px;">
-  <h4>Example: Valuing a Chase Ultimate Rewards Balance</h4>
-  <p>You have a balance of 50,000 Chase Ultimate Rewards points. You plan to transfer them to Hyatt, so you assign a conservative valuation of 1.5¢ per point.</p>
-  <p><em>Note: Actual transfer ratios and account-specific transition rules may vary. Always verify the live ratio in your bank's rewards portal before transferring.</em></p>
+  <h4>Worked Example 2: Transferring Flexible Bank Points to a Partner (Chase UR → Hyatt)</h4>
+  <p>When modeling bank credit card rewards transferred to partner airlines or hotels, evaluate the transfer in two distinct steps. <strong>Do not conflate the valuation of a bank point with the valuation of a partner point</strong>, and do not multiply bank points directly by partner unit values without accounting for the transfer ratio.</p>
+  <p><em>Setup: You hold 50,000 Chase Ultimate Rewards points. You evaluate transferring them to World of Hyatt, where you assume hotel points yield an illustrative 1.5¢ per Hyatt point.</em></p>
   <ul>
-    <li><strong>Calculation</strong>: 50,000 points × (1.5¢ ÷ 100) = $750</li>
+    <li><strong>Step 1 — Point Transfer:</strong><br>
+      <code>50,000 Chase points × 1.0 (illustrative demo ratio) = 50,000 World of Hyatt points</code><br>
+      <em>Note: The 1:1 transfer ratio is an illustrative demo input for eligible premium cards. Transfer ratios, promotional bonuses, and card-tier rules vary across accounts. Always verify the live ratio in your Chase portal before initiating an irreversible transfer.</em>
+    </li>
+    <li><strong>Step 2 — Valuation at Partner Rate:</strong><br>
+      <code>50,000 Hyatt points × (1.5¢ per Hyatt point ÷ 100) = $750</code>
+    </li>
+    <li><strong>Estimated Travel Value:</strong> <strong>$750</strong> (or $0.015 per original Chase point under a 1:1 ratio).</li>
   </ul>
-  <p>Your 50,000 points are worth an estimated $750 towards future travel. <em>Limitation: This is an estimated value for planning purposes, not liquid cash you can withdraw from an ATM.</em></p>
+  <p><em>Impact of alternative ratios: If an account or partner promotion utilized a different transfer ratio (for example, 4:3, yielding 37,500 Hyatt points), the estimated travel value would be <code>37,500 × $0.015 = $562.50</code> ($0.01125 per Chase point). Always calculate both steps separately.</em></p>
 </div>
 
 <div class="article-content prose" style="margin-top: 40px;">
@@ -157,7 +171,7 @@ breadcrumbs:
           <td>Not an official guaranteed cashout price</td>
         </tr>
         <tr>
-          <td style="font-weight: 600; color: #0f172a;">Typical airline-mile</td>
+          <td style="font-weight: 600; color: #0f172a;">Illustrative airline-mile</td>
           <td>1.5¢ / point</td>
           <td>General airline award calculation example</td>
           <td>Not a fixed standard across all carriers</td>
@@ -173,7 +187,7 @@ breadcrumbs:
   </div>
 
   <h2>Common Illustrative Balance Conversions</h2>
-  <p>Below is an illustrative conversion reference table across common mileage balances and scenario tiers:</p>
+  <p>Below is an illustrative conversion reference table across common mileage balances and scenario tiers (all calculated as <code>Miles × [Valuation in Cents ÷ 100]</code>):</p>
   
   <div class="responsive-table-wrapper">
     <table class="responsive-table">
@@ -182,11 +196,18 @@ breadcrumbs:
           <th style="text-align: left;">Miles / Points Balance</th>
           <th>@ 0.6¢ (Low-Value)</th>
           <th>@ 1.2¢ (Conservative)</th>
-          <th>@ 1.5¢ (Typical Mile)</th>
+          <th>@ 1.5¢ (Illustrative Mile)</th>
           <th>@ 2.0¢ (Higher-Value)</th>
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">1,000 miles</td>
+          <td>$6</td>
+          <td>$12</td>
+          <td>$15</td>
+          <td>$20</td>
+        </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">2,000 miles</td>
           <td>$12</td>
@@ -221,6 +242,13 @@ breadcrumbs:
           <td>$300</td>
           <td>$375</td>
           <td>$500</td>
+        </tr>
+        <tr>
+          <td style="text-align: left; font-weight: 600; color: #0f172a;">30,000 miles</td>
+          <td>$180</td>
+          <td>$360</td>
+          <td>$450</td>
+          <td>$600</td>
         </tr>
         <tr>
           <td style="text-align: left; font-weight: 600; color: #0f172a;">50,000 miles</td>
@@ -347,7 +375,7 @@ breadcrumbs:
     
     $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
     $('dollarValue').classList.add('win');
-    $('explain').textContent = `Points balance: ${P.toLocaleString('en-US')} | Valuation: ${V}¢ CPP | Estimated value: $${total.toLocaleString('en-US', {maximumFractionDigits:0})}. This is a modeled travel value, not a guaranteed cashout amount.`;
+    $('explain').textContent = `Balance: ${P.toLocaleString('en-US')} miles | Valuation: ${V}¢/mile (editable assumption) | Estimated travel value: $${total.toLocaleString('en-US', {maximumFractionDigits:0})}. This is an illustrative modeled travel value, not a guaranteed cashout amount or cash redemption rate.`;
   }
 
   // Preset balance buttons

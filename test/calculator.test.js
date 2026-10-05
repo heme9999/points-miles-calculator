@@ -1157,4 +1157,126 @@ test('Phase 9.11.2: United CNY Initialization, Collapsible Help, Button Accessib
   });
 });
 
+test('Miles to Dollars Calculator Targeted Regression: Chase-Hyatt 2-step formula, Search Presets, Units, and Disclaimers', async (t) => {
+  const enP2DHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/points-to-dollars/index.html'), 'utf8');
+  const zhP2DHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/points-to-dollars/index.html'), 'utf8');
+
+  await t.test('1. Chase UR to Hyatt Example: Strict 2-step transfer formula and separate valuation', () => {
+    // EN verification
+    assert.ok(enP2DHtml.includes('Do not conflate the valuation of a bank point with the valuation of a partner point'), 'Must clearly separate bank point and partner point');
+    assert.ok(enP2DHtml.includes('Step 1 — Point Transfer:'), 'Must have Step 1 Point Transfer');
+    assert.ok(enP2DHtml.includes('50,000 Chase points × 1.0 (illustrative demo ratio) = 50,000 World of Hyatt points'), 'Step 1 calculation');
+    assert.ok(enP2DHtml.includes('Step 2 — Valuation at Partner Rate:'), 'Must have Step 2 Valuation');
+    assert.ok(enP2DHtml.includes('50,000 Hyatt points × (1.5¢ per Hyatt point ÷ 100) = $750'), 'Step 2 calculation');
+    assert.ok(enP2DHtml.includes('37,500 × $0.015 = $562.50'), 'Alternative ratio check (4:3)');
+
+    // ZH verification
+    assert.ok(zhP2DHtml.includes('切勿将银行积分价值与合作伙伴积分价值混为一谈'), 'ZH must separate bank and partner point valuations');
+    assert.ok(zhP2DHtml.includes('步骤一：积分转入兑换'), 'ZH Step 1');
+    assert.ok(zhP2DHtml.includes('50,000 Chase 积分 × 1.0（演示比例）= 50,000 凯悦 Hyatt 积分'), 'ZH Step 1 formula');
+    assert.ok(zhP2DHtml.includes('步骤二：按伙伴积分价值计算旅行价值'), 'ZH Step 2');
+    assert.ok(zhP2DHtml.includes('50,000 凯悦积分 × (1.5¢ ÷ 100) = $750'), 'ZH Step 2 formula');
+    assert.ok(zhP2DHtml.includes('37,500 × $0.015 = $562.50'), 'ZH alternative ratio check');
+  });
+
+  await t.test('2. Preset buttons cover search intent queries: 1,000, 5,000, 10,000, 25,000, 30,000, 50,000, 100,000', () => {
+    const enDom = new JSDOM(enP2DHtml);
+    const zhDom = new JSDOM(zhP2DHtml);
+    const expectedPoints = ['1000', '5000', '10000', '25000', '30000', '50000', '100000'];
+
+    const enPresetPts = Array.from(enDom.window.document.querySelectorAll('.btn-balance-preset')).map(b => b.getAttribute('data-points'));
+    const zhPresetPts = Array.from(zhDom.window.document.querySelectorAll('.btn-balance-preset')).map(b => b.getAttribute('data-points'));
+
+    assert.deepStrictEqual(enPresetPts, expectedPoints, 'EN preset buttons must include all 7 target query points');
+    assert.deepStrictEqual(zhPresetPts, expectedPoints, 'ZH preset buttons must include all 7 target query points');
+  });
+
+  await t.test('3. Balance reference table covers 1,000, 5,000, 25,000, 30,000, etc. with exact recalculable numbers', () => {
+    const enDom = new JSDOM(enP2DHtml);
+    const rows = Array.from(enDom.window.document.querySelectorAll('table.responsive-table tbody tr'));
+    
+    // Find rows
+    const row1k = rows.find(r => r.children[0].textContent.includes('1,000'));
+    const row5k = rows.find(r => r.children[0].textContent.includes('5,000'));
+    const row25k = rows.find(r => r.children[0].textContent.includes('25,000'));
+    const row30k = rows.find(r => r.children[0].textContent.includes('30,000'));
+
+    assert.ok(row1k, '1,000 miles row must exist');
+    assert.strictEqual(row1k.children[1].textContent.trim(), '$6');   // 1000 * 0.006
+    assert.strictEqual(row1k.children[2].textContent.trim(), '$12');  // 1000 * 0.012
+    assert.strictEqual(row1k.children[3].textContent.trim(), '$15');  // 1000 * 0.015
+    assert.strictEqual(row1k.children[4].textContent.trim(), '$20');  // 1000 * 0.020
+
+    assert.ok(row5k, '5,000 miles row must exist');
+    assert.strictEqual(row5k.children[1].textContent.trim(), '$30');
+    assert.strictEqual(row5k.children[2].textContent.trim(), '$60');
+    assert.strictEqual(row5k.children[3].textContent.trim(), '$75');
+    assert.strictEqual(row5k.children[4].textContent.trim(), '$100');
+
+    assert.ok(row25k, '25,000 miles row must exist');
+    assert.strictEqual(row25k.children[1].textContent.trim(), '$150');
+    assert.strictEqual(row25k.children[2].textContent.trim(), '$300');
+    assert.strictEqual(row25k.children[3].textContent.trim(), '$375');
+    assert.strictEqual(row25k.children[4].textContent.trim(), '$500');
+
+    assert.ok(row30k, '30,000 miles row must exist');
+    assert.strictEqual(row30k.children[1].textContent.trim(), '$180');
+    assert.strictEqual(row30k.children[2].textContent.trim(), '$360');
+    assert.strictEqual(row30k.children[3].textContent.trim(), '$450');
+    assert.strictEqual(row30k.children[4].textContent.trim(), '$600');
+  });
+
+  await t.test('4. Disclaimers and labels: Editable demo values and estimated travel value naming', () => {
+    assert.ok(enP2DHtml.includes('Estimated Travel Value'), 'EN ticket key must be Estimated Travel Value');
+    assert.ok(zhP2DHtml.includes('预估旅行折合价值'), 'ZH ticket key must be 预估旅行折合价值');
+    assert.ok(enP2DHtml.includes('Custom value per mile (always editable)'), 'EN custom option text');
+    assert.ok(zhP2DHtml.includes('自定义单点价值（随时可直接输入修改）'), 'ZH custom option text');
+    assert.ok(enP2DHtml.includes('Default 150,000 miles is an editable example'), 'EN default input labeled as editable example');
+    assert.ok(zhP2DHtml.includes('默认 150,000 为可修改的演示数值'), 'ZH default input labeled as editable example');
+  });
+
+  await t.test('5. Dynamic browser-like execution of preset buttons and edge inputs', () => {
+    const dom = new JSDOM(enP2DHtml, { runScripts: 'dangerously', resources: 'usable' });
+    const doc = dom.window.document;
+    const $ = id => doc.getElementById(id);
+
+    // Initial check (150,000 @ 1.5 = $2,250)
+    assert.strictEqual($('dollarValue').textContent, '$2,250');
+
+    // Click 1,000 button
+    const btn1k = doc.querySelector('.btn-balance-preset[data-points="1000"]');
+    btn1k.click();
+    assert.strictEqual($('totalPoints').value, '1000');
+    assert.strictEqual($('dollarValue').textContent, '$15');
+    assert.strictEqual(btn1k.getAttribute('aria-pressed'), 'true');
+
+    // Click 30,000 button
+    const btn30k = doc.querySelector('.btn-balance-preset[data-points="30000"]');
+    btn30k.click();
+    assert.strictEqual($('totalPoints').value, '30000');
+    assert.strictEqual($('dollarValue').textContent, '$450');
+    assert.strictEqual(btn30k.getAttribute('aria-pressed'), 'true');
+    assert.strictEqual(btn1k.getAttribute('aria-pressed'), 'false');
+
+    // Test zero input
+    $('totalPoints').value = '0';
+    $('totalPoints').dispatchEvent(new dom.window.Event('input'));
+    assert.strictEqual($('dollarValue').textContent, '-');
+
+    // Test negative input
+    $('totalPoints').value = '-500';
+    $('totalPoints').dispatchEvent(new dom.window.Event('input'));
+    assert.strictEqual($('dollarValue').textContent, '-');
+    assert.ok($('explain').textContent.includes('cannot be negative'));
+
+    // Test custom valuation 2.5
+    $('totalPoints').value = '20000';
+    $('cppValue').value = '2.5';
+    $('cppValue').dispatchEvent(new dom.window.Event('input'));
+    assert.strictEqual($('dollarValue').textContent, '$500');
+    assert.strictEqual($('presetValuation').value, 'custom');
+  });
+});
+
+
 

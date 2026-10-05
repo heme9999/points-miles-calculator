@@ -841,8 +841,8 @@ async function runTests() {
   const p2dPresetDom = new JSDOM(p2dRes.data, { url: p2dPageUrl, runScripts: 'dangerously', resources: 'usable' });
   const p2dPresetDoc = p2dPresetDom.window.document;
   const presetBtns = p2dPresetDoc.querySelectorAll('.btn-balance-preset');
-  if (presetBtns.length !== 4) {
-    console.error('ERROR: Expected 4 balance preset buttons, got ' + presetBtns.length);
+  if (presetBtns.length < 4) {
+    console.error('ERROR: Expected at least 4 balance preset buttons, got ' + presetBtns.length);
     failures++;
   } else {
     const btn100k = Array.from(presetBtns).find(b => b.getAttribute('data-points') === '100000');
