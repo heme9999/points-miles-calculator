@@ -318,7 +318,7 @@ async function runTests() {
     console.error('ERROR: English valuation scenarios table missing');
     failures++;
   }
-  if (!cnP2D.data.includes('估值情景说明表') || !cnP2D.data.includes('低面值积分情景') || !cnP2D.data.includes('保守估值情景')) {
+  if (!cnP2D.data.includes('估值情景说明表') || !cnP2D.data.includes('低面值里程情景') || !cnP2D.data.includes('保守估值情景')) {
     console.error('ERROR: Chinese valuation scenarios table missing');
     failures++;
   }

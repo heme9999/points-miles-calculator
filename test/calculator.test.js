@@ -1230,7 +1230,7 @@ test('Miles to Dollars Calculator Targeted Regression: Chase-Hyatt 2-step formul
     assert.ok(enP2DHtml.includes('Estimated Travel Value'), 'EN ticket key must be Estimated Travel Value');
     assert.ok(zhP2DHtml.includes('预估旅行折合价值'), 'ZH ticket key must be 预估旅行折合价值');
     assert.ok(enP2DHtml.includes('Custom value per mile (always editable)'), 'EN custom option text');
-    assert.ok(zhP2DHtml.includes('自定义单点价值（随时可直接输入修改）'), 'ZH custom option text');
+    assert.ok(zhP2DHtml.includes('自定义每里估值（随时可直接输入修改）'), 'ZH custom option text');
     assert.ok(enP2DHtml.includes('Default 150,000 miles is an editable example'), 'EN default input labeled as editable example');
     assert.ok(zhP2DHtml.includes('默认 150,000 为可修改的演示数值'), 'ZH default input labeled as editable example');
   });
@@ -1275,6 +1275,56 @@ test('Miles to Dollars Calculator Targeted Regression: Chase-Hyatt 2-step formul
     $('cppValue').dispatchEvent(new dom.window.Event('input'));
     assert.strictEqual($('dollarValue').textContent, '$500');
     assert.strictEqual($('presetValuation').value, 'custom');
+  });
+
+  await t.test('6. Chinese airline miles unit consistency in component scopes', () => {
+    const zhDom = new JSDOM(zhP2DHtml, { runScripts: 'dangerously' });
+    const zhDoc = zhDom.window.document;
+
+    // A. Valuation selector unit and label
+    const hintValuation = zhDoc.getElementById('hintValuation');
+    assert.ok(hintValuation, '#hintValuation element must exist');
+    assert.strictEqual(hintValuation.textContent.trim(), '元/里');
+
+    const cppLabel = zhDoc.querySelector('label[for="cppValue"]');
+    assert.ok(cppLabel, 'label for cppValue must exist');
+    assert.ok(cppLabel.textContent.includes('自定义每里估值'));
+
+    // B. Presets options
+    const presetValuation = zhDoc.getElementById('presetValuation');
+    assert.ok(presetValuation, '#presetValuation element must exist');
+    const optionsText = Array.from(presetValuation.options).map(o => o.text).join(' ');
+    assert.ok(optionsText.includes('元/里') || optionsText.includes('美分/里'), 'Preset options should use 里 units');
+    assert.ok(!optionsText.includes('元/点'), 'Preset options must not contain 元/点');
+    assert.ok(!optionsText.includes('美分/点'), 'Preset options must not contain 美分/点');
+
+    // C. Formula box
+    const formulaExpr = zhDoc.querySelector('.formula-expression');
+    assert.ok(formulaExpr, 'formula-expression must exist');
+    assert.strictEqual(formulaExpr.textContent.trim(), '航空里程数量 × 每里估值（元/里 或 美元/里）');
+    assert.ok(!formulaExpr.textContent.includes('总点数'), 'Formula must not mention 总点数');
+    assert.ok(!formulaExpr.textContent.includes('单点价值'), 'Formula must not mention 单点价值');
+
+    // D. Dynamic result card (initial CNY: 150,000 @ 0.105 = ¥15,750)
+    const dollarValue = zhDoc.getElementById('dollarValue');
+    const explain = zhDoc.getElementById('explain');
+    assert.strictEqual(dollarValue.textContent.trim(), '¥15,750');
+    assert.ok(explain.textContent.includes('航空里程余额：150,000 里'), 'Dynamic result must state 航空里程余额 with 里');
+    assert.ok(explain.textContent.includes('0.105元/里'), 'Dynamic result must state 0.105元/里');
+    assert.ok(!explain.textContent.includes('积分/里程余额'), 'Dynamic result must not state 积分/里程余额');
+    assert.ok(!explain.textContent.includes('元/点'), 'Dynamic result must not state 元/点');
+
+    // E. Reference table headers
+    const refTableHeaders = Array.from(zhDoc.querySelectorAll('.responsive-table th')).map(th => th.textContent.trim());
+    assert.ok(refTableHeaders.some(h => h === '航空里程数量'), 'Reference table must contain 航空里程数量 header');
+    assert.ok(refTableHeaders.some(h => h.includes('元/里')), 'Reference table headers must contain 元/里');
+    assert.ok(!refTableHeaders.some(h => h.includes('积分/里程数量')), 'Reference table headers must not contain 积分/里程数量');
+
+    // F. Chase UR -> Hyatt example retains bank and hotel points terminology
+    assert.ok(zhP2DHtml.includes('50,000 Chase 积分'), 'Chase example must retain Chase 积分');
+    assert.ok(zhP2DHtml.includes('50,000 凯悦 Hyatt 积分'), 'Chase example must retain 凯悦 Hyatt 积分');
+    assert.ok(zhP2DHtml.includes('每点 1.5 美分'), 'Chase example must retain 每点 1.5 美分');
+    assert.ok(zhP2DHtml.includes('（约 0.105 元/点）'), 'Chase example must retain 元/点 for hotel point');
   });
 });
 

@@ -45,14 +45,14 @@ breadcrumbs:
   <div class="field">
     <label for="presetValuation">
       <span>选择估值情景（CPP）<button type="button" class="btn-help-toggle" id="btnHelpScenario" aria-expanded="false" aria-controls="helpScenarioGuide">我该选哪个？</button></span>
-      <span class="hint" id="hintValuation">元/点</span>
+      <span class="hint" id="hintValuation">元/里</span>
     </label>
 
     <div id="helpScenarioGuide" class="help-scenario-guide" style="display: none;">
       <h4>如何选择合适的估值情景（CPP）：</h4>
       <div class="guide-step">
         <strong>1. 有具体兑换计划：</strong>
-        <p>优先使用实际兑换项目的真实CPP：<code>实际CPP =（同一行程现金价 − 奖励票税费 − 放弃的现金回馈价值）÷ 所需积分</code>。</p>
+        <p>优先使用实际兑换项目的真实CPP：<code>实际CPP =（同一行程现金价 − 奖励票税费 − 放弃的现金回馈价值）÷ 所需里程</code>。</p>
         <div class="guide-actions">
           <a href="/calculators/cents-per-point/" class="btn-link-action">使用CPP计算器计算 →</a>
           <a href="/calculators/points-vs-cash/" class="btn-link-action">比较现金与积分 →</a>
@@ -64,22 +64,22 @@ breadcrumbs:
       </div>
       <div class="guide-step">
         <strong>3. 没有具体兑换或历史记录：</strong>
-        <p>先使用保守估值情景测算底线，再切换其他情景观察区间。请注意：0.6 不是所有酒店积分的价值；1.5 不是所有航空里程的价值；2.0 也非保证可实现的收益；各计划的航线、舱位、税费与库存都会显著影响实际结果。</p>
+        <p>先使用保守估值情景测算底线，再切换其他情景观察区间。请注意：0.6 不是所有常客积分的价值；1.5 不是所有航空里程的价值；2.0 也非保证可实现的收益；各计划的航线、舱位、税费与库存都会显著影响实际结果。</p>
       </div>
     </div>
 
     <select id="presetValuation" aria-describedby="hintValuation unitValuation">
-      <option value="custom">自定义单点价值（随时可直接输入修改）</option>
-      <option value="0.6">低面值积分情景：0.6美分/点 (约0.042元/点)</option>
-      <option value="1.2">保守估值情景：1.2美分/点 (约0.084元/点)</option>
-      <option value="1.5" selected>中性航空里程演示情景：1.5美分/点 (约0.105元/点)</option>
-      <option value="2.0">较高价值兑换情景：2.0美分/点 (约0.140元/点)</option>
+      <option value="custom">自定义每里估值（随时可直接输入修改）</option>
+      <option value="0.6">低面值里程情景：0.6美分/里 (约0.042元/里)</option>
+      <option value="1.2">保守估值情景：1.2美分/里 (约0.084元/里)</option>
+      <option value="1.5" selected>中性航空里程演示情景：1.5美分/里 (约0.105元/里)</option>
+      <option value="2.0">较高价值兑换情景：2.0美分/里 (约0.140元/里)</option>
     </select>
     <div style="margin-top: 10px;">
-      <label for="cppValue" style="font-size: 0.85rem; color: #475569; font-weight: 500; display: block; margin-bottom: 4px;">自定义单点价值：</label>
+      <label for="cppValue" style="font-size: 0.85rem; color: #475569; font-weight: 500; display: block; margin-bottom: 4px;">自定义每里估值：</label>
       <input type="number" id="cppValue" value="0.105" min="0.001" step="0.001" inputmode="decimal" aria-describedby="hintValuation unitValuation">
     </div>
-    <div class="unit" id="unitValuation">这些CPP仅用于比较不同估值情景，不是官方兑换比例、实时估值或保证价值。默认 1.5 美分（约 0.105 元）为可修改的演示估值，不是官方兑换比例、实时牌价或提现保证。最准确的估值应依据你打算兑换的真实机票或酒店行程。</div>
+    <div class="unit" id="unitValuation">这些CPP仅用于比较不同估值情景，不是官方兑换比例、实时估值或保证价值。默认 1.5 美分（约 0.105 元）为可修改的演示估值，不是官方兑换比例、实时牌价或提现保证。最准确的估值应依据你打算兑换的真实机票行程。</div>
   </div>
 </div>
 
@@ -112,15 +112,15 @@ breadcrumbs:
 </div>
 
 <div class="callout" style="margin-top: 24px;">
-  <strong>核心考量：</strong> 长期持有积分可能因计划贬值而降低购买力。较稳妥的做法是围绕明确兑换计划积累积分，避免长期持有不必要的大额余额。积分不具备法定现金兜底，不能视作银行存款。
+  <strong>核心考量：</strong> 长期持有里程可能因计划贬值而降低购买力。较稳妥的做法是围绕明确兑换计划积累里程，避免长期持有不必要的大额余额。航空里程不具备法定现金兜底，不能视作银行存款。
 </div>
 
 <div class="article-content prose" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line);">
   <h2>折算计算公式 (Conversion Formula)</h2>
-  <p>将积分或里程折算为估计旅行价值，采用基础乘法公式：</p>
+  <p>将航空里程折算为估计旅行价值，采用基础乘法公式：</p>
   <div class="formula-box">
     <span class="formula-name">预估旅行价值 =</span>
-    <span class="formula-expression">总点数/里程 × 单点价值（元/点 或 美元/点）</span>
+    <span class="formula-expression">航空里程数量 × 每里估值（元/里 或 美元/里）</span>
   </div>
 
   <h3>测算示例</h3>
@@ -168,26 +168,26 @@ breadcrumbs:
       </thead>
       <tbody>
         <tr>
-          <td style="font-weight: 600; color: #0f172a;">低面值积分情景</td>
-          <td>0.6¢ / 点</td>
-          <td>测试低面值常客积分结果</td>
-          <td>不代表所有酒店积分均为此价值</td>
+          <td style="font-weight: 600; color: #0f172a;">低面值里程情景</td>
+          <td>0.6¢ / 里</td>
+          <td>测试低面值常客里程结果</td>
+          <td>不代表所有航司里程均为此价值</td>
         </tr>
         <tr>
           <td style="font-weight: 600; color: #0f172a;">保守估值情景</td>
-          <td>1.2¢ / 点</td>
+          <td>1.2¢ / 里</td>
           <td>无历史数据时的保守底线测算</td>
           <td>不代表官方保底回收价格</td>
         </tr>
         <tr>
           <td style="font-weight: 600; color: #0f172a;">中性航空里程演示情景</td>
-          <td>1.5¢ / 点</td>
+          <td>1.5¢ / 里</td>
           <td>普通航空里程兑换的演示情景</td>
           <td>不代表所有航司统一固定比例</td>
         </tr>
         <tr>
           <td style="font-weight: 600; color: #0f172a;">较高价值兑换情景</td>
-          <td>2.0¢ / 点</td>
+          <td>2.0¢ / 里</td>
           <td>测试两舱或甜点航线兑换潜力</td>
           <td>不保证实际必定可以兑出此价值</td>
         </tr>
@@ -195,18 +195,18 @@ breadcrumbs:
     </table>
   </div>
 
-  <h2>常见里程与积分折现参考表</h2>
+  <h2>常见航空里程折现参考表</h2>
   <p>下表整理了常见里程数量在不同情景下的参考对照金额（美元以 <code>数量 × [美分 ÷ 100]</code> 计算，人民币金额按 7.0 演示汇率换算）：</p>
   
   <div class="responsive-table-wrapper">
     <table class="responsive-table">
       <thead>
         <tr>
-          <th style="text-align: left;">积分/里程数量</th>
-          <th>@ 0.6¢ (约0.042元)</th>
-          <th>@ 1.2¢ (约0.084元)</th>
-          <th>@ 1.5¢ (约0.105元)</th>
-          <th>@ 2.0¢ (约0.140元)</th>
+          <th style="text-align: left;">航空里程数量</th>
+          <th>@ 0.6¢ (约0.042元/里)</th>
+          <th>@ 1.2¢ (约0.084元/里)</th>
+          <th>@ 1.5¢ (约0.105元/里)</th>
+          <th>@ 2.0¢ (约0.140元/里)</th>
         </tr>
       </thead>
       <tbody>
@@ -378,11 +378,11 @@ breadcrumbs:
     const currentSelected = select.value;
 
     if (currentCurrency === 'USD') {
-      select.options[0].text = 'Custom CPP';
-      select.options[1].text = 'Low-value points scenario: 0.6¢ per point';
-      select.options[2].text = 'Conservative scenario: 1.2¢ per point';
-      select.options[3].text = 'Typical airline-mile scenario: 1.5¢ per point';
-      select.options[4].text = 'Higher-value redemption scenario: 2.0¢ per point';
+      select.options[0].text = 'Custom value per mile';
+      select.options[1].text = 'Low-value miles scenario: 0.6¢ per mile';
+      select.options[2].text = 'Conservative scenario: 1.2¢ per mile';
+      select.options[3].text = 'Typical airline-mile scenario: 1.5¢ per mile';
+      select.options[4].text = 'Higher-value redemption scenario: 2.0¢ per mile';
       
       select.options[1].value = '0.6';
       select.options[2].value = '1.2';
@@ -394,11 +394,11 @@ breadcrumbs:
       const cny15 = (1.5 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
       const cny20 = (2.0 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
 
-      select.options[0].text = '自定义CPP';
-      select.options[1].text = `低面值积分情景：0.6美分/点 (约${cny06}元/点)`;
-      select.options[2].text = `保守估值情景：1.2美分/点 (约${cny12}元/点)`;
-      select.options[3].text = `中性航空里程情景：1.5美分/点 (约${cny15}元/点)`;
-      select.options[4].text = `较高价值兑换情景：2.0美分/点 (约${cny20}元/点)`;
+      select.options[0].text = '自定义每里估值';
+      select.options[1].text = `低面值里程情景：0.6美分/里 (约${cny06}元/里)`;
+      select.options[2].text = `保守估值情景：1.2美分/里 (约${cny12}元/里)`;
+      select.options[3].text = `中性航空里程情景：1.5美分/里 (约${cny15}元/里)`;
+      select.options[4].text = `较高价值兑换情景：2.0美分/里 (约${cny20}元/里)`;
 
       select.options[1].value = '0.6';
       select.options[2].value = '1.2';
@@ -414,13 +414,13 @@ breadcrumbs:
   const updateUnitsAndVisibility = () => {
     const fx = getActiveFx();
     if (currentCurrency === 'USD') {
-      if($('hintValuation')) $('hintValuation').textContent = '¢ / 点';
+      if($('hintValuation')) $('hintValuation').textContent = '¢ / 里';
       if($('fieldFx')) $('fieldFx').style.display = 'none';
       if($('spanFxEcho')) $('spanFxEcho').textContent = fx.toString();
       if($('spanCnyCppEcho')) $('spanCnyCppEcho').textContent = (1.5 / 100 * fx).toFixed(3);
       if($('spanEgCny')) $('spanEgCny').textContent = '¥' + (50000 * (1.5 / 100 * fx)).toLocaleString('zh-CN', {maximumFractionDigits:0});
     } else {
-      if($('hintValuation')) $('hintValuation').textContent = '元/点';
+      if($('hintValuation')) $('hintValuation').textContent = '元/里';
       if($('fieldFx')) $('fieldFx').style.display = 'block';
       if($('spanFxEcho')) $('spanFxEcho').textContent = fx.toString();
       const cnyRate = (1.5 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
@@ -532,7 +532,7 @@ breadcrumbs:
     };
 
     if (P <= 0 || V <= 0 || !$('cppValue').value) {
-      resetState(P < 0 || V < 0 ? '输入不能为负数。' : '请输入积分余额和估值。');
+      resetState(P < 0 || V < 0 ? '输入不能为负数。' : '请输入里程余额和估值。');
       return;
     }
     
@@ -540,11 +540,11 @@ breadcrumbs:
     if (currentCurrency === 'USD') {
       total = P * (V / 100);
       $('dollarValue').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits:2});
-      $('explain').textContent = `积分/里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} | 估值：${V}美分/点（演示假设）| 预估折合旅行价值：$${total.toLocaleString('en-US', {maximumFractionDigits:2})}。该数值为测算购买力演示，非官方保底提现金额。`;
+      $('explain').textContent = `航空里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里 | 估值：${V}美分/里（演示假设）| 预估折合旅行价值：$${total.toLocaleString('en-US', {maximumFractionDigits:2})}。该数值为测算购买力演示，非官方保底提现金额。`;
     } else {
       total = P * V;
       $('dollarValue').textContent = '¥' + total.toLocaleString('zh-CN', {maximumFractionDigits:0});
-      $('explain').textContent = `积分/里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} | 估值：${V}元/点（演示假设）| 预估折合旅行价值：¥${total.toLocaleString('zh-CN', {maximumFractionDigits:0})}。该数值为测算购买力演示，非官方保底提现金额。`;
+      $('explain').textContent = `航空里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里 | 估值：${V}元/里（演示假设）| 预估折合旅行价值：¥${total.toLocaleString('zh-CN', {maximumFractionDigits:0})}。该数值为测算购买力演示，非官方保底提现金额。`;
     }
     $('dollarValue').classList.add('win');
   }
