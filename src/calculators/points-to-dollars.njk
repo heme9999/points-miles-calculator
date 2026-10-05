@@ -13,27 +13,15 @@ breadcrumbs:
   - name: 积分换算现金价值计算器
 ---
 <h1>积分换算现金价值计算器</h1>
-<p class="sub">别把积分当欢乐豆，它们代表真实的消费力。选择估值情景或输入自定义单点价值（CPP），测算手头积分与里程的等价旅行估值。</p>
+<p class="sub" style="margin-top: 8px; margin-bottom: 16px;">将航空里程折算为预估旅行价值。输入里程余额与每里估值，测算免票兑换购买力。</p>
 
-<div class="direct-answer" id="directAnswerBox">
-  <strong>直接折现规则：</strong> 按演示中性航空里程情景 1.5 美分/点测算；人民币金额采用页面显示的汇率假设（1.5美分 = 0.015美元；0.015美元 × <span id="spanFxEcho">7.0</span> = <span id="spanCnyCppEcho">0.105</span>元/点）。例如：持有 50,000 里程约折合 <span id="spanEgCny">¥5,250</span>（或 $750 旅行价值）。该数值仅用于演示建模，不是官方实时价值或提现兑现承诺。
+<div class="direct-answer" id="directAnswerBox" style="margin-top: 0; margin-bottom: 20px; padding: 14px 16px;">
+  <strong>直接折现规则：</strong> 输入任意航空里程数量即可即时测算预估旅行价值。按演示中性航空里程情景 1.5 美分/里测算（人民币按页面汇率假设换算）。例如：持有 50,000 里程约折合 <span id="spanEgCny">¥5,250</span>（或 $750 旅行价值）。该数值仅用于教育演示建模，非官方实时兑换报价或提现兑现承诺。
 </div>
 
-<div class="currency-selector" style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-  <button id="btnShare" class="btn-share">分享此计算</button>
-  <div>
-    <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
-    <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
-      <option value="CNY" selected>人民币（CNY ¥）</option>
-      <option value="USD">美元（USD $）</option>
-    </select>
-  </div>
-</div>
-<div id="toast" class="toast">已复制分享链接！</div>
-
-<div class="panel">
+<div class="panel" style="margin-top: 0;">
   <div class="field">
-    <label for="totalPoints">你账户里的总积分/里程（演示输入）<span class="hint" id="hintTotal">点/里程</span></label>
+    <label for="totalPoints">航空里程数量（演示输入）<span class="hint" id="hintTotal">里程</span></label>
     <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal unitTotal">
     <div class="unit" id="unitTotal" style="margin-bottom: 8px;">默认 150,000 为可修改的演示数值，非自动读取真实账户余额。可直接手动输入或点击下方快速填入：</div>
     <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
@@ -95,7 +83,7 @@ breadcrumbs:
   </div>
 </div>
 
-<div class="ticket" aria-live="polite">
+<div class="ticket" aria-live="polite" style="margin-top: 24px;">
   <div class="main">
     <div class="compare">
       <div class="item">
@@ -106,6 +94,18 @@ breadcrumbs:
     <div class="note" id="explain"></div>
   </div>
 </div>
+
+<div class="currency-selector" style="margin-top: 16px; margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+  <button id="btnShare" class="btn-share">分享此计算</button>
+  <div>
+    <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
+    <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <option value="CNY" selected>人民币（CNY ¥）</option>
+      <option value="USD">美元（USD $）</option>
+    </select>
+  </div>
+</div>
+<div id="toast" class="toast">已复制分享链接！</div>
 
 <div class="callout" style="margin-top: 20px;">
   <strong>需要评估具体航司里程？</strong> 如果您持有美联航常旅客里程，推荐使用专用的 <a href="/calculators/united-miles-value-calculator/">美联航里程价值计算器</a>，按动态定价情景和典型航线测算实际等价折现。

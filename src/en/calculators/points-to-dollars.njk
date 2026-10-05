@@ -14,16 +14,13 @@ breadcrumbs:
   - name: Miles to Dollars Calculator
 ---
 <h1>Miles to Dollars Calculator</h1>
-<p class="sub">Convert your airline miles balance and credit card rewards into an estimated travel value. Select a valuation scenario or input a custom value per mile to model portfolio purchasing power.</p>
+<p class="sub" style="margin-top: 8px; margin-bottom: 16px;">Convert airline miles into an estimated travel value. Enter your mileage balance and value per mile to model redemption purchasing power.</p>
 
-<div class="direct-answer">
+<div class="direct-answer" style="margin-top: 0; margin-bottom: 20px; padding: 14px 16px;">
   Enter any mileage balance to instantly estimate its travel value—no signup required. Results are planning estimates, not guaranteed cashout values.
 </div>
 
-<div class="currency-selector" style="margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
-<div id="toast" class="toast">Link copied to clipboard!</div>
-
-<div class="panel">
+<div class="panel" style="margin-top: 0;">
   <div class="field">
     <label for="totalPoints">Airline miles balance (demo input)<span class="hint" id="hintTotal">Miles</span></label>
     <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal unitTotal">
@@ -81,7 +78,7 @@ breadcrumbs:
   </div>
 </div>
 
-<div class="ticket" aria-live="polite">
+<div class="ticket" aria-live="polite" style="margin-top: 24px;">
   <div class="main">
     <div class="compare">
       <div class="item">
@@ -92,6 +89,9 @@ breadcrumbs:
     <div class="note" id="explain"></div>
   </div>
 </div>
+
+<div class="currency-selector" style="margin-top: 16px; margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
+<div id="toast" class="toast">Link copied to clipboard!</div>
 
 <div class="callout" style="margin-top: 24px;">
   <strong>Calculating Airline Miles for a Specific Carrier?</strong> If you hold a United MileagePlus balance, use our dedicated <a href="/en/calculators/united-miles-value-calculator/">United Miles Value Calculator</a> to explore dynamic pricing scenarios, sweet spots, and domestic vs long-haul award values.
