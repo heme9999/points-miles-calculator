@@ -1328,5 +1328,79 @@ test('Miles to Dollars Calculator Targeted Regression: Chase-Hyatt 2-step formul
   });
 });
 
+test('Blog, Contact, About, and Fact-Check Regression Suite', async (t) => {
+  const fs = require('fs');
+  const path = require('path');
+  const { JSDOM } = require('jsdom');
 
+  await t.test('1. Blog reading links must not contain broken double slash or missing slug', () => {
+    const blogFiles = [
+      '../_site/blog/yazhouwanlitong-licheng-jiazhi/index.html',
+      '../_site/blog/xinyongka-jifen-zhuan-yazhouwanlitong/index.html',
+      '../_site/blog/zhaohang-jifen-huan-licheng/index.html',
+      '../_site/en/blog/yazhouwanlitong-licheng-jiazhi/index.html',
+      '../_site/en/blog/xinyongka-jifen-zhuan-yazhouwanlitong/index.html',
+      '../_site/en/blog/zhaohang-jifen-huan-licheng/index.html'
+    ];
 
+    for (const relPath of blogFiles) {
+      const fullPath = path.resolve(__dirname, relPath);
+      assert.ok(fs.existsSync(fullPath), `File ${relPath} must exist`);
+      const html = fs.readFileSync(fullPath, 'utf8');
+      const dom = new JSDOM(html);
+      const readsLinks = Array.from(dom.window.document.querySelectorAll('.reads a.item')).map(a => a.getAttribute('href'));
+      
+      assert.ok(readsLinks.length > 0, `File ${relPath} must have reading links`);
+      for (const href of readsLinks) {
+        assert.ok(!href.includes('//') || href.startsWith('http'), `Href in ${relPath} must not contain empty slug / double slash: ${href}`);
+        assert.notStrictEqual(href, '/blog/', `Href in ${relPath} must point to a specific article, not index: ${href}`);
+        assert.notStrictEqual(href, '/en/blog/', `Href in ${relPath} must point to a specific article, not index: ${href}`);
+      }
+    }
+  });
+
+  await t.test('2. /blog/ and /en/blog/ index pages exist and are included in sitemap.xml', () => {
+    const zhBlogIndex = path.resolve(__dirname, '../_site/blog/index.html');
+    const enBlogIndex = path.resolve(__dirname, '../_site/en/blog/index.html');
+    assert.ok(fs.existsSync(zhBlogIndex), '/blog/index.html must exist');
+    assert.ok(fs.existsSync(enBlogIndex), '/en/blog/index.html must exist');
+
+    const sitemapXml = fs.readFileSync(path.resolve(__dirname, '../_site/sitemap.xml'), 'utf8');
+    assert.ok(sitemapXml.includes('https://points-miles-calculator.pages.dev/blog/'), 'Sitemap must contain /blog/');
+    assert.ok(sitemapXml.includes('https://points-miles-calculator.pages.dev/en/blog/'), 'Sitemap must contain /en/blog/');
+  });
+
+  await t.test('3. Blog articles contain valid datePublished and dateModified in Article JSON-LD', () => {
+    const articleHtml = fs.readFileSync(path.resolve(__dirname, '../_site/blog/yazhouwanlitong-licheng-jiazhi/index.html'), 'utf8');
+    const dom = new JSDOM(articleHtml);
+    const jsonLdScripts = Array.from(dom.window.document.querySelectorAll('script[type="application/ld+json"]'));
+    let articleData = null;
+    for (const script of jsonLdScripts) {
+      const json = JSON.parse(script.textContent);
+      if (json['@graph']) {
+        articleData = json['@graph'].find(x => x['@type'] === 'Article');
+      }
+    }
+    assert.ok(articleData, 'Article JSON-LD must exist');
+    assert.ok(articleData.datePublished, 'datePublished must exist');
+    assert.ok(articleData.dateModified, 'dateModified must exist');
+  });
+
+  await t.test('4. Contact page provides valid email and About page <h2>品牌说明</h2> is inside .article-content', () => {
+    const contactHtml = fs.readFileSync(path.resolve(__dirname, '../_site/contact/index.html'), 'utf8');
+    assert.ok(contactHtml.includes('hello@points-miles-calculator.pages.dev'), 'Contact page must include real contact email');
+    assert.ok(!contactHtml.includes('通过下方表单'), 'Contact page must not mention non-existent form');
+
+    const aboutHtml = fs.readFileSync(path.resolve(__dirname, '../_site/about/index.html'), 'utf8');
+    const dom = new JSDOM(aboutHtml);
+    const brandH2 = Array.from(dom.window.document.querySelectorAll('.article-content h2')).find(h => h.textContent.includes('品牌说明'));
+    assert.ok(brandH2, '品牌说明 <h2> must be inside .article-content container');
+  });
+
+  await t.test('5. Chinese homepage fact-checked date is synchronized with English homepage (2026年9月 / September 2026)', () => {
+    const zhHomeHtml = fs.readFileSync(path.resolve(__dirname, '../_site/index.html'), 'utf8');
+    const enHomeHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/index.html'), 'utf8');
+    assert.ok(zhHomeHtml.includes('最后事实审核：2026年9月'), 'Chinese home must be fact-checked 2026年9月');
+    assert.ok(enHomeHtml.includes('September 2026'), 'English home must be fact-checked September 2026');
+  });
+});
