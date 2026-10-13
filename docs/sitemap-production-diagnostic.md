@@ -1,6 +1,6 @@
 # Sitemap Production Diagnostic Report
 
-**Date:** 2026-10-13T05:15:35.715Z
+**Date:** 2026-10-13T05:16:37.423Z
 **Target:** https://points-miles-calculator.pages.dev
 
 ## 1. Five-Category Evidence Classification
@@ -53,9 +53,9 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 - **HTTP Status:** 200
 - **Final URL:** https://points-miles-calculator.pages.dev/sitemap.xml
 - **Content-Type:** application/xml
-- **Content-Length:** 12317
+- **Content-Length:** 12521
 - **Cache-Control:** public, max-age=0, must-revalidate
-- **ETag:** "b6c74b683c2e3f7312a429ab656a5c42"
+- **ETag:** "28d1097e6fadb26c1630b5bd8f730247"
 - **Content-Encoding:** none
 - **Response First 200 Bytes:**
 ```xml
@@ -67,7 +67,7 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
   <url>
     <loc>h
 ```
-- **Complete Response SHA-256:** `8f037dbca4ef745fe82a063dd83f0c20f8cfded8da7b34cd27ca63f3950853f6`
+- **Complete Response SHA-256:** `6f4fef9a335f0b9b518a06960dc1e4dc599711bc05f6bdb30d4ac42d0bc82a55`
 - **Total `<loc>` Count:** 110 (Unique: 110)
 - **Duplicate URLs:** 0
 - **URLs with Params (?):** 0
@@ -77,9 +77,9 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 - **HTTP Status:** 200
 - **Final URL:** https://points-miles-calculator.pages.dev/sitemap.xml
 - **Content-Type:** application/xml
-- **Content-Length:** 12317
+- **Content-Length:** 12521
 - **Cache-Control:** public, max-age=0, must-revalidate
-- **ETag:** "b6c74b683c2e3f7312a429ab656a5c42"
+- **ETag:** "28d1097e6fadb26c1630b5bd8f730247"
 - **Content-Encoding:** none
 - **Response First 200 Bytes:**
 ```xml
@@ -91,7 +91,7 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
   <url>
     <loc>h
 ```
-- **Complete Response SHA-256:** `8f037dbca4ef745fe82a063dd83f0c20f8cfded8da7b34cd27ca63f3950853f6`
+- **Complete Response SHA-256:** `6f4fef9a335f0b9b518a06960dc1e4dc599711bc05f6bdb30d4ac42d0bc82a55`
 - **Total `<loc>` Count:** 110 (Unique: 110)
 - **Duplicate URLs:** 0
 - **URLs with Params (?):** 0
