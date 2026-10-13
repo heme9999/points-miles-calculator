@@ -239,14 +239,18 @@ breadcrumbs:
 
     const incBadge = preset.incrementVerified
       ? `${preset.increment.toLocaleString('en-US')} increment (Verified)`
-      : `Conservative ${preset.increment.toLocaleString('en-US')} default increment (Increment unverified in public terms)`;
+      : `Pre-filled ${preset.increment.toLocaleString('en-US')} illustrative step assumption (Increment unverified in public terms, not an officially confirmed value)`;
+
+    const partnerSourceHtml = (preset.partnerSourceUrl && preset.partnerSourceNameEn)
+      ? ` | <a href="${preset.partnerSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.partnerSourceNameEn}</a>`
+      : '';
 
     detailEl.innerHTML = `
       <div><strong>Issuing Region:</strong> ${preset.regionLabelEn} | <strong>Min &amp; Increment:</strong> ${preset.minTransfer.toLocaleString('en-US')} min transfer, ${incBadge}</div>
       <div style="margin-top:0.25rem;"><strong>Field Verification Status:</strong> ${preset.fieldStatusEn}</div>
       <div style="margin-top:0.25rem;"><strong>Card Eligibility:</strong> ${preset.eligibilityEn}</div>
-      <div style="margin-top:0.25rem;"><strong>Promotional Bonus Note:</strong> Presets define base transfer rules only; the Transfer Bonus field (currently ${hasBonus ? '+' + bonusVal + '%' : '0%'}) is a user-entered promotional assumption, not an inherent preset rule.</div>
-      <div style="margin-top:0.25rem;"><strong>Official Sources:</strong> <a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameEn}</a> | <a href="${preset.partnerSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.partnerSourceNameEn}</a> (Last verified: ${preset.lastVerified})</div>
+      <div style="margin-top:0.25rem;"><strong>Promotional Bonus Note:</strong> Presets define base transfer parameters only; the Transfer Bonus field (currently ${hasBonus ? '+' + bonusVal + '%' : '0%'}) is a user-entered promotional assumption, not an inherent preset rule.</div>
+      <div style="margin-top:0.25rem;"><strong>Official Sources:</strong> <a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameEn}</a>${partnerSourceHtml} (Last verified: ${preset.lastVerified})</div>
       <div style="margin-top:0.25rem; color:#fde047;"><strong>Reminder:</strong> Always verify the live transfer rules displayed in your rewards portal before transferring. Editing ratio, min transfer, or increment switches to Custom mode.</div>
     `;
   }

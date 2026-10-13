@@ -239,14 +239,18 @@ breadcrumbs:
 
     const incBadge = preset.incrementVerified
       ? `按 ${preset.increment.toLocaleString('en-US')} 分步长整数倍（已核实）`
-      : `默认按 ${preset.increment.toLocaleString('en-US')} 分保守步长（公开条款未单独确认步长，标记为“未知/待核实”）`;
+      : `预填 ${preset.increment.toLocaleString('en-US')} 分演示假设步长（公开条款未确认步长，标记为“未知/待核实”，非官方确认值）`;
+
+    const partnerSourceHtml = (preset.partnerSourceUrl && preset.partnerSourceNameZh)
+      ? ` ｜ <a href="${preset.partnerSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.partnerSourceNameZh}</a>`
+      : '';
 
     detailEl.innerHTML = `
       <div><strong>发行国家/地区：</strong>${preset.regionLabelZh} ｜ <strong>起转与步长：</strong>最低 ${preset.minTransfer.toLocaleString('en-US')} 分起转，${incBadge}</div>
       <div style="margin-top:0.25rem;"><strong>分项核验状态：</strong>${preset.fieldStatusZh}</div>
       <div style="margin-top:0.25rem;"><strong>适用范围：</strong>${preset.eligibilityZh}</div>
-      <div style="margin-top:0.25rem;"><strong>促销加赠说明：</strong>预设仅包含基础转点规则；“转点加赠比例”（当前：${hasBonus ? '+' + bonusVal + '%' : '0%'}）为您额外填写的促销假设，不属于预设固有规则。</div>
-      <div style="margin-top:0.25rem;"><strong>规则来源：</strong><a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameZh}</a> ｜ <a href="${preset.partnerSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.partnerSourceNameZh}</a>（核验日期：${preset.lastVerified}）</div>
+      <div style="margin-top:0.25rem;"><strong>促销加赠说明：</strong>预设仅包含基础转点参数；“转点加赠比例”（当前：${hasBonus ? '+' + bonusVal + '%' : '0%'}）为您额外填写的促销假设，不属于预设固有规则。</div>
+      <div style="margin-top:0.25rem;"><strong>规则来源：</strong><a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameZh}</a>${partnerSourceHtml}（核验日期：${preset.lastVerified}）</div>
       <div style="margin-top:0.25rem; color:#fde047;"><strong>重要提示：</strong>转点前请以奖励后台实时显示规则为准。修改比例、起转量或步长将自动切换为“自定义”状态。</div>
     `;
   }

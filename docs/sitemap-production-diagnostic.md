@@ -1,6 +1,6 @@
 # Sitemap Production Diagnostic Report
 
-**Date:** 2026-10-13T06:14:27.334Z
+**Date:** 2026-10-13T06:55:32.936Z
 **Target:** https://points-miles-calculator.pages.dev
 
 ## 1. Five-Category Evidence Classification
@@ -106,12 +106,13 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 - **Added in Local Build (0):** None
 - **Removed in Local Build (0):** None
 
-## 4. Diagnostic Status Matrix (Assertion-Driven)
+## 4. Diagnostic Status Matrix (Assertion-Driven, Scope-Separated)
 
 | Dimension | Status | Evidence Basis |
 | :--- | :--- | :--- |
-| **Technical Accessibility** | **PASS** | `/sitemap.xml` and `/robots.txt` return HTTP 200, well-formed XML (<urlset>), 110 unique URLs, 0 duplicates, and 0 origin mismatches; Verified 0 canonical/hreflang errors across 110 pages in local build. |
-| **Canonical / Hreflang Audit** | **PASS** | Verified 0 canonical/hreflang errors across 110 pages in local build |
+| **Production Sitemap & Robots Accessibility** | **PASS** | `/sitemap.xml` and `/robots.txt` return HTTP 200, well-formed XML (<urlset>), 110 unique URLs, 0 duplicates, and 0 origin mismatches; Production Canonical/Hreflang: NOT TESTED. |
+| **Production Canonical / Hreflang Audit** | **NOT TESTED** | NOT TESTED on live production by this script (this probe only fetches /robots.txt and /sitemap.xml, not all 110 live HTML pages). |
+| **Local Build (`_site`) Canonical / Hreflang Audit** | **PASS (LOCAL BUILD ONLY)** | Verified 0 canonical/hreflang errors across 110 pages in local _site build (scope: local_build only; does not represent live production page crawl) |
 | **Sitemap Processed (GSC)** | **UNAVAILABLE** | Cannot be verified via static HTTP probe; must be checked in GSC Sitemaps UI (last observed UI state: `Couldn't fetch`). |
 | **Cloudflare Historical Logs** | **UNAVAILABLE** | Cloudflare Pages free tier does not retain historical static request logs for past Googlebot fetches. |
 | **Google Indexed** | **NOT TESTED** | Sitemap presence does not equal indexation; check GSC Pages / URL Inspection for individual URL indexing status. |

@@ -5,6 +5,8 @@ const path = require('path');
 const { JSDOM } = require('jsdom');
 
 const PROD_URL = 'https://points-miles-calculator.pages.dev';
+const AUDIT_REPORT_SCHEMA_VERSION = '1.0';
+const DEFAULT_MAX_REPORT_AGE_MS = 60 * 60 * 1000; // 1 hour
 
 const CHROME_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 const SIMULATED_GOOGLEBOT_UA = 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
@@ -112,86 +114,243 @@ function analyzeSitemap(dataInput, targetOrigin = PROD_URL) {
   };
 }
 
-function verifyCanonicalAndHreflang({ auditReportData = null, auditReportPath = null, siteDir = null, targetOrigin = PROD_URL } = {}) {
-  // 1. If explicit auditReportData object is passed (e.g. in tests or same-batch runner)
-  let report = auditReportData;
-  if (!report && auditReportPath && fs.existsSync(auditReportPath)) {
+/**
+ * Strictly validates an imported canonical/hreflang audit report or executes a local build check when explicitly requested.
+ * Never defaults missing/invalid fields to 0 errors, and never conflates local_build checks with live production verification.
+ */
+function verifyCanonicalAndHreflang({
+  auditReportData = undefined,
+  auditReportPath = null,
+  expectedUrls = null,
+  expectedCommitSha = null,
+  expectedScope = 'production',
+  targetOrigin = PROD_URL,
+  maxAgeMs = DEFAULT_MAX_REPORT_AGE_MS,
+  nowMs = Date.now(),
+  siteDir = null
+} = {}) {
+  const invalidEvidence = (reason, scope = 'unknown') => ({
+    status: 'INVALID EVIDENCE',
+    scope,
+    tested: false,
+    validEvidence: false,
+    errorCount: null,
+    exitCode: 1,
+    detail: `INVALID EVIDENCE: ${reason}`
+  });
+
+  // Branch 1: Validating an imported report (via auditReportData or auditReportPath)
+  const hasReportInput = auditReportData !== undefined || (auditReportPath !== null && auditReportPath !== undefined);
+  if (hasReportInput) {
+    let report = auditReportData;
+    if (report === undefined && auditReportPath) {
+      if (typeof auditReportPath !== 'string' || !fs.existsSync(auditReportPath)) {
+        return invalidEvidence(`Audit report file not found at ${auditReportPath}`);
+      }
+      try {
+        report = JSON.parse(fs.readFileSync(auditReportPath, 'utf8'));
+      } catch (err) {
+        return invalidEvidence(`Failed to parse audit report JSON: ${err.message}`);
+      }
+    }
+
+    if (!report || typeof report !== 'object' || Array.isArray(report)) {
+      return invalidEvidence('Audit report must be a non-null plain object');
+    }
+
+    // 1. Schema version check
+    if (report.schemaVersion !== AUDIT_REPORT_SCHEMA_VERSION) {
+      return invalidEvidence(`Missing or unsupported schemaVersion (expected "${AUDIT_REPORT_SCHEMA_VERSION}", got ${JSON.stringify(report.schemaVersion)})`);
+    }
+
+    // 2. Scope check (strict separation between local_build and production)
+    if (report.scope !== 'production' && report.scope !== 'local_build') {
+      return invalidEvidence(`Invalid or missing report scope (expected "production" or "local_build", got ${JSON.stringify(report.scope)})`);
+    }
+    if (expectedScope && report.scope !== expectedScope) {
+      return invalidEvidence(`Scope mismatch: report scope "${report.scope}" cannot satisfy expected "${expectedScope}" verification`, report.scope);
+    }
+
+    // 3. Target origin check
+    if (typeof report.targetOrigin !== 'string' || report.targetOrigin.trim() === '') {
+      return invalidEvidence('Missing or non-string targetOrigin in audit report', report.scope);
+    }
     try {
-      report = JSON.parse(fs.readFileSync(auditReportPath, 'utf8'));
-    } catch (err) {
-      return {
-        status: 'FAIL',
-        tested: true,
-        errorCount: 1,
-        detail: `Failed to parse ${auditReportPath}: ${err.message}`
-      };
-    }
-  }
-
-  if (report) {
-    if (report.targetOrigin && report.targetOrigin !== targetOrigin) {
-      return {
-        status: 'NOT TESTED',
-        tested: false,
-        errorCount: null,
-        detail: `audit_report.json targetOrigin (${report.targetOrigin}) does not match ${targetOrigin}`
-      };
-    }
-    const canonicalErrs = Array.isArray(report.canonicalErrors) ? report.canonicalErrors.length : Number(report.canonicalErrors || 0);
-    const hreflangErrs = Array.isArray(report.hreflangErrors) ? report.hreflangErrors.length : Number(report.hreflangErrors || 0);
-    const totalChecked = Number(report.totalChecked || 0);
-
-    if (totalChecked <= 0) {
-      return {
-        status: 'NOT TESTED',
-        tested: false,
-        errorCount: null,
-        detail: 'Canonical/Hreflang check did not inspect any pages (0 pages checked)'
-      };
+      const parsedTarget = new URL(report.targetOrigin);
+      if (parsedTarget.origin !== targetOrigin || report.targetOrigin !== targetOrigin) {
+        return invalidEvidence(`targetOrigin mismatch: report "${report.targetOrigin}" !== expected "${targetOrigin}"`, report.scope);
+      }
+    } catch (e) {
+      return invalidEvidence(`Malformed targetOrigin URL: "${report.targetOrigin}"`, report.scope);
     }
 
-    const totalErrors = canonicalErrs + hreflangErrs;
+    // 4. Commit / build SHA check against expectedCommitSha
+    const shaRegex = /^[0-9a-f]{40}$/i;
+    if (typeof report.commitSha !== 'string' || !shaRegex.test(report.commitSha)) {
+      return invalidEvidence(`Missing or invalid 40-char commitSha in report (got ${JSON.stringify(report.commitSha)})`, report.scope);
+    }
+    if (typeof expectedCommitSha !== 'string' || !shaRegex.test(expectedCommitSha)) {
+      return invalidEvidence('Caller must provide a valid 40-char expectedCommitSha to verify report version consistency', report.scope);
+    }
+    if (report.commitSha.toLowerCase() !== expectedCommitSha.toLowerCase()) {
+      return invalidEvidence(`Commit SHA mismatch: report commit ${report.commitSha} !== expected commit ${expectedCommitSha}`, report.scope);
+    }
+
+    // 5. Timestamp & freshness check
+    if (typeof report.generatedAt !== 'string' || report.generatedAt.trim() === '') {
+      return invalidEvidence('Missing or non-string generatedAt timestamp in audit report', report.scope);
+    }
+    const parsedTime = Date.parse(report.generatedAt);
+    if (!Number.isFinite(parsedTime)) {
+      return invalidEvidence(`Invalid generatedAt ISO timestamp: "${report.generatedAt}"`, report.scope);
+    }
+    if (typeof maxAgeMs !== 'number' || !Number.isFinite(maxAgeMs) || maxAgeMs <= 0) {
+      return invalidEvidence(`Invalid maxAgeMs parameter: ${maxAgeMs}`, report.scope);
+    }
+    const ageMs = nowMs - parsedTime;
+    if (ageMs < -60000) {
+      return invalidEvidence(`Report generatedAt timestamp is in the future (${report.generatedAt})`, report.scope);
+    }
+    if (ageMs > maxAgeMs) {
+      return invalidEvidence(`Stale audit report: age ${Math.round(ageMs / 1000)}s exceeds maxAgeMs ${Math.round(maxAgeMs / 1000)}s`, report.scope);
+    }
+
+    // 6. totalChecked & checkedUrls strict type and set equality check
+    if (typeof report.totalChecked !== 'number' || !Number.isInteger(report.totalChecked) || report.totalChecked <= 0) {
+      return invalidEvidence(`Invalid totalChecked: must be a positive integer, got ${JSON.stringify(report.totalChecked)}`, report.scope);
+    }
+    if (!Array.isArray(report.checkedUrls) || report.checkedUrls.length === 0) {
+      return invalidEvidence('Missing or empty checkedUrls array in audit report', report.scope);
+    }
+    if (report.checkedUrls.length !== report.totalChecked) {
+      return invalidEvidence(`Count mismatch: totalChecked (${report.totalChecked}) !== checkedUrls.length (${report.checkedUrls.length})`, report.scope);
+    }
+
+    const checkedSet = new Set();
+    for (const u of report.checkedUrls) {
+      if (typeof u !== 'string' || u.trim() === '') {
+        return invalidEvidence('checkedUrls contains a non-string or empty entry', report.scope);
+      }
+      let parsedU;
+      try {
+        parsedU = new URL(u);
+      } catch (e) {
+        return invalidEvidence(`checkedUrls contains malformed URL: "${u}"`, report.scope);
+      }
+      if (parsedU.origin !== targetOrigin) {
+        return invalidEvidence(`checkedUrls contains wrong-origin URL: "${u}" (expected origin "${targetOrigin}")`, report.scope);
+      }
+      if (checkedSet.has(u)) {
+        return invalidEvidence(`checkedUrls contains duplicate URL: "${u}"`, report.scope);
+      }
+      checkedSet.add(u);
+    }
+
+    if (!Array.isArray(expectedUrls) || expectedUrls.length === 0) {
+      return invalidEvidence('Caller must provide non-empty expectedUrls list to verify URL coverage', report.scope);
+    }
+    const expectedSet = new Set(expectedUrls);
+    if (expectedSet.size !== expectedUrls.length) {
+      return invalidEvidence('expectedUrls contains duplicate entries', report.scope);
+    }
+    if (checkedSet.size !== expectedSet.size) {
+      return invalidEvidence(`URL coverage count mismatch: report checked ${checkedSet.size} unique URLs, expected ${expectedSet.size}`, report.scope);
+    }
+    for (const reqUrl of expectedSet) {
+      if (!checkedSet.has(reqUrl)) {
+        return invalidEvidence(`URL coverage mismatch: expected URL "${reqUrl}" missing from checkedUrls`, report.scope);
+      }
+    }
+
+    // 7. Strict validation of canonicalErrors & hreflangErrors arrays (never coerce undefined/null/NaN to 0)
+    if (!Array.isArray(report.canonicalErrors)) {
+      return invalidEvidence(`Missing or non-array canonicalErrors field (got ${typeof report.canonicalErrors})`, report.scope);
+    }
+    if (!Array.isArray(report.hreflangErrors)) {
+      return invalidEvidence(`Missing or non-array hreflangErrors field (got ${typeof report.hreflangErrors})`, report.scope);
+    }
+    for (const item of report.canonicalErrors) {
+      if (typeof item !== 'string' || item.trim() === '') {
+        return invalidEvidence('canonicalErrors entries must be non-empty strings', report.scope);
+      }
+    }
+    for (const item of report.hreflangErrors) {
+      if (typeof item !== 'string' || item.trim() === '') {
+        return invalidEvidence('hreflangErrors entries must be non-empty strings', report.scope);
+      }
+    }
+
+    const totalErrors = report.canonicalErrors.length + report.hreflangErrors.length;
     if (totalErrors > 0) {
       return {
         status: 'FAIL',
+        scope: report.scope,
         tested: true,
+        validEvidence: true,
         errorCount: totalErrors,
-        detail: `${totalErrors} canonical/hreflang error(s) detected across ${totalChecked} checked pages (canonical: ${canonicalErrs}, hreflang: ${hreflangErrs})`
+        exitCode: 1,
+        detail: `FAIL: ${totalErrors} canonical/hreflang error(s) across ${report.totalChecked} URLs (canonical: ${report.canonicalErrors.length}, hreflang: ${report.hreflangErrors.length})`
       };
     }
 
     return {
       status: 'PASS',
+      scope: report.scope,
       tested: true,
+      validEvidence: true,
       errorCount: 0,
-      detail: `Verified 0 canonical/hreflang errors across ${totalChecked} pages`
+      exitCode: 0,
+      detail: `Verified 0 canonical/hreflang errors across ${report.totalChecked} unique URLs (scope: ${report.scope}, commit: ${report.commitSha.slice(0, 12)})`
     };
   }
 
-  // 2. If siteDir is provided and exists, perform direct DOM verification on built HTML files matching sitemap locs
-  if (siteDir && fs.existsSync(siteDir)) {
+  // Branch 2: Direct local build (_site) DOM inspection (ONLY allowed when expectedScope === 'local_build')
+  if (siteDir) {
+    if (expectedScope && expectedScope !== 'local_build') {
+      return invalidEvidence(
+        `Scope mismatch: local _site directory check has scope "local_build" and cannot be used to claim "${expectedScope}" canonical/hreflang PASS`,
+        'local_build'
+      );
+    }
+    if (!fs.existsSync(siteDir)) {
+      return {
+        status: 'NOT TESTED',
+        scope: 'local_build',
+        tested: false,
+        validEvidence: false,
+        errorCount: null,
+        exitCode: 1,
+        detail: `Local build directory not found: ${siteDir}`
+      };
+    }
     const localSitemapPath = path.join(siteDir, 'sitemap.xml');
     if (!fs.existsSync(localSitemapPath)) {
       return {
         status: 'NOT TESTED',
+        scope: 'local_build',
         tested: false,
+        validEvidence: false,
         errorCount: null,
-        detail: 'Local _site/sitemap.xml not found for canonical/hreflang verification'
+        exitCode: 1,
+        detail: 'Local _site/sitemap.xml not found for local canonical/hreflang check'
       };
     }
     const localAnalysis = analyzeSitemap(fs.readFileSync(localSitemapPath), targetOrigin);
-    if (!localAnalysis.xmlValid || localAnalysis.locCount === 0) {
+    if (!localAnalysis.xmlValid || localAnalysis.locCount === 0 || localAnalysis.duplicates > 0 || localAnalysis.nonCanonicalUrls > 0) {
       return {
         status: 'FAIL',
+        scope: 'local_build',
         tested: true,
+        validEvidence: true,
         errorCount: 1,
-        detail: 'Local _site/sitemap.xml is invalid or empty'
+        exitCode: 1,
+        detail: 'Local _site/sitemap.xml failed XML/URL validation'
       };
     }
 
     let checkedPages = 0;
-    let canonicalErrors = 0;
-    let hreflangErrors = 0;
+    const canonicalErrors = [];
+    const hreflangErrors = [];
 
     for (const loc of localAnalysis.locs) {
       const parsed = new URL(loc);
@@ -199,7 +358,7 @@ function verifyCanonicalAndHreflang({ auditReportData = null, auditReportPath = 
         ? path.join(siteDir, parsed.pathname, 'index.html')
         : path.join(siteDir, parsed.pathname);
       if (!fs.existsSync(relFile)) {
-        canonicalErrors++;
+        canonicalErrors.push(`Missing file for ${loc}`);
         continue;
       }
       const html = fs.readFileSync(relFile, 'utf8');
@@ -207,47 +366,57 @@ function verifyCanonicalAndHreflang({ auditReportData = null, auditReportPath = 
       const doc = dom.window.document;
       const canonicalEl = doc.querySelector('link[rel="canonical"]');
       if (!canonicalEl || canonicalEl.getAttribute('href') !== loc) {
-        canonicalErrors++;
+        canonicalErrors.push(`Canonical mismatch on ${loc}`);
       }
       const hreflangs = Array.from(doc.querySelectorAll('link[rel="alternate"][hreflang]'));
       if (hreflangs.length === 0) {
-        hreflangErrors++;
+        hreflangErrors.push(`Missing hreflang on ${loc}`);
       } else {
         for (const hl of hreflangs) {
           try {
             const hlUrl = new URL(hl.getAttribute('href'));
-            if (hlUrl.origin !== targetOrigin) hreflangErrors++;
+            if (hlUrl.origin !== targetOrigin) hreflangErrors.push(`Wrong hreflang origin on ${loc}`);
           } catch (e) {
-            hreflangErrors++;
+            hreflangErrors.push(`Invalid hreflang URL on ${loc}`);
           }
         }
       }
       checkedPages++;
     }
 
-    const totalErrors = canonicalErrors + hreflangErrors;
+    const totalErrors = canonicalErrors.length + hreflangErrors.length;
     if (totalErrors > 0) {
       return {
         status: 'FAIL',
+        scope: 'local_build',
         tested: true,
+        validEvidence: true,
         errorCount: totalErrors,
-        detail: `${totalErrors} canonical/hreflang error(s) detected across ${checkedPages} local build pages (canonical: ${canonicalErrors}, hreflang: ${hreflangErrors})`
+        exitCode: 1,
+        detail: `FAIL (local_build): ${totalErrors} canonical/hreflang error(s) across ${checkedPages} local _site pages`
       };
     }
 
     return {
       status: 'PASS',
+      scope: 'local_build',
       tested: true,
+      validEvidence: true,
       errorCount: 0,
-      detail: `Verified 0 canonical/hreflang errors across ${checkedPages} pages in local build`
+      exitCode: 0,
+      detail: `Verified 0 canonical/hreflang errors across ${checkedPages} pages in local _site build (scope: local_build only; does not represent live production page crawl)`
     };
   }
 
+  // Branch 3: Neither report nor local check provided -> NOT TESTED
   return {
     status: 'NOT TESTED',
+    scope: 'none',
     tested: false,
+    validEvidence: false,
     errorCount: null,
-    detail: 'NOT TESTED (No canonical/hreflang check or audit_report.json provided in this run)'
+    exitCode: 1,
+    detail: 'NOT TESTED: No canonical/hreflang check was executed in this run'
   };
 }
 
@@ -276,7 +445,9 @@ function compareWithLocalBuild(prodLocs, siteDir = path.join(__dirname, '_site')
 function evaluateDiagnostic({
   robotsResponses = [],
   sitemapResponses = [],
-  canonicalResult = { status: 'NOT TESTED', tested: false, errorCount: null, detail: 'NOT TESTED' },
+  canonicalResult = { status: 'NOT TESTED', scope: 'none', tested: false, validEvidence: false, errorCount: null, detail: 'NOT TESTED' },
+  localCanonicalResult = null,
+  requireCanonicalPass = false,
   gscStatus = 'UNAVAILABLE',
   cloudflareLogsStatus = 'UNAVAILABLE',
   targetOrigin = PROD_URL
@@ -328,8 +499,18 @@ function evaluateDiagnostic({
     }
   }
 
-  if (canonicalResult && canonicalResult.status === 'FAIL') {
-    failures.push(`Canonical/Hreflang check failed: ${canonicalResult.detail}`);
+  if (canonicalResult) {
+    if (canonicalResult.status === 'FAIL' || canonicalResult.status === 'INVALID EVIDENCE') {
+      failures.push(`Canonical/Hreflang check failed (${canonicalResult.status}): ${canonicalResult.detail}`);
+    } else if (requireCanonicalPass && (canonicalResult.status !== 'PASS' || canonicalResult.scope !== 'production')) {
+      failures.push(`Production Canonical/Hreflang gate not satisfied (status: ${canonicalResult.status}, scope: ${canonicalResult.scope || 'none'})`);
+    }
+  } else if (requireCanonicalPass) {
+    failures.push('Production Canonical/Hreflang gate required but no canonicalResult provided');
+  }
+
+  if (localCanonicalResult && (localCanonicalResult.status === 'FAIL' || localCanonicalResult.status === 'INVALID EVIDENCE')) {
+    failures.push(`Local build canonical/hreflang check failed: ${localCanonicalResult.detail}`);
   }
 
   const technicalStatus = failures.length === 0 ? 'PASS' : 'FAIL';
@@ -337,10 +518,10 @@ function evaluateDiagnostic({
 
   let technicalEvidence = '';
   if (technicalStatus === 'PASS' && primaryAnalysis) {
-    const canonSummary = canonicalResult && canonicalResult.status === 'PASS'
-      ? `; ${canonicalResult.detail}`
-      : `; Canonical/Hreflang: ${canonicalResult ? canonicalResult.status : 'NOT TESTED'}`;
-    technicalEvidence = `\`/sitemap.xml\` and \`/robots.txt\` return HTTP 200, well-formed XML (<urlset>), ${primaryAnalysis.uniqueCount} unique URLs, 0 duplicates, and 0 origin mismatches${canonSummary}.`;
+    const prodCanonNote = (canonicalResult && canonicalResult.status === 'PASS' && canonicalResult.scope === 'production')
+      ? `; Production Canonical/Hreflang: ${canonicalResult.detail}`
+      : `; Production Canonical/Hreflang: ${canonicalResult ? canonicalResult.status : 'NOT TESTED'}`;
+    technicalEvidence = `\`/sitemap.xml\` and \`/robots.txt\` return HTTP 200, well-formed XML (<urlset>), ${primaryAnalysis.uniqueCount} unique URLs, 0 duplicates, and 0 origin mismatches${prodCanonNote}.`;
   } else {
     technicalEvidence = `FAIL: ${failures.join(' | ')}`;
   }
@@ -350,6 +531,8 @@ function evaluateDiagnostic({
     technicalEvidence,
     canonicalStatus: canonicalResult ? canonicalResult.status : 'NOT TESTED',
     canonicalEvidence: canonicalResult ? canonicalResult.detail : 'NOT TESTED',
+    localCanonicalStatus: localCanonicalResult ? localCanonicalResult.status : 'NOT TESTED',
+    localCanonicalEvidence: localCanonicalResult ? localCanonicalResult.detail : 'NOT TESTED',
     gscStatus: gscStatus || 'UNAVAILABLE',
     cloudflareLogsStatus: cloudflareLogsStatus || 'UNAVAILABLE',
     failures,
@@ -420,17 +603,38 @@ async function run(options = {}) {
     }
   }
 
-  const canonicalResult = options.canonicalResult || verifyCanonicalAndHreflang({
-    auditReportData: options.auditReportData,
-    auditReportPath: options.auditReportPath,
-    siteDir,
-    targetOrigin
-  });
+  // Strictly separate production canonical/hreflang check from local _site build check
+  const prodCanonicalResult = options.canonicalResult || (
+    (options.auditReportData !== undefined || options.auditReportPath)
+      ? verifyCanonicalAndHreflang({
+          auditReportData: options.auditReportData,
+          auditReportPath: options.auditReportPath,
+          expectedUrls: options.expectedUrls,
+          expectedCommitSha: options.expectedCommitSha,
+          expectedScope: 'production',
+          targetOrigin
+        })
+      : {
+          status: 'NOT TESTED',
+          scope: 'production',
+          tested: false,
+          validEvidence: false,
+          errorCount: null,
+          exitCode: 0,
+          detail: 'NOT TESTED on live production by this script (this probe only fetches /robots.txt and /sitemap.xml, not all 110 live HTML pages).'
+        }
+  );
+
+  const localCanonicalResult = siteDir
+    ? verifyCanonicalAndHreflang({ siteDir, expectedScope: 'local_build', targetOrigin })
+    : { status: 'NOT TESTED', scope: 'local_build', tested: false, validEvidence: false, errorCount: null, detail: 'Local _site directory not checked' };
 
   const evaluation = evaluateDiagnostic({
     robotsResponses,
     sitemapResponses,
-    canonicalResult,
+    canonicalResult: prodCanonicalResult,
+    localCanonicalResult,
+    requireCanonicalPass: Boolean(options.requireCanonicalPass),
     gscStatus: 'UNAVAILABLE',
     cloudflareLogsStatus: 'UNAVAILABLE',
     targetOrigin
@@ -449,11 +653,12 @@ async function run(options = {}) {
     md += `- Comparison unavailable: ${diff.reason}\n\n`;
   }
 
-  md += `## 4. Diagnostic Status Matrix (Assertion-Driven)\n\n`;
+  md += `## 4. Diagnostic Status Matrix (Assertion-Driven, Scope-Separated)\n\n`;
   md += `| Dimension | Status | Evidence Basis |\n`;
   md += `| :--- | :--- | :--- |\n`;
-  md += `| **Technical Accessibility** | **${evaluation.technicalStatus}** | ${evaluation.technicalEvidence} |\n`;
-  md += `| **Canonical / Hreflang Audit** | **${evaluation.canonicalStatus}** | ${evaluation.canonicalEvidence} |\n`;
+  md += `| **Production Sitemap & Robots Accessibility** | **${evaluation.technicalStatus}** | ${evaluation.technicalEvidence} |\n`;
+  md += `| **Production Canonical / Hreflang Audit** | **${evaluation.canonicalStatus}** | ${evaluation.canonicalEvidence} |\n`;
+  md += `| **Local Build (\`_site\`) Canonical / Hreflang Audit** | **${evaluation.localCanonicalStatus} (LOCAL BUILD ONLY)** | ${evaluation.localCanonicalEvidence} |\n`;
   md += `| **Sitemap Processed (GSC)** | **${evaluation.gscStatus}** | Cannot be verified via static HTTP probe; must be checked in GSC Sitemaps UI (last observed UI state: \`Couldn't fetch\`). |\n`;
   md += `| **Cloudflare Historical Logs** | **${evaluation.cloudflareLogsStatus}** | Cloudflare Pages free tier does not retain historical static request logs for past Googlebot fetches. |\n`;
   md += `| **Google Indexed** | **NOT TESTED** | Sitemap presence does not equal indexation; check GSC Pages / URL Inspection for individual URL indexing status. |\n`;
@@ -477,7 +682,7 @@ async function run(options = {}) {
 }
 
 if (require.main === module) {
-  run().then(({ evaluation, outputPath }) => {
+  run().then(({ evaluation }) => {
     console.log(`Diagnostic completed with Technical Status: ${evaluation.technicalStatus} (exitCode=${evaluation.exitCode})`);
     if (evaluation.exitCode !== 0) {
       console.error('Failures:', evaluation.failures);
@@ -491,6 +696,8 @@ if (require.main === module) {
 
 module.exports = {
   PROD_URL,
+  AUDIT_REPORT_SCHEMA_VERSION,
+  DEFAULT_MAX_REPORT_AGE_MS,
   analyzeSitemap,
   verifyCanonicalAndHreflang,
   compareWithLocalBuild,

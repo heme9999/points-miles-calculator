@@ -1769,13 +1769,27 @@ test('Phase 9.12.1: HTML Injection Defense, MinTransfer Floor Step Validation, U
     assert.ok(evalDup.failures.some(f => f.includes('duplicate')));
 
     // F. Canonical / Hreflang failure -> FAIL (and never outputs "0 canonical/hreflang errors" + PASS)
+    const nowIso = new Date().toISOString();
+    const validSha = '9724daf15d1598a8be4ea65ce4d76b5119dad8f1';
+    const expectedList = [
+      'https://points-miles-calculator.pages.dev/',
+      'https://points-miles-calculator.pages.dev/en/'
+    ];
     const canonFailResult = sitemapDiag.verifyCanonicalAndHreflang({
       auditReportData: {
+        schemaVersion: '1.0',
+        scope: 'production',
         targetOrigin: 'https://points-miles-calculator.pages.dev',
-        totalChecked: 110,
-        canonicalErrors: ['https://points-miles-calculator.pages.dev/broken/'],
+        commitSha: validSha,
+        generatedAt: nowIso,
+        totalChecked: 2,
+        checkedUrls: expectedList,
+        canonicalErrors: ['https://points-miles-calculator.pages.dev/'],
         hreflangErrors: []
-      }
+      },
+      expectedUrls: expectedList,
+      expectedCommitSha: validSha,
+      expectedScope: 'production'
     });
     assert.strictEqual(canonFailResult.status, 'FAIL');
     const evalCanonFail = sitemapDiag.evaluateDiagnostic({
@@ -1788,9 +1802,9 @@ test('Phase 9.12.1: HTML Injection Defense, MinTransfer Floor Step Validation, U
     assert.ok(!evalCanonFail.technicalEvidence.includes('0 canonical/hreflang errors'));
   });
 
-  await t.test('5. P2 Preset Source Granularity: Specific partner/rule URLs and Capital One -> EVA unverified increment handling', () => {
+  await t.test('5. P2 Preset Source Granularity: Specific rule URLs and Capital One -> EVA unverified increment handling', () => {
     for (const p of transferPresets) {
-      assert.ok(p.sourceUrl && p.partnerSourceUrl, `Preset ${p.id} must have both issuer sourceUrl and partnerSourceUrl`);
+      assert.ok(p.sourceUrl, `Preset ${p.id} must have a primary sourceUrl`);
       assert.ok(p.fieldStatusZh && p.fieldStatusEn, `Preset ${p.id} must have field-level verification status strings`);
       // Must not use generic root homepage for sourceUrl
       const parsedSource = new URL(p.sourceUrl);
@@ -1799,11 +1813,294 @@ test('Phase 9.12.1: HTML Injection Defense, MinTransfer Floor Step Validation, U
 
     const capOneEva = transferPresets.find(p => p.id === 'capone-us-eva');
     assert.ok(capOneEva, 'capone-us-eva preset must exist');
-    assert.strictEqual(capOneEva.incrementVerified, false, 'capone-us-eva incrementVerified must be false since public terms do not confirm 100 step');
+    assert.strictEqual(capOneEva.incrementVerified, false, 'capone-us-eva incrementVerified must be false since public terms do not confirm step');
     assert.strictEqual(capOneEva.increment, 1000, 'capone-us-eva must not auto-apply unverified 100 increment as officially confirmed');
-    assert.ok(capOneEva.fieldStatusZh.includes('未知/待核实'), 'capone-us-eva ZH fieldStatus must explicitly mark increment as 未知/待核实');
-    assert.ok(capOneEva.fieldStatusEn.includes('Unknown / Unverified'), 'capone-us-eva EN fieldStatus must explicitly mark increment as Unknown / Unverified');
+    assert.ok(capOneEva.fieldStatusZh.includes('未知/待核实') && capOneEva.fieldStatusZh.includes('演示假设'), 'capone-us-eva ZH fieldStatus must explicitly mark increment as 未知/待核实 and 演示假设');
+    assert.ok(capOneEva.fieldStatusEn.includes('Unknown / Unverified') && capOneEva.fieldStatusEn.includes('illustrative assumption'), 'capone-us-eva EN fieldStatus must explicitly mark increment as Unknown / Unverified and illustrative assumption');
   });
 });
+
+test('Phase 9.12.2: Official Preset Sources Fix, Audit Report False-PASS Elimination & Missing Partner Source Rendering', async (t) => {
+  const fs = require('fs');
+  const path = require('path');
+  const { JSDOM } = require('jsdom');
+  const transferPresets = require('../src/_data/transferPresets.js');
+  const sitemapDiag = require('../sitemap_diagnostic.js');
+
+  const converterPages = [
+    ['zh', '../_site/calculators/points-to-miles-converter/index.html'],
+    ['en', '../_site/en/calculators/points-to-miles-converter/index.html']
+  ];
+
+  await t.test('1. Broken Official Source URLs Replaced/Removed and Template Renders Cleanly Without partnerSourceUrl', () => {
+    const bannedBrokenUrls = [
+      'https://www.chase.com/personal/credit-cards/education/rewards-benefits/how-to-transfer-chase-ultimate-rewards-points',
+      'https://www.capitalone.com/learn-grow/money-management/capital-one-miles-transfer-partners/',
+      'https://www.cathaypacific.com/cx/en_US/cathay-club/earn-miles/finance-and-insurance/points-conversion.html',
+      'https://www.evaair.com/en-global/infinity-mileagelands/earning-miles/points-conversion/'
+    ];
+
+    const chasePreset = transferPresets.find(p => p.id === 'chase-us-united');
+    const capOnePreset = transferPresets.find(p => p.id === 'capone-us-eva');
+    const cathayPreset = transferPresets.find(p => p.id === 'amex-us-cathay');
+    const aeroplanPreset = transferPresets.find(p => p.id === 'amex-us-aeroplan');
+
+    assert.strictEqual(
+      chasePreset.sourceUrl,
+      'https://www.chase.com/personal/credit-cards/education/basics/how-to-transfer-chase-ultimate-rewards-points'
+    );
+    assert.strictEqual(
+      capOnePreset.sourceUrl,
+      'https://www.capitalone.com/learn-grow/money-management/venture-miles-transfer-partnerships/'
+    );
+    assert.strictEqual(cathayPreset.sourceUrl, 'https://global.americanexpress.com/rewards/transfer');
+    assert.strictEqual(cathayPreset.partnerSourceUrl, null);
+    assert.strictEqual(aeroplanPreset.sourceUrl, 'https://global.americanexpress.com/rewards/transfer');
+
+    // Verify field-by-field honest disclosures
+    assert.strictEqual(chasePreset.ratioVerified, false, 'Chase public article does not print numeric 1:1 ratio table');
+    assert.strictEqual(chasePreset.minTransferVerified, true);
+    assert.strictEqual(chasePreset.incrementVerified, true);
+    assert.strictEqual(capOnePreset.ratioVerified, true);
+    assert.strictEqual(capOnePreset.minTransferVerified, true);
+    assert.strictEqual(capOnePreset.incrementVerified, false);
+
+    for (const [lang, relPath] of converterPages) {
+      const html = fs.readFileSync(path.resolve(__dirname, relPath), 'utf8');
+      for (const badUrl of bannedBrokenUrls) {
+        assert.ok(!html.includes(badUrl), `${lang} converter HTML must NOT contain broken URL: ${badUrl}`);
+      }
+
+      const dom = new JSDOM(html, {
+        runScripts: 'dangerously',
+        url: 'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/'
+      });
+      const doc = dom.window.document;
+      const sel = doc.getElementById('transferPreset');
+      const detailEl = doc.getElementById('presetDetailContent');
+
+      for (const preset of transferPresets) {
+        sel.value = preset.id;
+        sel.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+
+        const detailHtml = detailEl.innerHTML;
+        const detailText = detailEl.textContent;
+        assert.ok(!detailHtml.includes('undefined'), `${lang} ${preset.id}: detailHTML must not contain undefined`);
+        assert.ok(!detailHtml.includes('href="null"'), `${lang} ${preset.id}: detailHTML must not contain href="null"`);
+        assert.ok(!detailHtml.includes('href=""'), `${lang} ${preset.id}: detailHTML must not contain empty href=""`);
+        assert.ok(!detailText.includes('undefined') && !detailText.includes('null'), `${lang} ${preset.id}: detailText must not contain undefined/null`);
+
+        const links = Array.from(detailEl.querySelectorAll('a'));
+        assert.ok(links.length >= 1, `${lang} ${preset.id}: must render at least 1 valid source link`);
+        for (const a of links) {
+          const href = a.getAttribute('href');
+          const parsed = new URL(href);
+          assert.notStrictEqual(parsed.pathname, '/', `${lang} ${preset.id}: source link must not be a generic root homepage: ${href}`);
+          assert.ok(a.textContent.trim().length > 0, `${lang} ${preset.id}: source link text must not be empty`);
+        }
+      }
+    }
+  });
+
+  await t.test('2. Audit Report Import Validation: All 9 Negative Scenarios Rejected (Never PASS or 0 canonical/hreflang errors)', () => {
+    const nowMs = Date.parse('2026-10-13T06:50:00.000Z');
+    const nowIso = '2026-10-13T06:45:00.000Z';
+    const validSha = '9724daf15d1598a8be4ea65ce4d76b5119dad8f1';
+    const expectedUrls = [
+      'https://points-miles-calculator.pages.dev/',
+      'https://points-miles-calculator.pages.dev/en/',
+      'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/'
+    ];
+    const validXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://points-miles-calculator.pages.dev/</loc></url>
+  <url><loc>https://points-miles-calculator.pages.dev/en/</loc></url>
+  <url><loc>https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/</loc></url>
+</urlset>`;
+
+    const makeValidReport = (overrides = {}) => ({
+      schemaVersion: '1.0',
+      scope: 'production',
+      targetOrigin: 'https://points-miles-calculator.pages.dev',
+      commitSha: validSha,
+      generatedAt: nowIso,
+      totalChecked: 3,
+      checkedUrls: [...expectedUrls],
+      canonicalErrors: [],
+      hreflangErrors: [],
+      ...overrides
+    });
+
+    const assertRejected = (label, callArgs) => {
+      const res = sitemapDiag.verifyCanonicalAndHreflang({
+        expectedUrls,
+        expectedCommitSha: validSha,
+        expectedScope: 'production',
+        nowMs,
+        ...callArgs
+      });
+      assert.notStrictEqual(res.status, 'PASS', `${label}: status must NEVER be PASS (got ${res.status}: ${res.detail})`);
+      assert.strictEqual(res.exitCode, 1, `${label}: exitCode must be 1`);
+      assert.ok(!res.detail.includes('Verified 0 canonical/hreflang errors'), `${label}: must never claim 0 errors`);
+
+      const diag = sitemapDiag.evaluateDiagnostic({
+        robotsResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from('User-agent: *\nAllow: /') }],
+        sitemapResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from(validXml) }],
+        canonicalResult: res,
+        requireCanonicalPass: true
+      });
+      assert.strictEqual(diag.technicalStatus, 'FAIL', `${label}: evaluateDiagnostic must be FAIL`);
+      assert.strictEqual(diag.exitCode, 1, `${label}: evaluateDiagnostic exitCode must be 1`);
+      assert.ok(!diag.technicalEvidence.includes('0 canonical/hreflang errors'), `${label}: technicalEvidence must not claim 0 errors`);
+    };
+
+    // Negative 1: Only passing { totalChecked: 110 } (the exact bug reproduced from prior round)
+    assertRejected('1. { totalChecked: 110 } only', {
+      auditReportData: { totalChecked: 110 }
+    });
+
+    // Negative 2: Missing any required inspection result field
+    for (const field of ['schemaVersion', 'scope', 'targetOrigin', 'commitSha', 'generatedAt', 'totalChecked', 'checkedUrls', 'canonicalErrors', 'hreflangErrors']) {
+      const r = makeValidReport();
+      delete r[field];
+      assertRejected(`2. Missing field "${field}"`, { auditReportData: r });
+    }
+
+    // Negative 3: Wrong field types, null, NaN, Infinity, negative numbers
+    const badTypePayloads = [
+      { totalChecked: NaN },
+      { totalChecked: Infinity },
+      { totalChecked: -10 },
+      { totalChecked: 0 },
+      { totalChecked: '3' },
+      { canonicalErrors: null },
+      { canonicalErrors: 0 },
+      { canonicalErrors: false },
+      { canonicalErrors: '0' },
+      { hreflangErrors: undefined },
+      { hreflangErrors: null },
+      { hreflangErrors: NaN },
+      { checkedUrls: null },
+      { checkedUrls: 'https://points-miles-calculator.pages.dev/' }
+    ];
+    badTypePayloads.forEach((override, idx) => {
+      assertRejected(`3. Bad type payload #${idx + 1} (${JSON.stringify(override)})`, {
+        auditReportData: makeValidReport(override)
+      });
+    });
+
+    // Negative 4: Wrong target domain (either in targetOrigin or inside checkedUrls)
+    assertRejected('4a. Wrong report targetOrigin', {
+      auditReportData: makeValidReport({ targetOrigin: 'https://points-miles-calculator.pages.dev.evil.com' })
+    });
+    assertRejected('4b. Wrong origin inside checkedUrls', {
+      auditReportData: makeValidReport({
+        checkedUrls: [
+          'https://points-miles-calculator.pages.dev/',
+          'https://points-miles-calculator.pages.dev/en/',
+          'https://points-miles-calculator.pages.dev.evil.com/calculators/points-to-miles-converter/'
+        ]
+      })
+    });
+
+    // Negative 5: Stale report, future report, mismatched commitSha, or local_build scope passed as production
+    assertRejected('5a. Stale report (> 1h old)', {
+      auditReportData: makeValidReport({ generatedAt: '2026-10-12T00:00:00.000Z' })
+    });
+    assertRejected('5b. Future report (> 60s ahead)', {
+      auditReportData: makeValidReport({ generatedAt: '2026-10-13T08:00:00.000Z' })
+    });
+    assertRejected('5c. Mismatched commitSha', {
+      auditReportData: makeValidReport({ commitSha: 'eef8ce515d1598a8be4ea65ce4d76b5119dad8f1' })
+    });
+    assertRejected('5d. Missing expectedCommitSha from caller', {
+      auditReportData: makeValidReport(),
+      expectedCommitSha: null
+    });
+    assertRejected('5e. Scope mismatch (local_build report used for production)', {
+      auditReportData: makeValidReport({ scope: 'local_build' }),
+      expectedScope: 'production'
+    });
+    assertRejected('5f. Direct local _site check attempted when expectedScope is production', {
+      siteDir: path.resolve(__dirname, '../_site'),
+      expectedScope: 'production'
+    });
+
+    // Negative 6: Mismatch between totalChecked and checkedUrls.length
+    assertRejected('6. totalChecked (110) !== checkedUrls.length (3)', {
+      auditReportData: makeValidReport({ totalChecked: 110 })
+    });
+
+    // Negative 7: Duplicate URLs, missing URLs, or wrong URL coverage set
+    assertRejected('7a. Duplicate URL in checkedUrls', {
+      auditReportData: makeValidReport({
+        checkedUrls: [
+          'https://points-miles-calculator.pages.dev/',
+          'https://points-miles-calculator.pages.dev/',
+          'https://points-miles-calculator.pages.dev/en/'
+        ]
+      })
+    });
+    assertRejected('7b. Omitted URL from expectedUrls', {
+      auditReportData: makeValidReport({
+        totalChecked: 2,
+        checkedUrls: [
+          'https://points-miles-calculator.pages.dev/',
+          'https://points-miles-calculator.pages.dev/en/'
+        ]
+      })
+    });
+    assertRejected('7c. Different URL substituted in checkedUrls', {
+      auditReportData: makeValidReport({
+        checkedUrls: [
+          'https://points-miles-calculator.pages.dev/',
+          'https://points-miles-calculator.pages.dev/en/',
+          'https://points-miles-calculator.pages.dev/about/'
+        ]
+      })
+    });
+
+    // Negative 8: Real canonical or hreflang error present
+    const realCanonErr = sitemapDiag.verifyCanonicalAndHreflang({
+      auditReportData: makeValidReport({
+        canonicalErrors: ['Canonical mismatch on /calculators/points-to-miles-converter/']
+      }),
+      expectedUrls,
+      expectedCommitSha: validSha,
+      expectedScope: 'production',
+      nowMs
+    });
+    assert.strictEqual(realCanonErr.status, 'FAIL');
+    assert.strictEqual(realCanonErr.exitCode, 1);
+
+    const realHreflangErr = sitemapDiag.verifyCanonicalAndHreflang({
+      auditReportData: makeValidReport({
+        hreflangErrors: ['Missing en alternate on /']
+      }),
+      expectedUrls,
+      expectedCommitSha: validSha,
+      expectedScope: 'production',
+      nowMs
+    });
+    assert.strictEqual(realHreflangErr.status, 'FAIL');
+    assert.strictEqual(realHreflangErr.exitCode, 1);
+
+    // Negative 9: No check executed ({})
+    assertRejected('9. No check executed ({})', {});
+
+    // Positive control: Complete, fresh, matching commit + matching URL set + 0 errors -> PASS
+    const validRes = sitemapDiag.verifyCanonicalAndHreflang({
+      auditReportData: makeValidReport(),
+      expectedUrls,
+      expectedCommitSha: validSha,
+      expectedScope: 'production',
+      nowMs
+    });
+    assert.strictEqual(validRes.status, 'PASS');
+    assert.strictEqual(validRes.exitCode, 0);
+    assert.strictEqual(validRes.scope, 'production');
+  });
+});
+
 
 
