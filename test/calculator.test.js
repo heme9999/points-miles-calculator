@@ -1404,3 +1404,142 @@ test('Blog, Contact, About, and Fact-Check Regression Suite', async (t) => {
     assert.ok(enHomeHtml.includes('September 2026'), 'English home must be fact-checked September 2026');
   });
 });
+
+test('Phase 9.12: Blog Conversion CTA, Beginner Points-to-Miles Converter, Presets & Navigation Suite', async (t) => {
+  const fs = require('fs');
+  const path = require('path');
+  const { JSDOM } = require('jsdom');
+
+  await t.test('1. Blog CTA buttons in CN & EN point to /calculators/points-to-miles-converter/ (never root / or /en/)', () => {
+    const cnBlogs = [
+      '../_site/blog/yazhouwanlitong-licheng-jiazhi/index.html',
+      '../_site/blog/xinyongka-jifen-zhuan-yazhouwanlitong/index.html',
+      '../_site/blog/zhaohang-jifen-huan-licheng/index.html'
+    ];
+    for (const rel of cnBlogs) {
+      const html = fs.readFileSync(path.resolve(__dirname, rel), 'utf8');
+      const dom = new JSDOM(html);
+      const ctaLink = dom.window.document.querySelector('.cta > a');
+      assert.ok(ctaLink, `CTA link must exist in ${rel}`);
+      assert.strictEqual(ctaLink.getAttribute('href'), '/calculators/points-to-miles-converter/', `CN blog CTA in ${rel} must point to /calculators/points-to-miles-converter/`);
+    }
+
+    const enBlogs = [
+      '../_site/en/blog/yazhouwanlitong-licheng-jiazhi/index.html',
+      '../_site/en/blog/xinyongka-jifen-zhuan-yazhouwanlitong/index.html',
+      '../_site/en/blog/zhaohang-jifen-huan-licheng/index.html'
+    ];
+    for (const rel of enBlogs) {
+      const html = fs.readFileSync(path.resolve(__dirname, rel), 'utf8');
+      const dom = new JSDOM(html);
+      const ctaLink = dom.window.document.querySelector('.cta > a');
+      assert.ok(ctaLink, `CTA link must exist in ${rel}`);
+      assert.strictEqual(ctaLink.getAttribute('href'), '/en/calculators/points-to-miles-converter/', `EN blog CTA in ${rel} must point to /en/calculators/points-to-miles-converter/`);
+    }
+  });
+
+  await t.test('2. Chinese & English Points to Miles Converter: intuitive X:Y ratio, 4:3, 15:1, presets, custom override, and URL params', () => {
+    for (const [lang, relPath, expectedMilesSuffix] of [
+      ['zh', '../_site/calculators/points-to-miles-converter/index.html', ' 里程'],
+      ['en', '../_site/en/calculators/points-to-miles-converter/index.html', ' Miles']
+    ]) {
+      const fullPath = path.resolve(__dirname, relPath);
+      const html = fs.readFileSync(fullPath, 'utf8');
+      const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/' });
+      const doc = dom.window.document;
+      const $ = id => doc.getElementById(id);
+      const setVal = (id, val, evtName = 'input') => {
+        const el = $(id);
+        el.value = String(val);
+        el.dispatchEvent(new dom.window.Event(evtName, { bubbles: true }));
+      };
+
+      // Realtime notice & Share button text
+      assert.ok($('realtimeNotice'), `${lang}: #realtimeNotice must exist`);
+      assert.ok($('btnShare').textContent.includes(lang === 'zh' ? '分享此计算' : 'Share this calculation'), `${lang}: Share button must clearly state share calculation`);
+
+      // Case A: 50,000 points, 1:1, 20% bonus, 1,000 increment -> 60,000 miles
+      setVal('bankPoints', 50000);
+      setVal('ratioPoints', 1);
+      setVal('ratioMiles', 1);
+      setVal('bonusPercent', 20);
+      setVal('increment', 1000);
+      assert.strictEqual($('totalMiles').textContent, '60,000' + expectedMilesSuffix);
+
+      // Case B: 50,500 points, 4:3 (0.75), 0% bonus, 1,000 increment -> 37,500 miles, 500 remaining
+      setVal('bankPoints', 50500);
+      setVal('ratioPoints', 4);
+      setVal('ratioMiles', 3);
+      setVal('bonusPercent', 0);
+      setVal('increment', 1000);
+      assert.strictEqual($('baseRatio').value, '0.75');
+      assert.strictEqual($('transferablePoints').textContent, '50,000');
+      assert.strictEqual($('remainingPoints').textContent, '500');
+      assert.strictEqual($('totalMiles').textContent, '37,500' + expectedMilesSuffix);
+
+      // Case C: 15,000 points, 15:1, 0% bonus, 1,000 increment -> 1,000 miles exact
+      setVal('bankPoints', 15000);
+      setVal('ratioPoints', 15);
+      setVal('ratioMiles', 1);
+      setVal('bonusPercent', 0);
+      setVal('increment', 1000);
+      assert.strictEqual($('transferablePoints').textContent, '15,000');
+      assert.strictEqual($('baseMiles').textContent, '1,000');
+      assert.strictEqual($('totalMiles').textContent, '1,000' + expectedMilesSuffix);
+
+      // Case D: Preset selection auto-fills & manual edit reverts to custom
+      setVal('transferPreset', 'amex-us-cathay', 'change');
+      assert.strictEqual($('ratioPoints').value, '1000');
+      assert.strictEqual($('ratioMiles').value, '800');
+      assert.strictEqual($('baseRatio').value, '0.8');
+      assert.strictEqual($('totalMiles').textContent, '12,000' + expectedMilesSuffix);
+      assert.ok($('presetDetailContent').textContent.includes('2026-10-13'), `${lang}: Preset metadata must show lastVerified date`);
+
+      // Manual edit of ratioPoints switches preset back to custom
+      setVal('ratioPoints', 2000);
+      assert.strictEqual($('transferPreset').value, 'custom');
+
+      // Case E: Minimum transfer threshold vs increment (Capital One -> EVA Air: min 1000, increment 100)
+      setVal('transferPreset', 'capone-us-eva', 'change');
+      assert.strictEqual($('minTransfer').value, '1000');
+      assert.strictEqual($('increment').value, '100');
+      setVal('bankPoints', 800);
+      assert.strictEqual($('totalMiles').textContent, '-');
+      assert.ok($('explain').textContent.includes('1000') && $('explain').textContent.includes('100'), `${lang}: Below minTransfer message must mention both minTransfer (1000) and increment (100)`);
+
+      setVal('bankPoints', 1250);
+      assert.strictEqual($('transferablePoints').textContent, '1,200');
+      assert.strictEqual($('remainingPoints').textContent, '50');
+      assert.strictEqual($('totalMiles').textContent, '900' + expectedMilesSuffix);
+
+      // Case F: URL parameter restoration with explicit override immunity
+      const domUrl = new JSDOM(html, {
+        runScripts: 'dangerously',
+        url: 'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/?preset=amex-us-cathay&points=20000&ratioPoints=1000&ratioMiles=800&bonusPercent=10&increment=1000&minTransfer=1000'
+      });
+      assert.strictEqual(domUrl.window.document.getElementById('totalMiles').textContent, '17,600' + expectedMilesSuffix);
+    }
+  });
+
+  await t.test('3. Global navigation contains /blog/ and /en/blog/, and Chinese homepage dynamically updates unitCashRatio by currency', () => {
+    const zhHomeHtml = fs.readFileSync(path.resolve(__dirname, '../_site/index.html'), 'utf8');
+    const enHomeHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/index.html'), 'utf8');
+
+    const zhDom = new JSDOM(zhHomeHtml, { runScripts: 'dangerously', url: 'https://points-miles-calculator.pages.dev/' });
+    const enDom = new JSDOM(enHomeHtml, { runScripts: 'dangerously', url: 'https://points-miles-calculator.pages.dev/en/' });
+
+    const zhNavHrefs = Array.from(zhDom.window.document.querySelectorAll('.site-nav nav a')).map(a => a.getAttribute('href'));
+    const enNavHrefs = Array.from(enDom.window.document.querySelectorAll('.site-nav nav a')).map(a => a.getAttribute('href'));
+    assert.ok(zhNavHrefs.includes('/blog/'), 'Chinese top nav must include /blog/');
+    assert.ok(enNavHrefs.includes('/en/blog/'), 'English top nav must include /en/blog/');
+
+    // Verify CNY vs USD unitCashRatio on Chinese homepage
+    const zhDoc = zhDom.window.document;
+    assert.strictEqual(zhDoc.getElementById('unitCashRatio').textContent.trim(), '例如：若100积分可以抵扣1元，就填写100。');
+    const currSelect = zhDoc.getElementById('currency');
+    currSelect.value = 'USD';
+    currSelect.dispatchEvent(new zhDom.window.Event('change', { bubbles: true }));
+    assert.strictEqual(zhDoc.getElementById('unitCashRatio').textContent.trim(), '例如：若100积分可以抵扣1美元，就填写100。');
+  });
+});
+

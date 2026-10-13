@@ -3,6 +3,8 @@ layout: base.njk
 title: 积分转点奖励计算指南
 description: 了解信用卡积分转点奖励的运作方式、基础比例、最小转点单位，以及如何最大化 15%、20%、25% 和 30% 的转点奖励。
 schemaType: Article
+lastModified: "2026-10-13"
+dateModified: "2026-10-13"
 breadcrumbs:
   - name: Guides
     url: /guides/
@@ -45,4 +47,4 @@ breadcrumbs:
 
 ## 转点奖励计算器
 
-觉得心算太麻烦？使用我们的 [转点奖励计算器](/calculators/)，轻松计算出你需要从信用卡转出多少积分，才能恰好达到目标里程数。
+觉得心算太麻烦？使用我们的 [转点奖励计算器](/calculators/transfer-bonus/)，轻松计算出你需要从信用卡转出多少积分，才能恰好达到目标里程数。

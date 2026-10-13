@@ -177,16 +177,17 @@ td{ font-family:'IBM Plex Mono', monospace; }
 .callout{ margin-top:28px; background:var(--ink-2); border-left:3px solid var(--gold); padding:18px 20px; border-radius:4px; font-size:14.5px; color:var(--muted); }
 .callout.warn{ border-left-color: var(--red); }
 .cta{ margin-top:40px; background:var(--ink-2); border:1px solid var(--line); border-radius:6px; padding:26px; text-align:center; }
-.cta a.btn{ display:inline-block; margin-top:14px; background:var(--gold); color:var(--ink); padding:12px 28px; border-radius:4px; text-decoration:none; font-weight:600; font-family:'IBM Plex Mono',monospace; font-size:14px; }
-.cta a.btn:hover{ opacity:0.9; }
+.cta > a, .cta a.btn{ display:inline-block; margin-top:14px; background:var(--gold); color:var(--ink); padding:12px 24px; border-radius:4px; text-decoration:none; font-weight:600; font-family:'IBM Plex Mono',monospace; font-size:14px; max-width:100%; box-sizing:border-box; }
+.cta > a:hover, .cta a.btn:hover{ opacity:0.9; }
 
 nav.breadcrumb{ font-family: 'IBM Plex Mono', monospace; font-size: 11px; margin-bottom: 24px; color: var(--muted); }
 nav.breadcrumb a{ color: var(--muted); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .2s; }
 nav.breadcrumb a:hover{ border-color: var(--muted); }
 nav.breadcrumb span.sep{ margin: 0 8px; opacity: 0.4; }
 
-.site-nav{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; padding-bottom:16px; margin-bottom:48px; border-bottom:1px solid var(--line); }
-.site-nav a{ color:var(--paper); text-decoration:none; margin-left: 12px; }
+.site-nav{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px 14px; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; padding-bottom:16px; margin-bottom:48px; border-bottom:1px solid var(--line); }
+.site-nav nav{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; }
+.site-nav a{ color:var(--paper); text-decoration:none; margin-left:0; white-space:nowrap; }
 .site-nav a:hover{ color:var(--gold); }
 .site-nav .brand{ color:var(--gold); margin-left:0; font-weight:600; letter-spacing:0.1em; }
 

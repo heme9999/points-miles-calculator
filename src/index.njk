@@ -4,7 +4,7 @@ title: 积分里程决策计算工具箱 | 玩转常旅客与信用卡积分
 description: 帮助常旅客完成积分价值计算、银行与航司里程换算、以及用分还是付现的科学决策。覆盖主流信用卡、航空与酒店常客计划。
 schemaType: WebApplication
 eyebrow: 里程账 · 工具 01
-lastModified: "2026-09-29"
+lastModified: "2026-10-13"
 ---
 <h1>积分与里程决策计算工具箱</h1>
 <p class="sub">一站式解决积分价值估算、转点里程换算与“用分还是付现”对比决策，让每次出行兑出更高真实价值。</p>
@@ -12,6 +12,10 @@ lastModified: "2026-09-29"
 <section class="popular-calculators">
   <h2>常用核心计算器</h2>
   <div class="popular-calculators-grid">
+    <a href="/calculators/points-to-miles-converter/" class="calculator-link-card">
+      积分转航空里程换算器 →
+      <span>按比例、步长与加赠计算可获航空里程数</span>
+    </a>
     <a href="/calculators/points-to-dollars/" class="calculator-link-card">
       积分换算现金价值计算器 →
       <span>换算里程与点数现金总值</span>
@@ -43,6 +47,11 @@ lastModified: "2026-09-29"
   </div>
 </section>
 
+<h2 style="margin-top: 2rem;">积分直接抵现 vs 转航空里程快速对比</h2>
+<p style="margin-bottom: 1.25rem; color: var(--muted); font-size: 0.95rem;">
+  本模块用于快速对比“积分直接折现抵账单”与“转成航空里程后的预估旅行价值”。如果您只需要按发卡行比例、起转门槛、步长和促销加赠精确计算<strong>能换出多少航空里程数量</strong>，请前往专用的 <a href="/calculators/points-to-miles-converter/" style="color: var(--gold); text-decoration: underline;">积分转航空里程换算器 →</a>
+</p>
+
 <div class="currency-selector" style="margin-bottom: 20px; text-align: right;">
   <label for="currency" style="font-weight: bold; margin-right: 8px;">显示货币</label>
   <select id="currency" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
@@ -59,9 +68,9 @@ lastModified: "2026-09-29"
 
   <div class="row">
     <div class="field">
-      <label for="cashRatio">现金/抵扣比例<span class="hint" id="hintCashRatio">积分 : 货币单位</span></label>
+      <label for="cashRatio">现金/抵扣比例<span class="hint" id="hintCashRatio">积分 : 元</span></label>
       <input type="number" id="cashRatio" value="100" min="1" step="1" inputmode="numeric" aria-describedby="hintCashRatio unitCashRatio">
-      <div class="unit" id="unitCashRatio">例:输入100,代表100积分抵1基本单位</div>
+      <div class="unit" id="unitCashRatio">例如：若100积分可以抵扣1元，就填写100。</div>
     </div>
     <div class="field">
       <label for="milesRatio">转里程比例<span class="hint" id="hintMilesRatio">积分 : 英里</span></label>
@@ -106,6 +115,30 @@ lastModified: "2026-09-29"
     </div>
     <div class="code" id="verdictCode">RATIO —</div>
   </div>
+</div>
+
+<div class="reads" style="margin-top: 36px;">
+  <h2>精选博客与实战指南</h2>
+  <a class="item" href="/blog/yazhouwanlitong-licheng-jiazhi/">
+    <span>国泰亚洲万里通里程价值到底多少钱一英里？没有单一答案</span>
+    <span class="arrow">→</span>
+  </a>
+  <a class="item" href="/blog/xinyongka-jifen-zhuan-yazhouwanlitong/">
+    <span>美国信用卡积分转国泰亚洲万里通，该用哪张卡？Chase 持卡人必看</span>
+    <span class="arrow">→</span>
+  </a>
+  <a class="item" href="/blog/zhaohang-jifen-huan-licheng/">
+    <span>招商银行积分换里程划算吗？先搞懂“活动制转点”这个坑</span>
+    <span class="arrow">→</span>
+  </a>
+  <a class="item" href="/guides/transfer-bonus-calculator-guide/">
+    <span>实战指南：积分转点奖励与最小步长计算指南</span>
+    <span class="arrow">→</span>
+  </a>
+  <a class="item" href="/blog/">
+    <span>浏览全部博客文章与实战案例 →</span>
+    <span class="arrow">→</span>
+  </a>
 </div>
 
 
@@ -158,6 +191,10 @@ lastModified: "2026-09-29"
 
 <div class="reads">
   <h2>热门计算器与估值工具</h2>
+  <a class="item" href="/calculators/points-to-miles-converter/">
+    <span>积分转航空里程换算器 (Points to Miles Converter · 算转点比例与加赠)</span>
+    <span class="arrow">→</span>
+  </a>
   <a class="item" href="/calculators/points-to-dollars/">
     <span>积分折现计算器 (Points to Dollars · 换算积分与里程现金价值)</span>
     <span class="arrow">→</span>
@@ -212,6 +249,7 @@ lastModified: "2026-09-29"
     const sel = $('programPreset');
     if (currentCurrency === 'USD') {
       if($('hintCashRatio')) $('hintCashRatio').textContent = '积分 : 美元';
+      if($('unitCashRatio')) $('unitCashRatio').textContent = '例如：若100积分可以抵扣1美元，就填写100。';
       if($('hintPreset')) $('hintPreset').textContent = '美分 / 英里';
       if (sel) {
         sel.options[0].text = 'Custom scenario (手动输入)';
@@ -226,6 +264,7 @@ lastModified: "2026-09-29"
       }
     } else {
       if($('hintCashRatio')) $('hintCashRatio').textContent = '积分 : 元';
+      if($('unitCashRatio')) $('unitCashRatio').textContent = '例如：若100积分可以抵扣1元，就填写100。';
       if($('hintPreset')) $('hintPreset').textContent = '元 / 英里';
       if (sel) {
         sel.options[0].text = '自定义估值情景';

@@ -5,6 +5,8 @@ seoTitle: "Chase Points Value: How Much Are UR Points Worth?"
 description: Estimate Chase Ultimate Rewards points value by redemption method, including cash back, Chase Travel, Points Boost and transfer partners.
 schemaType: Article
 eyebrow: Valuations
+lastModified: "2026-10-13"
+dateModified: "2026-10-13"
 breadcrumbs:
   - name: Points Valuations
     url: /en/values/
@@ -100,7 +102,7 @@ breadcrumbs:
 <ol>
   <li><strong>The Cash Equivalent (1.0¢)</strong>: Redeeming for statement credits or cash back provides a floor value of 1.0¢. This is a common cash-equivalent baseline.</li>
   <li><strong>The Chase Travel Portal & Points Boost</strong>: Before transferring points to a partner, check the cash price of the flight or hotel in the Chase Portal. Look for active Points Boost offers on your account. If a flight or hotel is eligible for a 1.5¢ or 2.0¢ boost, booking it directly might cost fewer points than using a transfer partner's award chart. (Use our <a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a> to verify the math).</li>
-  <li><strong>Airline & Hotel Transfer Partners (Potentially 2.0¢+)</strong>: Transferring to partners like United MileagePlus, Air France/KLM Flying Blue, or <a href="/en/values/hyatt-points/">World of Hyatt</a> can unlock enhanced value for high-demand bookings. Confirm the live transfer ratio in your rewards portal. Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1. Always verify the exact transfer ratio and award availability in your account before proceeding.</li>
+  <li><strong>Airline & Hotel Transfer Partners (Potentially 2.0¢+)</strong>: Transferring to partners like <a href="/en/calculators/united-miles-value-calculator/">United MileagePlus (United Miles Value Calculator)</a>, Air France/KLM Flying Blue, or <a href="/en/values/hyatt-points/">World of Hyatt</a> can unlock enhanced value for high-demand bookings. Confirm the live transfer ratio in your rewards portal. Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1. Always verify the exact transfer ratio and award availability in your account before proceeding (use our <a href="/en/calculators/points-to-miles-converter/">Points to Miles Converter</a> to calculate transferred miles).</li>
 </ol>
 <p>For a detailed breakdown of how this ecosystem compares to its main competitor, read our guide on <a href="/en/compare/capital-one-vs-chase/">Capital One Miles vs Chase Ultimate Rewards</a>.</p>
 

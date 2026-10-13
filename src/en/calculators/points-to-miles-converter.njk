@@ -5,8 +5,8 @@ description: Convert your credit card points to airline miles easily. Calculate 
 schemaType: WebApplication
 eyebrow: Tools · 05
 datePublished: "2026-09-08"
-dateModified: "2026-09-14"
-lastModified: "2026-09-14"
+dateModified: "2026-10-13"
+lastModified: "2026-10-13"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
@@ -15,70 +15,122 @@ breadcrumbs:
 <h1>Points to Miles Converter</h1>
 
 <div class="direct-answer">
-  <strong>Direct Answer:</strong> The <strong>Points to Miles Converter</strong> calculates the exact number of airline miles you will receive from a known bank points balance after applying transfer increments, base ratios, and promotional bonuses. This tool performs a forward calculation. It differs from the <a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a> (which reverse-calculates how many bank points you need for a target award ticket) and the <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a> (which estimates the monetary dollar value of a rewards balance).
+  <strong>Direct Answer:</strong> The <strong>Points to Miles Converter</strong> calculates the exact number of airline miles you will receive from a known bank points balance after verifying the minimum transfer threshold and applying transfer increments, base transfer ratios (e.g., 1:1, 5:4, 4:3), and promotional bonuses. This tool performs a forward quantity conversion. It differs from the <a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a> (which reverse-calculates how many bank points you need for a target award flight) and the <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a> (which estimates the monetary cash value of a rewards balance).
 </div>
 
-<div class="calculator-container" style="margin-top: 2rem;">
-  <div class="input-group">
+<div class="calculator-container" style="margin-top: 1.5rem;">
+  <div id="realtimeNotice" style="margin-bottom: 1rem; padding: 0.7rem 0.95rem; background: rgba(56, 189, 248, 0.1); border-left: 4px solid #38bdf8; border-radius: 6px; font-size: 0.9rem; color: var(--paper);">
+    <strong style="color: #7dd3fc;">Real-Time Auto-Calculation:</strong> Enter your points and transfer ratio—results update automatically with no calculate button needed.
+  </div>
+
+  <div class="input-group" style="margin-bottom: 1.1rem;">
     <label for="bankPoints">Bank points available</label>
-    <input type="number" id="bankPoints" min="0" step="1" inputmode="numeric">
-  </div>
-  
-  <div class="input-group">
-    <label for="baseRatio">Base transfer ratio <span class="hint">(e.g., 1.0 = 1 point → 1 mile)</span></label>
-    <input type="number" id="baseRatio" value="1" min="0.01" step="0.01" inputmode="decimal">
+    <input type="number" id="bankPoints" min="0" step="1" inputmode="numeric" placeholder="e.g., 50000">
   </div>
 
-  <div class="input-group">
-    <label for="bonusPercent">Transfer bonus percentage <span class="hint">(%)</span></label>
-    <input type="number" id="bonusPercent" value="0" min="0" step="1" inputmode="numeric">
-  </div>
-
-  <div class="input-group">
-    <label for="increment">Transfer increment <span class="hint">(Usually 1000)</span></label>
-    <input type="number" id="increment" value="1000" min="1" step="1" inputmode="numeric">
-  </div>
-
-  <div class="input-group">
-    <label for="targetProgram">Target program name <span class="hint">(Optional)</span></label>
-    <input type="text" id="targetProgram" placeholder="e.g., Flying Blue">
-  </div>
-
-  <div class="result-box" style="margin-top: 2rem;">
-    <h3 style="margin-top:0">Conversion Result</h3>
-    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);" id="totalMiles">-</div>
-    <div style="margin-top: 1rem; font-size: 0.9rem; color: #4b5563;" id="explain">Please enter your available bank points.</div>
-    <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;" id="breakdownBox" style="display:none;">
-      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
-        <span>Transferable Points:</span> <strong id="transferablePoints">-</strong>
-      </div>
-      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
-        <span>Remaining Bank Points:</span> <strong id="remainingPoints">-</strong>
-      </div>
-      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
-        <span>Base Miles:</span> <strong id="baseMiles">-</strong>
-      </div>
-      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
-        <span>Bonus Miles:</span> <strong id="bonusMiles">-</strong>
-      </div>
-      <div style="display:flex; justify-content: space-between; border-top: 1px solid #d1d5db; padding-top: 0.5rem; margin-top: 0.5rem;">
-        <span>Effective Ratio:</span> <strong id="effectiveRatio">-</strong>
+  <div class="input-group" style="margin-bottom: 1.1rem;">
+    <label for="transferPreset">Select a Common Transfer Partner <span class="hint">(Optional—or enter any custom ratio below)</span></label>
+    <select id="transferPreset">
+      <option value="custom">Custom / Enter live ratio from your bank app (e.g., CMB campaign ratios)</option>
+      <optgroup label="US · US Card Issuers (Verified Rules)">
+        {% for preset in transferPresets %}
+        <option value="{{ preset.id }}">{{ preset.labelEn }}</option>
+        {% endfor %}
+      </optgroup>
+    </select>
+    <div id="presetMetaBox" style="margin-top: 0.55rem; padding: 0.8rem 0.95rem; background: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; font-size: 0.85rem; color: rgba(244, 240, 230, 0.92); line-height: 1.6;">
+      <div><strong style="color: var(--gold);">Current Mode:</strong> <span id="presetModeStatus">Custom Parameters (Supports any bank and airline ratio)</span></div>
+      <div id="presetDetailContent" style="margin-top: 0.35rem;">
+        If your issuer uses card-tier rules, limited-time campaign ratios, or quota limits (such as <strong>China Merchants Bank / CMB</strong> campaign-based transfers), check your bank's official app for the active campaign rate and enter "Every X bank points convert to Y airline miles" below. <strong style="color: #fde047;">Always verify the live transfer ratio displayed in your rewards portal before transferring.</strong>
       </div>
     </div>
   </div>
   
-  <button id="btnShare" class="btn-secondary" style="margin-top:1rem; width:100%;">🔗 Copy Share Link</button>
+  <div class="input-group" style="margin-bottom: 1.1rem;">
+    <label for="ratioPoints">Base transfer ratio (Intuitive input) <span class="hint">(Points-to-miles quantity ratio—do not enter monetary values like 1.5¢/mile here)</span></label>
+    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+      <span style="font-size: 0.95rem; color: var(--paper);">Every</span>
+      <input type="number" id="ratioPoints" aria-label="Bank points in ratio" value="1" min="0.01" step="any" inputmode="decimal" style="width: 110px; flex: 1 1 85px;">
+      <span style="font-size: 0.95rem; color: var(--paper);">bank points convert to</span>
+      <input type="number" id="ratioMiles" aria-label="Airline miles in ratio" value="1" min="0.01" step="any" inputmode="decimal" style="width: 110px; flex: 1 1 85px;">
+      <span style="font-size: 0.95rem; color: var(--paper);">airline miles</span>
+    </div>
+  </div>
+
+  <div class="input-group" style="margin-bottom: 1.1rem;">
+    <label for="bonusPercent">Transfer bonus percentage <span class="hint">(%, promotional bonus—enter 0 if none)</span></label>
+    <input type="number" id="bonusPercent" value="0" min="0" step="1" inputmode="numeric">
+  </div>
+
+  <details id="advancedSettings" class="details-advanced" style="margin-bottom: 1.25rem; border: 1px solid var(--line); border-radius: 6px; padding: 0.65rem 0.95rem; background: var(--ink-2);">
+    <summary style="cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--gold); padding: 0.25rem 0; min-height: auto; background: transparent;">Advanced Settings (Minimum Transfer, Increment, Decimal Ratio &amp; Target Airline)</summary>
+    <div style="margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--line);">
+      <div class="input-group" style="margin-bottom: 0.9rem;">
+        <label for="baseRatio">Base transfer ratio (Decimal) <span class="hint">(e.g., 1.0 = 1:1, 0.8 = 5:4, 0.75 = 4:3; syncs automatically with intuitive input above)</span></label>
+        <input type="number" id="baseRatio" value="1" min="0.0001" step="any" inputmode="decimal">
+      </div>
+
+      <div class="input-group" style="margin-bottom: 0.9rem;">
+        <label for="minTransfer">Minimum transfer threshold <span class="hint">(Minimum points required to initiate a transfer, usually 1000)</span></label>
+        <input type="number" id="minTransfer" value="1000" min="1" step="1" inputmode="numeric">
+      </div>
+
+      <div class="input-group" style="margin-bottom: 0.9rem;">
+        <label for="increment">Transfer increment <span class="hint">(Step size above the minimum threshold, usually 1000 or 100)</span></label>
+        <input type="number" id="increment" value="1000" min="1" step="1" inputmode="numeric">
+      </div>
+
+      <div class="input-group" style="margin-bottom: 0;">
+        <label for="targetProgram">Target program name <span class="hint">(Optional)</span></label>
+        <input type="text" id="targetProgram" placeholder="e.g., Cathay Pacific Asia Miles / United">
+      </div>
+    </div>
+  </details>
+
+  <div class="result-box" style="margin-top: 1.25rem; padding: 1.25rem; background: var(--ink-2); border: 1px solid var(--line); border-radius: 8px;">
+    <h3 style="margin-top:0; color: var(--gold); font-size: 1.05rem;">Conversion Result</h3>
+    <div style="font-size: 1.75rem; font-weight: bold; color: var(--paper); font-family: var(--font-mono); margin-top: 0.35rem;" id="totalMiles">-</div>
+    <div style="margin-top: 0.75rem; font-size: 0.92rem; color: rgba(244, 240, 230, 0.92); line-height: 1.6;" id="explain">Please enter your available bank points.</div>
+    <div style="margin-top: 1rem; padding: 1rem; background: var(--ink); border: 1px solid var(--line); border-radius: 6px; color: var(--paper); font-size: 0.9rem;" id="breakdownBox">
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span style="color: var(--muted);">Transferable Points:</span> <strong id="transferablePoints" style="color: var(--paper);">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span style="color: var(--muted);">Remaining Bank Points:</span> <strong id="remainingPoints" style="color: var(--paper);">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span style="color: var(--muted);">Base Miles:</span> <strong id="baseMiles" style="color: var(--paper);">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span style="color: var(--muted);">Bonus Miles:</span> <strong id="bonusMiles" style="color: var(--paper);">-</strong>
+      </div>
+      <div style="display:flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 0.5rem; margin-top: 0.5rem;">
+        <span style="color: var(--muted);">Effective Ratio:</span> <strong id="effectiveRatio" style="color: var(--gold);">-</strong>
+      </div>
+    </div>
+  </div>
+  
+  <button id="btnShare" class="btn-secondary" style="margin-top:1rem; width:100%; padding: 0.75rem 1rem; background: var(--ink-2); color: var(--gold); border: 1px solid var(--gold); border-radius: 6px; font-weight: 600; cursor: pointer;">🔗 Share this calculation (Copy link with parameters)</button>
   <div id="toast" class="toast">Link copied to clipboard!</div>
 </div>
 
 <div class="prose" style="margin-top: 3rem;">
+  <h2>Essential Beginner Guide: 3 Concepts You Must Not Confuse</h2>
+  <p>When converting credit card points into airline miles, beginners often mix up transfer ratios with monetary valuations. Make sure to distinguish these three separate concepts:</p>
+  <ul>
+    <li><strong>1. Base Transfer Ratio</strong>: How many <strong>bank points convert into how many airline miles</strong> (a quantity-to-quantity exchange). For example, Chase UR (US) to United is <code>1,000 : 1,000</code> (1:1); US Amex MR to Cathay Pacific Asia Miles is <code>1,000 : 800</code> (5:4); certain regional bank campaigns may use <code>15 : 1</code>. This is what you enter in the ratio fields above.</li>
+    <li><strong>2. Transfer Bonus</strong>: An <strong>extra percentage of miles</strong> awarded during a limited-time bank promotion (e.g., a +20% bonus). Enter <code>0%</code> when no promotion is active.</li>
+    <li><strong>3. Monetary Valuation (Cents Per Point / Mile)</strong>: How much <strong>cash value 1 point or 1 mile is worth</strong> (e.g., <code>1.5¢/mile</code>). <strong>Never enter a cent-per-mile valuation like 1.5¢ into the Base Transfer Ratio field!</strong> To estimate the dollar value of a miles balance, use our <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a>; to evaluate a specific flight redemption against its cash ticket price, use our <a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>.</li>
+  </ul>
+
   <h2>How to Convert Points to Airline Miles</h2>
-  <p>The math behind converting your flexible credit card rewards (like Chase Ultimate Rewards or Amex Membership Rewards) into airline miles relies on a standard formula:</p>
+  <p>The math behind converting your flexible credit card rewards (like Chase Ultimate Rewards or Amex Membership Rewards) into airline miles relies on four standard rules:</p>
   
   <div class="math-formula">
     <strong>Standard Conversion Formula:</strong><br><br>
+    <em>Prerequisite: Bank Points ≥ Minimum Transfer Threshold (e.g., 1,000 points)</em><br>
     <em>Transferable Points = floor(Bank Points / Increment) × Increment</em><br>
-    <em>Base Miles = Transferable Points × Base Ratio</em><br>
+    <em>Base Miles = Transferable Points × (Airline Miles Y / Bank Points X)</em><br>
     <em>Bonus Miles = Base Miles × Bonus Percentage</em><br>
     <em>Total Miles = Base Miles + Bonus Miles</em>
   </div>
@@ -86,7 +138,7 @@ breadcrumbs:
   <h3>Calculation Examples</h3>
   
   <h4>Example 1: Standard 1:1 Transfer with a 20% Bonus</h4>
-  <p>You have 50,000 Amex points and want to transfer them to Air France Flying Blue during a 20% transfer bonus. The increment is 1,000.</p>
+  <p>You have 50,000 Amex points and want to transfer them to Air Canada Aeroplan or Flying Blue (1:1) during a 20% transfer bonus. The minimum transfer and increment are 1,000.</p>
   <ul>
     <li>Transferable Points: 50,000</li>
     <li>Base Miles (1:1): 50,000</li>
@@ -95,12 +147,20 @@ breadcrumbs:
   </ul>
 
   <h4>Example 2: Non-1:1 Transfer with Step Restrictions</h4>
-  <p>Suppose you have 50,500 <a href="/en/values/capital-one-miles/">Capital One Miles</a> and the selected partner uses a 4:3 transfer ratio, equivalent to 0.75 airline miles per bank point. With a 1,000-point transfer increment and no bonus, 50,000 points can be transferred for 37,500 miles, leaving 500 points in the account.</p>
+  <p>Suppose you have 50,500 <a href="/en/values/capital-one-miles/">Capital One Miles</a> and the selected partner uses a 4:3 transfer ratio (every 4 points convert to 3 miles, or 0.75 airline miles per bank point). With a 1,000-point transfer increment and no bonus, 50,000 points can be transferred for 37,500 miles, leaving 500 points in the account.</p>
   <ul>
     <li>Transferable Points: 50,000 (500 points left behind)</li>
-    <li>Base Miles (0.75 ratio): 37,500</li>
+    <li>Base Miles (4:3 / 0.75 ratio): 37,500</li>
     <li>Bonus Miles (0%): 0</li>
     <li><strong>Total Miles: 37,500</strong></li>
+  </ul>
+
+  <h4>Example 3: Multi-Point Regional Bank Ratio (e.g., 15:1 Campaign Ratio)</h4>
+  <p>Suppose your regional credit card campaign offers 1 airline mile for every 15 bank points, and you hold 15,000 points with a 1,000-point increment and 0% bonus:</p>
+  <ul>
+    <li>Enter in the intuitive ratio fields: Every <code>15</code> bank points convert to <code>1</code> airline miles</li>
+    <li>Transferable Points: 15,000</li>
+    <li><strong>Total Miles: 1,000</strong></li>
   </ul>
 
   <h2>Points to Miles Converter vs. Transfer Bonus Calculator</h2>
@@ -111,13 +171,13 @@ breadcrumbs:
   </ul>
 
   <h2>Where to Find Real Transfer Ratios</h2>
-  <p>Never assume all transfers are 1:1. While many airline partners across programs like Amex, Chase, and Capital One transfer at 1:1, there are numerous exceptions (e.g., 4:3, 2:1, or 3:1 for hotel currencies), and promotional bonuses temporarily alter effective ratios. Always treat listed transfer ratios as illustrative examples and verify the live ratio shown in your bank's reward portal before initiating a transfer. The portal will explicitly state the current ratio (e.g., "1,000 points = 1,000 miles").</p>
+  <p>Never assume all transfers are 1:1. Transfer ratios, minimum thresholds, and caps vary by issuing country (e.g., US Amex vs. HK Amex), card tier, and active promotional campaigns. Always verify the live ratio shown in your bank's reward portal before initiating a transfer.</p>
 
   <h2>Important Transfer Rules and Limitations</h2>
   <ul>
-    <li><strong>Transfers are Final</strong>: Transfers are generally final and normally cannot be reversed. Never transfer points speculatively.</li>
-    <li><strong>Award Availability</strong>: Just because you have the miles doesn't mean you can book the flight. Always confirm award space exists before initiating a transfer.</li>
-    <li><strong>Transfer Delays</strong>: While many transfers are instant, some partners (like ANA or Singapore Airlines) can take 24 to 48 hours to process.</li>
+    <li><strong>Transfers are Final</strong>: Transfers are generally one-way and cannot be reversed. Never transfer points speculatively before confirming award seat availability.</li>
+    <li><strong>Minimum Transfer Threshold vs. Transfer Increment</strong>: Some issuers require a 1,000-point minimum transfer but allow 100-point increments above 1,000, while others enforce strict 1,000-point multiples. Check both rules in your portal.</li>
+    <li><strong>Transfer Posting Times Vary</strong>: Posting times vary by bank, airline partner, and account verification status—while many transfers are instant, some partners (such as ANA or Singapore Airlines KrisFlyer) can take several hours to several business days to process according to official program terms.</li>
   </ul>
 
   <h3>Frequently Asked Questions</h3>
@@ -125,49 +185,181 @@ breadcrumbs:
     <details>
       <summary>Do all credit card points transfer at a 1:1 ratio?</summary>
       <div>
-        <p>No. While 1:1 is the most common ratio for premium travel cards, many hotel points (like Marriott or Hilton) and specific bank partners have different ratios. For example, Marriott typically transfers to airlines at a 3:1 ratio.</p>
+        <p>No. While 1:1 is common for US travel cards, exceptions include 5:4 (US Amex to Cathay Pacific), 4:3 (Capital One to EVA Air), 3:1 (Marriott Bonvoy to most airlines), and 15:1 or 20:1 on certain regional credit card programs.</p>
       </div>
     </details>
     
     <details>
-      <summary>Can I transfer just the exact amount of points I need?</summary>
+      <summary>What is the difference between Minimum Transfer Threshold and Transfer Increment?</summary>
       <div>
-        <p>Usually not. Most major banks enforce a minimum transfer amount (often 1,000 points) and require transfers to be in 1,000-point increments.</p>
+        <p>The <strong>Minimum Transfer Threshold</strong> is the smallest amount required to start a transfer (typically 1,000 points). The <strong>Transfer Increment</strong> is the step size allowed above that minimum (e.g., 1,000-point steps vs. 100-point steps).</p>
       </div>
     </details>
 
     <details>
-      <summary>Why didn't my bonus miles show up immediately?</summary>
+      <summary>Why didn't my miles or bonus miles show up immediately?</summary>
       <div>
-        <p>In most cases, the base miles will appear instantly, but promotional bonus miles can sometimes take an additional 24 to 48 hours to post to your airline account, depending on the bank and airline systems.</p>
+        <p>Posting speed depends on the issuing bank, partner airline system, and account status. While many partners post instantly, some airlines or batch-processed promotional bonuses can take several hours to several business days to appear per official program disclosures.</p>
       </div>
     </details>
   </div>
 </div>
 
 <script>
+  const PRESETS = {{ transferPresets | dump | safe }};
   const $ = id => document.getElementById(id);
-  
-  const parseParam = (key, elId, maxVal = 1000000000) => {
-    const params = new URLSearchParams(window.location.search);
-    let val = parseFloat(params.get(key));
-    if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
-      const el = $(elId);
-      if (el) el.value = val;
-    }
-  };
 
-  parseParam('points', 'bankPoints');
-  parseParam('bankPoints', 'bankPoints');
-  parseParam('baseRatio', 'baseRatio');
-  parseParam('bonusPercent', 'bonusPercent');
-  parseParam('increment', 'increment');
+  let exactRatio = 1;
+  let isApplyingPreset = false;
+  let minTransferManuallyEdited = false;
+
+  function findPreset(id) {
+    return PRESETS.find(p => p.id === id) || null;
+  }
+
+  function updatePresetMetaUI(presetId) {
+    const preset = findPreset(presetId);
+    const statusEl = $('presetModeStatus');
+    const detailEl = $('presetDetailContent');
+    if (!statusEl || !detailEl) return;
+
+    if (!preset) {
+      statusEl.textContent = 'Custom Parameters (Supports any bank and airline ratio)';
+      detailEl.innerHTML = 'If your issuer uses card-tier rules, limited-time campaign ratios, or quota limits (such as <strong>China Merchants Bank / CMB</strong> campaign-based transfers), check your bank\'s official app for the active campaign rate and enter "Every X bank points convert to Y airline miles" below. <strong style="color: #fde047;">Always verify the live transfer ratio displayed in your rewards portal before transferring.</strong>';
+      return;
+    }
+
+    statusEl.textContent = `Preset Applied: ${preset.labelEn}`;
+    detailEl.innerHTML = `
+      <div><strong>Issuing Region:</strong> ${preset.regionLabelEn} | <strong>Min &amp; Increment:</strong> ${preset.minTransfer.toLocaleString('en-US')} min transfer, ${preset.increment.toLocaleString('en-US')} increment</div>
+      <div style="margin-top:0.25rem;"><strong>Card Eligibility:</strong> ${preset.eligibilityEn}</div>
+      <div style="margin-top:0.25rem;"><strong>Official Source:</strong> <a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameEn}</a> (Last verified: ${preset.lastVerified})</div>
+      <div style="margin-top:0.25rem; color:#fde047;"><strong>Reminder:</strong> Always verify the live transfer ratio displayed in your rewards portal before transferring. Editing any transfer parameter below switches to Custom mode.</div>
+    `;
+  }
+
+  function switchToCustomMode(keepTargetProgram = false) {
+    if (isApplyingPreset) return;
+    const sel = $('transferPreset');
+    if (sel && sel.value !== 'custom') {
+      sel.value = 'custom';
+      if (!keepTargetProgram && $('targetProgram')) {
+        $('targetProgram').value = '';
+      }
+      updatePresetMetaUI('custom');
+    }
+  }
+
+  function applyPreset(presetId) {
+    const preset = findPreset(presetId);
+    if (!preset) {
+      updatePresetMetaUI('custom');
+      return;
+    }
+    isApplyingPreset = true;
+    $('ratioPoints').value = preset.ratioPoints;
+    $('ratioMiles').value = preset.ratioMiles;
+    exactRatio = preset.ratioMiles / preset.ratioPoints;
+    $('baseRatio').value = Number(exactRatio.toFixed(6));
+    $('minTransfer').value = preset.minTransfer;
+    $('increment').value = preset.increment;
+    $('targetProgram').value = preset.targetProgramEn;
+    minTransferManuallyEdited = true;
+    updatePresetMetaUI(presetId);
+    isApplyingPreset = false;
+  }
+
+  function syncFromHumanRatio() {
+    switchToCustomMode();
+    const rp = parseFloat($('ratioPoints').value);
+    const rm = parseFloat($('ratioMiles').value);
+    if (!isNaN(rp) && !isNaN(rm) && rp > 0 && rm > 0 && isFinite(rp) && isFinite(rm)) {
+      exactRatio = rm / rp;
+      $('baseRatio').value = Number(exactRatio.toFixed(6));
+    } else {
+      exactRatio = NaN;
+      $('baseRatio').value = '';
+    }
+    calculateConversion();
+  }
+
+  function syncFromBaseRatio() {
+    switchToCustomMode();
+    const r = parseFloat($('baseRatio').value);
+    if (!isNaN(r) && r > 0 && isFinite(r)) {
+      exactRatio = r;
+      $('ratioPoints').value = 1;
+      $('ratioMiles').value = r;
+    } else {
+      exactRatio = r;
+    }
+    calculateConversion();
+  }
+
+  function initFromUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const presetParam = params.get('preset');
+    if (presetParam && findPreset(presetParam)) {
+      $('transferPreset').value = presetParam;
+      applyPreset(presetParam);
+    }
+
+    const parseNum = (key, maxVal = 1000000000) => {
+      if (!params.has(key)) return null;
+      const val = parseFloat(params.get(key));
+      if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) return val;
+      return null;
+    };
+
+    const pts = parseNum('points') ?? parseNum('bankPoints');
+    if (pts !== null) $('bankPoints').value = pts;
+
+    const rp = parseNum('ratioPoints');
+    const rm = parseNum('ratioMiles');
+    const br = parseNum('baseRatio');
+
+    if (rp !== null && rm !== null && rp > 0 && rm > 0) {
+      $('ratioPoints').value = rp;
+      $('ratioMiles').value = rm;
+      exactRatio = rm / rp;
+      $('baseRatio').value = Number(exactRatio.toFixed(6));
+    } else if (br !== null && br > 0) {
+      $('baseRatio').value = br;
+      exactRatio = br;
+      $('ratioPoints').value = 1;
+      $('ratioMiles').value = br;
+    }
+
+    const bonus = parseNum('bonusPercent');
+    if (bonus !== null) $('bonusPercent').value = bonus;
+
+    const inc = parseNum('increment');
+    if (inc !== null && inc > 0) {
+      $('increment').value = inc;
+      if (!params.has('minTransfer') && !presetParam) {
+        $('minTransfer').value = inc;
+      }
+    }
+
+    const minT = parseNum('minTransfer');
+    if (minT !== null && minT > 0) {
+      $('minTransfer').value = minT;
+      minTransferManuallyEdited = true;
+    }
+
+    if (params.has('targetProgram')) {
+      $('targetProgram').value = params.get('targetProgram').slice(0, 60);
+    }
+  }
 
   function calculateConversion() {
     let points = parseFloat($('bankPoints').value);
-    let ratio = parseFloat($('baseRatio').value);
+    let ratio = (!isNaN(exactRatio) && exactRatio > 0) ? exactRatio : parseFloat($('baseRatio').value);
     let bonus = parseFloat($('bonusPercent').value);
     let inc = parseFloat($('increment').value);
+    let minTransferEl = $('minTransfer');
+    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : inc;
+    if (isNaN(minTransfer) || minTransfer <= 0) minTransfer = inc;
     let targetProg = $('targetProgram').value.trim() || 'airline';
 
     const resetState = (msg = 'Please enter valid numbers.') => {
@@ -200,6 +392,12 @@ breadcrumbs:
       return;
     }
 
+    const effectiveMinRequired = Math.max(minTransfer, inc);
+    if (points < effectiveMinRequired) {
+      resetState(`You need at least ${effectiveMinRequired} points to make a transfer (minimum transfer threshold: ${minTransfer}, increment: ${inc}).`);
+      return;
+    }
+
     let transferablePoints = Math.floor(points / inc) * inc;
     let remainingBankPoints = points - transferablePoints;
     
@@ -208,9 +406,9 @@ breadcrumbs:
       return;
     }
 
-    let baseMiles = transferablePoints * ratio;
-    let bonusMiles = baseMiles * (bonus / 100);
-    let totalMiles = baseMiles + bonusMiles;
+    let baseMiles = Math.round(transferablePoints * ratio * 1e6) / 1e6;
+    let bonusMiles = Math.round(baseMiles * (bonus / 100) * 1e6) / 1e6;
+    let totalMiles = Math.round((baseMiles + bonusMiles) * 1e6) / 1e6;
     let effectiveRatio = totalMiles / transferablePoints;
 
     $('totalMiles').textContent = totalMiles.toLocaleString('en-US', {maximumFractionDigits:0}) + ' Miles';
@@ -225,29 +423,76 @@ breadcrumbs:
     $('remainingPoints').textContent = remainingBankPoints.toLocaleString('en-US');
     $('baseMiles').textContent = baseMiles.toLocaleString('en-US', {maximumFractionDigits:0});
     $('bonusMiles').textContent = bonusMiles.toLocaleString('en-US', {maximumFractionDigits:0});
-    $('effectiveRatio').textContent = effectiveRatio.toLocaleString('en-US', {maximumFractionDigits:2});
+    $('effectiveRatio').textContent = effectiveRatio.toLocaleString('en-US', {maximumFractionDigits:4});
   }
 
-  ['bankPoints', 'baseRatio', 'bonusPercent', 'increment', 'targetProgram'].forEach(id => {
-    if($(id)) $(id).addEventListener('input', calculateConversion);
+  if ($('transferPreset')) {
+    $('transferPreset').addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val === 'custom') {
+        updatePresetMetaUI('custom');
+      } else {
+        applyPreset(val);
+      }
+      calculateConversion();
+    });
+  }
+
+  if ($('ratioPoints')) $('ratioPoints').addEventListener('input', syncFromHumanRatio);
+  if ($('ratioMiles')) $('ratioMiles').addEventListener('input', syncFromHumanRatio);
+  if ($('baseRatio')) $('baseRatio').addEventListener('input', syncFromBaseRatio);
+
+  if ($('increment')) {
+    $('increment').addEventListener('input', () => {
+      switchToCustomMode();
+      if (!minTransferManuallyEdited && $('minTransfer')) {
+        $('minTransfer').value = $('increment').value;
+      }
+      calculateConversion();
+    });
+  }
+
+  if ($('minTransfer')) {
+    $('minTransfer').addEventListener('input', () => {
+      minTransferManuallyEdited = true;
+      switchToCustomMode();
+      calculateConversion();
+    });
+  }
+
+  ['bankPoints', 'bonusPercent', 'targetProgram'].forEach(id => {
+    if ($(id)) {
+      $(id).addEventListener('input', () => {
+        if (id === 'targetProgram') switchToCustomMode(true);
+        calculateConversion();
+      });
+    }
   });
 
   if ($('btnShare')) {
     $('btnShare').addEventListener('click', () => {
       const url = new URL(window.location.origin + window.location.pathname);
       const points = parseFloat($('bankPoints').value);
+      const rp = parseFloat($('ratioPoints').value);
+      const rm = parseFloat($('ratioMiles').value);
       const ratio = parseFloat($('baseRatio').value);
       const bonus = parseFloat($('bonusPercent').value);
       const inc = parseFloat($('increment').value);
+      const minT = parseFloat($('minTransfer').value);
+      const presetVal = $('transferPreset') ? $('transferPreset').value : 'custom';
 
-      if(points > 0) url.searchParams.set('points', points);
-      if(ratio > 0) url.searchParams.set('baseRatio', ratio);
-      if(bonus >= 0) url.searchParams.set('bonusPercent', bonus);
-      if(inc > 0) url.searchParams.set('increment', inc);
+      if (presetVal && presetVal !== 'custom') url.searchParams.set('preset', presetVal);
+      if (points > 0) url.searchParams.set('points', points);
+      if (rp > 0) url.searchParams.set('ratioPoints', rp);
+      if (rm > 0) url.searchParams.set('ratioMiles', rm);
+      if (ratio > 0) url.searchParams.set('baseRatio', ratio);
+      if (bonus >= 0) url.searchParams.set('bonusPercent', bonus);
+      if (inc > 0) url.searchParams.set('increment', inc);
+      if (minT > 0) url.searchParams.set('minTransfer', minT);
 
       navigator.clipboard.writeText(url.toString()).then(() => {
         const toast = $('toast');
-        if(toast) {
+        if (toast) {
           toast.classList.add('show');
           setTimeout(() => toast.classList.remove('show'), 2000);
         }
@@ -255,5 +500,6 @@ breadcrumbs:
     });
   }
 
+  initFromUrlParams();
   calculateConversion();
 </script>

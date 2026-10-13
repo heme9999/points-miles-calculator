@@ -1,11 +1,19 @@
 # Sitemap Production Diagnostic Report
 
-**Date:** 2026-09-08T15:11:53.033Z
+**Date:** 2026-10-13T05:15:35.715Z
 **Target:** https://points-miles-calculator.pages.dev
 
-## File: /robots.txt
+## 1. Five-Category Evidence Classification
 
-### Chrome UA
+1. **Regular HTTP Client Request (Chrome UA):** Measured live below.
+2. **Simulated Googlebot UA Client Request:** Measured live below. *(Note: Spoofing the `User-Agent` header from a non-Google IP only tests UA-string filtering; it does NOT replicate real Googlebot ASN/IP reputation or prove Cloudflare never challenged Google's crawler.)*
+3. **Repository Static Rules (`_headers` / `_redirects`):** `src/_headers` present: `false`; `src/_redirects` present: `false`. Verified no repo-level rules block or redirect `/sitemap.xml` or `/robots.txt`.
+4. **Google Search Console Live Inspection Result:** `UNAVAILABLE via static script` *(Must be read directly from GSC URL Inspection UI; prior manual check at 2026-10-13 11:47:44 returned HTTP 200 & `application/xml`, which proves live inspection fetchability at that moment but does not guarantee asynchronous Sitemap Processor completion)*.
+5. **Cloudflare WAF / Bot Historical Request Logs:** `UNAVAILABLE` *(Cloudflare Pages free tier dashboard does not expose historical raw static request logs for past Google Sitemap Processor fetches; therefore, historical edge/WAF interception can neither be confirmed nor ruled out)*.
+
+## 2. Live Endpoint Probe: `/robots.txt`
+
+### 1) Regular HTTP Client (Chrome UA)
 - **HTTP Status:** 200
 - **Final URL:** https://points-miles-calculator.pages.dev/robots.txt
 - **Content-Type:** text/plain; charset=utf-8
@@ -22,7 +30,7 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 
 ```
 
-### Googlebot UA
+### 2) Simulated Googlebot UA Client
 - **HTTP Status:** 200
 - **Final URL:** https://points-miles-calculator.pages.dev/robots.txt
 - **Content-Type:** text/plain; charset=utf-8
@@ -39,56 +47,68 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 
 ```
 
-## File: /sitemap.xml
+## 2. Live Endpoint Probe: `/sitemap.xml`
 
-### Chrome UA
+### 1) Regular HTTP Client (Chrome UA)
 - **HTTP Status:** 200
 - **Final URL:** https://points-miles-calculator.pages.dev/sitemap.xml
 - **Content-Type:** application/xml
-- **Content-Length:** 11246
+- **Content-Length:** 12317
 - **Cache-Control:** public, max-age=0, must-revalidate
-- **ETag:** "652fcfe331356f6a482e327d2304db55"
+- **ETag:** "b6c74b683c2e3f7312a429ab656a5c42"
 - **Content-Encoding:** none
 - **Response First 200 Bytes:**
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://points-miles-calculator.pages.dev/</loc>
-    <lastmod>2026-08-22</lastmod>
-
+    <loc>https://points-miles-calculator.pages.dev/values/</loc>
+  </url>
+  <url>
+    <loc>h
 ```
-- **Complete Response SHA-256:** `33c072c255f531c2c80bd6fd37bf66d735a48e32d28dc7d29579c96bed740d49`
-- **<loc> Count:** 104
+- **Complete Response SHA-256:** `8f037dbca4ef745fe82a063dd83f0c20f8cfded8da7b34cd27ca63f3950853f6`
+- **Total `<loc>` Count:** 110 (Unique: 110)
 - **Duplicate URLs:** 0
 - **URLs with Params (?):** 0
 - **Non-canonical Host URLs:** 0
 
-### Googlebot UA
+### 2) Simulated Googlebot UA Client
 - **HTTP Status:** 200
 - **Final URL:** https://points-miles-calculator.pages.dev/sitemap.xml
 - **Content-Type:** application/xml
-- **Content-Length:** 11246
+- **Content-Length:** 12317
 - **Cache-Control:** public, max-age=0, must-revalidate
-- **ETag:** "652fcfe331356f6a482e327d2304db55"
+- **ETag:** "b6c74b683c2e3f7312a429ab656a5c42"
 - **Content-Encoding:** none
 - **Response First 200 Bytes:**
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://points-miles-calculator.pages.dev/</loc>
-    <lastmod>2026-08-22</lastmod>
-
+    <loc>https://points-miles-calculator.pages.dev/values/</loc>
+  </url>
+  <url>
+    <loc>h
 ```
-- **Complete Response SHA-256:** `33c072c255f531c2c80bd6fd37bf66d735a48e32d28dc7d29579c96bed740d49`
-- **<loc> Count:** 104
+- **Complete Response SHA-256:** `8f037dbca4ef745fe82a063dd83f0c20f8cfded8da7b34cd27ca63f3950853f6`
+- **Total `<loc>` Count:** 110 (Unique: 110)
 - **Duplicate URLs:** 0
 - **URLs with Params (?):** 0
 - **Non-canonical Host URLs:** 0
 
-## Cloudflare Configuration Analysis
-- **WAF / Bot Fight Mode:** Checked project settings. Cloudflare Pages default domains (`pages.dev`) sometimes have strict automated bot protections. Since our Googlebot UA returned 200 (if confirmed above), Bot Fight Mode is not blocking Googlebot.
-- **Redirect / Transform Rules:** None configured that intercept `/sitemap.xml`.
-- **_headers:** Checked `src/_headers`. No rules block or restrict Googlebot from `/sitemap.xml`.
-- **_redirects:** Checked `src/_redirects`. No rules redirect `/sitemap.xml`.
+## 3. Sitemap URL Set Comparison (Local Build vs. Production)
+
+- **Local Build `_site/sitemap.xml` Unique URLs:** 110
+- **Production `/sitemap.xml` Unique URLs:** 110
+- **Added in Local Build (0):** None
+- **Removed in Local Build (0):** None
+
+## 4. Four-Dimension Status Separation
+
+| Dimension | Status | Evidence Basis |
+| :--- | :--- | :--- |
+| **Technical Accessibility** | **PASS** | `/sitemap.xml` and `/robots.txt` return HTTP 200, valid `application/xml` / `text/plain`, well-formed XML, and 0 canonical/hreflang errors across 110 URLs. |
+| **Sitemap Processed (GSC)** | **PENDING / REQUIRES GSC UI CHECK** | Technical accessibility does not automatically flip GSC Sitemaps status from `Couldn't fetch` to `Success`; must be verified in GSC Sitemaps report after resubmission. |
+| **Google Indexed** | **REQUIRES GSC COVERAGE / URL INSPECTION** | Sitemap presence does not equal indexation; check GSC Pages / URL Inspection for individual URL indexing status. |
+| **Search Clicks** | **REQUIRES GSC PERFORMANCE** | Tracked separately in GSC Performance report. |

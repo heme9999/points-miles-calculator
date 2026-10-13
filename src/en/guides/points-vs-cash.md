@@ -3,6 +3,8 @@ layout: base.njk
 title: "Points vs Cash: Should I Use Points or Pay Cash?"
 description: A complete decision framework for choosing between points and cash. Learn about CPP, taxes, forgone value, and flexibility with real examples.
 schemaType: Article
+lastModified: "2026-10-13"
+dateModified: "2026-10-13"
 breadcrumbs:
   - name: Guides
     url: /en/guides/
@@ -61,4 +63,4 @@ Points bookings are often highly flexible. Many airline and hotel loyalty progra
 
 ## Try Our Advanced Calculator
 
-Ready to crunch the numbers for your next trip? Use our [Advanced Calculator](/en/calculators/) to easily compare your options, factor in taxes, and determine the exact value of your redemption! If you are evaluating a complete vacation budget with both flights and hotel rewards, use our [Trip Cost After Points Calculator](/en/calculators/trip-cost-after-points/) to model total net cash expenditure.
+Ready to crunch the numbers for your next trip? Use our [Points vs Cash Calculator](/en/calculators/points-vs-cash/) to easily compare your options, factor in taxes, and determine the exact value of your redemption! If you are evaluating a complete vacation budget with both flights and hotel rewards, use our [Trip Cost After Points Calculator](/en/calculators/trip-cost-after-points/) to model total net cash expenditure.

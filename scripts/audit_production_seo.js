@@ -81,10 +81,32 @@ async function runAudit() {
   const urlMatches = sitemapXml.match(/<loc>(.*?)<\/loc>/g) || [];
   const urls = urlMatches.map(m => m.replace(/<\/?loc>/g, '').trim());
   report.totalUrls = urls.length;
-  console.log(`- Total URLs in sitemap: ${urls.length}`);
+  console.log(`- Total URLs in production sitemap: ${urls.length}`);
 
-  if (urls.length !== 106) {
-    failures.push(`Sitemap URL count mismatch: Expected 106, got ${urls.length}`);
+  // Compare against local build _site/sitemap.xml dynamically instead of hardcoded count
+  const localSitemapPath = path.join(__dirname, '../_site/sitemap.xml');
+  if (fs.existsSync(localSitemapPath)) {
+    const localSitemapXml = fs.readFileSync(localSitemapPath, 'utf8');
+    const localMatches = localSitemapXml.match(/<loc>(.*?)<\/loc>/g) || [];
+    const localUrls = localMatches.map(m => m.replace(/<\/?loc>/g, '').trim());
+    const prodSet = new Set(urls);
+    const localSet = new Set(localUrls);
+    const addedUrls = urls.filter(u => !localSet.has(u));
+    const removedUrls = localUrls.filter(u => !prodSet.has(u));
+    report.sitemapComparison = {
+      localCount: localUrls.length,
+      productionCount: urls.length,
+      addedOnProduction: addedUrls,
+      missingOnProduction: removedUrls
+    };
+    console.log(`- Local _site/sitemap.xml URLs: ${localUrls.length}`);
+    if (addedUrls.length > 0) console.log(`- URLs on production but not local: ${addedUrls.join(', ')}`);
+    if (removedUrls.length > 0) console.log(`- URLs in local build but not yet on production: ${removedUrls.join(', ')}`);
+    if (urls.length !== localUrls.length) {
+      failures.push(`Sitemap URL count mismatch between local build (${localUrls.length}) and target (${urls.length})`);
+    }
+  } else if (urls.length === 0) {
+    failures.push('Sitemap contains 0 URLs');
   }
 
   // Check unique & no query params & no preview domains

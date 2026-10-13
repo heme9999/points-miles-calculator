@@ -4,6 +4,8 @@ title: Chase Ultimate Rewards (UR) 积分估值与使用攻略
 description: 深度解析大通银行 Chase Ultimate Rewards (UR) 积分的市场估值、最佳转点兑换方式以及避坑指南。
 schemaType: Article
 eyebrow: 里程账 · 估值分析
+lastModified: "2026-10-13"
+dateModified: "2026-10-13"
 breadcrumbs:
   - name: 积分估值
     url: /values/
@@ -94,7 +96,7 @@ breadcrumbs:
 
 <h2>常见高价值兑换方式与示例</h2>
 <p>Chase Ultimate Rewards (UR) 玩家公认的常见用法通常包括：</p>
-<p><em>转入 <a href="/values/hyatt-points/">World of Hyatt 凯悦酒店</a> 兑换酒店，或转入美联航 (United Airlines) 兑换星空联盟航班网络。请以奖励后台实时显示的转点比例为准。比例可能因符合条件的 Chase 卡种、合作伙伴、账户过渡规则及生效日期而不同；例如，部分符合条件的卡种对 Hyatt 采用 4:3，而许多其他伙伴仍为 1:1。如果您需要规划不同比例下的兑换，可以使用我们的<a href="/calculators/points-to-miles-converter/">积分转航空里程工具</a>来计算准确的转换结果。</em></p>
+<p><em>转入 <a href="/values/hyatt-points/">World of Hyatt 凯悦酒店</a> 兑换酒店，或转入 <a href="/calculators/united-miles-value-calculator/">美联航 (United MileagePlus 里程价值计算器)</a> 兑换星空联盟航班网络。请以奖励后台实时显示的转点比例为准。比例可能因符合条件的 Chase 卡种、合作伙伴、账户过渡规则及生效日期而不同；例如，部分符合条件的卡种对 Hyatt 采用 4:3，而许多其他伙伴仍为 1:1。如果您需要规划不同比例下的兑换，可以使用我们的<a href="/calculators/points-to-miles-converter/">积分转航空里程工具</a>来计算准确的转换结果。</em></p>
 
 <h3>如何自行验证是否划算？</h3>
 <p>当你准备兑换时，请按照以下步骤自行验证：</p>

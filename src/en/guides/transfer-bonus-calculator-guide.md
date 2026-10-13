@@ -3,6 +3,8 @@ layout: base.njk
 title: How to Maximize Points Transfer Bonuses
 description: Learn how points transfer bonuses work. Understand base ratios, minimum increments, one-way transfers, and how to maximize bonus promotions.
 schemaType: Article
+lastModified: "2026-10-13"
+dateModified: "2026-10-13"
 breadcrumbs:
   - name: Guides
     url: /en/guides/
@@ -45,4 +47,4 @@ Because transfers are irreversible, **never transfer points speculatively**. Do 
 
 ## Transfer Bonus Calculator
 
-Don't want to do the math in your head? Use our [Transfer Bonus Calculator](/en/calculators/) to figure out exactly how many credit card points you need to transfer to hit your target miles.
+Don't want to do the math in your head? Use our [Transfer Bonus Calculator](/en/calculators/transfer-bonus/) to figure out exactly how many credit card points you need to transfer to hit your target miles.

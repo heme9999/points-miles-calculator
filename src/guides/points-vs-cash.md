@@ -3,6 +3,8 @@ layout: base.njk
 title: 积分还是现金：我应该用积分还是现金支付？
 description: 关于如何决定是用积分还是现金预订机票和酒店的完整指南。了解CPP计算方法、税费、机会成本等。
 schemaType: Article
+lastModified: "2026-10-13"
+dateModified: "2026-10-13"
 breadcrumbs:
   - name: Guides
     url: /guides/
@@ -61,4 +63,4 @@ breadcrumbs:
 
 ## 尝试我们的高级计算器
 
-准备好为下一次旅行算算账了吗？使用我们的[高级计算器](/calculators/)，轻松比较各项选项，包含税费计算，准确得出你的兑换价值！
+准备好为下一次旅行算算账了吗？使用我们的[积分 vs 现金高级计算器](/calculators/points-vs-cash/)，轻松比较各项选项，包含税费计算，准确得出你的兑换价值！

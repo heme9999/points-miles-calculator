@@ -136,10 +136,12 @@
       {% if isEnglish %}
       <a href="/en/calculators/">Calculators</a>
       <a href="/en/values/">Valuations</a>
+      <a href="/en/blog/">Blog</a>
       <a href="/en/methodology/">Methodology</a>
       {% else %}
       <a href="/calculators/">计算器</a>
       <a href="/values/">积分估值</a>
+      <a href="/blog/">博客</a>
       <a href="/methodology/">方法论</a>
       {% endif %}
     </nav>
@@ -180,6 +182,7 @@
         <strong style="display:block; margin-bottom: 12px; color: #0f172a;">{% if isEnglish %}Tools & Resources{% else %}工具与资源{% endif %}</strong>
         <a href="{{ '/en/calculators/' if isEnglish else '/calculators/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}All Calculators{% else %}全部计算器{% endif %}</a>
         <a href="{{ '/en/values/' if isEnglish else '/values/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Points Valuations{% else %}积分估值目录{% endif %}</a>
+        <a href="{{ '/en/blog/' if isEnglish else '/blog/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Blog & Case Studies{% else %}实战博客专栏{% endif %}</a>
         <a href="{{ '/en/guides/how-to-calculate-point-value/' if isEnglish else '/guides/how-to-calculate-point-value/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}How to Calculate CPP{% else %}如何计算积分价值 (CPP){% endif %}</a>
       </div>
       <div>
