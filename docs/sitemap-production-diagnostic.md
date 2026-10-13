@@ -1,6 +1,6 @@
 # Sitemap Production Diagnostic Report
 
-**Date:** 2026-10-13T05:16:37.423Z
+**Date:** 2026-10-13T06:14:27.334Z
 **Target:** https://points-miles-calculator.pages.dev
 
 ## 1. Five-Category Evidence Classification
@@ -8,8 +8,8 @@
 1. **Regular HTTP Client Request (Chrome UA):** Measured live below.
 2. **Simulated Googlebot UA Client Request:** Measured live below. *(Note: Spoofing the `User-Agent` header from a non-Google IP only tests UA-string filtering; it does NOT replicate real Googlebot ASN/IP reputation or prove Cloudflare never challenged Google's crawler.)*
 3. **Repository Static Rules (`_headers` / `_redirects`):** `src/_headers` present: `false`; `src/_redirects` present: `false`. Verified no repo-level rules block or redirect `/sitemap.xml` or `/robots.txt`.
-4. **Google Search Console Live Inspection Result:** `UNAVAILABLE via static script` *(Must be read directly from GSC URL Inspection UI; prior manual check at 2026-10-13 11:47:44 returned HTTP 200 & `application/xml`, which proves live inspection fetchability at that moment but does not guarantee asynchronous Sitemap Processor completion)*.
-5. **Cloudflare WAF / Bot Historical Request Logs:** `UNAVAILABLE` *(Cloudflare Pages free tier dashboard does not expose historical raw static request logs for past Google Sitemap Processor fetches; therefore, historical edge/WAF interception can neither be confirmed nor ruled out)*.
+4. **Google Search Console Live Inspection & Sitemaps Status:** `UNAVAILABLE` *(Cannot be queried automatically by this unauthenticated script; must be read from GSC UI)*.
+5. **Cloudflare WAF / Bot Historical Request Logs:** `UNAVAILABLE` *(Cloudflare Pages free tier dashboard does not expose historical raw static request logs for past Google Sitemap Processor fetches; historical edge/WAF interception can neither be confirmed nor ruled out)*.
 
 ## 2. Live Endpoint Probe: `/robots.txt`
 
@@ -57,6 +57,7 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 - **Cache-Control:** public, max-age=0, must-revalidate
 - **ETag:** "28d1097e6fadb26c1630b5bd8f730247"
 - **Content-Encoding:** none
+- **XML Well-Formedness:** VALID
 - **Response First 200 Bytes:**
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -71,7 +72,7 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 - **Total `<loc>` Count:** 110 (Unique: 110)
 - **Duplicate URLs:** 0
 - **URLs with Params (?):** 0
-- **Non-canonical Host URLs:** 0
+- **Non-canonical / Wrong-Origin URLs:** 0
 
 ### 2) Simulated Googlebot UA Client
 - **HTTP Status:** 200
@@ -81,6 +82,7 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 - **Cache-Control:** public, max-age=0, must-revalidate
 - **ETag:** "28d1097e6fadb26c1630b5bd8f730247"
 - **Content-Encoding:** none
+- **XML Well-Formedness:** VALID
 - **Response First 200 Bytes:**
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -95,7 +97,7 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 - **Total `<loc>` Count:** 110 (Unique: 110)
 - **Duplicate URLs:** 0
 - **URLs with Params (?):** 0
-- **Non-canonical Host URLs:** 0
+- **Non-canonical / Wrong-Origin URLs:** 0
 
 ## 3. Sitemap URL Set Comparison (Local Build vs. Production)
 
@@ -104,11 +106,13 @@ Sitemap: https://points-miles-calculator.pages.dev/sitemap.xml
 - **Added in Local Build (0):** None
 - **Removed in Local Build (0):** None
 
-## 4. Four-Dimension Status Separation
+## 4. Diagnostic Status Matrix (Assertion-Driven)
 
 | Dimension | Status | Evidence Basis |
 | :--- | :--- | :--- |
-| **Technical Accessibility** | **PASS** | `/sitemap.xml` and `/robots.txt` return HTTP 200, valid `application/xml` / `text/plain`, well-formed XML, and 0 canonical/hreflang errors across 110 URLs. |
-| **Sitemap Processed (GSC)** | **PENDING / REQUIRES GSC UI CHECK** | Technical accessibility does not automatically flip GSC Sitemaps status from `Couldn't fetch` to `Success`; must be verified in GSC Sitemaps report after resubmission. |
-| **Google Indexed** | **REQUIRES GSC COVERAGE / URL INSPECTION** | Sitemap presence does not equal indexation; check GSC Pages / URL Inspection for individual URL indexing status. |
-| **Search Clicks** | **REQUIRES GSC PERFORMANCE** | Tracked separately in GSC Performance report. |
+| **Technical Accessibility** | **PASS** | `/sitemap.xml` and `/robots.txt` return HTTP 200, well-formed XML (<urlset>), 110 unique URLs, 0 duplicates, and 0 origin mismatches; Verified 0 canonical/hreflang errors across 110 pages in local build. |
+| **Canonical / Hreflang Audit** | **PASS** | Verified 0 canonical/hreflang errors across 110 pages in local build |
+| **Sitemap Processed (GSC)** | **UNAVAILABLE** | Cannot be verified via static HTTP probe; must be checked in GSC Sitemaps UI (last observed UI state: `Couldn't fetch`). |
+| **Cloudflare Historical Logs** | **UNAVAILABLE** | Cloudflare Pages free tier does not retain historical static request logs for past Googlebot fetches. |
+| **Google Indexed** | **NOT TESTED** | Sitemap presence does not equal indexation; check GSC Pages / URL Inspection for individual URL indexing status. |
+| **Search Clicks** | **NOT TESTED** | Tracked separately in GSC Performance report. |

@@ -1499,10 +1499,11 @@ test('Phase 9.12: Blog Conversion CTA, Beginner Points-to-Miles Converter, Prese
       setVal('ratioPoints', 2000);
       assert.strictEqual($('transferPreset').value, 'custom');
 
-      // Case E: Minimum transfer threshold vs increment (Capital One -> EVA Air: min 1000, increment 100)
+      // Case E: Minimum transfer threshold vs increment (Capital One -> EVA Air preset defaults to conservative 1000 increment when unverified publicly; test explicit 100 increment)
       setVal('transferPreset', 'capone-us-eva', 'change');
       assert.strictEqual($('minTransfer').value, '1000');
-      assert.strictEqual($('increment').value, '100');
+      assert.strictEqual($('increment').value, '1000');
+      setVal('increment', 100);
       setVal('bankPoints', 800);
       assert.strictEqual($('totalMiles').textContent, '-');
       assert.ok($('explain').textContent.includes('1000') && $('explain').textContent.includes('100'), `${lang}: Below minTransfer message must mention both minTransfer (1000) and increment (100)`);
@@ -1542,4 +1543,267 @@ test('Phase 9.12: Blog Conversion CTA, Beginner Points-to-Miles Converter, Prese
     assert.strictEqual(zhDoc.getElementById('unitCashRatio').textContent.trim(), '例如：若100积分可以抵扣1美元，就填写100。');
   });
 });
+
+test('Phase 9.12.1: HTML Injection Defense, MinTransfer Floor Step Validation, URL Preset Conflict Resolution, Sitemap Diagnostic Failure Modes & Preset Source Granularity', async (t) => {
+  const fs = require('fs');
+  const path = require('path');
+  const { JSDOM } = require('jsdom');
+  const transferPresets = require('../src/_data/transferPresets.js');
+  const sitemapDiag = require('../sitemap_diagnostic.js');
+
+  const converterPages = [
+    ['zh', '../_site/calculators/points-to-miles-converter/index.html', ' 里程'],
+    ['en', '../_site/en/calculators/points-to-miles-converter/index.html', ' Miles']
+  ];
+
+  await t.test('1. P1 HTML Injection Defense: #targetProgram input and URL param never inject DOM elements into #explain', () => {
+    const payloads = [
+      '<img src=x onerror=alert(1)>',
+      '<b>Test</b>',
+      '"&\'<><script>window.__xss=1</script>'
+    ];
+
+    for (const [lang, relPath] of converterPages) {
+      const html = fs.readFileSync(path.resolve(__dirname, relPath), 'utf8');
+
+      for (const payload of payloads) {
+        // A. Via URL parameter ?targetProgram=
+        const encoded = encodeURIComponent(payload);
+        const domUrl = new JSDOM(html, {
+          runScripts: 'dangerously',
+          url: `https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/?points=50000&baseRatio=1&targetProgram=${encoded}`
+        });
+        const explainUrl = domUrl.window.document.getElementById('explain');
+        assert.strictEqual(
+          explainUrl.querySelectorAll('img,script,b').length,
+          0,
+          `${lang} URL param payload "${payload}" must produce 0 injected elements in #explain`
+        );
+        assert.strictEqual(domUrl.window.__xss, undefined, `${lang} URL param must not execute script`);
+        assert.ok(explainUrl.textContent.includes(payload.slice(0, 60)), `${lang} URL param payload must be rendered as literal text`);
+
+        // B. Via manual input into #targetProgram
+        const domInput = new JSDOM(html, {
+          runScripts: 'dangerously',
+          url: 'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/?points=50500&baseRatio=1&increment=1000'
+        });
+        const docInput = domInput.window.document;
+        const targetInput = docInput.getElementById('targetProgram');
+        targetInput.value = payload;
+        targetInput.dispatchEvent(new domInput.window.Event('input', { bubbles: true }));
+
+        const explainInput = docInput.getElementById('explain');
+        assert.strictEqual(
+          explainInput.querySelectorAll('img,script,b').length,
+          0,
+          `${lang} manual input payload "${payload}" must produce 0 injected elements in #explain`
+        );
+        assert.ok(explainInput.textContent.includes(payload), `${lang} manual input payload must be rendered as literal text`);
+      }
+    }
+  });
+
+  await t.test('2. P1 MinTransfer vs Increment Floor Validation (Cases A, B, C, D, E)', () => {
+    for (const [lang, relPath, suffix] of converterPages) {
+      const html = fs.readFileSync(path.resolve(__dirname, relPath), 'utf8');
+      const dom = new JSDOM(html, {
+        runScripts: 'dangerously',
+        url: 'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/'
+      });
+      const doc = dom.window.document;
+      const $ = id => doc.getElementById(id);
+      const setVal = (id, val) => {
+        const el = $(id);
+        el.value = String(val);
+        el.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+      };
+
+      // Case A: points=1600, minTransfer=1500, increment=1000, ratio=1 -> transferablePoints=1000 < 1500 -> FAIL, must require at least 2000
+      setVal('baseRatio', 1);
+      setVal('bonusPercent', 0);
+      setVal('minTransfer', 1500);
+      setVal('increment', 1000);
+      setVal('bankPoints', 1600);
+      assert.strictEqual($('totalMiles').textContent, '-', `${lang} Case A: totalMiles must reset to '-'`);
+      assert.strictEqual($('transferablePoints').textContent, '-', `${lang} Case A: transferablePoints must reset to '-'`);
+      assert.strictEqual($('baseMiles').textContent, '-', `${lang} Case A: baseMiles must reset to '-'`);
+      assert.ok($('explain').textContent.includes('2000'), `${lang} Case A: explain must state minimum valid transfer 2000, got: ${$('explain').textContent}`);
+      assert.ok($('explain').textContent.includes('1500') && $('explain').textContent.includes('1000'), `${lang} Case A: explain must reference 1500 threshold and 1000 transferable/increment`);
+
+      // Case B: points=2000, minTransfer=1500, increment=1000, ratio=1 -> transfers 2000, receives 2000 miles
+      setVal('bankPoints', 2000);
+      assert.strictEqual($('transferablePoints').textContent, '2,000', `${lang} Case B: transferablePoints must be 2,000`);
+      assert.strictEqual($('totalMiles').textContent, '2,000' + suffix, `${lang} Case B: totalMiles must be 2,000`);
+
+      // Case C: points=800, minTransfer=1000, increment=100, ratio=0.75 -> FAIL, requires 1000
+      setVal('baseRatio', 0.75);
+      setVal('minTransfer', 1000);
+      setVal('increment', 100);
+      setVal('bankPoints', 800);
+      assert.strictEqual($('totalMiles').textContent, '-', `${lang} Case C: totalMiles must reset to '-'`);
+      assert.ok($('explain').textContent.includes('1000') && $('explain').textContent.includes('100'), `${lang} Case C: explain must state 1000 minTransfer and 100 increment`);
+
+      // Case D: points=1250, minTransfer=1000, increment=100, ratio=0.75 -> transfers 1200, receives 900 miles, remaining 50
+      setVal('bankPoints', 1250);
+      assert.strictEqual($('transferablePoints').textContent, '1,200', `${lang} Case D: transferablePoints must be 1,200`);
+      assert.strictEqual($('remainingPoints').textContent, '50', `${lang} Case D: remainingPoints must be 50`);
+      assert.strictEqual($('totalMiles').textContent, '900' + suffix, `${lang} Case D: totalMiles must be 900`);
+
+      // Case E: Invalid #minTransfer values ("", 0, -100, "abc") must NOT fall back to increment and show success
+      for (const badMin of ['', '0', '-100', 'abc']) {
+        setVal('minTransfer', badMin);
+        assert.strictEqual($('totalMiles').textContent, '-', `${lang} Case E: minTransfer="${badMin}" must reset totalMiles to '-'`);
+        assert.strictEqual($('transferablePoints').textContent, '-', `${lang} Case E: minTransfer="${badMin}" must reset transferablePoints to '-'`);
+      }
+    }
+  });
+
+  await t.test('3. P1 URL Parameter Override Preset Identity Conflict Resolution', () => {
+    for (const [lang, relPath, suffix] of converterPages) {
+      const html = fs.readFileSync(path.resolve(__dirname, relPath), 'utf8');
+
+      // A. Conflicting URL: preset=amex-us-cathay (5:4) but explicit baseRatio=1 -> must calculate 50,000 miles AND switch preset to custom
+      const domConflict = new JSDOM(html, {
+        runScripts: 'dangerously',
+        url: 'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/?preset=amex-us-cathay&points=50000&baseRatio=1&bonusPercent=0&increment=1000&minTransfer=1000'
+      });
+      const docC = domConflict.window.document;
+      assert.strictEqual(docC.getElementById('totalMiles').textContent, '50,000' + suffix, `${lang}: Explicit baseRatio=1 must calculate 50,000 miles`);
+      assert.strictEqual(docC.getElementById('transferPreset').value, 'custom', `${lang}: Conflicting baseRatio must switch #transferPreset to custom`);
+      assert.strictEqual(docC.getElementById('targetProgram').value, '', `${lang}: Unspecified targetProgram must not retain Cathay preset name after conflict`);
+      const statusTextC = docC.getElementById('presetModeStatus').textContent;
+      assert.ok(!statusTextC.includes('已应用预设') && !statusTextC.includes('Preset Applied'), `${lang}: Status must NOT claim preset is applied when overridden: ${statusTextC}`);
+
+      // B. Consistent URL with points + bonusPercent: preset=amex-us-cathay & ratioPoints=1000 & ratioMiles=800 & bonusPercent=10 -> keeps preset & labels bonus as promotional assumption
+      const domMatch = new JSDOM(html, {
+        runScripts: 'dangerously',
+        url: 'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/?preset=amex-us-cathay&points=20000&ratioPoints=1000&ratioMiles=800&bonusPercent=10&increment=1000&minTransfer=1000'
+      });
+      const docM = domMatch.window.document;
+      assert.strictEqual(docM.getElementById('transferPreset').value, 'amex-us-cathay', `${lang}: Matching ratio/min/inc with bonusPercent must keep preset identity`);
+      assert.strictEqual(docM.getElementById('totalMiles').textContent, '17,600' + suffix, `${lang}: 20,000 @ 5:4 + 10% = 17,600`);
+      const statusTextM = docM.getElementById('presetModeStatus').textContent;
+      assert.ok(
+        statusTextM.includes('促销假设') || statusTextM.includes('promotional bonus assumption'),
+        `${lang}: Status with bonus must label bonus as user-entered promotional assumption: ${statusTextM}`
+      );
+
+      // C. Exact fraction preservation in URL: ratioPoints=15&ratioMiles=1&baseRatio=0.066667&points=15000 -> exact 1,000 miles
+      const domFrac = new JSDOM(html, {
+        runScripts: 'dangerously',
+        url: 'https://points-miles-calculator.pages.dev/calculators/points-to-miles-converter/?points=15000&ratioPoints=15&ratioMiles=1&baseRatio=0.066667&increment=1000&minTransfer=1000'
+      });
+      assert.strictEqual(domFrac.window.document.getElementById('totalMiles').textContent, '1,000' + suffix, `${lang}: 15:1 ratio with 15,000 points must equal exact 1,000 miles`);
+    }
+  });
+
+  await t.test('4. P2 Sitemap Diagnostic Real Assertion & Failure Mode Suite', async () => {
+    const validXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://points-miles-calculator.pages.dev/</loc></url>
+  <url><loc>https://points-miles-calculator.pages.dev/en/</loc></url>
+</urlset>`;
+
+    // A. Valid sitemap + HTTP 200 -> PASS (when canonical is PASS or NOT TESTED without claiming 0 canonical errors)
+    const evalPass = sitemapDiag.evaluateDiagnostic({
+      robotsResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from('User-agent: *\nAllow: /') }],
+      sitemapResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from(validXml) }],
+      canonicalResult: { status: 'NOT TESTED', tested: false, errorCount: null, detail: 'NOT TESTED' }
+    });
+    assert.strictEqual(evalPass.technicalStatus, 'PASS');
+    assert.strictEqual(evalPass.exitCode, 0);
+    assert.strictEqual(evalPass.canonicalStatus, 'NOT TESTED');
+    assert.ok(!evalPass.technicalEvidence.includes('0 canonical/hreflang errors'), 'Untested canonical must NOT claim 0 canonical/hreflang errors');
+    assert.strictEqual(evalPass.gscStatus, 'UNAVAILABLE');
+    assert.strictEqual(evalPass.cloudflareLogsStatus, 'UNAVAILABLE');
+
+    // B. HTTP 403 / 404 -> FAIL
+    const eval403 = sitemapDiag.evaluateDiagnostic({
+      robotsResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from('OK') }],
+      sitemapResponses: [{ name: 'Googlebot', statusCode: 403, data: Buffer.from('Forbidden') }]
+    });
+    assert.strictEqual(eval403.technicalStatus, 'FAIL');
+    assert.strictEqual(eval403.exitCode, 1);
+
+    const eval404 = sitemapDiag.evaluateDiagnostic({
+      robotsResponses: [{ name: 'Chrome', statusCode: 404, data: Buffer.from('Not Found') }],
+      sitemapResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from(validXml) }]
+    });
+    assert.strictEqual(eval404.technicalStatus, 'FAIL');
+    assert.strictEqual(eval404.exitCode, 1);
+
+    // C. Malformed XML -> FAIL
+    const malformedXml = `<?xml version="1.0" encoding="UTF-8"?><urlset><url><loc>https://points-miles-calculator.pages.dev/</loc></urlset>`;
+    const evalBadXml = sitemapDiag.evaluateDiagnostic({
+      robotsResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from('OK') }],
+      sitemapResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from(malformedXml) }]
+    });
+    assert.strictEqual(evalBadXml.technicalStatus, 'FAIL');
+    assert.strictEqual(evalBadXml.exitCode, 1);
+
+    // D. Wrong origin (startsWith bypass attempt: https://points-miles-calculator.pages.dev.evil.com/...) -> FAIL
+    const evilOriginXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://points-miles-calculator.pages.dev.evil.com/calculators/</loc></url>
+</urlset>`;
+    const evalEvil = sitemapDiag.evaluateDiagnostic({
+      robotsResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from('OK') }],
+      sitemapResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from(evilOriginXml) }]
+    });
+    assert.strictEqual(evalEvil.technicalStatus, 'FAIL');
+    assert.strictEqual(evalEvil.exitCode, 1);
+    assert.ok(evalEvil.failures.some(f => f.includes('non-matching origin')));
+
+    // E. Duplicate <loc> -> FAIL
+    const dupXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://points-miles-calculator.pages.dev/</loc></url>
+  <url><loc>https://points-miles-calculator.pages.dev/</loc></url>
+</urlset>`;
+    const evalDup = sitemapDiag.evaluateDiagnostic({
+      robotsResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from('OK') }],
+      sitemapResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from(dupXml) }]
+    });
+    assert.strictEqual(evalDup.technicalStatus, 'FAIL');
+    assert.strictEqual(evalDup.exitCode, 1);
+    assert.ok(evalDup.failures.some(f => f.includes('duplicate')));
+
+    // F. Canonical / Hreflang failure -> FAIL (and never outputs "0 canonical/hreflang errors" + PASS)
+    const canonFailResult = sitemapDiag.verifyCanonicalAndHreflang({
+      auditReportData: {
+        targetOrigin: 'https://points-miles-calculator.pages.dev',
+        totalChecked: 110,
+        canonicalErrors: ['https://points-miles-calculator.pages.dev/broken/'],
+        hreflangErrors: []
+      }
+    });
+    assert.strictEqual(canonFailResult.status, 'FAIL');
+    const evalCanonFail = sitemapDiag.evaluateDiagnostic({
+      robotsResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from('OK') }],
+      sitemapResponses: [{ name: 'Chrome', statusCode: 200, data: Buffer.from(validXml) }],
+      canonicalResult: canonFailResult
+    });
+    assert.strictEqual(evalCanonFail.technicalStatus, 'FAIL');
+    assert.strictEqual(evalCanonFail.exitCode, 1);
+    assert.ok(!evalCanonFail.technicalEvidence.includes('0 canonical/hreflang errors'));
+  });
+
+  await t.test('5. P2 Preset Source Granularity: Specific partner/rule URLs and Capital One -> EVA unverified increment handling', () => {
+    for (const p of transferPresets) {
+      assert.ok(p.sourceUrl && p.partnerSourceUrl, `Preset ${p.id} must have both issuer sourceUrl and partnerSourceUrl`);
+      assert.ok(p.fieldStatusZh && p.fieldStatusEn, `Preset ${p.id} must have field-level verification status strings`);
+      // Must not use generic root homepage for sourceUrl
+      const parsedSource = new URL(p.sourceUrl);
+      assert.notStrictEqual(parsedSource.pathname, '/', `Preset ${p.id} sourceUrl must point to a specific rule/guide path, not generic root /`);
+    }
+
+    const capOneEva = transferPresets.find(p => p.id === 'capone-us-eva');
+    assert.ok(capOneEva, 'capone-us-eva preset must exist');
+    assert.strictEqual(capOneEva.incrementVerified, false, 'capone-us-eva incrementVerified must be false since public terms do not confirm 100 step');
+    assert.strictEqual(capOneEva.increment, 1000, 'capone-us-eva must not auto-apply unverified 100 increment as officially confirmed');
+    assert.ok(capOneEva.fieldStatusZh.includes('未知/待核实'), 'capone-us-eva ZH fieldStatus must explicitly mark increment as 未知/待核实');
+    assert.ok(capOneEva.fieldStatusEn.includes('Unknown / Unverified'), 'capone-us-eva EN fieldStatus must explicitly mark increment as Unknown / Unverified');
+  });
+});
+
 

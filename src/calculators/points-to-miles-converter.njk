@@ -15,7 +15,7 @@ breadcrumbs:
 <h1>积分转航空里程换算器</h1>
 
 <div class="direct-answer">
-  <strong>核心计算逻辑：</strong>首先确认您的积分达到“最低起转门槛”，并根据“最小转点步长”（通常为 1,000 或 100）向下取整得到实际可转出的积分数；然后乘以“基础转点比例”（如 1:1、5:4、4:3 或招行活动比例）获得基础里程；最后叠加促销期间的加赠百分比，得出您最终能够收到的航空里程总数。
+  <strong>核心计算逻辑：</strong>首先按“最小转点步长”（通常为 1,000 或 100）向下取整得到步长整数倍的实际可转积分数，并确认该可转出总额达到“最低起转门槛”；然后乘以“基础转点比例”（如 1:1、5:4、4:3 或招行活动比例）获得基础里程；最后叠加促销期间的加赠百分比，得出您最终能够收到的航空里程总数。
 </div>
 
 <div class="calculator-container" style="margin-top: 1.5rem;">
@@ -32,7 +32,7 @@ breadcrumbs:
     <label for="transferPreset">选择常见转点组合 <span class="hint">（可选，也可直接在下方自定义比例）</span></label>
     <select id="transferPreset">
       <option value="custom">自定义 / 按银行 App 当前活动填写（如招行掌上生活活动制转点）</option>
-      <optgroup label="US · 美国发卡行（已核验规则）">
+      <optgroup label="US · 美国发卡行（分项标注规则来源）">
         {% for preset in transferPresets %}
         <option value="{{ preset.id }}">{{ preset.labelZh }}</option>
         {% endfor %}
@@ -41,7 +41,7 @@ breadcrumbs:
     <div id="presetMetaBox" style="margin-top: 0.55rem; padding: 0.8rem 0.95rem; background: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; font-size: 0.85rem; color: rgba(244, 240, 230, 0.92); line-height: 1.6;">
       <div><strong style="color: var(--gold);">当前模式：</strong><span id="presetModeStatus">自定义参数（支持任意银行与航司比例）</span></div>
       <div id="presetDetailContent" style="margin-top: 0.35rem;">
-        若您持有<strong>招商银行</strong>等采用“活动制/卡种分层/名额限制”的银行积分，因不同卡种与活动期的兑换比例、起转门槛和总额度上限均不固定，请打开银行官方 App（如“掌上生活”）查看当期活动比例，并在下方直接填写“每 X 积分换 Y 里程”。<strong style="color: #fde047;">操作前请再次核对奖励后台显示的实际比例。</strong>
+        若您持有<strong>招商银行</strong>等采用“活动制/卡种分层/名额限制”的银行积分，因不同卡种与活动期的兑换比例、起转门槛和总额度上限均不固定，请打开银行官方 App（如“掌上生活”）查看当期活动比例，并在下方直接填写“每 X 积分换 Y 里程”。<strong style="color: #fde047;">转点前请以奖励后台实时显示规则为准。</strong>
       </div>
     </div>
   </div>
@@ -58,7 +58,7 @@ breadcrumbs:
   </div>
 
   <div class="input-group" style="margin-bottom: 1.1rem;">
-    <label for="bonusPercent">转点加赠比例 <span class="hint">(%，银行促销额外赠送百分比，无加赠填 0)</span></label>
+    <label for="bonusPercent">转点加赠比例 <span class="hint">(%，用户额外填写的限时促销假设，无加赠填 0)</span></label>
     <input type="number" id="bonusPercent" value="0" min="0" step="1" inputmode="numeric">
   </div>
 
@@ -71,12 +71,12 @@ breadcrumbs:
       </div>
 
       <div class="input-group" style="margin-bottom: 0.9rem;">
-        <label for="minTransfer">最低起转量 <span class="hint">（首次发起转点至少需要的积分数量，通常为 1000）</span></label>
+        <label for="minTransfer">最低起转量 <span class="hint">（单次实际转出积分不得低于该门槛，通常为 1000）</span></label>
         <input type="number" id="minTransfer" value="1000" min="1" step="1" inputmode="numeric">
       </div>
 
       <div class="input-group" style="margin-bottom: 0.9rem;">
-        <label for="increment">最小转点步长 <span class="hint">（达到起转门槛后，每次递增的积分单位，通常为 1000 或 100）</span></label>
+        <label for="increment">最小转点步长 <span class="hint">（转出总额必须为步长的整数倍，且不能低于最低起转量，通常为 1000 或 100）</span></label>
         <input type="number" id="increment" value="1000" min="1" step="1" inputmode="numeric">
       </div>
 
@@ -110,7 +110,7 @@ breadcrumbs:
     </div>
   </div>
   
-  <button id="btnShare" class="btn-secondary" style="margin-top:1rem; width:100%; padding: 0.75rem 1rem; background: var(--ink-2); color: var(--gold); border: 1px solid var(--gold); border-radius: 6px; font-weight: 600; cursor: pointer;">🔗 分享此计算（复制带参数链接）</button>
+  <button id="btnShare" class="btn-secondary" style="margin-top:1rem; width:100%; min-height: 44px; padding: 0.75rem 1rem; background: var(--ink-2); color: var(--gold); border: 1px solid var(--gold); border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer;">🔗 分享此计算（复制带参数链接）</button>
   <div id="toast" class="toast">链接已复制到剪贴板！</div>
 </div>
 
@@ -128,8 +128,8 @@ breadcrumbs:
   
   <div class="math-formula">
     <strong>标准换算公式：</strong><br><br>
-    <em>前置条件：可用银行积分 ≥ 最低起转量（如 1,000 分）</em><br>
     <em>实际可转积分 = floor(总积分 ÷ 最小转点步长) × 最小转点步长</em><br>
+    <em>门槛校验：转出总额（实际可转积分）必须为最小转点步长的整数倍，且不能低于最低起转量（即至少需要 ceil(最低起转量 ÷ 最小转点步长) × 最小转点步长）</em><br>
     <em>基础里程 = 实际可转积分 × (兑换里程数 Y ÷ 所需积分数 X)</em><br>
     <em>加赠里程 = 基础里程 × 加赠比例 (%)</em><br>
     <em>最终里程总数 = 基础里程 + 加赠里程</em>
@@ -171,12 +171,12 @@ breadcrumbs:
   </ul>
 
   <h2>在哪里查询真实的转点比例？</h2>
-  <p>不要想当然地认为所有转点都是 1:1。不同发卡国家/地区（如美版 Amex vs 港版 Amex）、不同卡种层级（如经典白金卡 vs 普通卡）以及不同限时活动期，转点比例、起转门槛和额度上限都可能存在差异。<strong>操作前请务必以您所持银行卡奖励后台当日显示的实际比例为准。</strong></p>
+  <p>不要想当然地认为所有转点都是 1:1。不同发卡国家/地区（如美版 Amex vs 港版 Amex）、不同卡种层级（如经典白金卡 vs 普通卡）以及不同限时活动期，转点比例、起转门槛和额度上限都可能存在差异。<strong>转点前请以奖励后台实时显示规则为准。</strong></p>
 
   <h2>转点的重要限制与风险提示</h2>
   <ul>
     <li><strong>转点不可逆</strong>：转点通常为单向操作且不可撤销。请勿在未查妥机票的情况下盲目囤积航空里程。</li>
-    <li><strong>最低起转量 vs 最小转点步长</strong>：部分银行规定“最低 1,000 分起转，超出部分按 100 分步长递增”，也有些银行要求“必须按 1,000 分的整数倍起转并递增”。请在银行转点页面确认这两项规则。</li>
+    <li><strong>最低起转量 vs 最小转点步长</strong>：本工具采用“转出总额必须为步长的整数倍，且不能低于最低起转量”的计算模型。例如当最低起转量为 1,500、最小步长为 1,000 时，满足整数倍且不低于门槛的最小有效转出额为 2,000 积分。请在银行转点页面确认这两项规则。</li>
     <li><strong>转点到账时间因银行与航司而异</strong>：不同转点路径的到账时效差异很大——部分伙伴支持即时到账，而部分航司（如全日空 ANA 或新加坡航空 KrisFlyer）或首次绑定账户可能需要数小时至数个工作日处理，具体以各计划官方说明为准。等待期间奖励机票余票可能会发生变化。</li>
   </ul>
 
@@ -192,7 +192,7 @@ breadcrumbs:
     <details>
       <summary>最低起转量和最小转点步长有什么区别？</summary>
       <div>
-        <p><strong>最低起转量</strong>是发起单次转点的最低门槛（例如至少满 1,000 积分才能转出）；<strong>最小转点步长</strong>是达到门槛后允许递增的最小单位（例如步长为 1,000 时只能转 1,000、2,000、3,000；若步长为 100，则满 1,000 后可转 1,100、1,200 等）。</p>
+        <p><strong>最低起转量</strong>是发起单次转点的最低门槛（例如至少满 1,000 积分才能转出）；<strong>最小转点步长</strong>是转出总额必须满足的整数倍单位（转出总额必须为步长的整数倍，且不能低于最低起转量；例如起转量为 1,000、步长为 1,000 时只能转 1,000、2,000、3,000；若起转量为 1,000、步长为 100，则可转 1,000、1,100、1,200 等）。</p>
       </div>
     </details>
 
@@ -217,24 +217,37 @@ breadcrumbs:
     return PRESETS.find(p => p.id === id) || null;
   }
 
-  function updatePresetMetaUI(presetId) {
+  function updatePresetMetaUI(presetId, overriddenByUrl = false) {
     const preset = findPreset(presetId);
     const statusEl = $('presetModeStatus');
     const detailEl = $('presetDetailContent');
     if (!statusEl || !detailEl) return;
 
     if (!preset) {
-      statusEl.textContent = '自定义参数（支持任意银行与航司比例）';
-      detailEl.innerHTML = '若您持有<strong>招商银行</strong>等采用“活动制/卡种分层/名额限制”的银行积分，因不同卡种与活动期的兑换比例、起转门槛和总额度上限均不固定，请打开银行官方 App（如“掌上生活”）查看当期活动比例，并在下方直接填写“每 X 积分换 Y 里程”。<strong style="color: #fde047;">操作前请再次核对奖励后台显示的实际比例。</strong>';
+      statusEl.textContent = overriddenByUrl
+        ? '自定义参数（URL 显式参数已覆盖原预设规则，按当前输入计算）'
+        : '自定义参数（支持任意银行与航司比例）';
+      detailEl.innerHTML = '若您持有<strong>招商银行</strong>等采用“活动制/卡种分层/名额限制”的银行积分，因不同卡种与活动期的兑换比例、起转门槛和总额度上限均不固定，请打开银行官方 App（如“掌上生活”）查看当期活动比例，并在下方直接填写“每 X 积分换 Y 里程”。<strong style="color: #fde047;">转点前请以奖励后台实时显示规则为准。</strong>';
       return;
     }
 
-    statusEl.textContent = `已应用预设：${preset.labelZh}`;
+    const bonusVal = $('bonusPercent') ? parseFloat($('bonusPercent').value) : 0;
+    const hasBonus = !isNaN(bonusVal) && bonusVal > 0;
+    statusEl.textContent = hasBonus
+      ? `已应用预设：${preset.labelZh}（含用户额外填写的 +${bonusVal}% 促销假设）`
+      : `已应用预设：${preset.labelZh}`;
+
+    const incBadge = preset.incrementVerified
+      ? `按 ${preset.increment.toLocaleString('en-US')} 分步长整数倍（已核实）`
+      : `默认按 ${preset.increment.toLocaleString('en-US')} 分保守步长（公开条款未单独确认步长，标记为“未知/待核实”）`;
+
     detailEl.innerHTML = `
-      <div><strong>发行国家/地区：</strong>${preset.regionLabelZh} ｜ <strong>起转与步长：</strong>最低 ${preset.minTransfer.toLocaleString('en-US')} 分起转，按 ${preset.increment.toLocaleString('en-US')} 分步长递增</div>
+      <div><strong>发行国家/地区：</strong>${preset.regionLabelZh} ｜ <strong>起转与步长：</strong>最低 ${preset.minTransfer.toLocaleString('en-US')} 分起转，${incBadge}</div>
+      <div style="margin-top:0.25rem;"><strong>分项核验状态：</strong>${preset.fieldStatusZh}</div>
       <div style="margin-top:0.25rem;"><strong>适用范围：</strong>${preset.eligibilityZh}</div>
-      <div style="margin-top:0.25rem;"><strong>规则来源：</strong><a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameZh}</a>（最后核验日期：${preset.lastVerified}）</div>
-      <div style="margin-top:0.25rem; color:#fde047;"><strong>重要提示：</strong>操作前请再次核对奖励后台显示的实际比例。修改下方任意转点参数将自动切换为“自定义”状态。</div>
+      <div style="margin-top:0.25rem;"><strong>促销加赠说明：</strong>预设仅包含基础转点规则；“转点加赠比例”（当前：${hasBonus ? '+' + bonusVal + '%' : '0%'}）为您额外填写的促销假设，不属于预设固有规则。</div>
+      <div style="margin-top:0.25rem;"><strong>规则来源：</strong><a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameZh}</a> ｜ <a href="${preset.partnerSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.partnerSourceNameZh}</a>（核验日期：${preset.lastVerified}）</div>
+      <div style="margin-top:0.25rem; color:#fde047;"><strong>重要提示：</strong>转点前请以奖励后台实时显示规则为准。修改比例、起转量或步长将自动切换为“自定义”状态。</div>
     `;
   }
 
@@ -319,10 +332,17 @@ breadcrumbs:
     const br = parseNum('baseRatio');
 
     if (rp !== null && rm !== null && rp > 0 && rm > 0) {
-      $('ratioPoints').value = rp;
-      $('ratioMiles').value = rm;
-      exactRatio = rm / rp;
-      $('baseRatio').value = Number(exactRatio.toFixed(6));
+      if (br !== null && br > 0 && Math.abs((rm / rp) - br) > 1e-4) {
+        $('baseRatio').value = br;
+        exactRatio = br;
+        $('ratioPoints').value = 1;
+        $('ratioMiles').value = br;
+      } else {
+        $('ratioPoints').value = rp;
+        $('ratioMiles').value = rm;
+        exactRatio = rm / rp;
+        $('baseRatio').value = Number(exactRatio.toFixed(6));
+      }
     } else if (br !== null && br > 0) {
       $('baseRatio').value = br;
       exactRatio = br;
@@ -350,6 +370,52 @@ breadcrumbs:
     if (params.has('targetProgram')) {
       $('targetProgram').value = params.get('targetProgram').slice(0, 60);
     }
+
+    if (presetParam && findPreset(presetParam)) {
+      const preset = findPreset(presetParam);
+      const presetRatio = preset.ratioMiles / preset.ratioPoints;
+      const currentMinT = parseFloat($('minTransfer').value);
+      const currentInc = parseFloat($('increment').value);
+      const ratioMatches = !isNaN(exactRatio) && Math.abs(exactRatio - presetRatio) <= 1e-6;
+      const minTMatches = !isNaN(currentMinT) && currentMinT === preset.minTransfer;
+      const incMatches = !isNaN(currentInc) && currentInc === preset.increment;
+      const targetProgMatches = !params.has('targetProgram') ||
+        params.get('targetProgram').trim() === preset.targetProgramZh;
+
+      if (!ratioMatches || !minTMatches || !incMatches || !targetProgMatches) {
+        $('transferPreset').value = 'custom';
+        if (!params.has('targetProgram') && $('targetProgram')) {
+          $('targetProgram').value = '';
+        }
+        updatePresetMetaUI('custom', true);
+      } else {
+        updatePresetMetaUI(presetParam);
+      }
+    }
+  }
+
+  function renderExplainSafe(transferablePoints, totalMiles, targetProg, remainingBankPoints) {
+    const el = $('explain');
+    if (!el) return;
+    el.textContent = '';
+
+    const appendStrong = (text) => {
+      const s = document.createElement('strong');
+      s.textContent = text;
+      el.appendChild(s);
+    };
+
+    el.appendChild(document.createTextNode('您可以转出 '));
+    appendStrong(transferablePoints.toLocaleString('en-US'));
+    el.appendChild(document.createTextNode(' 点积分，最终获得 '));
+    appendStrong(totalMiles.toLocaleString('en-US', { maximumFractionDigits: 0 }));
+    el.appendChild(document.createTextNode(` ${targetProg}里程。`));
+
+    if (remainingBankPoints > 0) {
+      el.appendChild(document.createTextNode(' 由于步长限制，您的银行账户中将剩余 '));
+      appendStrong(remainingBankPoints.toLocaleString('en-US'));
+      el.appendChild(document.createTextNode(' 点积分。'));
+    }
   }
 
   function calculateConversion() {
@@ -358,8 +424,7 @@ breadcrumbs:
     let bonus = parseFloat($('bonusPercent').value);
     let inc = parseFloat($('increment').value);
     let minTransferEl = $('minTransfer');
-    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : inc;
-    if (isNaN(minTransfer) || minTransfer <= 0) minTransfer = inc;
+    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : NaN;
     let targetProg = $('targetProgram').value.trim() || '航空';
 
     const resetState = (msg = '请输入有效的数值。') => {
@@ -372,18 +437,18 @@ breadcrumbs:
       $('effectiveRatio').textContent = '-';
     };
 
-    if (isNaN(points) || isNaN(ratio) || isNaN(bonus) || isNaN(inc)) {
-      resetState('请输入有效的数值。');
+    if (isNaN(points) || isNaN(ratio) || isNaN(bonus) || isNaN(inc) || isNaN(minTransfer)) {
+      resetState('请输入有效的数值（积分、比例、最低起转量和步长均不能为空）。');
       return;
     }
 
-    if (points < 0 || ratio <= 0 || bonus < 0 || inc <= 0) {
-      resetState('数值不能为负，且比例和步长必须大于 0。');
-      return;
-    }
-
-    if (!isFinite(points) || !isFinite(ratio) || !isFinite(bonus) || !isFinite(inc)) {
+    if (!isFinite(points) || !isFinite(ratio) || !isFinite(bonus) || !isFinite(inc) || !isFinite(minTransfer)) {
       resetState('输入的数值过大。');
+      return;
+    }
+
+    if (points < 0 || ratio <= 0 || bonus < 0 || inc <= 0 || minTransfer <= 0) {
+      resetState('数值不能为负，且比例、最低起转量和步长必须大于 0。');
       return;
     }
 
@@ -392,17 +457,12 @@ breadcrumbs:
       return;
     }
 
-    const effectiveMinRequired = Math.max(minTransfer, inc);
-    if (points < effectiveMinRequired) {
-      resetState(`余额不足。每次至少需要转出 ${effectiveMinRequired} 积分（最低起转量：${minTransfer} 积分，最小转点步长：${inc} 积分）。`);
-      return;
-    }
-
     let transferablePoints = Math.floor(points / inc) * inc;
     let remainingBankPoints = points - transferablePoints;
-    
-    if (transferablePoints === 0) {
-      resetState(`余额不足。每次至少需要转出 ${inc} 积分。`);
+    const minValidTransfer = Math.ceil(minTransfer / inc) * inc;
+
+    if (points < minTransfer || transferablePoints === 0 || transferablePoints < minTransfer) {
+      resetState(`余额不足。按当前步长（${inc}）实际可转出 ${transferablePoints} 积分，低于最低起转量（${minTransfer} 积分）；转出总额必须为步长的整数倍且不低于最低起转量，每次至少需要转出 ${minValidTransfer} 积分。`);
       return;
     }
 
@@ -412,12 +472,7 @@ breadcrumbs:
     let effectiveRatio = totalMiles / transferablePoints;
 
     $('totalMiles').textContent = totalMiles.toLocaleString('en-US', {maximumFractionDigits:0}) + ' 里程';
-    
-    let explainHtml = `您可以转出 <strong>${transferablePoints.toLocaleString('en-US')}</strong> 点积分，最终获得 <strong>${totalMiles.toLocaleString('en-US', {maximumFractionDigits:0})}</strong> ${targetProg}里程。`;
-    if (remainingBankPoints > 0) {
-      explainHtml += ` 由于步长限制，您的银行账户中将剩余 <strong>${remainingBankPoints.toLocaleString('en-US')}</strong> 点积分。`;
-    }
-    $('explain').innerHTML = explainHtml;
+    renderExplainSafe(transferablePoints, totalMiles, targetProg, remainingBankPoints);
 
     $('transferablePoints').textContent = transferablePoints.toLocaleString('en-US');
     $('remainingPoints').textContent = remainingBankPoints.toLocaleString('en-US');
@@ -445,7 +500,8 @@ breadcrumbs:
   if ($('increment')) {
     $('increment').addEventListener('input', () => {
       switchToCustomMode();
-      if (!minTransferManuallyEdited && $('minTransfer')) {
+      const incVal = parseFloat($('increment').value);
+      if (!minTransferManuallyEdited && $('minTransfer') && !isNaN(incVal) && incVal > 0) {
         $('minTransfer').value = $('increment').value;
       }
       calculateConversion();
@@ -463,7 +519,11 @@ breadcrumbs:
   ['bankPoints', 'bonusPercent', 'targetProgram'].forEach(id => {
     if ($(id)) {
       $(id).addEventListener('input', () => {
-        if (id === 'targetProgram') switchToCustomMode(true);
+        if (id === 'targetProgram') {
+          switchToCustomMode(true);
+        } else if (id === 'bonusPercent' && $('transferPreset') && $('transferPreset').value !== 'custom') {
+          updatePresetMetaUI($('transferPreset').value);
+        }
         calculateConversion();
       });
     }

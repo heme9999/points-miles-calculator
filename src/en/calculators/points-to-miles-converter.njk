@@ -15,7 +15,7 @@ breadcrumbs:
 <h1>Points to Miles Converter</h1>
 
 <div class="direct-answer">
-  <strong>Direct Answer:</strong> The <strong>Points to Miles Converter</strong> calculates the exact number of airline miles you will receive from a known bank points balance after verifying the minimum transfer threshold and applying transfer increments, base transfer ratios (e.g., 1:1, 5:4, 4:3), and promotional bonuses. This tool performs a forward quantity conversion. It differs from the <a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a> (which reverse-calculates how many bank points you need for a target award flight) and the <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a> (which estimates the monetary cash value of a rewards balance).
+  <strong>Direct Answer:</strong> The <strong>Points to Miles Converter</strong> calculates the exact number of airline miles you will receive from a known bank points balance after rounding down to an integer multiple of the transfer increment, verifying that the transferable total meets the minimum transfer threshold, and applying base transfer ratios (e.g., 1:1, 5:4, 4:3) and promotional bonuses. This tool performs a forward quantity conversion. It differs from the <a href="/en/calculators/transfer-bonus/">Transfer Bonus Calculator</a> (which reverse-calculates how many bank points you need for a target award flight) and the <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a> (which estimates the monetary cash value of a rewards balance).
 </div>
 
 <div class="calculator-container" style="margin-top: 1.5rem;">
@@ -32,7 +32,7 @@ breadcrumbs:
     <label for="transferPreset">Select a Common Transfer Partner <span class="hint">(Optional—or enter any custom ratio below)</span></label>
     <select id="transferPreset">
       <option value="custom">Custom / Enter live ratio from your bank app (e.g., CMB campaign ratios)</option>
-      <optgroup label="US · US Card Issuers (Verified Rules)">
+      <optgroup label="US · US Card Issuers (Field-Level Source Notes)">
         {% for preset in transferPresets %}
         <option value="{{ preset.id }}">{{ preset.labelEn }}</option>
         {% endfor %}
@@ -41,7 +41,7 @@ breadcrumbs:
     <div id="presetMetaBox" style="margin-top: 0.55rem; padding: 0.8rem 0.95rem; background: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; font-size: 0.85rem; color: rgba(244, 240, 230, 0.92); line-height: 1.6;">
       <div><strong style="color: var(--gold);">Current Mode:</strong> <span id="presetModeStatus">Custom Parameters (Supports any bank and airline ratio)</span></div>
       <div id="presetDetailContent" style="margin-top: 0.35rem;">
-        If your issuer uses card-tier rules, limited-time campaign ratios, or quota limits (such as <strong>China Merchants Bank / CMB</strong> campaign-based transfers), check your bank's official app for the active campaign rate and enter "Every X bank points convert to Y airline miles" below. <strong style="color: #fde047;">Always verify the live transfer ratio displayed in your rewards portal before transferring.</strong>
+        If your issuer uses card-tier rules, limited-time campaign ratios, or quota limits (such as <strong>China Merchants Bank / CMB</strong> campaign-based transfers), check your bank's official app for the active campaign rate and enter "Every X bank points convert to Y airline miles" below. <strong style="color: #fde047;">Always verify the live transfer rules displayed in your rewards portal before transferring.</strong>
       </div>
     </div>
   </div>
@@ -58,7 +58,7 @@ breadcrumbs:
   </div>
 
   <div class="input-group" style="margin-bottom: 1.1rem;">
-    <label for="bonusPercent">Transfer bonus percentage <span class="hint">(%, promotional bonus—enter 0 if none)</span></label>
+    <label for="bonusPercent">Transfer bonus percentage <span class="hint">(%, user-entered promotional bonus assumption—enter 0 if none)</span></label>
     <input type="number" id="bonusPercent" value="0" min="0" step="1" inputmode="numeric">
   </div>
 
@@ -71,12 +71,12 @@ breadcrumbs:
       </div>
 
       <div class="input-group" style="margin-bottom: 0.9rem;">
-        <label for="minTransfer">Minimum transfer threshold <span class="hint">(Minimum points required to initiate a transfer, usually 1000)</span></label>
+        <label for="minTransfer">Minimum transfer threshold <span class="hint">(Minimum transferable points required to initiate a transfer, usually 1000)</span></label>
         <input type="number" id="minTransfer" value="1000" min="1" step="1" inputmode="numeric">
       </div>
 
       <div class="input-group" style="margin-bottom: 0.9rem;">
-        <label for="increment">Transfer increment <span class="hint">(Step size above the minimum threshold, usually 1000 or 100)</span></label>
+        <label for="increment">Transfer increment <span class="hint">(Total transferred points must be a multiple of this increment and not below the minimum transfer threshold, usually 1000 or 100)</span></label>
         <input type="number" id="increment" value="1000" min="1" step="1" inputmode="numeric">
       </div>
 
@@ -110,7 +110,7 @@ breadcrumbs:
     </div>
   </div>
   
-  <button id="btnShare" class="btn-secondary" style="margin-top:1rem; width:100%; padding: 0.75rem 1rem; background: var(--ink-2); color: var(--gold); border: 1px solid var(--gold); border-radius: 6px; font-weight: 600; cursor: pointer;">🔗 Share this calculation (Copy link with parameters)</button>
+  <button id="btnShare" class="btn-secondary" style="margin-top:1rem; width:100%; min-height: 44px; padding: 0.75rem 1rem; background: var(--ink-2); color: var(--gold); border: 1px solid var(--gold); border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer;">🔗 Share this calculation (Copy link with parameters)</button>
   <div id="toast" class="toast">Link copied to clipboard!</div>
 </div>
 
@@ -128,8 +128,8 @@ breadcrumbs:
   
   <div class="math-formula">
     <strong>Standard Conversion Formula:</strong><br><br>
-    <em>Prerequisite: Bank Points ≥ Minimum Transfer Threshold (e.g., 1,000 points)</em><br>
     <em>Transferable Points = floor(Bank Points / Increment) × Increment</em><br>
+    <em>Threshold Requirement: Total Transferable Points must be an integer multiple of the Increment AND ≥ Minimum Transfer Threshold (minimum valid transfer = ceil(Minimum Transfer Threshold / Increment) × Increment)</em><br>
     <em>Base Miles = Transferable Points × (Airline Miles Y / Bank Points X)</em><br>
     <em>Bonus Miles = Base Miles × Bonus Percentage</em><br>
     <em>Total Miles = Base Miles + Bonus Miles</em>
@@ -171,12 +171,12 @@ breadcrumbs:
   </ul>
 
   <h2>Where to Find Real Transfer Ratios</h2>
-  <p>Never assume all transfers are 1:1. Transfer ratios, minimum thresholds, and caps vary by issuing country (e.g., US Amex vs. HK Amex), card tier, and active promotional campaigns. Always verify the live ratio shown in your bank's reward portal before initiating a transfer.</p>
+  <p>Never assume all transfers are 1:1. Transfer ratios, minimum thresholds, and caps vary by issuing country (e.g., US Amex vs. HK Amex), card tier, and active promotional campaigns. <strong>Always verify the live transfer rules displayed in your rewards portal before transferring.</strong></p>
 
   <h2>Important Transfer Rules and Limitations</h2>
   <ul>
     <li><strong>Transfers are Final</strong>: Transfers are generally one-way and cannot be reversed. Never transfer points speculatively before confirming award seat availability.</li>
-    <li><strong>Minimum Transfer Threshold vs. Transfer Increment</strong>: Some issuers require a 1,000-point minimum transfer but allow 100-point increments above 1,000, while others enforce strict 1,000-point multiples. Check both rules in your portal.</li>
+    <li><strong>Minimum Transfer Threshold vs. Transfer Increment</strong>: Under this calculator's model, the total transferred amount must be an integer multiple of the transfer increment and cannot be less than the minimum transfer threshold (for example, if the minimum transfer is 1,500 and the increment is 1,000, the smallest valid transfer is 2,000 points). Check both rules in your portal.</li>
     <li><strong>Transfer Posting Times Vary</strong>: Posting times vary by bank, airline partner, and account verification status—while many transfers are instant, some partners (such as ANA or Singapore Airlines KrisFlyer) can take several hours to several business days to process according to official program terms.</li>
   </ul>
 
@@ -192,7 +192,7 @@ breadcrumbs:
     <details>
       <summary>What is the difference between Minimum Transfer Threshold and Transfer Increment?</summary>
       <div>
-        <p>The <strong>Minimum Transfer Threshold</strong> is the smallest amount required to start a transfer (typically 1,000 points). The <strong>Transfer Increment</strong> is the step size allowed above that minimum (e.g., 1,000-point steps vs. 100-point steps).</p>
+        <p>The <strong>Minimum Transfer Threshold</strong> is the smallest amount required to initiate a transfer (typically 1,000 points). The <strong>Transfer Increment</strong> is the unit multiple required for the total transfer amount (total transferred points must be an integer multiple of the increment and at least the minimum transfer threshold—e.g., 1,000, 1,100, 1,200 when min transfer is 1,000 and increment is 100).</p>
       </div>
     </details>
 
@@ -217,24 +217,37 @@ breadcrumbs:
     return PRESETS.find(p => p.id === id) || null;
   }
 
-  function updatePresetMetaUI(presetId) {
+  function updatePresetMetaUI(presetId, overriddenByUrl = false) {
     const preset = findPreset(presetId);
     const statusEl = $('presetModeStatus');
     const detailEl = $('presetDetailContent');
     if (!statusEl || !detailEl) return;
 
     if (!preset) {
-      statusEl.textContent = 'Custom Parameters (Supports any bank and airline ratio)';
-      detailEl.innerHTML = 'If your issuer uses card-tier rules, limited-time campaign ratios, or quota limits (such as <strong>China Merchants Bank / CMB</strong> campaign-based transfers), check your bank\'s official app for the active campaign rate and enter "Every X bank points convert to Y airline miles" below. <strong style="color: #fde047;">Always verify the live transfer ratio displayed in your rewards portal before transferring.</strong>';
+      statusEl.textContent = overriddenByUrl
+        ? 'Custom Parameters (URL parameters overrode preset rules—calculating with explicit inputs)'
+        : 'Custom Parameters (Supports any bank and airline ratio)';
+      detailEl.innerHTML = 'If your issuer uses card-tier rules, limited-time campaign ratios, or quota limits (such as <strong>China Merchants Bank / CMB</strong> campaign-based transfers), check your bank\'s official app for the active campaign rate and enter "Every X bank points convert to Y airline miles" below. <strong style="color: #fde047;">Always verify the live transfer rules displayed in your rewards portal before transferring.</strong>';
       return;
     }
 
-    statusEl.textContent = `Preset Applied: ${preset.labelEn}`;
+    const bonusVal = $('bonusPercent') ? parseFloat($('bonusPercent').value) : 0;
+    const hasBonus = !isNaN(bonusVal) && bonusVal > 0;
+    statusEl.textContent = hasBonus
+      ? `Preset Applied: ${preset.labelEn} (with user-entered +${bonusVal}% promotional bonus assumption)`
+      : `Preset Applied: ${preset.labelEn}`;
+
+    const incBadge = preset.incrementVerified
+      ? `${preset.increment.toLocaleString('en-US')} increment (Verified)`
+      : `Conservative ${preset.increment.toLocaleString('en-US')} default increment (Increment unverified in public terms)`;
+
     detailEl.innerHTML = `
-      <div><strong>Issuing Region:</strong> ${preset.regionLabelEn} | <strong>Min &amp; Increment:</strong> ${preset.minTransfer.toLocaleString('en-US')} min transfer, ${preset.increment.toLocaleString('en-US')} increment</div>
+      <div><strong>Issuing Region:</strong> ${preset.regionLabelEn} | <strong>Min &amp; Increment:</strong> ${preset.minTransfer.toLocaleString('en-US')} min transfer, ${incBadge}</div>
+      <div style="margin-top:0.25rem;"><strong>Field Verification Status:</strong> ${preset.fieldStatusEn}</div>
       <div style="margin-top:0.25rem;"><strong>Card Eligibility:</strong> ${preset.eligibilityEn}</div>
-      <div style="margin-top:0.25rem;"><strong>Official Source:</strong> <a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameEn}</a> (Last verified: ${preset.lastVerified})</div>
-      <div style="margin-top:0.25rem; color:#fde047;"><strong>Reminder:</strong> Always verify the live transfer ratio displayed in your rewards portal before transferring. Editing any transfer parameter below switches to Custom mode.</div>
+      <div style="margin-top:0.25rem;"><strong>Promotional Bonus Note:</strong> Presets define base transfer rules only; the Transfer Bonus field (currently ${hasBonus ? '+' + bonusVal + '%' : '0%'}) is a user-entered promotional assumption, not an inherent preset rule.</div>
+      <div style="margin-top:0.25rem;"><strong>Official Sources:</strong> <a href="${preset.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.sourceNameEn}</a> | <a href="${preset.partnerSourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline;">${preset.partnerSourceNameEn}</a> (Last verified: ${preset.lastVerified})</div>
+      <div style="margin-top:0.25rem; color:#fde047;"><strong>Reminder:</strong> Always verify the live transfer rules displayed in your rewards portal before transferring. Editing ratio, min transfer, or increment switches to Custom mode.</div>
     `;
   }
 
@@ -319,10 +332,17 @@ breadcrumbs:
     const br = parseNum('baseRatio');
 
     if (rp !== null && rm !== null && rp > 0 && rm > 0) {
-      $('ratioPoints').value = rp;
-      $('ratioMiles').value = rm;
-      exactRatio = rm / rp;
-      $('baseRatio').value = Number(exactRatio.toFixed(6));
+      if (br !== null && br > 0 && Math.abs((rm / rp) - br) > 1e-4) {
+        $('baseRatio').value = br;
+        exactRatio = br;
+        $('ratioPoints').value = 1;
+        $('ratioMiles').value = br;
+      } else {
+        $('ratioPoints').value = rp;
+        $('ratioMiles').value = rm;
+        exactRatio = rm / rp;
+        $('baseRatio').value = Number(exactRatio.toFixed(6));
+      }
     } else if (br !== null && br > 0) {
       $('baseRatio').value = br;
       exactRatio = br;
@@ -350,6 +370,52 @@ breadcrumbs:
     if (params.has('targetProgram')) {
       $('targetProgram').value = params.get('targetProgram').slice(0, 60);
     }
+
+    if (presetParam && findPreset(presetParam)) {
+      const preset = findPreset(presetParam);
+      const presetRatio = preset.ratioMiles / preset.ratioPoints;
+      const currentMinT = parseFloat($('minTransfer').value);
+      const currentInc = parseFloat($('increment').value);
+      const ratioMatches = !isNaN(exactRatio) && Math.abs(exactRatio - presetRatio) <= 1e-6;
+      const minTMatches = !isNaN(currentMinT) && currentMinT === preset.minTransfer;
+      const incMatches = !isNaN(currentInc) && currentInc === preset.increment;
+      const targetProgMatches = !params.has('targetProgram') ||
+        params.get('targetProgram').trim() === preset.targetProgramEn;
+
+      if (!ratioMatches || !minTMatches || !incMatches || !targetProgMatches) {
+        $('transferPreset').value = 'custom';
+        if (!params.has('targetProgram') && $('targetProgram')) {
+          $('targetProgram').value = '';
+        }
+        updatePresetMetaUI('custom', true);
+      } else {
+        updatePresetMetaUI(presetParam);
+      }
+    }
+  }
+
+  function renderExplainSafe(transferablePoints, totalMiles, targetProg, remainingBankPoints) {
+    const el = $('explain');
+    if (!el) return;
+    el.textContent = '';
+
+    const appendStrong = (text) => {
+      const s = document.createElement('strong');
+      s.textContent = text;
+      el.appendChild(s);
+    };
+
+    el.appendChild(document.createTextNode('You can transfer '));
+    appendStrong(transferablePoints.toLocaleString('en-US'));
+    el.appendChild(document.createTextNode(' points to receive '));
+    appendStrong(totalMiles.toLocaleString('en-US', { maximumFractionDigits: 0 }));
+    el.appendChild(document.createTextNode(` ${targetProg} miles.`));
+
+    if (remainingBankPoints > 0) {
+      el.appendChild(document.createTextNode(' You will have '));
+      appendStrong(remainingBankPoints.toLocaleString('en-US'));
+      el.appendChild(document.createTextNode(' points left in your bank account due to increment restrictions.'));
+    }
   }
 
   function calculateConversion() {
@@ -358,8 +424,7 @@ breadcrumbs:
     let bonus = parseFloat($('bonusPercent').value);
     let inc = parseFloat($('increment').value);
     let minTransferEl = $('minTransfer');
-    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : inc;
-    if (isNaN(minTransfer) || minTransfer <= 0) minTransfer = inc;
+    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : NaN;
     let targetProg = $('targetProgram').value.trim() || 'airline';
 
     const resetState = (msg = 'Please enter valid numbers.') => {
@@ -372,18 +437,18 @@ breadcrumbs:
       $('effectiveRatio').textContent = '-';
     };
 
-    if (isNaN(points) || isNaN(ratio) || isNaN(bonus) || isNaN(inc)) {
-      resetState('Please enter valid numbers.');
+    if (isNaN(points) || isNaN(ratio) || isNaN(bonus) || isNaN(inc) || isNaN(minTransfer)) {
+      resetState('Please enter valid numbers (points, ratio, minimum transfer, and increment cannot be empty).');
       return;
     }
 
-    if (points < 0 || ratio <= 0 || bonus < 0 || inc <= 0) {
-      resetState('Inputs cannot be negative. Ratio and increment must be greater than 0.');
-      return;
-    }
-
-    if (!isFinite(points) || !isFinite(ratio) || !isFinite(bonus) || !isFinite(inc)) {
+    if (!isFinite(points) || !isFinite(ratio) || !isFinite(bonus) || !isFinite(inc) || !isFinite(minTransfer)) {
       resetState('Inputs are too large.');
+      return;
+    }
+
+    if (points < 0 || ratio <= 0 || bonus < 0 || inc <= 0 || minTransfer <= 0) {
+      resetState('Inputs cannot be negative. Ratio, minimum transfer, and increment must be greater than 0.');
       return;
     }
 
@@ -392,17 +457,12 @@ breadcrumbs:
       return;
     }
 
-    const effectiveMinRequired = Math.max(minTransfer, inc);
-    if (points < effectiveMinRequired) {
-      resetState(`You need at least ${effectiveMinRequired} points to make a transfer (minimum transfer threshold: ${minTransfer}, increment: ${inc}).`);
-      return;
-    }
-
     let transferablePoints = Math.floor(points / inc) * inc;
     let remainingBankPoints = points - transferablePoints;
-    
-    if (transferablePoints === 0) {
-      resetState(`You need at least ${inc} points to make a transfer.`);
+    const minValidTransfer = Math.ceil(minTransfer / inc) * inc;
+
+    if (points < minTransfer || transferablePoints === 0 || transferablePoints < minTransfer) {
+      resetState(`You need at least ${minValidTransfer} points to make a transfer: under the ${inc} increment rule, your transferable amount (${transferablePoints} points) is below the ${minTransfer} minimum transfer threshold (total transferred must be a multiple of ${inc} and at least ${minTransfer}).`);
       return;
     }
 
@@ -412,12 +472,7 @@ breadcrumbs:
     let effectiveRatio = totalMiles / transferablePoints;
 
     $('totalMiles').textContent = totalMiles.toLocaleString('en-US', {maximumFractionDigits:0}) + ' Miles';
-    
-    let explainHtml = `You can transfer <strong>${transferablePoints.toLocaleString('en-US')}</strong> points to receive <strong>${totalMiles.toLocaleString('en-US', {maximumFractionDigits:0})}</strong> ${targetProg} miles.`;
-    if (remainingBankPoints > 0) {
-      explainHtml += ` You will have <strong>${remainingBankPoints.toLocaleString('en-US')}</strong> points left in your bank account due to increment restrictions.`;
-    }
-    $('explain').innerHTML = explainHtml;
+    renderExplainSafe(transferablePoints, totalMiles, targetProg, remainingBankPoints);
 
     $('transferablePoints').textContent = transferablePoints.toLocaleString('en-US');
     $('remainingPoints').textContent = remainingBankPoints.toLocaleString('en-US');
@@ -445,7 +500,8 @@ breadcrumbs:
   if ($('increment')) {
     $('increment').addEventListener('input', () => {
       switchToCustomMode();
-      if (!minTransferManuallyEdited && $('minTransfer')) {
+      const incVal = parseFloat($('increment').value);
+      if (!minTransferManuallyEdited && $('minTransfer') && !isNaN(incVal) && incVal > 0) {
         $('minTransfer').value = $('increment').value;
       }
       calculateConversion();
@@ -463,7 +519,11 @@ breadcrumbs:
   ['bankPoints', 'bonusPercent', 'targetProgram'].forEach(id => {
     if ($(id)) {
       $(id).addEventListener('input', () => {
-        if (id === 'targetProgram') switchToCustomMode(true);
+        if (id === 'targetProgram') {
+          switchToCustomMode(true);
+        } else if (id === 'bonusPercent' && $('transferPreset') && $('transferPreset').value !== 'custom') {
+          updatePresetMetaUI($('transferPreset').value);
+        }
         calculateConversion();
       });
     }
