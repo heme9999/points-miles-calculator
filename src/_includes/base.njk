@@ -2,7 +2,10 @@
 <html lang="{{ lang | default(site.lang) }}">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0E1A2B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0E1A2B">
+<meta name="color-scheme" content="dark">
 {% set currentLang = lang | default(site.lang) %}
 {% set isEnglish = currentLang == 'en' %}
 {% set siteName = 'Points & Miles Calculator' if isEnglish else site.name %}
@@ -176,28 +179,28 @@
   
   {{ content | safe }}
 
-  <footer class="site-footer" style="margin-top: 80px; padding-top: 40px; border-top: 1px solid #e2e8f0; font-size: 14px; color: #64748b;">
-    <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; margin-bottom: 24px;">
-      <div>
-        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">{% if isEnglish %}Tools & Resources{% else %}工具与资源{% endif %}</strong>
-        <a href="{{ '/en/calculators/' if isEnglish else '/calculators/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}All Calculators{% else %}全部计算器{% endif %}</a>
-        <a href="{{ '/en/values/' if isEnglish else '/values/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Points Valuations{% else %}积分估值目录{% endif %}</a>
-        <a href="{{ '/en/blog/' if isEnglish else '/blog/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Blog & Case Studies{% else %}实战博客专栏{% endif %}</a>
-        <a href="{{ '/en/guides/how-to-calculate-point-value/' if isEnglish else '/guides/how-to-calculate-point-value/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}How to Calculate CPP{% else %}如何计算积分价值 (CPP){% endif %}</a>
+  <footer class="site-footer">
+    <div class="footer-columns">
+      <div class="footer-col">
+        <strong class="footer-col-title">{% if isEnglish %}Tools & Resources{% else %}工具与资源{% endif %}</strong>
+        <a href="{{ '/en/calculators/' if isEnglish else '/calculators/' }}">{% if isEnglish %}All Calculators{% else %}全部计算器{% endif %}</a>
+        <a href="{{ '/en/values/' if isEnglish else '/values/' }}">{% if isEnglish %}Points Valuations{% else %}积分估值目录{% endif %}</a>
+        <a href="{{ '/en/blog/' if isEnglish else '/blog/' }}">{% if isEnglish %}Blog & Case Studies{% else %}实战博客专栏{% endif %}</a>
+        <a href="{{ '/en/guides/how-to-calculate-point-value/' if isEnglish else '/guides/how-to-calculate-point-value/' }}">{% if isEnglish %}How to Calculate CPP{% else %}如何计算积分价值 (CPP){% endif %}</a>
       </div>
-      <div>
-        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">{% if isEnglish %}About Us{% else %}关于本站{% endif %}</strong>
-        <a href="{{ '/en/about/' if isEnglish else '/about/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}About{% else %}关于我们{% endif %}</a>
-        <a href="{{ '/en/methodology/' if isEnglish else '/methodology/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Methodology{% else %}估值方法论{% endif %}</a>
-        <a href="{{ '/en/contact/' if isEnglish else '/contact/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Contact Us{% else %}联系我们{% endif %}</a>
+      <div class="footer-col">
+        <strong class="footer-col-title">{% if isEnglish %}About Us{% else %}关于本站{% endif %}</strong>
+        <a href="{{ '/en/about/' if isEnglish else '/about/' }}">{% if isEnglish %}About{% else %}关于我们{% endif %}</a>
+        <a href="{{ '/en/methodology/' if isEnglish else '/methodology/' }}">{% if isEnglish %}Methodology{% else %}估值方法论{% endif %}</a>
+        <a href="{{ '/en/contact/' if isEnglish else '/contact/' }}">{% if isEnglish %}Contact Us{% else %}联系我们{% endif %}</a>
       </div>
-      <div>
-        <strong style="display:block; margin-bottom: 12px; color: #0f172a;">{% if isEnglish %}Legal & Policy{% else %}法律与政策{% endif %}</strong>
-        <a href="{{ '/en/privacy/' if isEnglish else '/privacy/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Privacy Policy{% else %}隐私政策{% endif %}</a>
-        <a href="{{ '/en/terms/' if isEnglish else '/terms/' }}" style="display:block; margin-bottom: 8px; color: inherit; text-decoration: none;">{% if isEnglish %}Terms & Disclaimer{% else %}免责声明与条款{% endif %}</a>
+      <div class="footer-col">
+        <strong class="footer-col-title">{% if isEnglish %}Legal & Policy{% else %}法律与政策{% endif %}</strong>
+        <a href="{{ '/en/privacy/' if isEnglish else '/privacy/' }}">{% if isEnglish %}Privacy Policy{% else %}隐私政策{% endif %}</a>
+        <a href="{{ '/en/terms/' if isEnglish else '/terms/' }}">{% if isEnglish %}Terms & Disclaimer{% else %}免责声明与条款{% endif %}</a>
       </div>
     </div>
-    <div style="text-align: center; border-top: 1px solid #f1f5f9; padding-top: 24px;">
+    <div class="footer-disclaimer">
       &copy; 2026 Points & Miles Calculator. {% if isEnglish %}Not affiliated with any airlines or financial institutions. Results are for reference only and do not constitute financial advice.{% else %}不受任何航空公司或金融机构背书。计算结果仅供参考，不构成财务建议。{% endif %}
     </div>
   </footer>

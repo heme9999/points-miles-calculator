@@ -1,6 +1,6 @@
 # Sitemap Production Diagnostic Report
 
-**Date:** 2026-10-13T06:55:32.936Z
+**Date:** 2026-10-15T06:08:24.531Z
 **Target:** https://points-miles-calculator.pages.dev
 
 ## 1. Five-Category Evidence Classification
