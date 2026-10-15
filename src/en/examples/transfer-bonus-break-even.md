@@ -58,10 +58,10 @@ If the same flight only cost $300 in cash, your redemption value (even with a 30
 *   **Transfers are irreversible:** Once you transfer points from a flexible credit card program to an airline or hotel, you cannot transfer them back.
 *   **Do not transfer speculatively:** Only transfer points when you have verified that award space exists for your specific dates. 
 
-<div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+<div class="cta">
   <h3 style="margin-top: 0;">Calculate Your Transfer</h3>
   <p>Looking to transfer points with an active bonus? Use our Transfer Bonus Calculator to find exactly how many points you need to transfer:</p>
-  <a href="/en/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000" class="btn" style="display: inline-block; padding: 0.75rem 1.5rem; background: #0f172a; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 600;">Run This Calculation</a>
+  <a href="/en/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000" class="btn">Run This Calculation</a>
 </div>
 
 *Last fact-checked: August 2026.*

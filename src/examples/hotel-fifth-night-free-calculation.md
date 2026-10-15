@@ -45,10 +45,10 @@ breadcrumbs:
 *   **资格要求:** 您通常需要持有该酒店的高级会员资格（例如希尔顿银卡或以上）才能解锁此福利。
 *   **并非所有日期适用:** 本文仅作案例演示。真实的酒店库存、现金房价和税费会根据具体日期和酒店发生波动。
 
-<div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+<div class="cta">
   <h3 style="margin-top: 0;">一键计算您的专属行程</h3>
   <p>想看看您自己挑选的酒店是否划算？点击下方按钮，使用我们的酒店积分计算器（已预填上述案例数据）：</p>
-  <a href="/calculators/hotel-points-vs-cash/?cash=300&nights=5&taxes=300&points=40000&valuation=0.7&freeRule=5th&currency=USD" class="btn" style="display: inline-block; padding: 0.75rem 1.5rem; background: #0f172a; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 600;">运行此计算</a>
+  <a href="/calculators/hotel-points-vs-cash/?cash=300&nights=5&taxes=300&points=40000&valuation=0.7&freeRule=5th&currency=USD" class="btn">运行此计算</a>
 </div>
 
 *最后事实审核：2026年8月。*

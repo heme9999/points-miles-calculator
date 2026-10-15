@@ -45,10 +45,10 @@ Since your redemption value (3.80 CPP) is much higher than your purchase cost (1
 *   **Non-Refundable:** Point purchases are almost always processed by third parties (like Points.com) and are generally non-refundable.
 *   **Devaluation Risk:** If you buy points without an immediate redemption plan, loyalty programs may adjust award pricing in the future.
 
-<div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+<div class="cta">
   <h3 style="margin-top: 0;">Calculate Your Own Purchase</h3>
   <p>Have a different promotion or amount in mind? Use our Buy Points Calculator with the numbers from this example pre-filled:</p>
-  <a href="/en/calculators/buy-points/?buy=50000&price=1500&bonus=100&currency=USD" class="btn" style="display: inline-block; padding: 0.75rem 1.5rem; background: #0f172a; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 600;">Run This Calculation</a>
+  <a href="/en/calculators/buy-points/?buy=50000&price=1500&bonus=100&currency=USD" class="btn">Run This Calculation</a>
 </div>
 
 *Last fact-checked: August 2026. This is a hypothetical example and does not represent an active promotion.*

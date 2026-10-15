@@ -19,7 +19,7 @@ breadcrumbs:
   Chase Ultimate Rewards points do not have a single fixed value. Your realized return varies by card product, redemption channel, eligible Points Boost promotion, live transfer partner ratio, and award seat availability. Baseline cash-back redemptions yield 1.0¢ each, while eligible travel bookings and partner transfers may unlock higher value. Cardholders should always verify current rates directly in their account before redeeming.
 </div>
 
-<p class="cta-banner" style="margin: 16px 0; padding: 12px 16px; background: #f1f5f9; border-radius: 6px; font-size: 0.95rem;">
+<p class="cta-banner">
   💡 <strong>Have an existing Chase points balance?</strong> Use our <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a> to instantly convert your points into estimated dollar purchasing power.
 </p>
 

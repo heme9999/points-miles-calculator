@@ -15,7 +15,7 @@ breadcrumbs:
 ---
 <h1>Amex Membership Rewards (MR) Points Value Guide</h1>
 
-<div class="direct-answer" style="margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-left: 4px solid #2563eb; border-radius: 4px;">
+<div class="direct-answer">
   <strong>Direct Answer:</strong> American Express Membership Rewards points are generally estimated between 1.0¢ and 2.0¢ each, but they do not hold a fixed or guaranteed cash value. The actual value depends entirely on your specific redemption method. Transferring points to airline partners typically delivers the highest return, while statement credits and retail checkout options yield far less. Always calculate your realized return using live award pricing and active transfer ratios.
 </div>
 
@@ -143,7 +143,7 @@ breadcrumbs:
 </div>
 <p style="font-size: 0.9em; color: #64748b; margin-top: 0.5rem;"><em>Note: The numbers above represent illustrative valuation scenarios, not guaranteed cash values or official redemption rates. Actual value depends on redemption method, award availability, and applicable taxes.</em></p>
 
-<div class="guide-actions" style="margin: 1.5rem 0; padding: 1rem; background: #f1f5f9; border-radius: 6px;">
+<div class="guide-actions">
   <strong>Next Steps for Your Points:</strong>
   <ul style="margin: 0.5rem 0 0 1.25rem;">
     <li>Estimate another balance with the <a href="/en/calculators/points-to-dollars/">Miles to Dollars Calculator</a>.</li>

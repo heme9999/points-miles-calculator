@@ -45,10 +45,10 @@ breadcrumbs:
 *   **不可退款:** 买分交易通常由第三方平台（如 Points.com）处理，一旦购买通常无法退款。
 *   **贬值风险:** 如果您买分后没有立刻使用，常客计划可能在未来调整兑换表格，影响积分价值。
 
-<div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+<div class="cta">
   <h3 style="margin-top: 0;">计算您遇到的买分活动</h3>
   <p>遇到不同的促销比例或价格？点击下方按钮，使用我们的买分计算器（已预填上述案例数据）：</p>
-  <a href="/calculators/buy-points/?buy=50000&price=1500&bonus=100&currency=USD" class="btn" style="display: inline-block; padding: 0.75rem 1.5rem; background: #0f172a; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 600;">运行此计算</a>
+  <a href="/calculators/buy-points/?buy=50000&price=1500&bonus=100&currency=USD" class="btn">运行此计算</a>
 </div>
 
 *最后事实审核：2026年8月。本案例仅为数学演示，不代表当前真实的促销活动。*

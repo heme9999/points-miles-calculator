@@ -53,6 +53,18 @@ button, .btn, .btn-primary, .btn-secondary, .btn-share, .btn-balance-preset, .bt
   user-select: none;
   -webkit-user-select: none;
 }
+a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: #fde047;
+  }
+}
 body {
   background: var(--ink);
   color: var(--paper);
@@ -851,6 +863,165 @@ h3 + .faq, h2 + .faq {
   color: var(--muted);
   margin-top: 0.35rem;
   line-height: 1.45;
+}
+
+/* Tool Summary Card (/calculators/ & /en/calculators/) */
+.tool-summary-card {
+  margin-bottom: 1.5rem;
+  padding: 1.35rem 1.5rem;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--paper);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-fast) var(--ease-out), border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tool-summary-card:hover {
+    border-color: var(--gold);
+    box-shadow: var(--shadow-glow-gold);
+    transform: translateY(-2px);
+  }
+}
+.tool-summary-card:active {
+  transform: scale(0.995);
+}
+.tool-summary-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.18rem;
+  line-height: 1.4;
+}
+.tool-summary-card h3 a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+.tool-summary-card h3 a:hover {
+  color: #fde047;
+  text-decoration: underline;
+}
+.tool-summary-card p {
+  color: rgba(244, 240, 230, 0.92);
+  font-size: 0.96rem;
+  line-height: 1.65;
+  margin-top: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+.tool-summary-card ul {
+  margin: 0.75rem 0 0 1.25rem;
+  font-size: 0.93rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.tool-summary-card ul strong {
+  color: var(--paper);
+  font-weight: 600;
+}
+.tool-summary-card ul li {
+  color: var(--muted);
+}
+
+/* Worked Examples Grid & Cards (CPP Calculator) */
+.worked-examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.worked-example-card {
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+  color: var(--paper);
+  box-shadow: var(--shadow-card);
+}
+.worked-example-card h3 {
+  margin-top: 0;
+  font-size: 1.15rem;
+  color: var(--gold);
+}
+.worked-example-card ul {
+  padding-left: 20px;
+  margin: 8px 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.worked-example-card ul strong {
+  color: var(--paper);
+}
+.worked-example-card p {
+  font-size: 0.92rem;
+  margin: 8px 0;
+  color: rgba(244, 240, 230, 0.92);
+}
+.worked-example-badge-blue {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(2, 132, 199, 0.15);
+  border-left: 3px solid #38bdf8;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #7dd3fc;
+}
+.worked-example-badge-green {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border-left: 3px solid #34d399;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #6ee7b7;
+}
+
+/* Guide Actions & CTA Banner */
+.guide-actions {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--paper);
+  box-shadow: var(--shadow-card);
+}
+.guide-actions strong {
+  color: var(--gold);
+  font-size: 1.05rem;
+}
+.guide-actions ul {
+  margin: 0.5rem 0 0 1.25rem;
+  color: rgba(244, 240, 230, 0.92);
+  line-height: 1.7;
+}
+.guide-actions a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+.guide-actions a:hover {
+  color: #fde047;
+}
+
+.cta-banner {
+  margin: 16px 0;
+  padding: 14px 18px;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--paper);
+  box-shadow: var(--shadow-card);
+}
+.cta-banner strong {
+  color: var(--paper);
+}
+.cta-banner a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+.cta-banner a:hover {
+  color: #fde047;
 }
 
 /* Harmonized Dark Theme Footer (Apple Design Materials) */

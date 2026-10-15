@@ -45,10 +45,10 @@ By saving 40,000 points, your redemption value increased from 0.90 CPP to 1.125 
 *   **Eligibility:** You often need elite status (e.g., Hilton Silver or higher) to unlock this benefit.
 *   **Not All Dates Apply:** This is just a demonstration. Actual hotel availability, cash rates, and taxes vary by date and property. 
 
-<div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+<div class="cta">
   <h3 style="margin-top: 0;">Calculate Your Own Stay</h3>
   <p>Want to see if your specific redemption makes sense? Use our Hotel Points Calculator with these exact numbers pre-filled:</p>
-  <a href="/en/calculators/hotel-points-vs-cash/?cash=300&nights=5&taxes=300&points=40000&valuation=0.7&freeRule=5th" class="btn" style="display: inline-block; padding: 0.75rem 1.5rem; background: #0f172a; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 600;">Run This Calculation</a>
+  <a href="/en/calculators/hotel-points-vs-cash/?cash=300&nights=5&taxes=300&points=40000&valuation=0.7&freeRule=5th" class="btn">Run This Calculation</a>
 </div>
 
 *Last fact-checked: August 2026.*

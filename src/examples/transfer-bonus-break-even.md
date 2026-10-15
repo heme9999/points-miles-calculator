@@ -58,10 +58,10 @@ breadcrumbs:
 *   **转点通常不可逆 (Irreversible):** 一旦将积分从信用卡系统转入航空公司或酒店，通常无法退回信用卡系统中。
 *   **避免为了加赠盲目转点:** 建议在确认了确切日期的航班有奖励机票库存后再进行转点操作（即“即转即用”）。
 
-<div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+<div class="cta">
   <h3 style="margin-top: 0;">计算您的转点需求</h3>
   <p>准备在加赠期转点？点击下方按钮，使用我们的转点加赠计算器准确计算出最少需要转入的积分数量：</p>
-  <a href="/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000" class="btn" style="display: inline-block; padding: 0.75rem 1.5rem; background: #0f172a; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 600;">运行此计算</a>
+  <a href="/calculators/transfer-bonus/?targetMiles=60000&baseRatio=1&bonusPercent=20&increment=1000" class="btn">运行此计算</a>
 </div>
 
 *最后事实审核：2026年8月。*
