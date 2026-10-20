@@ -53,9 +53,9 @@ breadcrumbs:
 
 <h2>数据来源与最后事实核查</h2>
 <ul>
-  <li><strong>[Editorial] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Baseline Value (1.5¢)</a> (Last checked: 2026-08-11)</li>
-  <li><strong>[Editorial] OMAAT Value Guide</strong>: <a href="https://onemileatatime.com/guides/value-frequent-flyer-miles/" target="_blank" rel="noopener">Baseline Value (1.5¢)</a> (Last checked: 2026-08-11)</li>
-  <li><strong>[Official] Aeroplan Official Terms</strong>: <a href="https://www.aircanada.com/ca/en/aco/home/aeroplan.html" target="_blank" rel="noopener">Program Rules</a> (Last checked: 2026-08-11)</li>
+  <li><strong>[行业参考] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">基准估值 (1.5¢)</a> （核查日期：2026年10月）</li>
+  <li><strong>[行业参考] OMAAT Value Guide</strong>: <a href="https://onemileatatime.com/guides/value-frequent-flyer-miles/" target="_blank" rel="noopener">基准估值 (1.5¢)</a> （核查日期：2026年10月）</li>
+  <li><strong>[官方来源] Aeroplan Official Terms</strong>: <a href="https://www.aircanada.com/ca/en/aco/home/aeroplan.html" target="_blank" rel="noopener">官方计划规则</a> （核查日期：2026年10月）</li>
   <li><strong>数据汇率折算</strong>：按美元基准参考价估算，当前参考汇率 约 7.00</li>
 </ul>
-<p class="disclaimer"><em>最后事实核查时间：2026-08-11。免责声明：本站提供的估值与计算结果仅供参考，不构成任何财务建议。</em></p>
+<p class="disclaimer"><em>最后事实核查时间：2026年10月。免责声明：本站提供的估值与计算结果仅供参考，不构成任何财务建议。</em></p>

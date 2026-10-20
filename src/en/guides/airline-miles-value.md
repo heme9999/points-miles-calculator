@@ -15,7 +15,7 @@ Trying to figure out the exact value of an airline mile is like trying to hit a 
 
 ## Miles Have No Fixed Cash Value
 
-Unless you are cashing out points directly through a travel portal at a fixed rate (like Chase Sapphire Reserve at 1.5 cents each), airline miles have no fixed cash value. Their value is determined entirely by how you redeem them. 
+Unless you are redeeming points directly through a travel portal or statement credit at a fixed rate (such as a 1.0¢ baseline or specific portal promotional boosts), airline miles have no fixed cash value. Their value is determined entirely by how you redeem them. 
 
 ## Editorial vs. Actual Value
 

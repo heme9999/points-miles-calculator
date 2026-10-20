@@ -9,8 +9,9 @@ breadcrumbs:
 ---
 # How to Calculate Point and Mile Value (CPP Guide)
 
-> [!NOTE]
-> The single most important metric in the points and miles game is **CPP (Cents Per Point / Cents Per Mile)**. It tells you exactly how many cents of value you are getting out of each point. Mastering CPP is the first step to ensuring you never waste your hard-earned rewards on poor redemptions.
+<div class="callout">
+  <strong>Key Takeaway:</strong> The single most important metric in the points and miles game is <strong>CPP (Cents Per Point / Cents Per Mile)</strong>. It tells you exactly how many cents of value you are getting out of each point. Mastering CPP is the first step to ensuring you never waste your hard-earned rewards on poor redemptions.
+</div>
 
 ## What is the CPP Formula?
 
@@ -45,8 +46,9 @@ This is an incredible redemption value! Compared to cashing out your points thro
 
 ## Common Calculation Mistakes
 
-> [!WARNING]
-> Do not fall into these common CPP traps!
+<div class="callout warn">
+  <strong>Warning:</strong> Do not fall into these common CPP traps!
+</div>
 
 1. **Using inflated cash prices**: Some people like to calculate their CPP using full-fare First Class prices (e.g., $15,000), which results in a massive CPP (like 15 cents/point). However, if you would never realistically pay $15,000 for that flight, this "high CPP" is a vanity metric. Always use the **maximum cash price you would actually be willing to pay**.
 2. **Ignoring exorbitant fees**: Seeing a flight to Europe for 40,000 miles seems like a great deal until you reach checkout and see an €800 fuel surcharge. In this case, you might be better off buying a cheap cash fare.
@@ -56,7 +58,7 @@ This is an incredible redemption value! Compared to cashing out your points thro
 
 Different points systems have different baseline values. If your calculation yields a number below the baseline, **you are usually better off paying cash**.
 
-*   **Chase Ultimate Rewards (UR)**: The baseline is typically 1.25¢ - 1.5¢ (based on the portal redemption rate of the Sapphire cards).
+*   **Chase Ultimate Rewards (UR)**: The baseline is typically 1.0¢ for cash back, with higher effective value available through eligible Points Boost promotions or transfer partners.
 *   **Amex Membership Rewards (MR)**: The baseline is around 0.6¢ - 1.1¢ (depending on whether you have the Charles Schwab Platinum card to cash out).
 *   **Airline Miles (e.g., Aeroplan, Avios)**: Economy redemptions should generally hit at least 1.2¢, while Business/First Class redemptions should easily exceed 2.0¢.
 

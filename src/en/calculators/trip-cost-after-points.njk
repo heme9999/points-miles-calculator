@@ -179,7 +179,7 @@ faqItems:
         <div class="expense-grid">
           <div class="field">
             <label for="flightBaseTransferRatio">Base Transfer Ratio (Miles per 1 bank point)<span class="hint">RATIO</span></label>
-            <input type="number" id="flightBaseTransferRatio" value="1" min="0.1" max="10" step="0.1" inputmode="decimal" placeholder="1 for 1:1 ratio">
+            <input type="number" id="flightBaseTransferRatio" value="1" min="0.1" max="10" step="any" inputmode="decimal" placeholder="1 for 1:1 ratio">
             <div class="unit">e.g. 1:1 enter 1; 2 pts per 1 mile enter 0.5; 1 pt per 2 miles enter 2</div>
           </div>
           <div class="field">
@@ -188,7 +188,7 @@ faqItems:
           </div>
           <div class="field">
             <label for="flightTransferIncrement">Minimum Transfer Increment<span class="hint">Rounding</span></label>
-            <input type="number" id="flightTransferIncrement" value="1000" min="1" max="50000" step="100" inputmode="numeric" placeholder="Default 1000">
+            <input type="number" id="flightTransferIncrement" value="1000" min="100" max="50000" step="100" inputmode="numeric" placeholder="Default 1000">
           </div>
           <div class="field">
             <label for="flightTransferableBalance">Transferable Bank Points Balance<span class="hint">Optional</span></label>
@@ -737,7 +737,7 @@ faqItems:
         tableHtml += `<tr class="waterfall-row" data-category-id="${r.id}" data-row-type="category">
           <th scope="row"><strong>${r.name}</strong></th>
           <td>${core.formatCurrency(r.cash, curr, 'en')}</td>
-          <td class="${dedClass}">${r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'en') : '—'}</td>
+          <td class="${dedClass}">${r.deduction !== 0 ? '-' + core.formatCurrency(Math.abs(r.deduction), curr, 'en') : '—'}</td>
           <td class="${taxClass}">${r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'en') : '—'}</td>
           <td><strong>${core.formatCurrency(r.final, curr, 'en')}</strong></td>
         </tr>`;
@@ -759,7 +759,7 @@ faqItems:
       if (cardsListEl && cardsTotalEl) {
         let cardsHtml = '';
         activeRows.forEach(r => {
-          const dedText = r.deduction !== 0 ? core.formatCurrency(r.deduction, curr, 'en') : '—';
+          const dedText = r.deduction !== 0 ? '-' + core.formatCurrency(Math.abs(r.deduction), curr, 'en') : '—';
           const taxText = r.taxes > 0 ? '+' + core.formatCurrency(r.taxes, curr, 'en') : '—';
           const dedClass = r.deduction < 0 ? 'value-deduction' : 'value-muted';
           const taxClass = r.taxes > 0 ? 'value-fees' : 'value-muted';

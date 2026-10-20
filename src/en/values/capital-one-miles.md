@@ -53,7 +53,7 @@ breadcrumbs:
 
 <h2>Data Sources and Last Fact-Checked</h2>
 <ul>
-  <li><strong>[Editorial] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Baseline Value (1.85¢)</a> (Last checked: 2026-08-11)</li>
-  <li><strong>[Official] Capital One Official Terms</strong>: <a href="https://www.capitalone.com/credit-cards/travel-and-miles/" target="_blank" rel="noopener">Transfer Partners</a> (Last checked: 2026-08-11)</li>
+  <li><strong>[Editorial] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Baseline Value (1.85¢)</a> (Last checked: October 2026)</li>
+  <li><strong>[Official] Capital One Official Terms</strong>: <a href="https://www.capitalone.com/credit-cards/travel-and-miles/" target="_blank" rel="noopener">Transfer Partners</a> (Last checked: October 2026)</li>
 </ul>
-<p class="disclaimer"><em>Last Fact-Checked: 2026-08-11. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice.</em></p>
+<p class="disclaimer"><em>Last Fact-Checked: October 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice.</em></p>

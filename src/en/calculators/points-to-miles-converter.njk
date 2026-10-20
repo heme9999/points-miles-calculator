@@ -423,14 +423,6 @@ breadcrumbs:
   }
 
   function calculateConversion() {
-    let points = parseFloat($('bankPoints').value);
-    let ratio = (!isNaN(exactRatio) && exactRatio > 0) ? exactRatio : parseFloat($('baseRatio').value);
-    let bonus = parseFloat($('bonusPercent').value);
-    let inc = parseFloat($('increment').value);
-    let minTransferEl = $('minTransfer');
-    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : NaN;
-    let targetProg = $('targetProgram').value.trim() || 'airline';
-
     const resetState = (msg = 'Please enter valid numbers.') => {
       $('totalMiles').textContent = '-';
       $('explain').textContent = msg;
@@ -440,6 +432,20 @@ breadcrumbs:
       $('bonusMiles').textContent = '-';
       $('effectiveRatio').textContent = '-';
     };
+
+    let bankPointsRaw = $('bankPoints').value.trim();
+    if (bankPointsRaw === '') {
+      resetState('Enter your bank points above to see how many miles you will receive.');
+      return;
+    }
+
+    let points = parseFloat(bankPointsRaw);
+    let ratio = (!isNaN(exactRatio) && exactRatio > 0) ? exactRatio : parseFloat($('baseRatio').value);
+    let bonus = parseFloat($('bonusPercent').value);
+    let inc = parseFloat($('increment').value);
+    let minTransferEl = $('minTransfer');
+    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : NaN;
+    let targetProg = $('targetProgram').value.trim() || 'airline';
 
     if (isNaN(points) || isNaN(ratio) || isNaN(bonus) || isNaN(inc) || isNaN(minTransfer)) {
       resetState('Please enter valid numbers (points, ratio, minimum transfer, and increment cannot be empty).');

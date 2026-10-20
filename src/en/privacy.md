@@ -9,6 +9,8 @@ breadcrumbs:
 ---
 # Privacy Policy
 
+*Last Updated: October 2026*
+
 Your privacy is paramount to us. This Privacy Policy explains how Points & Miles Calculator handles your information.
 
 ## 1. Local Processing (No Data Collection)

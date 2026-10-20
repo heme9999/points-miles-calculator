@@ -11,7 +11,7 @@ eyebrow: 里程账 · 联系
 <p>如果你在里程账的使用过程中遇到了 Bug，对某个积分体系的估值有不同见解，或者希望我们开发新的计算器功能，欢迎向我们发送反馈邮件。</p>
 
 <h2>联系方式</h2>
-<p>请发送邮件至：<strong>hello@points-miles-calculator.pages.dev</strong></p>
+<p>请发送邮件至：<a href="mailto:hello@points-miles-calculator.pages.dev"><strong>hello@points-miles-calculator.pages.dev</strong></a></p>
 
 <div class="panel">
   <p><strong>⚠️ 注意：</strong></p>

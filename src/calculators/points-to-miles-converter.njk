@@ -120,7 +120,7 @@ breadcrumbs:
   <ul>
     <li><strong>1. 基础转点比例（Transfer Ratio）</strong>：指<strong>多少银行积分可以换成多少航空里程</strong>（数量换算关系）。例如 Chase UR (US) 转美联航为 <code>1,000 : 1,000</code>（1:1）；美版 Amex MR 转国泰亚洲万里通为 <code>1,000 : 800</code>（5:4）；部分国内信用卡活动可能是 <code>15 : 1</code> 或 <code>2,000 : 1,000</code>。这是本页面第 3 项需要填写的数值。</li>
     <li><strong>2. 转点加赠（Transfer Bonus）</strong>：指银行在限时促销期间<strong>额外赠送的里程百分比</strong>（例如限时 +20% 加赠）。平时无促销活动时填 <code>0%</code>。</li>
-    <li><strong>3. 积分/里程现金估值（Monetary Valuation）</strong>：指 <strong>1 点积分或 1 航空里程大约值多少钱</strong>（如 <code>1.5 美分/里</code> 或 <code>¥0.08/里</code>）。<strong>切勿把 1.5¢ 等现金估值填进本页的“基础转点比例”！</strong>如果您想估算已知里程余额值多少现金，请使用 <a href="/calculators/points-to-dollars/">里程折算现金计算器（Miles to Dollars）</a>；如果您想根据具体机票价格反算单点价值，请使用 <a href="/calculators/cents-per-point/">单点价值计算器（CPP）</a>。</li>
+    <li><strong>3. 积分/里程现金估值（Monetary Valuation）</strong>：指 <strong>1 点积分或 1 航空里程大约值多少钱</strong>（如 <code>1.5 美分/里</code> 或 <code>¥0.08/里</code>）。<strong>切勿把 1.5¢ 等现金估值填进本页的“基础转点比例”！</strong>如果您想估算已知里程余额值多少现金，请使用 <a href="/calculators/points-to-dollars/">积分换算现金价值计算器（Miles to Dollars）</a>；如果您想根据具体机票价格反算单点价值，请使用 <a href="/calculators/cents-per-point/">单点价值计算器（CPP）</a>。</li>
   </ul>
 
   <h2>如何计算积分转里程的结果？</h2>
@@ -423,14 +423,6 @@ breadcrumbs:
   }
 
   function calculateConversion() {
-    let points = parseFloat($('bankPoints').value);
-    let ratio = (!isNaN(exactRatio) && exactRatio > 0) ? exactRatio : parseFloat($('baseRatio').value);
-    let bonus = parseFloat($('bonusPercent').value);
-    let inc = parseFloat($('increment').value);
-    let minTransferEl = $('minTransfer');
-    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : NaN;
-    let targetProg = $('targetProgram').value.trim() || '航空';
-
     const resetState = (msg = '请输入有效的数值。') => {
       $('totalMiles').textContent = '-';
       $('explain').textContent = msg;
@@ -440,6 +432,20 @@ breadcrumbs:
       $('bonusMiles').textContent = '-';
       $('effectiveRatio').textContent = '-';
     };
+
+    let bankPointsRaw = $('bankPoints').value.trim();
+    if (bankPointsRaw === '') {
+      resetState('在上方输入银行积分数量，即可自动换算可获得的航空里程。');
+      return;
+    }
+
+    let points = parseFloat(bankPointsRaw);
+    let ratio = (!isNaN(exactRatio) && exactRatio > 0) ? exactRatio : parseFloat($('baseRatio').value);
+    let bonus = parseFloat($('bonusPercent').value);
+    let inc = parseFloat($('increment').value);
+    let minTransferEl = $('minTransfer');
+    let minTransfer = minTransferEl ? parseFloat(minTransferEl.value) : NaN;
+    let targetProg = $('targetProgram').value.trim() || '航空';
 
     if (isNaN(points) || isNaN(ratio) || isNaN(bonus) || isNaN(inc) || isNaN(minTransfer)) {
       resetState('请输入有效的数值（积分、比例、最低起转量和步长均不能为空）。');

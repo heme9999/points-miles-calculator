@@ -14,7 +14,7 @@ eyebrow: 里程账 · 方法论
 <p>本站提供的估值基准并非凭空捏造，而是基于以下数据源的综合考量：</p>
 <ol>
   <li><strong>主流媒体评测</strong>：参考 The Points Guy (TPG), One Mile at a Time (OMAAT), Frequent Miler 等国际权威常旅客博客的长期追踪数据。</li>
-  <li><strong>保底抵扣率</strong>：如 Chase Sapphire Reserve 持卡人通过其 Portal 购票可获得 1.5 cents/point 的保底兑换率，这构成了 UR 积分的硬性价值底线。</li>
+  <li><strong>保底抵扣与出行兑现率</strong>：如信用卡积分直接按固定比例抵扣账单（如 Chase 基础抵现 1.0 cents/point）或通过旅行门户特定加成兑换（如 Points Boost 轮换优惠），这构成了积分的基础价值参考线。</li>
   <li><strong>海量真实兑换案例</strong>：基于北美和亚洲航线最常见的经济舱和商务舱的平均兑换成本（剔除极端的节假日天价票）。</li>
 </ol>
 

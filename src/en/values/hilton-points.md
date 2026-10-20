@@ -53,8 +53,8 @@ breadcrumbs:
 
 <h2>Data Sources and Last Fact-Checked</h2>
 <ul>
-  <li><strong>[Editorial] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Baseline Value (0.6¢)</a> (Last checked: 2026-08-11)</li>
-  <li><strong>[Editorial] OMAAT Value Guide</strong>: <a href="https://onemileatatime.com/guides/value-frequent-flyer-miles/" target="_blank" rel="noopener">Baseline Value (0.4¢)</a> (Last checked: 2026-08-11)</li>
-  <li><strong>[Official] Hilton Honors Official Terms</strong>: <a href="https://www.hilton.com/en/hilton-honors/" target="_blank" rel="noopener">5th Night Free</a> (Last checked: 2026-08-11)</li>
+  <li><strong>[Editorial] TPG Monthly Valuations</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Baseline Value (0.6¢)</a> (Last checked: October 2026)</li>
+  <li><strong>[Editorial] OMAAT Value Guide</strong>: <a href="https://onemileatatime.com/guides/value-frequent-flyer-miles/" target="_blank" rel="noopener">Baseline Value (0.4¢)</a> (Last checked: October 2026)</li>
+  <li><strong>[Official] Hilton Honors Official Terms</strong>: <a href="https://www.hilton.com/en/hilton-honors/" target="_blank" rel="noopener">5th Night Free</a> (Last checked: October 2026)</li>
 </ul>
-<p class="disclaimer"><em>Last Fact-Checked: 2026-08-11. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice.</em></p>
+<p class="disclaimer"><em>Last Fact-Checked: October 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice.</em></p>

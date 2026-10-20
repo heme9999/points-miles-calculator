@@ -9,7 +9,7 @@ breadcrumbs:
   - name: Hotel Points Value
 ---
 
-# How Much Are Hotel Points Worth?
+# How Much Are Hotel Points Worth? Value Guide
 
 Valuing hotel points is generally easier than airline miles, but the landscape is rapidly changing as major hotel chains shift their loyalty programs.
 
