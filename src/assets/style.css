@@ -2427,3 +2427,108 @@ h3 + .faq, h2 + .faq {
   }
 }
 
+/* GeFei Blueprint: Key Features & Use Cases Grids */
+.features-section,
+.use-cases-section {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+.features-section h2,
+.use-cases-section h2 {
+  font-size: 1.35rem;
+  color: var(--paper);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+.features-section .section-sub,
+.use-cases-section .section-sub {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 1rem 0;
+}
+.feature-card {
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-fast) var(--ease-out), border-color var(--duration-base) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .feature-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+}
+.feature-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+.feature-card h3 {
+  color: var(--gold);
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  margin-top: 0;
+}
+.feature-card p {
+  font-size: 0.92rem;
+  color: rgba(244, 240, 230, 0.88);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.use-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 1rem 0;
+}
+.use-case-card {
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 22px;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-fast) var(--ease-out), border-color var(--duration-base) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .use-case-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+}
+.use-case-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(212, 167, 60, 0.15);
+  color: var(--gold);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+.use-case-card h3 {
+  color: var(--paper);
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+.use-case-card p {
+  font-size: 0.92rem;
+  color: rgba(244, 240, 230, 0.88);
+  line-height: 1.6;
+  margin: 0;
+}
+
+
