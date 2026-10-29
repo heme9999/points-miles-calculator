@@ -47,4 +47,4 @@ A common pitfall is using inflated or unrealistic cash list prices to calculate 
 
 ## Use Our Free Calculators
 
-Skip the manual math! Use our [CPP Calculator](/en/calculators/cents-per-point/) to instantly figure out the value of your next flight or hotel redemption, or check your total portfolio value with our [Points to Dollars Calculator](/en/calculators/points-to-dollars/).
+Skip the manual math! Use our [CPP Calculator](/en/calculators/cents-per-point/) to instantly figure out the value of your next flight or hotel redemption, or check your total portfolio value with our [Miles to Dollars Calculator](/en/calculators/points-to-dollars/).

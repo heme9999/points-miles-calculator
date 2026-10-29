@@ -37,4 +37,4 @@ CPP = ($344.40 / 15,000) × 100
 
 ## The Result
 
-Want to try it yourself? [Calculate this scenario in our Points vs Cash Calculator](/en/calculators/points-vs-cash/?cash=350&points=15000&taxes=5.6), or use our [Points to Dollars Calculator](/en/calculators/points-to-dollars/) to see what your entire points balance is worth.
+Want to try it yourself? [Calculate this scenario in our Points vs Cash Calculator](/en/calculators/points-vs-cash/?cash=350&points=15000&taxes=5.6), or use our [Miles to Dollars Calculator](/en/calculators/points-to-dollars/) to see what your entire points balance is worth.
