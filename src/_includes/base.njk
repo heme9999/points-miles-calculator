@@ -73,6 +73,10 @@
       "headline": "{{ title | safe }}",
       "url": "{{ site.url }}{{ page.url }}",
       "description": "{{ description or site.description }}"
+      {% if schemaType == 'WebApplication' %}
+      ,"applicationCategory": "FinanceApplication",
+      "operatingSystem": "All"
+      {% endif %}
       {% if schemaType == 'Article' %}
       ,"author": {
         "@id": "{{ site.url }}/#organization"

@@ -1,0 +1,147 @@
+---
+layout: base.njk
+title: "Chase 积分转美联航里程换算器：转点比例、规则与估值分析"
+seoTitle: Chase转美联航里程换算器 | UR转United比例与到账规则 | 里程账
+description: 在线计算 Chase Ultimate Rewards 积分转换美联航 United MileagePlus 里程。提供 1:1 实时换算、1000 分起转与步长限制、到账时效及价值分析。
+schemaType: WebApplication
+eyebrow: 专属转点对 · 01
+datePublished: "2026-11-03"
+dateModified: "2026-11-03"
+lastModified: "2026-11-03"
+breadcrumbs:
+  - name: 决策计算器
+    url: /calculators/
+  - name: Chase 转美联航
+---
+<h1>Chase 积分转美联航里程换算器</h1>
+<p class="sub">精确计算大通银行 Chase Ultimate Rewards® 积分转换为美联航 (United MileagePlus®) 里程的到账数量。内置 1:1 比例规则、1,000 分起转限制与兑换估值损益分析。</p>
+
+<div class="callout" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+  <strong>直接结论：</strong> Chase UR 积分转美联航里程的基础比例为 <strong>1:1</strong>，以 <strong>1,000 点为起转单位与递增步长</strong>（即 1,000 点 Chase = 1,000 里程）。转点通常即时到账，Chase 不额外加收任何转点手续费或消费税。转点一旦完成<strong>单向不可逆</strong>，无法转回 Chase 账户。
+</div>
+
+<div class="panel" style="margin-top: 1.5rem;">
+  <div class="field">
+    <label for="chasePoints">持有的 Chase UR 积分余额 <span class="hint">点数</span></label>
+    <input type="number" id="chasePoints" value="50000" min="0" step="1000" inputmode="numeric">
+    <div class="unit">转点必须为 1,000 点的整数倍（最低起转 1,000 点）。</div>
+  </div>
+
+  <div class="field">
+    <label for="promotionalBonus">转点加赠比例（若当前有活动） <span class="hint">%</span></label>
+    <input type="number" id="promotionalBonus" value="0" min="0" max="100" step="5" inputmode="numeric">
+    <div class="unit">Chase 极少对美联航推出转点加赠；日常转点请保持 0%。</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">实际可转 Chase 积分</div>
+        <div class="v" id="outTransferable">50,000</div>
+      </div>
+      <div class="item">
+        <div class="k">预计到账美联航里程</div>
+        <div class="v" id="outMiles" style="color: var(--gold);">50,000</div>
+      </div>
+    </div>
+    <div class="note" id="outNote">按 1:1 比例换算，账户剩余：0 点。</div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">参考估值 (1.2¢/里)</div>
+      <div class="verdict" id="outValue">¥4,200</div>
+    </div>
+    <div class="code">比例 1:1</div>
+  </div>
+</div>
+
+<div class="callout" style="margin-top: 1.5rem;">
+  <strong>官方数据源与适用卡种：</strong> 核验自 <a href="https://www.chase.com/personal/credit-cards/education/basics/how-to-transfer-chase-ultimate-rewards-points" target="_blank" rel="noopener">Chase 官方转点指南</a>（最近核验：2026年10月）。需要持有具备转点权限的美版 Chase 信用卡（如 Chase Sapphire Preferred®、Chase Sapphire Reserve® 或 Ink Business Preferred®）。
+</div>
+
+<div class="article-content prose" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">
+  <h2>分步计算逻辑与真实算例</h2>
+  <p>由于大通银行要求转点必须按 1,000 分为单位递增，所有不足 1,000 分的零头都无法转出，将保留在 Chase 账户中：</p>
+  
+  <div class="formula-box" style="margin: 1.5rem 0; padding: 1.25rem; background: var(--ink-2); border-left: 4px solid var(--gold); border-radius: 6px;">
+    <div><strong>可转整点</strong> = 向下取整(积分总额 ÷ 1,000) × 1,000（最低 1,000）</div>
+    <div style="margin-top: 0.5rem;"><strong>到账里程</strong> = 可转整点 × 1.0 × (1 + 加赠百分比)</div>
+    <div style="margin-top: 0.5rem;"><strong>账户留存积分</strong> = 积分总额 - 可转整点</div>
+  </div>
+
+  <h3>真实计算案例</h3>
+  <p>假设你的 Chase 账户中有 <strong>52,400 积分</strong>：</p>
+  <ul>
+    <li><strong>实际转出数量</strong>：向下取整为 52,000 积分（扣除 400 点零头）。</li>
+    <li><strong>Chase 留存数量</strong>：400 积分继续保留在账户中。</li>
+    <li><strong>美联航到账里程</strong>：52,000 MileagePlus 里程（按 1:1 正常比例）。</li>
+    <li><strong>参考出行价值</strong>：按美联航 1.2 美分/里行业基准，52,000 里程约折合 624 美元（按 7.0 汇率约合 <strong>¥4,368</strong>）。</li>
+  </ul>
+
+  <h2>转点手续费、到账时效与注意事项</h2>
+  <ul>
+    <li><strong>手续费 (Excise Tax)</strong>：<strong>¥0 免费</strong>。与运通 Amex（转美系航司收取每点 $0.0006 消费税代扣）不同，Chase 转美联航不加收任何联邦消费税费，全额免费转出。</li>
+    <li><strong>到账时效</strong>：通常为<strong>即时到账 (Instant)</strong>，大多在 1–5 分钟内入账。转点前请确保 Chase 账户姓名与美联航会员姓名完全一致。</li>
+    <li><strong>单向不可逆</strong>：一旦完成转点，里程无法退还成 Chase UR 积分。<strong>切忌盲目转点囤积</strong>，必须在美联航官网查到心仪可订的奖励票后再行转点。</li>
+  </ul>
+
+  <h2>估值权衡：把 Chase 积分转成美联航划算吗？</h2>
+  <p>Chase UR 积分因具备全方位的转点灵活性，行业公允估值约为 <strong>1.5 美分/点</strong>；而美联航由于采用全面动态定价，基准估值约为 <strong>1.2 美分/里</strong>。</p>
+  <p><strong>以下情况转点划算：</strong></p>
+  <ol>
+    <li>你兑换的具体航班 CPP 大于 1.5¢（例如节假日机票价格暴涨时的境内 Saver 票，或换长途星空联盟商务舱）；</li>
+    <li>你的美联航账户已有大部分里程，只需转入小几千分即可凑齐整张机票。</li>
+  </ol>
+  <p><strong>不建议转点的情况：</strong>如果兑换的经济舱实际 CPP 低于 1.0¢，直接在 Chase 旅行门户抵扣或账单返现（保底 1.0¢）会更加划算，转成美联航反而会造成积分贬值。</p>
+
+  <h2>相关工具与深度指南</h2>
+  <ul>
+    <li><a href="/calculators/united-miles-value-calculator/">美联航里程价值计算器</a>：多场景测算你手头美联航里程的实际购买力。</li>
+    <li><a href="/values/chase-ultimate-rewards/">Chase Ultimate Rewards 估值解析</a>：了解返现、门户抵扣及转点伙伴的最佳路径。</li>
+    <li><a href="/calculators/cents-per-point/">单点价值 (CPP) 计算器</a>：计算你准备换的美联航具体航班每点兑出多少钱。</li>
+    <li><a href="/calculators/points-to-miles-converter/">全功能积分转里程换算器</a>：支持全网所有银行和航司的自定义换算。</li>
+  </ul>
+</div>
+
+<script>
+  (function() {
+    const $ = id => document.getElementById(id);
+    const ptsInput = $('chasePoints');
+    const bonusInput = $('promotionalBonus');
+
+    function calculate() {
+      const pts = parseInt(ptsInput.value, 10) || 0;
+      const bonus = parseFloat(bonusInput.value) || 0;
+
+      if (pts < 1000) {
+        $('outTransferable').textContent = '0';
+        $('outMiles').textContent = '0';
+        $('outNote').textContent = '最低起转量为 1,000 点 Chase 积分。';
+        $('outValue').textContent = '¥0';
+        return;
+      }
+
+      const transferable = Math.floor(pts / 1000) * 1000;
+      const remainder = pts - transferable;
+      const miles = Math.round(transferable * 1.0 * (1 + bonus / 100));
+      const estCny = Math.round(miles * 0.012 * 7.0);
+
+      $('outTransferable').textContent = transferable.toLocaleString('zh-CN');
+      $('outMiles').textContent = miles.toLocaleString('zh-CN');
+      $('outValue').textContent = '¥' + estCny.toLocaleString('zh-CN');
+
+      if (remainder > 0) {
+        $('outNote').textContent = `按 1:1 比例转出 ${transferable.toLocaleString('zh-CN')} 点。账户剩余 ${remainder.toLocaleString('zh-CN')} 点零头（起转与步长为 1,000 点）。`;
+      } else {
+        $('outNote').textContent = `全部 ${transferable.toLocaleString('zh-CN')} 点全额按 1:1 转出。账户无零头残留。`;
+      }
+    }
+
+    ptsInput.addEventListener('input', calculate);
+    bonusInput.addEventListener('input', calculate);
+    calculate();
+  })();
+</script>

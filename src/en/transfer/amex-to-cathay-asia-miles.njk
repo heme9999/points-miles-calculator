@@ -1,0 +1,147 @@
+---
+layout: base.njk
+title: "Amex to Cathay Pacific Asia Miles Calculator: 5:4 Ratio & Transfer Rules"
+seoTitle: Amex to Cathay Asia Miles Calculator – 5:4 Transfer Ratio
+description: Calculate how many Cathay Pacific Asia Miles you receive from Amex Membership Rewards points using the official 5:4 ratio (1,000:800). Fees, timing, and sweet spots.
+schemaType: WebApplication
+eyebrow: Transfer Pairs · 03
+datePublished: "2026-11-03"
+dateModified: "2026-11-03"
+lastModified: "2026-11-03"
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: Amex to Cathay Asia Miles
+---
+<h1>Amex to Cathay Pacific Asia Miles Calculator</h1>
+<p class="sub">Calculate exact Cathay Pacific Asia Miles™ received from American Express Membership Rewards® points using the official 5:4 ratio. Factors in 1,000-point blocks and oneworld redemption valuation.</p>
+
+<div class="direct-answer">
+  <strong>Direct Answer:</strong> US American Express Membership Rewards® transfer to Cathay Pacific Asia Miles™ at a <strong>5:4 ratio</strong> (1,000 Amex points = 800 Asia Miles, or 0.8 miles per point) in minimum increments of 1,000 points. As a foreign airline, Amex charges <strong>$0 in excise fees</strong>. Transfers are non-reversible and typically take between a few minutes and 24 hours.
+</div>
+
+<div class="panel" style="margin-top: 1.5rem;">
+  <div class="field">
+    <label for="amexPoints">Amex Membership Rewards Points Available <span class="hint">Points</span></label>
+    <input type="number" id="amexPoints" value="50000" min="0" step="1000" inputmode="numeric">
+    <div class="unit">Transfers must be in multiples of 1,000 points (minimum 1,000 points).</div>
+  </div>
+
+  <div class="field">
+    <label for="promotionalBonus">Active Promotional Transfer Bonus (if applicable) <span class="hint">%</span></label>
+    <input type="number" id="promotionalBonus" value="0" min="0" max="100" step="5" inputmode="numeric">
+    <div class="unit">Amex occasionally launches 15%–20% bonus campaigns to Cathay. Enter 0% for standard 5:4 ratio.</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Transferable Amex Points</div>
+        <div class="v" id="outTransferable">50,000</div>
+      </div>
+      <div class="item">
+        <div class="k">Asia Miles Received</div>
+        <div class="v" id="outMiles" style="color: var(--gold);">40,000</div>
+      </div>
+    </div>
+    <div class="note" id="outNote">Calculation: 50,000 points converted at 5:4 ratio (0.8 multiplier). Remainder left in Amex: 0 points.</div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">Estimated Value (1.3¢/mi)</div>
+      <div class="verdict" id="outValue">$520</div>
+    </div>
+    <div class="code">RATIO 5:4 (0.8)</div>
+  </div>
+</div>
+
+<div class="callout" style="margin-top: 1.5rem;">
+  <strong>Official Source &amp; Policy:</strong> Verified via <a href="https://global.americanexpress.com/rewards/transfer" target="_blank" rel="noopener">American Express Official Transfer Partners Page</a> (Last checked: October 2026). Public page confirms "Cathay Pacific 1,000 Points = 800 Asia Miles™".
+</div>
+
+<div class="article-content prose" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">
+  <h2>Step-by-Step Calculation Formula &amp; Worked Example</h2>
+  <p>Because the transfer ratio is 5:4, you receive 0.8 miles per point. Points must be transferred in blocks of 1,000:</p>
+  
+  <div class="formula-box" style="margin: 1.5rem 0; padding: 1.25rem; background: var(--ink-2); border-left: 4px solid var(--gold); border-radius: 6px;">
+    <div><strong>Transferable Points</strong> = Floor(Total Points ÷ 1,000) × 1,000 (minimum 1,000)</div>
+    <div style="margin-top: 0.5rem;"><strong>Asia Miles Received</strong> = (Transferable Points ÷ 1,000) × 800 × (1 + Promotional Bonus %)</div>
+    <div style="margin-top: 0.5rem;"><strong>Points Remaining in Amex</strong> = Total Points - Transferable Points</div>
+  </div>
+
+  <h3>Worked Real-World Example</h3>
+  <p>Suppose you want to book a Cathay Pacific long-haul flight and have <strong>75,600 Amex Membership Rewards points</strong> with no promotional bonus:</p>
+  <ul>
+    <li><strong>Eligible Transferable Block</strong>: 75,000 points (600 points remain in Amex).</li>
+    <li><strong>Base 5:4 Ratio Calculation</strong>: 75,000 × 0.8 = <strong>60,000 Asia Miles</strong>.</li>
+    <li><strong>Bonus Miles</strong>: 0.</li>
+    <li><strong>Total Miles Received</strong>: <strong>60,000 Asia Miles</strong>.</li>
+    <li><strong>Estimated Travel Value</strong>: At our baseline valuation of 1.3¢ per Asia Mile, 60,000 miles represent roughly <strong>$780</strong> in travel purchasing power.</li>
+  </ul>
+
+  <h2>Transfer Rules, Fees, and Warning for US Cardholders</h2>
+  <ul>
+    <li><strong>The 5:4 Penalty</strong>: Note that unlike transfer partners that convert 1:1, transferring to Cathay carries an immediate 20% haircut in unit quantity. You must ensure the redemption CPP compensates for this difference.</li>
+    <li><strong>Chase Does Not Transfer to Cathay</strong>: A widespread misconception is that Chase transfers to Cathay Pacific. <strong>Chase Ultimate Rewards has no direct partnership with Cathay.</strong> Amex, Citi, Capital One, and Bilt are the primary US transferable point currencies that support Asia Miles.</li>
+    <li><strong>Excise Fee Offset</strong>: <strong>$0 Free</strong>. As a foreign carrier, Amex charges no federal excise offset fees.</li>
+    <li><strong>Transfer Speed</strong>: Transfers often complete within a few minutes, though official terms allow up to 24–48 hours for batch processing.</li>
+    <li><strong>Strictly Non-Reversible</strong>: Transferred Asia Miles cannot be returned to Amex. Verify live seat availability on CathayPacific.com before transferring.</li>
+  </ul>
+
+  <h2>Valuation Trade-Off: When Does a 5:4 Transfer Make Sense?</h2>
+  <p>Amex Membership Rewards have a baseline valuation of <strong>1.5¢ per point</strong>, while Cathay Pacific Asia Miles average <strong>1.3¢ per mile</strong>. Factoring in the 5:4 ratio, your effective baseline threshold is approximately:</p>
+  <p style="text-align: center; font-weight: 500; color: var(--gold);">1.5¢ ÷ 0.8 = 1.88¢ per Asia Mile</p>
+  <p>This means you should aim for redemptions yielding <strong>at least 1.9¢ per Asia Mile</strong> to beat the baseline opportunity cost of your Amex points. Common sweet spots that easily exceed 2.0¢–3.5¢ CPP include Cathay Pacific long-haul Business Class (e.g., Hong Kong to North America or Europe) and multi-carrier oneworld award charts.</p>
+
+  <h2>Related Decision Tools &amp; Guides</h2>
+  <ul>
+    <li><a href="/en/blog/xinyongka-jifen-zhuan-yazhouwanlitong/">US Credit Cards Transferring to Cathay Asia Miles Guide</a>: Detailed warning for Chase holders and partner comparison.</li>
+    <li><a href="/en/blog/yazhouwanlitong-licheng-jiazhi/">How Much Are Cathay Asia Miles Worth?</a>: Realistic valuation analysis across short-haul and premium cabins.</li>
+    <li><a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>: Verify whether your specific flight redemption beats the 1.9¢ breakeven line.</li>
+    <li><a href="/en/calculators/points-to-miles-converter/">Full Points to Miles Converter</a>: Test custom bank and airline transfer scenarios.</li>
+  </ul>
+</div>
+
+<script>
+  (function() {
+    const $ = id => document.getElementById(id);
+    const ptsInput = $('amexPoints');
+    const bonusInput = $('promotionalBonus');
+
+    function calculate() {
+      const pts = parseInt(ptsInput.value, 10) || 0;
+      const bonus = parseFloat(bonusInput.value) || 0;
+
+      if (pts < 1000) {
+        $('outTransferable').textContent = '0';
+        $('outMiles').textContent = '0';
+        $('outNote').textContent = 'Minimum transfer threshold is 1,000 Amex points.';
+        $('outValue').textContent = '$0';
+        return;
+      }
+
+      const transferable = Math.floor(pts / 1000) * 1000;
+      const remainder = pts - transferable;
+      const baseMiles = Math.round((transferable / 1000) * 800);
+      const totalMiles = Math.round(baseMiles * (1 + bonus / 100));
+      const estValue = (totalMiles * 0.013).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+      $('outTransferable').textContent = transferable.toLocaleString('en-US');
+      $('outMiles').textContent = totalMiles.toLocaleString('en-US');
+      $('outValue').textContent = estValue;
+
+      if (remainder > 0) {
+        $('outNote').textContent = `Transferred ${transferable.toLocaleString('en-US')} points at 5:4 (0.8x). ${remainder.toLocaleString('en-US')} points remain in Amex (increments of 1,000).`;
+      } else {
+        $('outNote').textContent = `Transferred all ${transferable.toLocaleString('en-US')} points at 5:4 (0.8x). 0 points remaining.`;
+      }
+    }
+
+    ptsInput.addEventListener('input', calculate);
+    bonusInput.addEventListener('input', calculate);
+    calculate();
+  })();
+</script>

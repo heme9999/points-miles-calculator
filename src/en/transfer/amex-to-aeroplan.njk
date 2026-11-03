@@ -1,0 +1,148 @@
+---
+layout: base.njk
+title: "Amex to Aeroplan Transfer Calculator: Ratio, Rules & Sweet Spots"
+seoTitle: Amex to Aeroplan Calculator – Transfer Ratio & Value Guide
+description: Calculate how many Air Canada Aeroplan points you get from Amex Membership Rewards. 1:1 instant transfer calculator, fees, timing, and partner award analysis.
+schemaType: WebApplication
+eyebrow: Transfer Pairs · 02
+datePublished: "2026-11-03"
+dateModified: "2026-11-03"
+lastModified: "2026-11-03"
+breadcrumbs:
+  - name: Calculators
+    url: /en/calculators/
+  - name: Amex to Aeroplan
+---
+<h1>Amex to Aeroplan Transfer Calculator</h1>
+<p class="sub">Calculate exact Air Canada Aeroplan® points received from American Express Membership Rewards® points. Real-time 1:1 transfer calculator, 1,000-point increment enforcement, and Star Alliance redemption analysis.</p>
+
+<div class="direct-answer">
+  <strong>Direct Answer:</strong> American Express Membership Rewards® transfer to Air Canada Aeroplan® at a <strong>1:1 ratio in increments of 1,000 points</strong> (1,000 Amex points = 1,000 Aeroplan points). Because Air Canada is a foreign carrier, Amex charges <strong>$0 in excise offset fees</strong>. Transfers typically process instantly and are strictly non-reversible.
+</div>
+
+<div class="panel" style="margin-top: 1.5rem;">
+  <div class="field">
+    <label for="amexPoints">Amex Membership Rewards Points Available <span class="hint">Points</span></label>
+    <input type="number" id="amexPoints" value="50000" min="0" step="1000" inputmode="numeric">
+    <div class="unit">Transfers must be in multiples of 1,000 points (minimum 1,000 points).</div>
+  </div>
+
+  <div class="field">
+    <label for="promotionalBonus">Active Promotional Transfer Bonus (if applicable) <span class="hint">%</span></label>
+    <input type="number" id="promotionalBonus" value="0" min="0" max="100" step="5" inputmode="numeric">
+    <div class="unit">Amex occasionally offers 15%–20% transfer bonuses to Aeroplan. Enter 0% for standard 1:1 transfers.</div>
+  </div>
+</div>
+
+<div class="ticket" aria-live="polite">
+  <div class="main">
+    <div class="compare">
+      <div class="item">
+        <div class="k">Transferable Amex Points</div>
+        <div class="v" id="outTransferable">50,000</div>
+      </div>
+      <div class="item">
+        <div class="k">Aeroplan Points Received</div>
+        <div class="v" id="outMiles" style="color: var(--gold);">50,000</div>
+      </div>
+    </div>
+    <div class="note" id="outNote">Calculation: 50,000 points converted at 1:1 ratio. Remainder left in Amex: 0 points.</div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div>
+      <div class="verdict-label">Estimated Value (1.5¢/pt)</div>
+      <div class="verdict" id="outValue">$750</div>
+    </div>
+    <div class="code">RATIO 1:1</div>
+  </div>
+</div>
+
+<div class="callout" style="margin-top: 1.5rem;">
+  <strong>Official Source &amp; Policy:</strong> Verified via <a href="https://global.americanexpress.com/rewards/transfer" target="_blank" rel="noopener">American Express Official Transfer Partners Page</a> (Last checked: October 2026). Requires an eligible US Amex Membership Rewards card (accounts with only Rewards Checking are subject to partner transfer restrictions).
+</div>
+
+<div class="article-content prose" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">
+  <h2>Step-by-Step Calculation Formula &amp; Worked Example</h2>
+  <p>Amex requires that transfers occur in blocks of 1,000 points. Any points remaining below the unit block remain in your Membership Rewards balance:</p>
+  
+  <div class="formula-box" style="margin: 1.5rem 0; padding: 1.25rem; background: var(--ink-2); border-left: 4px solid var(--gold); border-radius: 6px;">
+    <div><strong>Transferable Points</strong> = Floor(Total Points ÷ 1,000) × 1,000 (minimum 1,000)</div>
+    <div style="margin-top: 0.5rem;"><strong>Aeroplan Points Received</strong> = Transferable Points × 1.0 × (1 + Promotional Bonus %)</div>
+    <div style="margin-top: 0.5rem;"><strong>Points Remaining in Amex</strong> = Total Points - Transferable Points</div>
+  </div>
+
+  <h3>Worked Real-World Example</h3>
+  <p>Suppose you have <strong>60,800 Amex Membership Rewards points</strong> and an active <strong>15% transfer bonus promotion</strong>:</p>
+  <ul>
+    <li><strong>Eligible Transferable Block</strong>: 60,000 points (800 points stay in your Amex balance).</li>
+    <li><strong>Base Points</strong>: 60,000 Aeroplan points (1:1 base).</li>
+    <li><strong>Promotional Bonus (15%)</strong>: 9,000 bonus Aeroplan points.</li>
+    <li><strong>Total Received</strong>: <strong>69,000 Aeroplan points</strong>.</li>
+    <li><strong>Estimated Travel Purchasing Power</strong>: At a 1.5¢ benchmark valuation, 69,000 Aeroplan points yield approximately <strong>$1,035</strong> in travel value.</li>
+  </ul>
+
+  <h2>Transfer Rules, Fees, and Friction Points</h2>
+  <ul>
+    <li><strong>Excise Fee Offset</strong>: <strong>$0 Free</strong>. Under US tax regulations, Amex charges an Excise Tax Offset Fee of $0.0006 per point (capped at $99) only when transferring to US domestic airlines (like Delta). Because Air Canada is based in Canada, <strong>no fee is charged</strong>.</li>
+    <li><strong>Transfer Speed</strong>: Transfers typically process <strong>instantly</strong>. In rare instances involving newly linked accounts, fraud screening can take up to 24–48 hours.</li>
+    <li><strong>No Fuel Surcharges</strong>: A major advantage of Air Canada Aeroplan is that it does not pass on carrier-imposed surcharges (YQ/YR) on partner redemptions (such as Lufthansa, ANA, Swiss, or Singapore Airlines), keeping your cash out-of-pocket costs remarkably low.</li>
+    <li><strong>One-Way Irreversibility</strong>: Once transferred, Aeroplan points cannot be returned to Amex. Always confirm seat availability before initiating the transfer.</li>
+  </ul>
+
+  <h2>Valuation Trade-Off: Is Transferring Amex to Aeroplan Worth It?</h2>
+  <p>Both Amex Membership Rewards and Air Canada Aeroplan have an estimated baseline valuation of <strong>1.5¢ per point</strong>. This makes Aeroplan one of the highest-parity transfer partners in the entire Amex ecosystem.</p>
+  <p>Transferring to Aeroplan is especially lucrative for:</p>
+  <ol>
+    <li><strong>Transatlantic &amp; Transpacific Business Class</strong>: Booking Star Alliance partner premium cabins without hundreds of dollars in fuel surcharges.</li>
+    <li><strong>Stopover Bookings</strong>: Adding a multi-day international stopover on a one-way award ticket for just 5,000 additional Aeroplan points.</li>
+  </ol>
+
+  <h2>Related Decision Tools &amp; Guides</h2>
+  <ul>
+    <li><a href="/en/values/aeroplan-points/">Air Canada Aeroplan Value Guide</a>: Detailed analysis of Aeroplan award sweet spots, dynamic pricing, and partner charts.</li>
+    <li><a href="/en/values/amex-membership-rewards/">Amex Membership Rewards Value Guide</a>: Comprehensive overview of Amex earning and redemption channels.</li>
+    <li><a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>: Calculate the exact redemption value of your award booking against cash ticket prices.</li>
+    <li><a href="/en/calculators/points-to-miles-converter/">Full Points to Miles Converter</a>: Compare transfer options across all major airline programs.</li>
+  </ul>
+</div>
+
+<script>
+  (function() {
+    const $ = id => document.getElementById(id);
+    const ptsInput = $('amexPoints');
+    const bonusInput = $('promotionalBonus');
+
+    function calculate() {
+      const pts = parseInt(ptsInput.value, 10) || 0;
+      const bonus = parseFloat(bonusInput.value) || 0;
+
+      if (pts < 1000) {
+        $('outTransferable').textContent = '0';
+        $('outMiles').textContent = '0';
+        $('outNote').textContent = 'Minimum transfer threshold is 1,000 Amex points.';
+        $('outValue').textContent = '$0';
+        return;
+      }
+
+      const transferable = Math.floor(pts / 1000) * 1000;
+      const remainder = pts - transferable;
+      const miles = Math.round(transferable * 1.0 * (1 + bonus / 100));
+      const estValue = (miles * 0.015).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+      $('outTransferable').textContent = transferable.toLocaleString('en-US');
+      $('outMiles').textContent = miles.toLocaleString('en-US');
+      $('outValue').textContent = estValue;
+
+      if (remainder > 0) {
+        $('outNote').textContent = `Transferred ${transferable.toLocaleString('en-US')} points at 1:1. ${remainder.toLocaleString('en-US')} points remain in Amex (increments of 1,000).`;
+      } else {
+        $('outNote').textContent = `Transferred all ${transferable.toLocaleString('en-US')} points at 1:1. 0 points remaining.`;
+      }
+    }
+
+    ptsInput.addEventListener('input', calculate);
+    bonusInput.addEventListener('input', calculate);
+    calculate();
+  })();
+</script>
