@@ -26,17 +26,23 @@ Put our methodology into practice with our free calculators:
 
 We aggregate and review valuations published by major US and international travel media outlets, such as The Points Guy (TPG) and One Mile at a Time (OMAAT). These platforms conduct extensive, ongoing research into the purchasing power of various currencies. By averaging and referencing their established baselines, we ensure our figures represent a broad industry consensus rather than a single subjective opinion.
 
-## 2. Real-World Redemption Baselines
+## 2. Baseline Cashout & Travel Portal Redemption
+
+Cardholder points establish a reliable floor value through statement credits and travel portal redemptions:
+- **Statement Credit Baseline**: Major flexible currencies provide a 1.0¢ per point cash-back floor (100 points = $1.00 cash).
+- **Portal & Points Boost Redemptions**: Standard Chase Travel portal redemptions redeem at 1.0¢ base value. Qualifying premium cards (such as Chase Sapphire Reserve®) can achieve enhanced value up to 1.5¢–2.0¢ per point on select eligible hotels and rotating promotional itineraries via Points Boost (see <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve" target="_blank" rel="noopener">Chase Sapphire Reserve Benefits</a> and our <a href="/en/values/chase-ultimate-rewards/">Chase UR Points Value Guide</a>; last verified: October 2026).
+
+## 3. Real-World Redemption Baselines
 
 When evaluating a loyalty program, we look for the most common, accessible redemption patterns rather than extreme edge cases.
 - For **airline miles**, we weigh standard long-haul economy and business class redemptions on popular routes. We do not base our baseline on a $15,000 First Class ticket that almost no one would buy in cash.
 - For **hotel points**, we look at standard room redemptions during normal demand periods, factoring in the removal of fixed award charts by programs like Marriott and Hilton.
 
-## 3. Factoring in Flexibility
+## 4. Factoring in Flexibility
 
 Transferable credit card currencies (like Chase Ultimate Rewards and Amex Membership Rewards) receive a premium valuation. The ability to transfer points to multiple different airlines and hotels protects you against sudden devaluations in any single program. Conversely, airline miles and hotel points are valued lower because they are locked into a single ecosystem.
 
-## 4. Taxes and Fees (YQ)
+## 5. Taxes and Fees (YQ)
 
 Programs that impose high fuel surcharges (such as British Airways Avios) are penalized in their overall valuation, as these cash co-pays directly erode the value of the miles. 
 

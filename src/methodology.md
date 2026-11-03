@@ -14,7 +14,7 @@ eyebrow: 里程账 · 方法论
 <p>本站提供的估值基准并非凭空捏造，而是基于以下数据源的综合考量：</p>
 <ol>
   <li><strong>主流媒体评测</strong>：参考 The Points Guy (TPG), One Mile at a Time (OMAAT), Frequent Miler 等国际权威常旅客博客的长期追踪数据。</li>
-  <li><strong>保底抵扣与出行兑现率</strong>：如信用卡积分直接按固定比例抵扣账单（如 Chase 基础抵现 1.0 cents/point）或通过旅行门户特定加成兑换（如 Points Boost 轮换优惠），这构成了积分的基础价值参考线。</li>
+  <li><strong>保底抵扣与出行兑现率</strong>：如信用卡积分直接按固定比例抵扣账单（如 Chase 基础抵现 1.0 cents/point，100 点 = $1.00）或通过官方旅行门户兑换。对于特定高端卡种，依托 Points Boost 轮换促销，在符合条件的酒店或旅行预订中可获得 1.5¢–2.0¢/点的条件性加成（详见 <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve" target="_blank" rel="noopener">Chase Sapphire Reserve 官方权益说明</a> 与 <a href="/values/chase-ultimate-rewards/">Chase UR 估值解析</a>，最近核验：2026年10月）。这构成了积分的基础价值底线。</li>
   <li><strong>海量真实兑换案例</strong>：基于北美和亚洲航线最常见的经济舱和商务舱的平均兑换成本（剔除极端的节假日天价票）。</li>
 </ol>
 

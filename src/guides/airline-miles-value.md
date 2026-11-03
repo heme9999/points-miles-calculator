@@ -15,7 +15,7 @@ breadcrumbs:
 
 ## 里程没有固定的现金价值
 
-除非你通过发卡行旅行门户或固定比例将积分当钱花（例如信用卡基础 1.0 美分/点抵扣或特定旅行门户加成），否则航空里程是没有固定现金价值的。它的价值完全取决于你如何使用它。
+除非你通过发卡行旅行门户或固定比例将积分当钱花（例如信用卡基础 1.0 美分/点账单抵现，或持有特定卡种通过 Points Boost 轮换优惠在特定酒店预订中享受 1.5¢–2.0¢ 条件性加成；参考 <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve" target="_blank" rel="noopener">Chase Sapphire Reserve 官方权益说明</a> 与 <a href="/values/chase-ultimate-rewards/">Chase UR 估值指南</a>，最近核验：2026年10月），否则航空里程是没有固定现金价值的。它的价值完全取决于你如何使用它。
 
 ## 媒体估值 vs. 实际价值
 

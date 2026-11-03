@@ -22,7 +22,7 @@ Capital One Miles and Chase Ultimate Rewards represent two distinct approaches t
 
 ## Travel Portals
 
-*   **Chase Travel Portal:** Chase offers a multiplier when booking through their portal. Sapphire Preferred cardholders get 1.25 cents per point, and Reserve cardholders get 1.5 cents per point. This makes Chase points excellent for booking boutique hotels or cheap economy flights where transferring to partners doesn't make sense.
+*   **Chase Travel Portal:** Booking standard travel via the Chase Travel portal yields a baseline of 1.0 cent per point. However, eligible premium cards can access Points Boost promotions for conditional enhanced redemption rates up to 1.5¢–2.0¢ per point on select hotel and itinerary bookings (see <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve" target="_blank" rel="noopener">Chase Sapphire Reserve Benefits</a> and our <a href="/en/values/chase-ultimate-rewards/">Chase UR Points Value Guide</a>; last verified: October 2026). When promotional boosts apply, booking directly can secure strong value without hunting for award seat inventory.
 *   **Capital One Travel:** Capital One miles have a fixed value of 1 cent each when used to "cover travel purchases" or book through their portal. The portal itself is powered by Hopper and is excellent for price tracking, but you don't get a value multiplier.
 
 ## Transfer Partner Overlaps

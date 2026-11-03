@@ -22,7 +22,7 @@ Capital One Miles（第一资本里程）和 Chase Ultimate Rewards（大通银�
 
 ## 官方旅游门户 (Travel Portals)
 
-*   **Chase Travel Portal:** 通过 Chase 门户订购旅行产品时，积分会自动增值。Sapphire Preferred 持卡人享有 1.25 美分/点的保底价值，而 Reserve 持卡人则有 1.5 美分/点。当转点给航司不划算时，用 Chase 积分直接预订精品酒店或廉价经济舱机票非常超值。
+*   **Chase Travel Portal:** 通过 Chase 门户订购普通旅行产品时，积分基础兑现为 1.0 美分/点。持有特定高端卡种时，可通过 Points Boost 轮换促销在符合资格的酒店或特定旅行预订中获得 1.5¢–2.0¢/点的条件性加成（详见 <a href="https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve" target="_blank" rel="noopener">Chase Sapphire Reserve 官方权益说明</a> 与 <a href="/values/chase-ultimate-rewards/">Chase UR 估值指南</a>，最近核验：2026年10月）。在符合加成条件的场景下，直接通过门户预订能锁定较高的每点出行价值。
 *   **Capital One Travel:** 当你在 Capital One 门户订票或使用里程“报销 (erase)”旅行消费时，里程具有固定的 1 美分/点价值。其门户网站由 Hopper 提供技术支持，价格追踪功能很棒，但没有兑换价值的加成。
 
 ## 转点伙伴重合度
