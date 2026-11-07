@@ -2566,5 +2566,72 @@ h3 + .faq, h2 + .faq {
   }
 }
 
+/* Phase 9.14.2: Program Meta Component Accessible Contrast */
+#programSummaryStrip,
+.program-summary-strip {
+  color: #cbd5e1;
+}
+#programSummaryStrip strong,
+.program-summary-strip strong {
+  color: #f4f0e6;
+}
+#programMetaDetails > summary,
+.program-meta-details > summary {
+  color: #cbd5e1 !important;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+}
+#programMetaDetails > summary:hover,
+.program-meta-details > summary:hover {
+  color: #f8fafc !important;
+}
+#programMetaDetails > summary:focus-visible,
+.program-meta-details > summary:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+#programMetaBox,
+.program-meta-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #334155;
+}
+#programMetaBox #metaScope,
+.program-meta-box .meta-scope {
+  color: #334155;
+}
+#programMetaBox a,
+#metaSourceLink,
+.program-meta-box a {
+  color: #1e3a8a !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+#programMetaBox a:hover,
+#metaSourceLink:hover,
+.program-meta-box a:hover {
+  color: #1d4ed8 !important;
+}
+#programMetaBox a:focus-visible,
+#metaSourceLink:focus-visible,
+.program-meta-box a:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+#programMetaBox .program-meta-disclaimer,
+.program-meta-disclaimer {
+  color: #475569 !important;
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 4px;
+  margin-top: 6px;
+  font-size: 0.8rem;
+}
+
 
 

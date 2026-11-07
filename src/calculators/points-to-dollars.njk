@@ -32,19 +32,19 @@ breadcrumbs:
       <option value="asiamiles">国泰航空 (Cathay Asia Miles)</option>
       <option value="avios">英航 / 卡塔尔航空 (Avios)</option>
     </select>
-    <div id="programSummaryStrip" style="margin-top: 6px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
-      <span style="color: #475569;">参考估值：<strong id="metaProgramName">自定义航司 / 手动输入</strong></span>
-      <span id="metaValuationType" style="background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">用户自定义</span>
+    <div id="programSummaryStrip" class="program-summary-strip" style="margin-top: 6px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+      <span>参考估值：<strong id="metaProgramName">自定义航司 / 手动输入</strong></span>
+      <span id="metaValuationType" style="background: #1e293b; color: #e2e8f0; border: 1px solid #334155; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">用户自定义</span>
     </div>
-    <details id="programMetaDetails" style="margin-top: 6px; font-size: 0.82rem; color: #64748b;">
-      <summary style="cursor: pointer; color: #475569; font-weight: 500;">查看计划估值来源与适用范围 ▾</summary>
-      <div id="programMetaBox" class="program-meta-box" style="margin-top: 6px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; line-height: 1.5; color: #334155;">
-        <div id="metaScope" style="margin-bottom: 4px; color: #475569;">适用范围：输入任意目标航司里程余额与自定义基准估值。</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8rem; color: #64748b;">
+    <details id="programMetaDetails" class="program-meta-details" style="margin-top: 6px; font-size: 0.82rem;">
+      <summary style="cursor: pointer; font-weight: 500;">查看计划估值来源与适用范围 ▾</summary>
+      <div id="programMetaBox" class="program-meta-box" style="margin-top: 6px; padding: 10px 12px; border-radius: 6px; line-height: 1.5;">
+        <div id="metaScope" class="meta-scope" style="margin-bottom: 4px;">适用范围：输入任意目标航司里程余额与自定义基准估值。</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8rem; color: #475569;">
           <span id="metaSource">数据来源：<a href="/values/" id="metaSourceLink">全网里程估值基准表</a></span>
           <span id="metaVerified">核验日期：2026年11月</span>
         </div>
-        <div style="margin-top: 4px; font-size: 0.78rem; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 4px;">
+        <div class="program-meta-disclaimer">
           * 测算金额仅供教育参考建模，非官方实时兑换报价或保底现金回收保证。
         </div>
       </div>
@@ -448,12 +448,14 @@ breadcrumbs:
     if (typeEl) {
       if (isCustomValuation || progKey === 'custom') {
         typeEl.textContent = '用户自定义';
-        typeEl.style.background = '#fef3c7';
-        typeEl.style.color = '#92400e';
+        typeEl.style.background = '#78350f';
+        typeEl.style.color = '#fef3c7';
+        typeEl.style.border = '1px solid #92400e';
       } else {
         typeEl.textContent = data.type;
-        typeEl.style.background = '#e2e8f0';
-        typeEl.style.color = '#475569';
+        typeEl.style.background = '#1e293b';
+        typeEl.style.color = '#e2e8f0';
+        typeEl.style.border = '1px solid #334155';
       }
     }
   }
@@ -498,16 +500,16 @@ breadcrumbs:
   };
 
   // Canonical Valuation State:
-  // sourceCurrency: 'USD' | 'CNY'
+  // sourceUnit: 'USD_CENTS_PER_MILE' | 'CNY_PER_MILE'
   // sourceValue: number
   let canonValuation = {
-    sourceCurrency: currentCurrency,
-    sourceValue: currentCurrency === 'USD' ? 1.5 : (1.5 / 100 * defaultFx)
+    sourceUnit: 'USD_CENTS_PER_MILE',
+    sourceValue: 1.5
   };
 
   const getEffectiveUsdCpp = () => {
     const fx = getActiveFx();
-    if (canonValuation.sourceCurrency === 'USD') {
+    if (canonValuation.sourceUnit === 'USD_CENTS_PER_MILE') {
       return canonValuation.sourceValue;
     } else {
       return fx > 0 ? (canonValuation.sourceValue / fx) * 100 : 0;
@@ -517,13 +519,13 @@ breadcrumbs:
   const getEffectiveCurrentValuation = () => {
     const fx = getActiveFx();
     if (currentCurrency === 'USD') {
-      if (canonValuation.sourceCurrency === 'USD') {
+      if (canonValuation.sourceUnit === 'USD_CENTS_PER_MILE') {
         return canonValuation.sourceValue;
       } else {
         return fx > 0 ? (canonValuation.sourceValue / fx) * 100 : 0;
       }
     } else {
-      if (canonValuation.sourceCurrency === 'CNY') {
+      if (canonValuation.sourceUnit === 'CNY_PER_MILE') {
         return canonValuation.sourceValue;
       } else {
         return (canonValuation.sourceValue / 100) * fx;
@@ -643,7 +645,7 @@ breadcrumbs:
     $('airlineProgram').value = progParam;
     if (PROGRAM_DATA[progParam].defaultCpp !== null) {
       canonValuation = {
-        sourceCurrency: 'USD',
+        sourceUnit: 'USD_CENTS_PER_MILE',
         sourceValue: PROGRAM_DATA[progParam].defaultCpp
       };
     }
@@ -654,19 +656,31 @@ breadcrumbs:
   if (scenParam && ['custom', '0.6', '1.2', '1.5', '2.0'].includes(scenParam)) {
     if (scenParam !== 'custom') {
       canonValuation = {
-        sourceCurrency: 'USD',
+        sourceUnit: 'USD_CENTS_PER_MILE',
         sourceValue: parseFloat(scenParam)
       };
     }
   }
 
-  // Parse valuation parameter (HIGHEST PRIORITY OVERRIDE)
-  const rawVal = parseFloat(params.get('cpp') || params.get('valuation') || params.get('cppValue'));
-  if (!isNaN(rawVal) && isFinite(rawVal) && rawVal > 0) {
-    canonValuation = {
-      sourceCurrency: currentCurrency,
-      sourceValue: rawVal
-    };
+  // Parse valuation parameter: stateVersion=2 vs Legacy (HIGHEST PRIORITY OVERRIDE)
+  const stateVer = params.get('stateVersion');
+  if (stateVer === '2') {
+    const sUnit = params.get('valuationSourceUnit');
+    const sVal = parseFloat(params.get('valuationSourceValue'));
+    if ((sUnit === 'USD_CENTS_PER_MILE' || sUnit === 'CNY_PER_MILE') && !isNaN(sVal) && isFinite(sVal) && sVal > 0) {
+      canonValuation = {
+        sourceUnit: sUnit,
+        sourceValue: sVal
+      };
+    }
+  } else {
+    const rawVal = parseFloat(params.get('cpp') || params.get('valuation') || params.get('cppValue'));
+    if (!isNaN(rawVal) && isFinite(rawVal) && rawVal > 0) {
+      canonValuation = {
+        sourceUnit: currentCurrency === 'CNY' ? 'CNY_PER_MILE' : 'USD_CENTS_PER_MILE',
+        sourceValue: rawVal
+      };
+    }
   }
 
   function updatePresetButtonsAria(currentPoints) {
@@ -711,7 +725,7 @@ breadcrumbs:
       const prog = e.target.value;
       if (prog !== 'custom' && PROGRAM_DATA[prog]?.defaultCpp !== null) {
         canonValuation = {
-          sourceCurrency: 'USD',
+          sourceUnit: 'USD_CENTS_PER_MILE',
           sourceValue: PROGRAM_DATA[prog].defaultCpp
         };
       }
@@ -738,9 +752,7 @@ breadcrumbs:
   if ($('fxRate')) {
     $('fxRate').addEventListener('input', () => {
       updateUnitsAndVisibility();
-      if (currentCurrency === 'CNY') {
-        if ($('cppValue')) $('cppValue').value = formatValuation(getEffectiveCurrentValuation());
-      }
+      if ($('cppValue')) $('cppValue').value = formatValuation(getEffectiveCurrentValuation());
       calcDollars();
     });
   }
@@ -751,7 +763,7 @@ breadcrumbs:
       const scen = e.target.value;
       if (scen !== 'custom') {
         canonValuation = {
-          sourceCurrency: 'USD',
+          sourceUnit: 'USD_CENTS_PER_MILE',
           sourceValue: parseFloat(scen)
         };
         if ($('cppValue')) $('cppValue').value = formatValuation(getEffectiveCurrentValuation());
@@ -764,11 +776,13 @@ breadcrumbs:
   // User manually edits cppValue
   if ($('cppValue')) {
     $('cppValue').addEventListener('input', () => {
-      const val = parseFloat($('cppValue').value) || 0;
-      canonValuation = {
-        sourceCurrency: currentCurrency,
-        sourceValue: val
-      };
+      const val = parseFloat($('cppValue').value);
+      if (!isNaN(val) && isFinite(val) && val >= 0) {
+        canonValuation = {
+          sourceUnit: currentCurrency === 'CNY' ? 'CNY_PER_MILE' : 'USD_CENTS_PER_MILE',
+          sourceValue: val
+        };
+      }
       syncPresetDropdownAndMeta();
       calcDollars();
     });
@@ -795,21 +809,25 @@ breadcrumbs:
   // Share button
   if ($('btnShare')) {
     $('btnShare').addEventListener('click', () => {
-      const shareUrl = new URL(window.location.href);
+      const shareUrl = new URL(window.location.origin + window.location.pathname);
+      shareUrl.searchParams.set('stateVersion', '2');
       shareUrl.searchParams.set('miles', $('totalPoints').value);
       shareUrl.searchParams.set('currency', currentCurrency);
-      shareUrl.searchParams.set('cpp', $('cppValue').value);
-      shareUrl.searchParams.set('fx', getActiveFx());
+      shareUrl.searchParams.set('valuationSourceUnit', canonValuation.sourceUnit);
+      shareUrl.searchParams.set('valuationSourceValue', String(canonValuation.sourceValue));
+
+      const activeFx = getActiveFx();
+      if (activeFx !== 7.0) {
+        shareUrl.searchParams.set('fx', String(activeFx));
+      }
+
       if ($('airlineProgram') && $('airlineProgram').value !== 'custom') {
         shareUrl.searchParams.set('program', $('airlineProgram').value);
-      } else {
-        shareUrl.searchParams.delete('program');
       }
       if ($('presetValuation') && $('presetValuation').value !== 'custom') {
         shareUrl.searchParams.set('scenario', $('presetValuation').value);
-      } else {
-        shareUrl.searchParams.delete('scenario');
       }
+
       navigator.clipboard.writeText(shareUrl.toString()).then(() => {
         const toast = $('toast');
         if (toast) {

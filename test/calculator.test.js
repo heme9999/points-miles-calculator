@@ -2423,6 +2423,207 @@ test('Phase 9.14.1: Precision Roundtrip, State Normalization, Contrast, and Mobi
   });
 });
 
+test('Phase 9.14.2: Program Meta Component Contrast & Canonical Unit Share State Gatekeeper', async (t) => {
+  const zhP2dHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/points-to-dollars/index.html'), 'utf8');
+  const enP2dHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/points-to-dollars/index.html'), 'utf8');
+  const styleCss = fs.readFileSync(path.resolve(__dirname, '../_site/assets/style.css'), 'utf8');
+
+  await t.test('1. P1: Component-level contrast rules in CSS and DOM attributes', () => {
+    // 1. Program summary strip & summary text on dark bg (#0E1A2B)
+    assert.ok(
+      styleCss.includes('#programSummaryStrip') || styleCss.includes('.program-summary-strip'),
+      'style.css must have dedicated component rule for #programSummaryStrip'
+    );
+    assert.ok(
+      styleCss.includes('#programMetaDetails summary') || styleCss.includes('.program-meta-details summary') || styleCss.includes('#programMetaDetails > summary'),
+      'style.css must style summary trigger for dark background'
+    );
+
+    // 2. Meta source link on light bg (#F8FAFC) must use accessible deep blue
+    assert.ok(
+      styleCss.includes('#metaSourceLink') || styleCss.includes('.program-meta-box a'),
+      'style.css must override link color for #metaSourceLink inside light meta box'
+    );
+
+    // 3. Disclaimer inside light meta box must not use light slate (#94A3B8)
+    assert.ok(
+      styleCss.includes('.program-meta-disclaimer') || styleCss.includes('#programMetaBox .disclaimer'),
+      'style.css must define readable disclaimer color for light meta box'
+    );
+  });
+
+  await t.test('2. P2: Case A - USD-based Valuation Share State Roundtrip across Fx Changes', () => {
+    // 1. Start original page: 50,000 miles, USD 1.234 cpp, fx 7.13, then switch to CNY
+    const origDom = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/points-to-dollars/?currency=USD&miles=50000&cpp=1.234&fx=7.13'
+    });
+    const origDoc = origDom.window.document;
+    const origCurr = origDoc.getElementById('currency');
+    const origFx = origDoc.getElementById('fxRate');
+    const origCpp = origDoc.getElementById('cppValue');
+    const origVal = origDoc.getElementById('dollarValue');
+
+    // Switch display currency to CNY
+    origCurr.value = 'CNY';
+    origCurr.dispatchEvent(new origDom.window.Event('change'));
+    assert.strictEqual(origVal.textContent, '¥4,399');
+
+    // Trigger share button to get share URL
+    let generatedShareUrl = null;
+    origDom.window.navigator.clipboard = {
+      writeText: async (text) => { generatedShareUrl = text; }
+    };
+    origDoc.getElementById('btnShare').click();
+    assert.ok(generatedShareUrl, 'Share button must generate URL');
+
+    const shareUrlObj = new URL(generatedShareUrl);
+    assert.strictEqual(shareUrlObj.searchParams.get('stateVersion'), '2', 'Share URL must use stateVersion=2');
+    assert.strictEqual(shareUrlObj.searchParams.get('valuationSourceUnit'), 'USD_CENTS_PER_MILE', 'Must preserve USD_CENTS_PER_MILE');
+    assert.strictEqual(shareUrlObj.searchParams.get('valuationSourceValue'), '1.234', 'Must preserve original 1.234 valuation');
+    assert.strictEqual(shareUrlObj.searchParams.get('currency'), 'CNY', 'Display currency must be CNY');
+    assert.strictEqual(shareUrlObj.searchParams.get('fx'), '7.13');
+
+    // 2. Open share URL in a completely fresh JSDOM instance
+    const shareDom = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: generatedShareUrl
+    });
+    const shareDoc = shareDom.window.document;
+    const shareCurr = shareDoc.getElementById('currency');
+    const shareFx = shareDoc.getElementById('fxRate');
+    const shareCpp = shareDoc.getElementById('cppValue');
+    const shareVal = shareDoc.getElementById('dollarValue');
+
+    // Both pages initially identical in CNY mode
+    assert.strictEqual(shareCurr.value, 'CNY');
+    assert.strictEqual(shareCpp.value, origCpp.value);
+    assert.strictEqual(shareVal.textContent, '¥4,399');
+
+    // 3. Change fx to 7.0 on BOTH pages
+    origFx.value = '7.0';
+    origFx.dispatchEvent(new origDom.window.Event('input'));
+    shareFx.value = '7.0';
+    shareFx.dispatchEvent(new shareDom.window.Event('input'));
+
+    // Both pages must update CNY to 0.08638 and ¥4,319
+    assert.strictEqual(origCpp.value, '0.08638');
+    assert.strictEqual(origVal.textContent, '¥4,319');
+    assert.strictEqual(shareCpp.value, '0.08638', 'Share page must recalculate CNY cpp to 0.08638 when fx changes to 7');
+    assert.strictEqual(shareVal.textContent, '¥4,319', 'Share page must recalculate total to ¥4,319 when fx changes to 7');
+
+    // 4. Switch BOTH pages to USD
+    origCurr.value = 'USD';
+    origCurr.dispatchEvent(new origDom.window.Event('change'));
+    shareCurr.value = 'USD';
+    shareCurr.dispatchEvent(new shareDom.window.Event('change'));
+
+    assert.strictEqual(origCpp.value, '1.234');
+    assert.strictEqual(origVal.textContent, '$617');
+    assert.strictEqual(shareCpp.value, '1.234', 'Share page must restore exact 1.234 in USD');
+    assert.strictEqual(shareVal.textContent, '$617', 'Share page must restore exact $617 in USD');
+  });
+
+  await t.test('3. P2: Case B - CNY-based Manual Valuation Share State Roundtrip across Fx Changes', () => {
+    // 1. Start page in CNY mode: user types 0.123元/里, 50,000 miles, fx 7.0
+    const origDom = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/points-to-dollars/?currency=CNY&miles=50000&fx=7.0'
+    });
+    const origDoc = origDom.window.document;
+    const origCurr = origDoc.getElementById('currency');
+    const origFx = origDoc.getElementById('fxRate');
+    const origCpp = origDoc.getElementById('cppValue');
+    const origVal = origDoc.getElementById('dollarValue');
+
+    // User types 0.123 in CNY mode
+    origCpp.value = '0.123';
+    origCpp.dispatchEvent(new origDom.window.Event('input'));
+    assert.strictEqual(origVal.textContent, '¥6,150');
+
+    // User switches to USD
+    origCurr.value = 'USD';
+    origCurr.dispatchEvent(new origDom.window.Event('change'));
+    // In USD mode: 0.123 / 7 * 100 = 1.7571428... -> total: 50,000 * 0.123 / 7 = $879
+    assert.strictEqual(origVal.textContent, '$879');
+
+    // Share link from USD view
+    let generatedShareUrl = null;
+    origDom.window.navigator.clipboard = {
+      writeText: async (text) => { generatedShareUrl = text; }
+    };
+    origDoc.getElementById('btnShare').click();
+
+    const shareUrlObj = new URL(generatedShareUrl);
+    assert.strictEqual(shareUrlObj.searchParams.get('stateVersion'), '2');
+    assert.strictEqual(shareUrlObj.searchParams.get('valuationSourceUnit'), 'CNY_PER_MILE');
+    assert.strictEqual(shareUrlObj.searchParams.get('valuationSourceValue'), '0.123');
+    assert.strictEqual(shareUrlObj.searchParams.get('currency'), 'USD');
+
+    // Open in fresh JSDOM
+    const shareDom = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: generatedShareUrl
+    });
+    const shareDoc = shareDom.window.document;
+    const shareCurr = shareDoc.getElementById('currency');
+    const shareFx = shareDoc.getElementById('fxRate');
+    const shareCpp = shareDoc.getElementById('cppValue');
+    const shareVal = shareDoc.getElementById('dollarValue');
+
+    assert.strictEqual(shareCurr.value, 'USD');
+    assert.strictEqual(shareVal.textContent, '$879');
+
+    // Switch both pages back to CNY
+    origCurr.value = 'CNY';
+    origCurr.dispatchEvent(new origDom.window.Event('change'));
+    shareCurr.value = 'CNY';
+    shareCurr.dispatchEvent(new shareDom.window.Event('change'));
+
+    assert.strictEqual(origCpp.value, '0.123');
+    assert.strictEqual(origVal.textContent, '¥6,150');
+    assert.strictEqual(shareCpp.value, '0.123', 'CNY original valuation must restore exact 0.123');
+    assert.strictEqual(shareVal.textContent, '¥6,150');
+
+    // Modify fx to 7.2 while in CNY mode: the CNY valuation must stay 0.123!
+    origFx.value = '7.2';
+    origFx.dispatchEvent(new origDom.window.Event('input'));
+    shareFx.value = '7.2';
+    shareFx.dispatchEvent(new shareDom.window.Event('input'));
+
+    assert.strictEqual(origCpp.value, '0.123');
+    assert.strictEqual(origVal.textContent, '¥6,150');
+    assert.strictEqual(shareCpp.value, '0.123', 'CNY-based original valuation must not change when fx changes');
+    assert.strictEqual(shareVal.textContent, '¥6,150');
+  });
+
+  await t.test('4. P2: Backward compatibility with legacy URLs & safety', () => {
+    // Legacy USD URL without stateVersion
+    const legacyDom1 = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/points-to-dollars/?currency=USD&miles=50000&cpp=1.234'
+    });
+    assert.strictEqual(legacyDom1.window.document.getElementById('dollarValue').textContent, '$617');
+
+    // Legacy EN URL with program override
+    const legacyDom2 = new JSDOM(enP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/en/calculators/points-to-dollars/?program=united&miles=50000&cpp=1.8'
+    });
+    assert.strictEqual(legacyDom2.window.document.getElementById('presetValuation').value, 'custom');
+    assert.strictEqual(legacyDom2.window.document.getElementById('dollarValue').textContent, '$900');
+
+    // Corrupted params
+    const corruptDom = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/points-to-dollars/?stateVersion=999&valuationSourceUnit=UNKNOWN&valuationSourceValue=INVALID&miles=-500'
+    });
+    const corruptVal = corruptDom.window.document.getElementById('dollarValue').textContent;
+    assert.ok(!corruptVal.includes('NaN') && !corruptVal.includes('Infinity'), 'Corrupt params must not display NaN/Infinity');
+  });
+});
+
+
 
 
 
