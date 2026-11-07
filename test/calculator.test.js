@@ -2282,6 +2282,147 @@ test('Phase 9.14: Miles to Dollars Program Selection, Zero-Drift Currency Toggle
   });
 });
 
+test('Phase 9.14.1: Precision Roundtrip, State Normalization, Contrast, and Mobile Layout Gatekeeper', async (t) => {
+  const zhP2dHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/points-to-dollars/index.html'), 'utf8');
+  const enP2dHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/points-to-dollars/index.html'), 'utf8');
+  const styleCss = fs.readFileSync(path.resolve(__dirname, '../_site/assets/style.css'), 'utf8');
+
+  await t.test('1. P1: Currency Round-trip Precision (1.234¢ @ fx 7.0 & fx 7.13)', () => {
+    const dom = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/points-to-dollars/?currency=USD&miles=50000&cpp=1.234&fx=7.0'
+    });
+    const doc = dom.window.document;
+    const currSelect = doc.getElementById('currency');
+    const cppInput = doc.getElementById('cppValue');
+    const dollarVal = doc.getElementById('dollarValue');
+    const fxInput = doc.getElementById('fxRate');
+
+    // Initial USD state: 50,000 miles @ 1.234¢ = $617
+    assert.strictEqual(currSelect.value, 'USD');
+    assert.strictEqual(cppInput.value, '1.234');
+    assert.strictEqual(dollarVal.textContent, '$617');
+
+    // Switch to CNY at fx 7.0: 1.234 / 100 * 7.0 = 0.08638元/里; 50,000 * 0.08638 = ¥4,319
+    currSelect.value = 'CNY';
+    currSelect.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(cppInput.value, '0.08638', 'CNY cppValue should be exact 0.08638 without truncation');
+    assert.strictEqual(dollarVal.textContent, '¥4,319', 'CNY total should be ¥4,319');
+
+    // 10 consecutive toggles between USD and CNY must preserve exact 1.234 and 0.08638
+    for (let i = 0; i < 10; i++) {
+      currSelect.value = 'USD';
+      currSelect.dispatchEvent(new dom.window.Event('change'));
+      assert.strictEqual(cppInput.value, '1.234', `Iteration ${i} USD cppValue drift`);
+      assert.strictEqual(dollarVal.textContent, '$617', `Iteration ${i} USD dollarValue drift`);
+
+      currSelect.value = 'CNY';
+      currSelect.dispatchEvent(new dom.window.Event('change'));
+      assert.strictEqual(cppInput.value, '0.08638', `Iteration ${i} CNY cppValue drift`);
+      assert.strictEqual(dollarVal.textContent, '¥4,319', `Iteration ${i} CNY dollarValue drift`);
+    }
+
+    // Test with fx 7.13: 50,000 @ 1.234¢ * 7.13 = 4399.21 -> ¥4,399
+    fxInput.value = '7.13';
+    fxInput.dispatchEvent(new dom.window.Event('input'));
+    assert.strictEqual(dollarVal.textContent, '¥4,399', 'CNY total at fx 7.13 should be ¥4,399');
+
+    // Switch back to USD must still restore 1.234 and $617
+    currSelect.value = 'USD';
+    currSelect.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(cppInput.value, '1.234');
+    assert.strictEqual(dollarVal.textContent, '$617');
+
+    // Manual CNY input: user types 0.08638 in CNY mode
+    currSelect.value = 'CNY';
+    currSelect.dispatchEvent(new dom.window.Event('change'));
+    cppInput.value = '0.08638';
+    cppInput.dispatchEvent(new dom.window.Event('input'));
+    // Switch to USD then back to CNY
+    currSelect.value = 'USD';
+    currSelect.dispatchEvent(new dom.window.Event('change'));
+    currSelect.value = 'CNY';
+    currSelect.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(cppInput.value, '0.08638', 'Manual CNY input must restore exact value');
+  });
+
+  await t.test('2. P1: State Normalization & Dropdown Synchronization (United + cpp 1.8)', () => {
+    // ZH test
+    const domZh = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/points-to-dollars/?program=united&currency=USD&miles=50000&cpp=1.8'
+    });
+    const docZh = domZh.window.document;
+    assert.strictEqual(docZh.getElementById('airlineProgram').value, 'united');
+    assert.strictEqual(docZh.getElementById('cppValue').value, '1.8');
+    assert.strictEqual(docZh.getElementById('presetValuation').value, 'custom', 'ZH presetValuation must be custom when cpp=1.8 overrides United default 1.2');
+    assert.strictEqual(docZh.getElementById('dollarValue').textContent, '$900');
+    assert.strictEqual(docZh.getElementById('metaValuationType').textContent, '用户自定义');
+
+    // EN test
+    const domEn = new JSDOM(enP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/en/calculators/points-to-dollars/?program=united&cpp=1.8&miles=50000'
+    });
+    const docEn = domEn.window.document;
+    assert.strictEqual(docEn.getElementById('airlineProgram').value, 'united');
+    assert.strictEqual(docEn.getElementById('cppValue').value, '1.8');
+    assert.strictEqual(docEn.getElementById('presetValuation').value, 'custom', 'EN presetValuation must be custom when cpp=1.8 overrides United default 1.2');
+    assert.strictEqual(docEn.getElementById('dollarValue').textContent, '$900');
+    assert.strictEqual(docEn.getElementById('metaValuationType').textContent, 'User Custom');
+  });
+
+  await t.test('3. P1: .next-step-box Accessible Link Contrast (>= 4.5:1)', () => {
+    assert.ok(styleCss.includes('.next-step-box a'), 'style.css must have explicit rules for .next-step-box a');
+    assert.ok(styleCss.includes('#1e3a8a') || styleCss.includes('rgb(30, 58, 138)'), 'Must use accessible deep blue for links');
+  });
+
+  await t.test('4. P2: Mobile First-Screen Flow & DOM Ordering', () => {
+    // Both ZH and EN DOMs: totalPoints is placed ahead of ticket, and details is collapsible
+    const domZh = new JSDOM(zhP2dHtml);
+    const docZh = domZh.window.document;
+    const detailsZh = docZh.getElementById('programMetaDetails');
+    const totalPointsZh = docZh.getElementById('totalPoints');
+    const ticketZh = docZh.querySelector('.ticket');
+
+    assert.ok(detailsZh, 'ZH has collapsible programMetaDetails');
+    assert.ok(!detailsZh.hasAttribute('open'), 'ZH programMetaDetails is closed by default to save mobile viewport space');
+    assert.ok(totalPointsZh, 'ZH has totalPoints input');
+    assert.ok(ticketZh, 'ZH has ticket');
+
+    // DOM order check: totalPoints precedes ticket
+    const zhNodes = Array.from(docZh.querySelectorAll('#airlineProgram, #programMetaDetails, #totalPoints, .ticket'));
+    const zhIdxProg = zhNodes.findIndex(el => el.id === 'airlineProgram');
+    const zhIdxMeta = zhNodes.findIndex(el => el.id === 'programMetaDetails');
+    const zhIdxPts = zhNodes.findIndex(el => el.id === 'totalPoints');
+    const zhIdxTkt = zhNodes.findIndex(el => el.classList.contains('ticket'));
+
+    assert.ok(zhIdxProg < zhIdxMeta && zhIdxMeta < zhIdxPts && zhIdxPts < zhIdxTkt, 'ZH element order: airlineProgram -> details -> totalPoints -> ticket');
+
+    // EN check
+    const domEn = new JSDOM(enP2dHtml);
+    const docEn = domEn.window.document;
+    const detailsEn = docEn.getElementById('programMetaDetails');
+    const totalPointsEn = docEn.getElementById('totalPoints');
+    const ticketEn = docEn.querySelector('.ticket');
+
+    assert.ok(detailsEn, 'EN has collapsible programMetaDetails');
+    assert.ok(!detailsEn.hasAttribute('open'), 'EN programMetaDetails is closed by default');
+    assert.ok(totalPointsEn, 'EN has totalPoints input');
+
+    const enNodes = Array.from(docEn.querySelectorAll('#airlineProgram, #programMetaDetails, #totalPoints, .ticket'));
+    const enIdxProg = enNodes.findIndex(el => el.id === 'airlineProgram');
+    const enIdxMeta = enNodes.findIndex(el => el.id === 'programMetaDetails');
+    const enIdxPts = enNodes.findIndex(el => el.id === 'totalPoints');
+    const enIdxTkt = enNodes.findIndex(el => el.classList.contains('ticket'));
+
+    assert.ok(enIdxProg < enIdxMeta && enIdxMeta < enIdxPts && enIdxPts < enIdxTkt, 'EN element order: airlineProgram -> details -> totalPoints -> ticket');
+
+    // CSS check for iOS auto-zoom prevention (>= 16px)
+    assert.ok(styleCss.includes('font-size: 16px') || styleCss.includes('font-size:16px'), 'Mobile styles must include font-size: 16px for input/select');
+  });
+});
+
 
 
 

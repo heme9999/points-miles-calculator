@@ -2531,4 +2531,40 @@ h3 + .faq, h2 + .faq {
   margin: 0;
 }
 
+/* Next Step Box styling & accessible link contrast (WCAG AA > 4.5:1) */
+.next-step-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #334155;
+}
+.next-step-box strong {
+  color: #0f172a;
+}
+.next-step-box a {
+  color: #1e3a8a !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+.next-step-box a:hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline;
+}
+.next-step-box a:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Ensure mobile form controls have >= 16px font-size to prevent iOS auto-zoom */
+@media (max-width: 640px) {
+  input[type="number"],
+  input[type="text"],
+  select {
+    font-size: 16px !important;
+  }
+}
+
+
 
