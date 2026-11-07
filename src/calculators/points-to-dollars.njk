@@ -5,8 +5,8 @@ description: 将航空里程和信用卡积分换算为现金价值（美元或�
 schemaType: WebApplication
 eyebrow: 里程账 · 工具 05
 datePublished: "2026-08-14"
-dateModified: "2026-10-05"
-lastModified: "2026-10-05"
+dateModified: "2026-11-07"
+lastModified: "2026-11-07"
 breadcrumbs:
   - name: 计算器
     url: /calculators/
@@ -21,7 +21,36 @@ breadcrumbs:
 
 <div class="panel" style="margin-top: 0;">
   <div class="field">
-    <label for="totalPoints">航空里程数量（演示输入）<span class="hint" id="hintTotal">里程</span></label>
+    <label for="airlineProgram">
+      <span>1. 选择航空里程计划</span>
+      <span class="hint" id="hintProgram">常旅客计划</span>
+    </label>
+    <select id="airlineProgram" aria-describedby="hintProgram">
+      <option value="custom" selected>自定义 / 其他航空计划（在下方手动输入估值）</option>
+      <option value="united">美联航 (United MileagePlus) · 1.2 美分/里程</option>
+      <option value="aeroplan">加拿大航空 (Air Canada Aeroplan) · 1.5 美分/里程</option>
+      <option value="asiamiles">国泰航空 (Cathay Asia Miles) · 1.3 美分/里程</option>
+      <option value="avios">英航 / 卡塔尔航空 (Avios) · 1.3 美分/里程</option>
+    </select>
+  </div>
+
+  <div id="programMetaBox" class="program-meta-box" style="margin-bottom: 16px; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; line-height: 1.5; color: #334155;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;">
+      <strong id="metaProgramName" style="color: #0f172a; font-size: 0.9rem;">自定义航司 / 手动输入估值</strong>
+      <span id="metaValuationType" style="background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">用户自定义</span>
+    </div>
+    <div id="metaScope" style="margin-bottom: 6px; color: #475569;">适用范围：输入任意目标航司里程余额与自定义基准估值。</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8rem; color: #64748b;">
+      <span id="metaSource">数据来源：<a href="/values/" id="metaSourceLink">全网里程估值基准表</a></span>
+      <span id="metaVerified">核验日期：2026年11月</span>
+    </div>
+    <div style="margin-top: 6px; font-size: 0.78rem; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 4px;">
+      * 测算金额仅供教育参考建模，非官方实时兑换报价或保底现金回收保证。
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="totalPoints">2. 航空里程数量（演示输入）<span class="hint" id="hintTotal">里程</span></label>
     <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal unitTotal">
     <div class="unit" id="unitTotal" style="margin-bottom: 8px;">默认 150,000 为可修改的演示数值，非自动读取真实账户余额。可直接手动输入或点击下方快速填入：</div>
     <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
@@ -37,7 +66,7 @@ breadcrumbs:
   </div>
 
   <div class="field" id="fieldFx">
-    <label for="fxRate">美元兑人民币汇率假设<span class="hint" id="hintFx">1 USD = ? CNY</span></label>
+    <label for="fxRate">美元兑人民币汇率假设（演示汇率，非实时牌价）<span class="hint" id="hintFx">1 USD = ? CNY</span></label>
     <input type="number" id="fxRate" value="7.0" min="0.1" max="20" step="0.01" inputmode="decimal" aria-describedby="hintFx unitFx">
     <div class="unit" id="unitFx">默认汇率仅用于计算演示，请按当日实际汇率调整</div>
   </div>
@@ -93,6 +122,15 @@ breadcrumbs:
     </div>
     <div class="note" id="explain"></div>
   </div>
+</div>
+
+<div class="next-step-box" style="margin-top: 20px; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.88rem; line-height: 1.5;">
+  <strong style="display: block; margin-bottom: 6px; color: #0f172a;">下一步决策推荐：</strong>
+  <ul style="margin: 0; padding-left: 20px; color: #475569;">
+    <li><strong>已有目标航班？</strong> <a href="/calculators/cents-per-point/">计算此机票的实际每点价值（CPP）→</a></li>
+    <li><strong>在买现金票还是用里程之间纠结？</strong> <a href="/calculators/points-vs-cash/">使用积分 vs 现金比较器，综合考量税费与机会成本 →</a></li>
+    <li><strong>持有银行信用卡积分需要转为里程？</strong> <a href="/calculators/points-to-miles-converter/">使用信用卡积分转里程换算器核对比例与加赠 →</a></li>
+  </ul>
 </div>
 
 <div class="currency-selector" style="margin-top: 16px; margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
@@ -328,6 +366,83 @@ breadcrumbs:
     });
   }
 
+  const PROGRAM_DATA = {
+    custom: {
+      name: '自定义航司 / 手动输入估值',
+      type: '用户自定义',
+      scope: '适用范围：输入任意目标航司里程余额与自定义基准估值。',
+      sourceText: '全网里程估值基准表',
+      sourceUrl: '/values/',
+      verified: '2026年11月',
+      defaultCpp: null
+    },
+    united: {
+      name: '美联航 (United MileagePlus)',
+      type: '本站编辑参考估值',
+      scope: '适用范围：美联航执飞航班及星空联盟伙伴免票（美国境内与跨洋航线）。',
+      sourceText: '美联航里程价值计算器',
+      sourceUrl: '/calculators/united-miles-value-calculator/',
+      verified: '2026年11月',
+      defaultCpp: 1.2
+    },
+    aeroplan: {
+      name: '加拿大航空 (Air Canada Aeroplan)',
+      type: '本站编辑参考估值',
+      scope: '适用范围：加航与星空联盟伙伴兑换（无航司燃油附加费，支持单程停留）。',
+      sourceText: '加航积分估值深度解析',
+      sourceUrl: '/values/aeroplan-points/',
+      verified: '2026年11月',
+      defaultCpp: 1.5
+    },
+    asiamiles: {
+      name: '国泰航空 (Cathay Asia Miles)',
+      type: '本站编辑参考估值',
+      scope: '适用范围：国泰航空及寰宇一家伙伴航班（基于飞行距离分区兑换）。',
+      sourceText: '亚洲万里通估值指南',
+      sourceUrl: '/blog/yazhouwanlitong-licheng-jiazhi/',
+      verified: '2026年11月',
+      defaultCpp: 1.3
+    },
+    avios: {
+      name: '英航 / 卡塔尔航空 (Avios)',
+      type: '本站编辑参考估值',
+      scope: '适用范围：英国航空与卡塔尔航空短途航线及 Qsuite 商务舱兑换。',
+      sourceText: 'Avios 积分估值指南',
+      sourceUrl: '/values/avios/',
+      verified: '2026年11月',
+      defaultCpp: 1.3
+    }
+  };
+
+  function updateProgramMeta(progKey, isCustomValuation = false) {
+    const data = PROGRAM_DATA[progKey] || PROGRAM_DATA.custom;
+    const nameEl = $('metaProgramName');
+    const typeEl = $('metaValuationType');
+    const scopeEl = $('metaScope');
+    const sourceLink = $('metaSourceLink');
+    const verifiedEl = $('metaVerified');
+
+    if (nameEl) nameEl.textContent = data.name;
+    if (scopeEl) scopeEl.textContent = data.scope;
+    if (sourceLink) {
+      sourceLink.textContent = data.sourceText;
+      sourceLink.href = data.sourceUrl;
+    }
+    if (verifiedEl) verifiedEl.textContent = '核验日期：' + data.verified;
+
+    if (typeEl) {
+      if (isCustomValuation || progKey === 'custom') {
+        typeEl.textContent = '用户自定义';
+        typeEl.style.background = '#fef3c7';
+        typeEl.style.color = '#92400e';
+      } else {
+        typeEl.textContent = data.type;
+        typeEl.style.background = '#e2e8f0';
+        typeEl.style.color = '#475569';
+      }
+    }
+  }
+
   const params = new URLSearchParams(window.location.search);
   let currentCurrency = 'CNY';
   const validCurrencies = ['CNY', 'USD'];
@@ -360,6 +475,8 @@ breadcrumbs:
     return 7.0;
   };
 
+  let internalUsdCpp = 1.5;
+
   const getScenarioUsdCpp = (scenarioKey) => {
     switch(scenarioKey) {
       case '0.6': return 0.6;
@@ -378,11 +495,11 @@ breadcrumbs:
     const currentSelected = select.value;
 
     if (currentCurrency === 'USD') {
-      select.options[0].text = 'Custom value per mile';
-      select.options[1].text = 'Low-value miles scenario: 0.6¢ per mile';
-      select.options[2].text = 'Conservative scenario: 1.2¢ per mile';
-      select.options[3].text = 'Typical airline-mile scenario: 1.5¢ per mile';
-      select.options[4].text = 'Higher-value redemption scenario: 2.0¢ per mile';
+      select.options[0].text = '自定义每里估值';
+      select.options[1].text = '低面值里程情景：0.6美分/里';
+      select.options[2].text = '保守估值情景：1.2美分/里';
+      select.options[3].text = '中性航空里程演示情景：1.5美分/里';
+      select.options[4].text = '较高价值兑换情景：2.0美分/里';
       
       select.options[1].value = '0.6';
       select.options[2].value = '1.2';
@@ -414,18 +531,18 @@ breadcrumbs:
   const updateUnitsAndVisibility = () => {
     const fx = getActiveFx();
     if (currentCurrency === 'USD') {
-      if($('hintValuation')) $('hintValuation').textContent = '¢ / 里';
+      if($('hintValuation')) $('hintValuation').textContent = '美分/里';
       if($('fieldFx')) $('fieldFx').style.display = 'none';
       if($('spanFxEcho')) $('spanFxEcho').textContent = fx.toString();
       if($('spanCnyCppEcho')) $('spanCnyCppEcho').textContent = (1.5 / 100 * fx).toFixed(3);
-      if($('spanEgCny')) $('spanEgCny').textContent = '¥' + (50000 * (1.5 / 100 * fx)).toLocaleString('zh-CN', {maximumFractionDigits:0});
+      if($('spanEgCny')) $('spanEgCny').textContent = '¥' + Math.round(50000 * (1.5 / 100 * fx)).toLocaleString('zh-CN');
     } else {
       if($('hintValuation')) $('hintValuation').textContent = '元/里';
       if($('fieldFx')) $('fieldFx').style.display = 'block';
       if($('spanFxEcho')) $('spanFxEcho').textContent = fx.toString();
       const cnyRate = (1.5 / 100 * fx).toFixed(3).replace(/\.?0+$/, '');
       if($('spanCnyCppEcho')) $('spanCnyCppEcho').textContent = cnyRate;
-      if($('spanEgCny')) $('spanEgCny').textContent = '¥' + (50000 * (1.5 / 100 * fx)).toLocaleString('zh-CN', {maximumFractionDigits:0});
+      if($('spanEgCny')) $('spanEgCny').textContent = '¥' + Math.round(50000 * (1.5 / 100 * fx)).toLocaleString('zh-CN');
     }
     updateSelectOptions();
   };
@@ -440,57 +557,93 @@ breadcrumbs:
   };
   parseParam('points', 'totalPoints');
   parseParam('totalPoints', 'totalPoints');
+  parseParam('miles', 'totalPoints');
+
+  // Program parsing
+  const progParam = (params.get('program') || params.get('airlineProgram') || '').toLowerCase();
+  if (progParam && PROGRAM_DATA[progParam] && $('airlineProgram')) {
+    $('airlineProgram').value = progParam;
+    if (PROGRAM_DATA[progParam].defaultCpp !== null) {
+      internalUsdCpp = PROGRAM_DATA[progParam].defaultCpp;
+      const scenStr = String(internalUsdCpp);
+      if (['0.6', '1.2', '1.5', '2.0'].includes(scenStr)) {
+        if ($('presetValuation')) $('presetValuation').value = scenStr;
+      } else {
+        if ($('presetValuation')) $('presetValuation').value = 'custom';
+      }
+    }
+    updateProgramMeta(progParam, false);
+  } else {
+    updateProgramMeta('custom', false);
+  }
 
   // Scenario parse
   const scenParam = params.get('presetValuation') || params.get('scenario');
   if (scenParam && ['custom', '0.6', '1.2', '1.5', '2.0'].includes(scenParam)) {
     if ($('presetValuation')) $('presetValuation').value = scenParam;
+    if (scenParam !== 'custom') {
+      internalUsdCpp = parseFloat(scenParam);
+    }
   }
 
-  // Parse valuation parameter
-  const rawVal = parseFloat(params.get('valuation') || params.get('cppValue'));
+  // Parse valuation parameter (highest priority override)
+  const rawVal = parseFloat(params.get('cpp') || params.get('valuation') || params.get('cppValue'));
+  const fxInit = getActiveFx();
   if (!isNaN(rawVal) && isFinite(rawVal) && rawVal > 0) {
     if ($('cppValue')) $('cppValue').value = rawVal;
+    if (currentCurrency === 'USD') {
+      internalUsdCpp = rawVal;
+    } else {
+      internalUsdCpp = (rawVal / fxInit) * 100;
+    }
+    const curProg = $('airlineProgram') ? $('airlineProgram').value : 'custom';
+    const isOverride = curProg !== 'custom' && PROGRAM_DATA[curProg]?.defaultCpp !== internalUsdCpp;
+    updateProgramMeta(curProg, isOverride || curProg === 'custom');
   } else {
     // Set default value according to currency
-    const activeScen = $('presetValuation') ? $('presetValuation').value : '1.5';
-    const fx = getActiveFx();
-    if (activeScen !== 'custom') {
-      const usdCpp = getScenarioUsdCpp(activeScen) || 1.5;
-      if (currentCurrency === 'USD') {
-        if ($('cppValue')) $('cppValue').value = usdCpp;
-      } else {
-        if ($('cppValue')) $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
-      }
+    if (currentCurrency === 'USD') {
+      if ($('cppValue')) $('cppValue').value = internalUsdCpp;
+    } else {
+      if ($('cppValue')) $('cppValue').value = parseFloat((internalUsdCpp / 100 * fxInit).toFixed(4));
     }
+  }
+
+  // Airline Program change listener
+  if ($('airlineProgram')) {
+    $('airlineProgram').addEventListener('change', e => {
+      const prog = e.target.value;
+      const activeFx = getActiveFx();
+      if (prog !== 'custom' && PROGRAM_DATA[prog]?.defaultCpp !== null) {
+        internalUsdCpp = PROGRAM_DATA[prog].defaultCpp;
+        if (currentCurrency === 'USD') {
+          $('cppValue').value = internalUsdCpp;
+        } else {
+          $('cppValue').value = parseFloat((internalUsdCpp / 100 * activeFx).toFixed(4));
+        }
+        if (['0.6', '1.2', '1.5', '2.0'].includes(String(internalUsdCpp))) {
+          $('presetValuation').value = String(internalUsdCpp);
+        } else {
+          $('presetValuation').value = 'custom';
+        }
+        updateProgramMeta(prog, false);
+      } else {
+        updateProgramMeta('custom', true);
+      }
+      calcDollars();
+    });
   }
 
   if ($('currency')) {
     $('currency').value = currentCurrency;
     $('currency').addEventListener('change', (e) => {
-      const oldCurrency = currentCurrency;
       currentCurrency = e.target.value;
-      const fx = getActiveFx();
-      const select = $('presetValuation');
-      const curScen = select ? select.value : 'custom';
+      const activeFx = getActiveFx();
 
-      if (curScen !== 'custom') {
-        const usdCpp = getScenarioUsdCpp(curScen);
-        if (currentCurrency === 'USD') {
-          $('cppValue').value = usdCpp;
-        } else {
-          $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
-        }
+      // Precision preserved through internalUsdCpp single source of truth - zero cumulative drift
+      if (currentCurrency === 'USD') {
+        $('cppValue').value = parseFloat(internalUsdCpp.toFixed(2));
       } else {
-        // Converting custom input accurately without drift
-        const oldVal = parseFloat($('cppValue').value) || 0;
-        if (oldVal > 0) {
-          if (currentCurrency === 'USD' && oldCurrency === 'CNY') {
-            $('cppValue').value = parseFloat((oldVal / fx * 100).toFixed(2));
-          } else if (currentCurrency === 'CNY' && oldCurrency === 'USD') {
-            $('cppValue').value = parseFloat((oldVal / 100 * fx).toFixed(4));
-          }
-        }
+        $('cppValue').value = parseFloat((internalUsdCpp / 100 * activeFx).toFixed(4));
       }
 
       try { localStorage.setItem('preferredCurrency', currentCurrency); } catch(err) {}
@@ -502,12 +655,9 @@ breadcrumbs:
   if ($('fxRate')) {
     $('fxRate').addEventListener('input', () => {
       updateUnitsAndVisibility();
-      const select = $('presetValuation');
-      const curScen = select ? select.value : 'custom';
-      const fx = getActiveFx();
-      if (curScen !== 'custom' && currentCurrency === 'CNY') {
-        const usdCpp = getScenarioUsdCpp(curScen);
-        $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
+      const activeFx = getActiveFx();
+      if (currentCurrency === 'CNY') {
+        $('cppValue').value = parseFloat((internalUsdCpp / 100 * activeFx).toFixed(4));
       }
       calcDollars();
     });
@@ -543,8 +693,8 @@ breadcrumbs:
       $('explain').textContent = `航空里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里 | 估值：${V}美分/里（演示假设）| 预估折合旅行价值：$${total.toLocaleString('en-US', {maximumFractionDigits:2})}。该数值为测算购买力演示，非官方保底提现金额。`;
     } else {
       total = P * V;
-      $('dollarValue').textContent = '¥' + total.toLocaleString('zh-CN', {maximumFractionDigits:0});
-      $('explain').textContent = `航空里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里 | 估值：${V}元/里（演示假设）| 预估折合旅行价值：¥${total.toLocaleString('zh-CN', {maximumFractionDigits:0})}。该数值为测算购买力演示，非官方保底提现金额。`;
+      $('dollarValue').textContent = '¥' + Math.round(total).toLocaleString('zh-CN');
+      $('explain').textContent = `航空里程余额：${P.toLocaleString('zh-CN', {maximumFractionDigits:0})} 里 | 估值：${V}元/里（演示假设）| 预估折合旅行价值：¥${Math.round(total).toLocaleString('zh-CN')}。该数值为测算购买力演示，非官方保底提现金额。`;
     }
     $('dollarValue').classList.add('win');
   }
@@ -561,30 +711,44 @@ breadcrumbs:
 
   $('presetValuation').addEventListener('change', e => {
     const scen = e.target.value;
-    const fx = getActiveFx();
+    const activeFx = getActiveFx();
     if(scen !== 'custom'){
       const usdCpp = getScenarioUsdCpp(scen);
+      internalUsdCpp = usdCpp;
       if (currentCurrency === 'USD') {
         $('cppValue').value = usdCpp;
       } else {
-        $('cppValue').value = parseFloat((usdCpp / 100 * fx).toFixed(4));
+        $('cppValue').value = parseFloat((usdCpp / 100 * activeFx).toFixed(4));
       }
+      const curProg = $('airlineProgram') ? $('airlineProgram').value : 'custom';
+      const isCustom = curProg !== 'custom' && PROGRAM_DATA[curProg]?.defaultCpp !== usdCpp;
+      updateProgramMeta(curProg, isCustom || curProg === 'custom');
       calcDollars();
     }
   });
 
   $('cppValue').addEventListener('input', () => {
     const val = parseFloat($('cppValue').value) || 0;
-    const fx = getActiveFx();
+    const activeFx = getActiveFx();
+    if (currentCurrency === 'USD') {
+      internalUsdCpp = val;
+    } else {
+      internalUsdCpp = activeFx > 0 ? (val / activeFx) * 100 : 0;
+    }
+
     let matched = 'custom';
     ['0.6', '1.2', '1.5', '2.0'].forEach(s => {
       const usdCpp = getScenarioUsdCpp(s);
-      const targetVal = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * fx).toFixed(4));
+      const targetVal = currentCurrency === 'USD' ? usdCpp : parseFloat((usdCpp / 100 * activeFx).toFixed(4));
       if (Math.abs(val - targetVal) < 0.0001) {
         matched = s;
       }
     });
     $('presetValuation').value = matched;
+
+    const curProg = $('airlineProgram') ? $('airlineProgram').value : 'custom';
+    const isCustom = curProg !== 'custom' && PROGRAM_DATA[curProg]?.defaultCpp !== internalUsdCpp;
+    updateProgramMeta(curProg, isCustom || curProg === 'custom');
     calcDollars();
   });
 
@@ -601,13 +765,15 @@ breadcrumbs:
       const p = parseFloat($('totalPoints').value) || 0;
       const v = parseFloat($('cppValue').value) || 0;
       const scen = $('presetValuation').value;
-      const fx = getActiveFx();
+      const prog = $('airlineProgram') ? $('airlineProgram').value : 'custom';
+      const activeFx = getActiveFx();
 
       if (p > 0) url.searchParams.set('points', p);
       if (v > 0) url.searchParams.set('valuation', v);
       if (scen && scen !== 'custom') url.searchParams.set('scenario', scen);
+      if (prog && prog !== 'custom') url.searchParams.set('program', prog);
       if (currentCurrency) url.searchParams.set('currency', currentCurrency);
-      if (currentCurrency === 'CNY' && fx !== 7.0) url.searchParams.set('fx', fx);
+      if (currentCurrency === 'CNY' && activeFx !== 7.0) url.searchParams.set('fx', activeFx);
 
       navigator.clipboard.writeText(url.toString()).then(() => {
         const toast = $('toast');

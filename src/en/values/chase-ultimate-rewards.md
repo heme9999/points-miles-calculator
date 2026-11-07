@@ -5,8 +5,8 @@ seoTitle: "Chase Points Value: How Much Are UR Points Worth?"
 description: Estimate Chase Ultimate Rewards points value by redemption method, including cash back, Chase Travel, Points Boost and transfer partners.
 schemaType: Article
 eyebrow: Valuations
-lastModified: "2026-10-13"
-dateModified: "2026-10-13"
+lastModified: "2026-11-07"
+dateModified: "2026-11-07"
 breadcrumbs:
   - name: Points Valuations
     url: /en/values/
@@ -100,11 +100,27 @@ breadcrumbs:
 <h2>The Chase Redemption Decision Flow</h2>
 <p>To maximize your Chase Ultimate Rewards, you have three distinct redemption paths. You should always compare them before booking:</p>
 <ol>
-  <li><strong>The Cash Equivalent (1.0¢)</strong>: Redeeming for statement credits or cash back provides a floor value of 1.0¢. This is a common cash-equivalent baseline.</li>
-  <li><strong>The Chase Travel Portal & Points Boost</strong>: Before transferring points to a partner, check the cash price of the flight or hotel in the Chase Portal. Look for active Points Boost offers on your account. If a flight or hotel is eligible for a 1.5¢ or 2.0¢ boost, booking it directly might cost fewer points than using a transfer partner's award chart. (Use our <a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a> to verify the math).</li>
-  <li><strong>Airline & Hotel Transfer Partners (Potentially 2.0¢+)</strong>: Transferring to partners like <a href="/en/calculators/united-miles-value-calculator/">United MileagePlus (United Miles Value Calculator)</a>, Air France/KLM Flying Blue, or <a href="/en/values/hyatt-points/">World of Hyatt</a> can unlock enhanced value for high-demand bookings. Confirm the live transfer ratio in your rewards portal. Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1. Always verify the exact transfer ratio and award availability in your account before proceeding (use our <a href="/en/calculators/points-to-miles-converter/">Points to Miles Converter</a> to calculate transferred miles).</li>
+  <li><strong>The Cash Equivalent (1.0¢)</strong>: Redeeming for statement credits or direct deposit cash back provides a floor value of 1.0¢ per point. This establishes a baseline against which all other redemptions must be measured.</li>
+  <li><strong>The Chase Travel Portal &amp; Points Boost (1.0¢–2.0¢)</strong>: Before transferring points to an airline or hotel partner, check the cash price in the Chase Travel portal. If your card has an active Points Boost promotion (such as 1.5¢ or 2.0¢ per point on selected premium hotels or flights), booking directly through the portal can cost fewer points than partner award charts without requiring award seat availability. Use our <a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a> to test whether portal booking beats partner transfer.</li>
+  <li><strong>Airline &amp; Hotel Transfer Partners (Two-Step Valuation)</strong>: Transferring to partners like <a href="/en/transfer/chase-to-united/">United MileagePlus (Chase to United Calculator)</a>, Air France/KLM Flying Blue, or <a href="/en/values/hyatt-points/">World of Hyatt</a> can unlock substantial upside for premium cabin awards or luxury stays. Evaluating a transfer involves two steps:
+    <ul>
+      <li><strong>Step 1 (Transfer Ratio)</strong>: Check how many partner miles/points your Chase points yield. Confirm the live transfer ratio in your rewards portal. Ratios may depend on the eligible Chase card, partner, account transition rules, and effective date; for example, some eligible cards use a 4:3 Hyatt ratio while many other partners remain 1:1. Use our <a href="/en/calculators/points-to-miles-converter/">Points to Miles Converter</a> to model conversions.</li>
+      <li><strong>Step 2 (Partner Redemption CPP)</strong>: Determine the true value per partner point by dividing cash savings by required miles with our <a href="/en/calculators/cents-per-point/">Cents Per Point (CPP) Calculator</a>. Your effective Chase point value equals: <code>(Transfer Ratio) × (Partner CPP)</code>. If this exceeds your portal or cash baseline, transferring delivers superior value.</li>
+    </ul>
+  </li>
 </ol>
-<p>For a detailed breakdown of how this ecosystem compares to its main competitor, read our guide on <a href="/en/compare/capital-one-vs-chase/">Capital One Miles vs Chase Ultimate Rewards</a>.</p>
+
+<div class="next-step-box" style="margin-top: 20px; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem; line-height: 1.5;">
+  <strong style="color: #0f172a; display: block; margin-bottom: 6px;">Next Steps for Chase UR Cardholders:</strong>
+  <ul style="margin: 0; padding-left: 20px; color: #475569;">
+    <li><strong>Model Chase to United transfers:</strong> <a href="/en/transfer/chase-to-united/">Use Chase to United Transfer Calculator →</a></li>
+    <li><strong>Compare cash tickets vs points booking:</strong> <a href="/en/calculators/points-vs-cash/">Use Points vs Cash Calculator →</a></li>
+    <li><strong>Verify award seat CPP value:</strong> <a href="/en/calculators/cents-per-point/">Use Cents Per Point (CPP) Calculator →</a></li>
+    <li><strong>Estimate points dollar balance:</strong> <a href="/en/calculators/points-to-dollars/">Use Miles to Dollars Calculator →</a></li>
+  </ul>
+</div>
+
+<p style="margin-top: 1.5rem;">For a detailed breakdown of how this ecosystem compares to its main competitor, read our guide on <a href="/en/compare/capital-one-vs-chase/">Capital One Miles vs Chase Ultimate Rewards</a>.</p>
 
 <h2>Important Guidelines Before Transferring</h2>
 <p>When you decide that transferring to a partner offers the best value, keep these rules in mind:</p>
@@ -121,4 +137,4 @@ breadcrumbs:
   <li><strong>Official Chase Ultimate Rewards Portal</strong>: <a href="https://ultimaterewardspoints.chase.com/" target="_blank" rel="noopener">Direct from Chase</a></li>
   <li><strong>Editorial Estimates (e.g. TPG)</strong>: <a href="https://thepointsguy.com/guide/monthly-valuations/" target="_blank" rel="noopener">Usually around 2.0¢ per point</a></li>
 </ul>
-<p class="disclaimer"><em>Last Fact-Checked: October 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice. Third-party valuations are not real-time or guaranteed.</em></p>
+<p class="disclaimer"><em>Last Fact-Checked: November 2026. Editorial Disclaimer: Valuations are estimates for educational purposes and do not constitute financial advice. Third-party valuations are not real-time or guaranteed.</em></p>

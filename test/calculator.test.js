@@ -2102,5 +2102,186 @@ test('Phase 9.12.2: Official Preset Sources Fix, Audit Report False-PASS Elimina
   });
 });
 
+test('Phase 9.14: Miles to Dollars Program Selection, Zero-Drift Currency Toggle, and Transfer Pair Multiplier Breakdown', async (t) => {
+  const enP2dHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/points-to-dollars/index.html'), 'utf8');
+  const zhP2dHtml = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/points-to-dollars/index.html'), 'utf8');
+
+  await t.test('1. EN Points to Dollars: Program selector defaults and meta box', () => {
+    const dom = new JSDOM(enP2dHtml, { runScripts: 'dangerously' });
+    const doc = dom.window.document;
+
+    const select = doc.getElementById('airlineProgram');
+    assert.ok(select, 'airlineProgram select must exist');
+    const options = Array.from(select.options).map(o => o.value);
+    assert.ok(options.includes('united'));
+    assert.ok(options.includes('aeroplan'));
+    assert.ok(options.includes('asiamiles'));
+    assert.ok(options.includes('avios'));
+    assert.ok(options.includes('custom'));
+
+    const cppInput = doc.getElementById('cppValue');
+    const programMetaBox = doc.getElementById('programMetaBox');
+    assert.ok(programMetaBox, 'programMetaBox container must exist');
+
+    // Default is custom (1.5¢) to preserve existing landing balance calculation
+    assert.strictEqual(select.value, 'custom');
+    assert.strictEqual(cppInput.value, '1.5');
+
+    // Switch to United -> 1.2¢
+    select.value = 'united';
+    select.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(cppInput.value, '1.2');
+    assert.ok(programMetaBox.textContent.includes('MileagePlus'));
+    assert.ok(programMetaBox.textContent.includes('United'));
+
+    // Switch to Aeroplan -> 1.5¢
+    select.value = 'aeroplan';
+    select.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(cppInput.value, '1.5');
+    assert.ok(programMetaBox.textContent.includes('Aeroplan'));
+
+    // Switch to Asia Miles -> 1.3¢
+    select.value = 'asiamiles';
+    select.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(cppInput.value, '1.3');
+    assert.ok(programMetaBox.textContent.includes('Asia Miles') || programMetaBox.textContent.includes('Cathay'));
+
+    // Switch to Avios -> 1.3¢
+    select.value = 'avios';
+    select.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(cppInput.value, '1.3');
+    assert.ok(programMetaBox.textContent.includes('Avios') || programMetaBox.textContent.includes('British Airways'));
+
+    // Next step links check
+    const nextSteps = doc.querySelector('.next-step-box');
+    assert.ok(nextSteps, 'next-step-box must exist');
+    assert.ok(nextSteps.innerHTML.includes('/en/calculators/cents-per-point/'));
+    assert.ok(nextSteps.innerHTML.includes('/en/calculators/points-vs-cash/'));
+    assert.ok(nextSteps.innerHTML.includes('/en/calculators/points-to-miles-converter/'));
+  });
+
+  await t.test('2. EN Points to Dollars: URL param priority (cpp overrides program default)', () => {
+    const dom = new JSDOM(enP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/en/calculators/points-to-dollars/?program=united&cpp=1.8&miles=50000'
+    });
+    const doc = dom.window.document;
+    const cppInput = doc.getElementById('cppValue');
+    const dollarVal = doc.getElementById('dollarValue');
+
+    // 50,000 miles @ 1.8¢ = $900 (custom cpp takes priority over United 1.2 default)
+    assert.strictEqual(cppInput.value, '1.8');
+    assert.strictEqual(dollarVal.textContent, '$900');
+  });
+
+  await t.test('3. ZH Points to Dollars: 10 consecutive currency toggles maintain zero drift', () => {
+    const dom = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/points-to-dollars/?miles=50000&cpp=1.2&currency=USD'
+    });
+    const doc = dom.window.document;
+    const currencySelect = doc.getElementById('currency');
+    const dollarVal = doc.getElementById('dollarValue');
+
+    // In USD mode: 50,000 @ 1.2¢ = $600
+    assert.strictEqual(dollarVal.textContent, '$600');
+
+    // Toggle back and forth 10 times
+    for (let i = 0; i < 10; i++) {
+      currencySelect.value = 'CNY';
+      currencySelect.dispatchEvent(new dom.window.Event('change'));
+      // 50,000 @ 1.2¢ * 7.0 = ¥4,200
+      assert.strictEqual(dollarVal.textContent, '¥4,200', `CNY drift on iteration ${i}`);
+
+      currencySelect.value = 'USD';
+      currencySelect.dispatchEvent(new dom.window.Event('change'));
+      assert.strictEqual(dollarVal.textContent, '$600', `USD drift on iteration ${i}`);
+    }
+  });
+
+  await t.test('4. Standard regression test cases for Points to Dollars', () => {
+    // Test 60,000 miles @ 1.2¢ = $720; at FX 7.0 = ¥5,040
+    const domEn = new JSDOM(enP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/en/calculators/points-to-dollars/?miles=60000&cpp=1.2'
+    });
+    assert.strictEqual(domEn.window.document.getElementById('dollarValue').textContent, '$720');
+
+    // In Chinese CNY mode: 1.2¢ is 0.084 元/里 (0.012 * 7.0 = 0.084) -> 60,000 * 0.084 = ¥5,040
+    const domZh = new JSDOM(zhP2dHtml, {
+      runScripts: 'dangerously',
+      url: 'http://localhost/calculators/points-to-dollars/?miles=60000&cpp=0.084&currency=CNY'
+    });
+    assert.strictEqual(domZh.window.document.getElementById('dollarValue').textContent, '¥5,040');
+  });
+
+  await t.test('5. Transfer Pairs: Multiplier breakdown and calculations in DOM', () => {
+    const pairs = [
+      { file: 'src/en/transfer/chase-to-united.njk', baseRatio: '1:1', bonus: '0%', mult: '1.00' },
+      { file: 'src/transfer/chase-to-united.njk', baseRatio: '1:1', bonus: '0%', mult: '1.00' },
+      { file: 'src/en/transfer/amex-to-aeroplan.njk', baseRatio: '1:1', bonus: '0%', mult: '1.00' },
+      { file: 'src/transfer/amex-to-aeroplan.njk', baseRatio: '1:1', bonus: '0%', mult: '1.00' },
+      { file: 'src/en/transfer/amex-to-cathay-asia-miles.njk', baseRatio: '5:4 (0.80x)', bonus: '0%', mult: '0.80' },
+      { file: 'src/transfer/amex-to-cathay-asia-miles.njk', baseRatio: '5:4 (0.80x)', bonus: '0%', mult: '0.80' },
+      { file: 'src/en/transfer/capital-one-to-eva-air.njk', baseRatio: '4:3 (0.75x)', bonus: '0%', mult: '0.75' },
+      { file: 'src/transfer/capital-one-to-eva-air.njk', baseRatio: '4:3 (0.75x)', bonus: '0%', mult: '0.75' }
+    ];
+
+    for (const p of pairs) {
+      const htmlPath = path.resolve(__dirname, '../_site', p.file.replace(/^src\//, '').replace(/\.njk$/, '/index.html'));
+      const html = fs.readFileSync(htmlPath, 'utf8');
+      const dom = new JSDOM(html, { runScripts: 'dangerously' });
+      const doc = dom.window.document;
+
+      assert.ok(doc.getElementById('outBaseRatio'), `${p.file} missing outBaseRatio`);
+      assert.ok(doc.getElementById('outBonus'), `${p.file} missing outBonus`);
+      assert.ok(doc.getElementById('outMultiplier'), `${p.file} missing outMultiplier`);
+      assert.ok(doc.querySelector('.next-step-box'), `${p.file} missing next-step-box`);
+
+      assert.strictEqual(doc.getElementById('outBaseRatio').textContent, p.baseRatio);
+      assert.strictEqual(doc.getElementById('outBonus').textContent, p.bonus);
+      assert.strictEqual(doc.getElementById('outMultiplier').textContent, p.mult);
+    }
+  });
+
+  await t.test('6. Transfer Pairs: Amex to Aeroplan regression (60,800 + 15% bonus = 69,000 miles)', () => {
+    const enAeroplanHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/transfer/amex-to-aeroplan/index.html'), 'utf8');
+    const dom = new JSDOM(enAeroplanHtml, { runScripts: 'dangerously' });
+    const doc = dom.window.document;
+
+    const ptsInput = doc.getElementById('amexPoints');
+    const bonusInput = doc.getElementById('promotionalBonus');
+
+    ptsInput.value = '60800';
+    bonusInput.value = '15';
+    ptsInput.dispatchEvent(new dom.window.Event('input'));
+    bonusInput.dispatchEvent(new dom.window.Event('input'));
+
+    assert.strictEqual(doc.getElementById('outTransferable').textContent, '60,000');
+    assert.strictEqual(doc.getElementById('outMiles').textContent, '69,000');
+    assert.strictEqual(doc.getElementById('outMultiplier').textContent, '1.15');
+    assert.strictEqual(doc.getElementById('outValue').textContent, '$1,035');
+  });
+
+  await t.test('7. Transfer Pairs: Capital One to EVA Air calculation (50,000 pts -> 37,500 miles)', () => {
+    const zhEvaHtml = fs.readFileSync(path.resolve(__dirname, '../_site/transfer/capital-one-to-eva-air/index.html'), 'utf8');
+    const dom = new JSDOM(zhEvaHtml, { runScripts: 'dangerously' });
+    const doc = dom.window.document;
+
+    const ptsInput = doc.getElementById('caponePoints');
+    const bonusInput = doc.getElementById('promotionalBonus');
+
+    ptsInput.value = '50000';
+    bonusInput.value = '0';
+    ptsInput.dispatchEvent(new dom.window.Event('input'));
+
+    assert.strictEqual(doc.getElementById('outTransferable').textContent, '50,000');
+    assert.strictEqual(doc.getElementById('outMiles').textContent, '37,500');
+    assert.strictEqual(doc.getElementById('outMultiplier').textContent, '0.75');
+    assert.strictEqual(doc.getElementById('outValue').textContent, '¥3,675');
+  });
+});
+
+
 
 

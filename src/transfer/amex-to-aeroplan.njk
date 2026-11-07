@@ -2,25 +2,29 @@
 layout: base.njk
 title: "Amex 运通积分转加航里程换算器：转点比例、规则与免燃油费亮点"
 seoTitle: Amex转加航Aeroplan换算器 | 运通MR转加航比例与规则 | 里程账
-description: 在线计算美国运通 Amex Membership Rewards 积分转加拿大航空 Aeroplan 里程。提供 1:1 实时换算、1000 分步长限制、无消费税费及星空联盟兑换亮点。
+description: 在线计算美国运通 Amex Membership Rewards 积分转加拿大航空 Aeroplan 里程。提供 1:1 即时换算、1000 分步长限制、无消费税费及星空联盟兑换亮点。
 schemaType: WebApplication
 eyebrow: 专属转点对 · 02
 datePublished: "2026-11-03"
-dateModified: "2026-11-03"
-lastModified: "2026-11-03"
+dateModified: "2026-11-07"
+lastModified: "2026-11-07"
 breadcrumbs:
   - name: 决策计算器
     url: /calculators/
   - name: Amex 转加航 Aeroplan
 ---
 <h1>Amex 运通积分转加航里程换算器</h1>
-<p class="sub">精确计算美版运通 Amex Membership Rewards® 积分转换为加拿大航空 (Air Canada Aeroplan®) 里程的到账数量。包含 1:1 比例规则、1,000 分起转限制与星空联盟伙伴兑换价值分析。</p>
+<p class="sub">精确计算美版运通 Amex Membership Rewards® 积分转换为加拿大航空 (Air Canada Aeroplan®) 里程的到账数量。包含 1:1 基础比例规则、1,000 分起转限制与星空联盟伙伴兑换价值分析。</p>
 
 <div class="callout" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-  <strong>直接结论：</strong> 美版运通 Amex MR 积分转加拿大航空 Aeroplan 的基础比例为 <strong>1:1</strong>，以 <strong>1,000 点为起转单位与递增步长</strong>（1,000 点 Amex = 1,000 点 Aeroplan）。因为加航为非美籍境外航司，Amex <strong>不收取任何消费税 (Excise Tax Offset)</strong>。转点通常即时到账，转出后<strong>单向不可逆</strong>。
+  <strong>直接结论：</strong> 美版运通 Amex MR 积分转加拿大航空 Aeroplan 的基础比例为 <strong>1:1</strong>，以 <strong>1,000 点为起转单位与递增步长</strong>（1,000 点 Amex = 1,000 点 Aeroplan）。因为加航为非美籍境外航司，Amex <strong>不收取任何消费税 (Excise Tax Offset)</strong>。转点通常即时到账，转出后通常<strong>单向不可逆</strong>。
 </div>
 
 <div class="panel" style="margin-top: 1.5rem;">
+  <div style="margin-bottom: 14px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; color: #475569;">
+    <strong>适用卡种与账户范围：</strong> 适用于持有美版 Membership Rewards 信用卡账户（如运通白金卡、金卡、绿卡、Blue Business Plus 等；仅持有商业借记卡 Rewards Checking 时转点可能受限）。<strong>不适用于中国发行的运通卡</strong>。
+  </div>
+
   <div class="field">
     <label for="amexPoints">持有的 Amex MR 积分余额 <span class="hint">点数</span></label>
     <input type="number" id="amexPoints" value="50000" min="0" step="1000" inputmode="numeric">
@@ -30,7 +34,7 @@ breadcrumbs:
   <div class="field">
     <label for="promotionalBonus">转点加赠比例（若当前有活动） <span class="hint">%</span></label>
     <input type="number" id="promotionalBonus" value="0" min="0" max="100" step="5" inputmode="numeric">
-    <div class="unit">Amex 偶尔会对 Aeroplan 推出 15%–20% 的转点加赠；日常转点请填 0%。</div>
+    <div class="unit">日常基础转点请保持 0%；若账户收到限时 15%–20% 加赠请输入对应百分比。</div>
   </div>
 </div>
 
@@ -46,20 +50,34 @@ breadcrumbs:
         <div class="v" id="outMiles" style="color: var(--gold);">50,000</div>
       </div>
     </div>
-    <div class="note" id="outNote">按 1:1 比例换算，账户剩余：0 点。</div>
+    <div class="transfer-rate-breakdown" style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 0.85rem; color: #475569;">
+      <div><strong>基础转点比例：</strong> <span id="outBaseRatio">1:1</span></div>
+      <div><strong>加赠比例：</strong> <span id="outBonus">0%</span></div>
+      <div><strong>每银行积分最终获得里程：</strong> <span id="outMultiplier" style="color: #0f172a; font-weight: 600;">1.00</span></div>
+    </div>
+    <div class="note" id="outNote" style="margin-top: 8px;">按 1:1 比例换算，账户剩余：0 点。</div>
   </div>
   <div class="perf"></div>
   <div class="stub">
     <div>
-      <div class="verdict-label">参考估值 (1.5¢/点)</div>
+      <div class="verdict-label">参考估值 (1.5¢/点假设)</div>
       <div class="verdict" id="outValue">¥5,250</div>
     </div>
-    <div class="code">比例 1:1</div>
+    <div class="code" id="outCode">比例 1:1</div>
   </div>
 </div>
 
+<div class="next-step-box" style="margin-top: 16px; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; line-height: 1.5;">
+  <strong style="color: #0f172a; display: block; margin-bottom: 4px;">下一步决策推荐：</strong>
+  <ul style="margin: 0; padding-left: 20px; color: #475569;">
+    <li><strong>已有目标加航或星盟航班？</strong> <a href="/calculators/cents-per-point/">计算此机票的实际每点价值（CPP）→</a></li>
+    <li><strong>在买现金票还是用里程之间犹豫？</strong> <a href="/calculators/points-vs-cash/">使用积分 vs 现金比较器（加航兑换伙伴免收燃油附加费）→</a></li>
+    <li><strong>遇上限时加赠想凑整出票？</strong> <a href="/calculators/transfer-bonus/">使用转点加赠计算器精确反推所需 Amex 积分 →</a></li>
+  </ul>
+</div>
+
 <div class="callout" style="margin-top: 1.5rem;">
-  <strong>官方数据源与适用账户：</strong> 核验自 <a href="https://global.americanexpress.com/rewards/transfer" target="_blank" rel="noopener">Amex US 官方转点伙伴页</a>（最近核验：2026年10月）。适用于持有美版 Membership Rewards 信用卡账户（仅持有商业或借记卡 Rewards Checking 时转点可能受限）。
+  <strong>官方数据源与适用账户：</strong> 核验自 <a href="https://global.americanexpress.com/rewards/transfer" target="_blank" rel="noopener">Amex US 官方转点伙伴页</a>（最近核验：2026年11月）。适用于持有美版 Membership Rewards 信用卡账户（仅持有商业或借记卡 Rewards Checking 时转点可能受限）。加赠活动以本人运通后台当前显示为准。
 </div>
 
 <div class="article-content prose" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">
@@ -69,18 +87,19 @@ breadcrumbs:
   <div class="formula-box" style="margin: 1.5rem 0; padding: 1.25rem; background: var(--ink-2); border-left: 4px solid var(--gold); border-radius: 6px;">
     <div><strong>可转整点</strong> = 向下取整(积分总额 ÷ 1,000) × 1,000（最低 1,000）</div>
     <div style="margin-top: 0.5rem;"><strong>到账里程</strong> = 可转整点 × 1.0 × (1 + 加赠百分比)</div>
+    <div><strong>每银行积分最终获得里程</strong> = 1.0 × (1 + 加赠百分比)</div>
     <div style="margin-top: 0.5rem;"><strong>账户留存积分</strong> = 积分总额 - 可转整点</div>
   </div>
 
   <h3>真实计算案例</h3>
-  <p>假设你的 Amex 账户中有 <strong>60,800 积分</strong>，且恰好遇到 <strong>15% 转点加赠</strong>活动：</p>
+  <p>假设你的 Amex 账户中有 <strong>60,800 积分</strong>，且假设当前有 <strong>15% 转点加赠</strong>活动（演示假设）：</p>
   <ul>
     <li><strong>实际转出数量</strong>：向下取整为 60,000 积分（扣除 800 点零头）。</li>
     <li><strong>Amex 留存数量</strong>：800 积分继续保留在账户中。</li>
-    <li><strong>基础到账</strong>：60,000 Aeroplan 点数（1:1）。</li>
-    <li><strong>加赠到账 (15%)</strong>：额外获得 9,000 点数。</li>
-    <li><strong>实际到账总额</strong>：<strong>69,000 点 Aeroplan</strong>。</li>
-    <li><strong>参考出行价值</strong>：按加航 1.5 美分/点行业基准，69,000 里程折合 1,035 美元（按 7.0 汇率约合 <strong>¥7,245</strong>）。</li>
+    <li><strong>基础到账</strong>：60,000 Aeroplan 点数（1:1 基础比例）。</li>
+    <li><strong>加赠到账 (15% 假设)</strong>：额外获得 9,000 点数。</li>
+    <li><strong>实际到账总额</strong>：<strong>69,000 点 Aeroplan</strong>（最终有效倍率：<strong>1.15</strong>）。</li>
+    <li><strong>参考出行价值</strong>：按加航 1.5 美分/点行业参考假设，69,000 里程折合 1,035 美元（按 7.0 演示汇率约合 <strong>¥7,245</strong>）。（注：该估值仅为本次演示假设，非现金回购保证）。</li>
   </ul>
 
   <h2>转点费用、到账时效与核心优势</h2>
@@ -92,12 +111,12 @@ breadcrumbs:
   </ul>
 
   <h2>估值权衡：把 Amex 积分转成加航划算吗？</h2>
-  <p>Amex MR 积分与加航 Aeroplan 的行业基准估值均为 <strong>1.5 美分/点（约 ¥0.105/点）</strong>，属于等价高保值转换。</p>
-  <p><strong>最划算的兑换场景：</strong></p>
+  <p>Amex MR 积分与加航 Aeroplan 的行业参考估值虽然通常都在 <strong>1.5 美分/点（约 ¥0.105/点）</strong> 附近，但相同的基准估值并不能单独证明某次转点必然划算。</p>
+  <p><strong>判断是否划算的正确方法：</strong></p>
   <ol>
-    <li>兑换中美、美欧、亚太之间的星空联盟商务舱/头等舱（现金票极贵，税费极低，CPP 往往超过 2.5¢–4.0¢）；</li>
-    <li>利用加航单程停留玩法一张票玩两个国家；</li>
-    <li>有 15%–20% 官方加赠时转点，直接实现无损放大。</li>
+    <li>使用 <a href="/calculators/cents-per-point/">CPP 计算器</a> 计算目标行程的实际每点价值：<code>(现金票价 − 免票自付税费) ÷ 所需加航里程</code>；</li>
+    <li>如果兑换中美、美欧、亚太之间的星空联盟商务舱/头等舱，CPP 往往达到 2.5¢–4.0¢，远超 1.5¢ 机会成本，转点极其划算；</li>
+    <li>如果兑换普通淡季经济舱，CPP 低于 1.2¢，则不如直接现金购票，保留 Amex 积分的后续灵活性。</li>
   </ol>
 
   <h2>相关工具与深度指南</h2>
@@ -124,22 +143,31 @@ breadcrumbs:
         $('outMiles').textContent = '0';
         $('outNote').textContent = '最低起转量为 1,000 点 Amex 积分。';
         $('outValue').textContent = '¥0';
+        $('outBaseRatio').textContent = '1:1';
+        $('outBonus').textContent = bonus + '%';
+        $('outMultiplier').textContent = '1.00';
+        $('outCode').textContent = '比例 1:1';
         return;
       }
 
       const transferable = Math.floor(pts / 1000) * 1000;
       const remainder = pts - transferable;
-      const miles = Math.round(transferable * 1.0 * (1 + bonus / 100));
+      const multiplier = 1.0 * (1 + bonus / 100);
+      const miles = Math.round(transferable * multiplier);
       const estCny = Math.round(miles * 0.015 * 7.0);
 
       $('outTransferable').textContent = transferable.toLocaleString('zh-CN');
       $('outMiles').textContent = miles.toLocaleString('zh-CN');
       $('outValue').textContent = '¥' + estCny.toLocaleString('zh-CN');
+      $('outBaseRatio').textContent = '1:1';
+      $('outBonus').textContent = bonus + '%';
+      $('outMultiplier').textContent = multiplier.toFixed(2);
+      $('outCode').textContent = bonus > 0 ? `比例 1:${multiplier.toFixed(2)}` : '比例 1:1';
 
       if (remainder > 0) {
-        $('outNote').textContent = `按 1:1 比例转出 ${transferable.toLocaleString('zh-CN')} 点。账户剩余 ${remainder.toLocaleString('zh-CN')} 点零头（起转与步长为 1,000 点）。`;
+        $('outNote').textContent = `按 1:1 基础比例（最终 ${multiplier.toFixed(2)} 倍）转出 ${transferable.toLocaleString('zh-CN')} 点。账户剩余 ${remainder.toLocaleString('zh-CN')} 点零头（起转与步长为 1,000 点）。`;
       } else {
-        $('outNote').textContent = `全部 ${transferable.toLocaleString('zh-CN')} 点全额按 1:1 转出。账户无零头残留。`;
+        $('outNote').textContent = `全部 ${transferable.toLocaleString('zh-CN')} 点全额按 1:1 基础比例（最终 ${multiplier.toFixed(2)} 倍）转出。账户无零头残留。`;
       }
     }
 

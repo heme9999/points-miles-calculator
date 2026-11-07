@@ -6,21 +6,25 @@ description: Calculate how many United MileagePlus miles you receive from Chase 
 schemaType: WebApplication
 eyebrow: Transfer Pairs · 01
 datePublished: "2026-11-03"
-dateModified: "2026-11-03"
-lastModified: "2026-11-03"
+dateModified: "2026-11-07"
+lastModified: "2026-11-07"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
   - name: Chase to United
 ---
 <h1>Chase Points to United Miles Calculator</h1>
-<p class="sub">Calculate exact United MileagePlus miles received from Chase Ultimate Rewards® points. Real-time 1:1 transfer calculator, 1,000-point increment enforcement, and award value analysis.</p>
+<p class="sub">Calculate exact United MileagePlus miles received from Chase Ultimate Rewards® points. Instant calculation 1:1 transfer calculator, 1,000-point increment enforcement, and award value analysis.</p>
 
 <div class="direct-answer">
-  <strong>Direct Answer:</strong> Chase Ultimate Rewards® transfer to United MileagePlus® at a <strong>1:1 ratio in increments of 1,000 points</strong> (1,000 Chase points = 1,000 United miles) with a minimum transfer threshold of 1,000 points. Transfers are typically instant and incur no transfer fees or excise taxes. Transferred points cannot be returned to Chase.
+  <strong>Direct Answer:</strong> Chase Ultimate Rewards® transfer to United MileagePlus® at a <strong>1:1 base ratio in increments of 1,000 points</strong> (1,000 Chase points = 1,000 United miles) with a minimum transfer threshold of 1,000 points. Applicable to eligible US-issued cards. Transfers are typically instant and incur no transfer fees or excise taxes. Transferred points cannot normally be returned to Chase.
 </div>
 
 <div class="panel" style="margin-top: 1.5rem;">
+  <div style="margin-bottom: 14px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; color: #475569;">
+    <strong>Eligible Program Scope:</strong> US-issued Chase cards with transfer capability (Chase Sapphire Preferred®, Chase Sapphire Reserve®, Ink Business Preferred®). Freedom-family cards must combine points with a premium card first. Not applicable to non-US bank cards.
+  </div>
+
   <div class="field">
     <label for="chasePoints">Chase Ultimate Rewards Points Available <span class="hint">Points</span></label>
     <input type="number" id="chasePoints" value="50000" min="0" step="1000" inputmode="numeric">
@@ -30,7 +34,7 @@ breadcrumbs:
   <div class="field">
     <label for="promotionalBonus">Active Promotional Transfer Bonus (if applicable) <span class="hint">%</span></label>
     <input type="number" id="promotionalBonus" value="0" min="0" max="100" step="5" inputmode="numeric">
-    <div class="unit">Chase rarely offers transfer bonuses to United; leave at 0% for standard 1:1 transfers.</div>
+    <div class="unit">Default is 0% for standard 1:1 transfers. Enter promotional bonus % if a targeted or public promotion is active.</div>
   </div>
 </div>
 
@@ -46,20 +50,34 @@ breadcrumbs:
         <div class="v" id="outMiles" style="color: var(--gold);">50,000</div>
       </div>
     </div>
-    <div class="note" id="outNote">Calculation: 50,000 points converted at 1:1 ratio. Remainder left in Chase: 0 points.</div>
+    <div class="transfer-rate-breakdown" style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 0.85rem; color: #475569;">
+      <div><strong>Base transfer ratio:</strong> <span id="outBaseRatio">1:1</span></div>
+      <div><strong>Transfer bonus:</strong> <span id="outBonus">0%</span></div>
+      <div><strong>Effective miles per point:</strong> <span id="outMultiplier" style="color: #0f172a; font-weight: 600;">1.00</span></div>
+    </div>
+    <div class="note" id="outNote" style="margin-top: 8px;">Calculation: 50,000 points converted at 1:1 ratio. Remainder left in Chase: 0 points.</div>
   </div>
   <div class="perf"></div>
   <div class="stub">
     <div>
-      <div class="verdict-label">Estimated Value (1.2¢/mi)</div>
+      <div class="verdict-label">Illustrative Value (@ 1.2¢)</div>
       <div class="verdict" id="outValue">$600</div>
     </div>
-    <div class="code">RATIO 1:1</div>
+    <div class="code" id="outCode">RATIO 1:1</div>
   </div>
 </div>
 
+<div class="next-step-box" style="margin-top: 16px; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; line-height: 1.5;">
+  <strong style="color: #0f172a; display: block; margin-bottom: 4px;">Next Steps for This Transfer:</strong>
+  <ul style="margin: 0; padding-left: 20px; color: #475569;">
+    <li><strong>Have a specific United award flight?</strong> <a href="/en/calculators/cents-per-point/">Calculate your flight's actual Cents Per Point (CPP) →</a></li>
+    <li><strong>Comparing cash fare vs United award taxes?</strong> <a href="/en/calculators/points-vs-cash/">Compare Points vs Cash taking into account fees →</a></li>
+    <li><strong>Need an exact mileage amount?</strong> <a href="/en/calculators/transfer-bonus/">Calculate required Chase points with Transfer Bonus Calculator →</a></li>
+  </ul>
+</div>
+
 <div class="callout" style="margin-top: 1.5rem;">
-  <strong>Official Source &amp; Policy:</strong> Verified via <a href="https://www.chase.com/personal/credit-cards/education/basics/how-to-transfer-chase-ultimate-rewards-points" target="_blank" rel="noopener">Chase Official Rewards Education Guide</a> (Last checked: October 2026). Requires an eligible card: Chase Sapphire Preferred®, Chase Sapphire Reserve®, or Ink Business Preferred®.
+  <strong>Official Source &amp; Policy:</strong> Verified via <a href="https://www.chase.com/personal/credit-cards/education/basics/how-to-transfer-chase-ultimate-rewards-points" target="_blank" rel="noopener">Chase Official Rewards Education Guide</a> (Last checked: November 2026). Requires an eligible card: Chase Sapphire Preferred®, Chase Sapphire Reserve®, or Ink Business Preferred®. Account transfer rules are subject to individual cardholder agreements.
 </div>
 
 <div class="article-content prose" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">
@@ -69,33 +87,33 @@ breadcrumbs:
   <div class="formula-box" style="margin: 1.5rem 0; padding: 1.25rem; background: var(--ink-2); border-left: 4px solid var(--gold); border-radius: 6px;">
     <div><strong>Transferable Points</strong> = Floor(Total Points ÷ 1,000) × 1,000 (minimum 1,000)</div>
     <div style="margin-top: 0.5rem;"><strong>United Miles Received</strong> = Transferable Points × 1.0 × (1 + Promotional Bonus %)</div>
+    <div style="margin-top: 0.5rem;"><strong>Effective Miles per Point</strong> = 1.0 × (1 + Promotional Bonus %)</div>
     <div style="margin-top: 0.5rem;"><strong>Points Remaining in Chase</strong> = Total Points - Transferable Points</div>
   </div>
 
   <h3>Worked Real-World Example</h3>
-  <p>Suppose you have <strong>52,400 Chase Ultimate Rewards points</strong>:</p>
+  <p>Suppose you have <strong>52,400 Chase Ultimate Rewards points</strong> and standard 0% promotional bonus:</p>
   <ul>
     <li><strong>Eligible Transferable Block</strong>: 52,000 points (rounded down to nearest 1,000).</li>
     <li><strong>Leftover in Chase</strong>: 400 points remain in your Chase account.</li>
-    <li><strong>United Miles Credited</strong>: 52,000 MileagePlus miles (at standard 1:1 ratio).</li>
-    <li><strong>Estimated Travel Purchasing Power</strong>: At a typical 1.2¢ benchmark valuation, 52,000 United miles represent approximately <strong>$624</strong> in travel value.</li>
+    <li><strong>United Miles Credited</strong>: 52,000 MileagePlus miles (at standard 1:1 base ratio, effective multiplier 1.00).</li>
+    <li><strong>Estimated Travel Purchasing Power</strong>: At an illustrative 1.2¢ benchmark valuation assumption, 52,000 United miles represent approximately <strong>$624</strong> in travel value.</li>
   </ul>
 
   <h2>Transfer Rules, Fees, and Friction Points</h2>
   <ul>
-    <li><strong>Excise Fee Offset</strong>: <strong>$0</strong>. Unlike American Express (which charges $0.0006 per point up to $99 to transfer to US domestic airlines), Chase absorbs all federal fees. Transferring to United is completely free.</li>
-    <li><strong>Transfer Speed</strong>: Transfers typically process <strong>instantly</strong> (under 5 minutes). Ensure your MileagePlus name matches your Chase account exactly to avoid security delays.</li>
-    <li><strong>One-Way Irreversibility</strong>: Once transferred, miles cannot be converted back into Chase Ultimate Rewards points. Always confirm award space on United.com before transferring.</li>
+    <li><strong>Excise Fee Offset</strong>: <strong>$0</strong>. Unlike American Express (which charges $0.0006 per point up to $99 to transfer to US domestic airlines), Chase absorbs all federal excise fees. Transferring to United is completely free of cash service fees.</li>
+    <li><strong>Transfer Speed</strong>: Transfers typically process <strong>instantly</strong> (under 5 minutes in standard conditions). Ensure your MileagePlus member name matches your Chase account name exactly to avoid security delays.</li>
+    <li><strong>One-Way Irreversibility</strong>: Once transferred, miles cannot normally be converted back into Chase Ultimate Rewards points. Always confirm award space on United.com before transferring.</li>
   </ul>
 
   <h2>Valuation Trade-Off: Is Transferring Chase Points to United Worth It?</h2>
-  <p>Chase Ultimate Rewards points have a baseline market valuation of <strong>1.5¢ per point</strong> due to transfer flexibility. United MileagePlus miles carry an estimated valuation of <strong>1.2¢ per mile</strong> due to dynamic award pricing.</p>
-  <p>Transferring is generally <strong>worthwhile</strong> when:</p>
+  <p>Chase Ultimate Rewards points have an editable baseline reference of <strong>1.5¢ per point</strong> due to transfer flexibility. United MileagePlus miles carry an illustrative editorial benchmark of <strong>1.2¢ per mile</strong> under dynamic award pricing.</p>
+  <p>Identical or higher assumed valuations alone do not prove a transfer is worthwhile. You should calculate whether your specific flight redemption yields a net CPP higher than your baseline opportunity cost:</p>
   <ol>
-    <li>You are booking a specific United award ticket yielding a CPP higher than 1.5¢ (e.g., saver domestic flights during peak holiday periods or international Star Alliance partner flights).</li>
-    <li>You need a small top-off (e.g., transferring 5,000 points) to unlock a high-value award ticket you already have miles for.</li>
+    <li>Calculate net value: <code>[(Cash Airfare - Award Taxes) ÷ Required Miles] × 100</code> using our <a href="/en/calculators/cents-per-point/">CPP Calculator</a>.</li>
+    <li>Compare against the 1.0¢ cash floor or portal Points Boost price using our <a href="/en/calculators/points-vs-cash/">Points vs Cash Calculator</a>.</li>
   </ol>
-  <p>Transferring is <strong>not worthwhile</strong> if the award redemption yields less than 1.0¢ per point, as you could redeem points directly for cash back or travel portal bookings at a guaranteed 1.0¢ baseline.</p>
 
   <h2>Related Decision Tools &amp; Guides</h2>
   <ul>
@@ -121,22 +139,31 @@ breadcrumbs:
         $('outMiles').textContent = '0';
         $('outNote').textContent = 'Minimum transfer threshold is 1,000 Chase points.';
         $('outValue').textContent = '$0';
+        $('outBaseRatio').textContent = '1:1';
+        $('outBonus').textContent = bonus + '%';
+        $('outMultiplier').textContent = '1.00';
+        $('outCode').textContent = 'RATIO 1:1';
         return;
       }
 
       const transferable = Math.floor(pts / 1000) * 1000;
       const remainder = pts - transferable;
-      const miles = Math.round(transferable * 1.0 * (1 + bonus / 100));
+      const multiplier = 1.0 * (1 + bonus / 100);
+      const miles = Math.round(transferable * multiplier);
       const estValue = (miles * 0.012).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
       $('outTransferable').textContent = transferable.toLocaleString('en-US');
       $('outMiles').textContent = miles.toLocaleString('en-US');
       $('outValue').textContent = estValue;
+      $('outBaseRatio').textContent = '1:1';
+      $('outBonus').textContent = bonus + '%';
+      $('outMultiplier').textContent = multiplier.toFixed(2);
+      $('outCode').textContent = bonus > 0 ? `RATIO 1:${multiplier.toFixed(2)}` : 'RATIO 1:1';
 
       if (remainder > 0) {
-        $('outNote').textContent = `Transferred ${transferable.toLocaleString('en-US')} points at 1:1. ${remainder.toLocaleString('en-US')} points remain in Chase (increments of 1,000).`;
+        $('outNote').textContent = `Transferred ${transferable.toLocaleString('en-US')} points at 1:1 base (effective ${multiplier.toFixed(2)}x). ${remainder.toLocaleString('en-US')} points remain in Chase (increments of 1,000).`;
       } else {
-        $('outNote').textContent = `Transferred all ${transferable.toLocaleString('en-US')} points at 1:1. 0 points remaining.`;
+        $('outNote').textContent = `Transferred all ${transferable.toLocaleString('en-US')} points at 1:1 base (effective ${multiplier.toFixed(2)}x). 0 points remaining.`;
       }
     }
 

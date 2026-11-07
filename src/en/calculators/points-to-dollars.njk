@@ -6,8 +6,8 @@ description: Estimate the travel value of airline miles in seconds. Enter your m
 schemaType: WebApplication
 eyebrow: Tools · 05
 datePublished: "2026-08-14"
-dateModified: "2026-10-05"
-lastModified: "2026-10-05"
+dateModified: "2026-11-07"
+lastModified: "2026-11-07"
 breadcrumbs:
   - name: Calculators
     url: /en/calculators/
@@ -22,7 +22,36 @@ breadcrumbs:
 
 <div class="panel" style="margin-top: 0;">
   <div class="field">
-    <label for="totalPoints">Airline miles balance (demo input)<span class="hint" id="hintTotal">Miles</span></label>
+    <label for="airlineProgram">
+      <span>1. Select Airline Program</span>
+      <span class="hint" id="hintProgram">Frequent Flyer Program</span>
+    </label>
+    <select id="airlineProgram" aria-describedby="hintProgram">
+      <option value="custom" selected>Custom / Other Airline Program (Enter custom valuation)</option>
+      <option value="united">United Airlines (MileagePlus) · 1.2¢ / mile</option>
+      <option value="aeroplan">Air Canada (Aeroplan) · 1.5¢ / mile</option>
+      <option value="asiamiles">Cathay Pacific (Asia Miles) · 1.3¢ / mile</option>
+      <option value="avios">British Airways / Qatar (Avios) · 1.3¢ / mile</option>
+    </select>
+  </div>
+
+  <div id="programMetaBox" class="program-meta-box" style="margin-bottom: 16px; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; line-height: 1.5; color: #334155;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;">
+      <strong id="metaProgramName" style="color: #0f172a; font-size: 0.9rem;">Custom Airline / User-Defined Rate</strong>
+      <span id="metaValuationType" style="background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">User Custom</span>
+    </div>
+    <div id="metaScope" style="margin-bottom: 6px; color: #475569;">Applicable scope: Enter any target airline miles and custom benchmark valuation.</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8rem; color: #64748b;">
+      <span id="metaSource">Source: <a href="/en/values/" id="metaSourceLink">Editorial Valuation Benchmarks</a></span>
+      <span id="metaVerified">Verified: November 2026</span>
+    </div>
+    <div style="margin-top: 6px; font-size: 0.78rem; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 4px;">
+      * Informational estimate for educational modeling. Not a live airline quote, guaranteed cashout value, or cash purchase offer.
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="totalPoints">2. Airline miles balance (demo input)<span class="hint" id="hintTotal">Miles</span></label>
     <input type="number" id="totalPoints" value="150000" min="0" step="1" inputmode="numeric" aria-describedby="hintTotal unitTotal">
     <div class="unit" id="unitTotal" style="margin-bottom: 8px;">Default 150,000 miles is an editable example, not an auto-detected balance. Type your own balance or pick a preset below:</div>
     <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
@@ -88,6 +117,15 @@ breadcrumbs:
     </div>
     <div class="note" id="explain"></div>
   </div>
+</div>
+
+<div class="next-step-box" style="margin-top: 20px; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.88rem; line-height: 1.5;">
+  <strong style="display: block; margin-bottom: 6px; color: #0f172a;">Next Steps for Your Award Travel:</strong>
+  <ul style="margin: 0; padding-left: 20px; color: #475569;">
+    <li><strong>Have a specific flight ticket?</strong> <a href="/en/calculators/cents-per-point/">Calculate your flight's actual Cents Per Point (CPP) →</a></li>
+    <li><strong>Deciding between cash airfare and using miles?</strong> <a href="/en/calculators/points-vs-cash/">Compare Points vs Cash taking into account fees and forgone rewards →</a></li>
+    <li><strong>Need to convert bank points into miles first?</strong> <a href="/en/calculators/points-to-miles-converter/">Calculate transferable points with our Points to Miles Converter →</a></li>
+  </ul>
 </div>
 
 <div class="currency-selector" style="margin-top: 16px; margin-bottom: 20px; text-align: right;"><button id="btnShare" class="btn-share">Share this calculation</button></div>
@@ -309,6 +347,83 @@ breadcrumbs:
 <script>
   const $ = id => document.getElementById(id);
 
+  const PROGRAM_DATA = {
+    custom: {
+      name: 'Custom Airline / User-Defined Rate',
+      type: 'User Custom',
+      scope: 'Applicable scope: Enter any target airline miles and custom benchmark valuation.',
+      sourceText: 'Editorial Valuation Benchmarks',
+      sourceUrl: '/en/values/',
+      verified: 'November 2026',
+      defaultCpp: null
+    },
+    united: {
+      name: 'United Airlines (MileagePlus)',
+      type: 'Editorial Benchmark',
+      scope: 'Applicable scope: United Airlines flights, Star Alliance partner awards (domestic US & international).',
+      sourceText: 'United Miles Value Guide & MileagePlus Rules',
+      sourceUrl: '/en/calculators/united-miles-value-calculator/',
+      verified: 'November 2026',
+      defaultCpp: 1.2
+    },
+    aeroplan: {
+      name: 'Air Canada (Aeroplan)',
+      type: 'Editorial Benchmark',
+      scope: 'Applicable scope: Air Canada flights & Star Alliance/partner awards (no carrier fuel surcharges).',
+      sourceText: 'Aeroplan Valuation Guide',
+      sourceUrl: '/en/values/aeroplan-points/',
+      verified: 'November 2026',
+      defaultCpp: 1.5
+    },
+    asiamiles: {
+      name: 'Cathay Pacific (Asia Miles)',
+      type: 'Editorial Benchmark',
+      scope: 'Applicable scope: Cathay Pacific & oneworld partner award flights (distance-based zone chart).',
+      sourceText: 'Asia Miles Valuation Guide',
+      sourceUrl: '/en/blog/yazhouwanlitong-licheng-jiazhi/',
+      verified: 'November 2026',
+      defaultCpp: 1.3
+    },
+    avios: {
+      name: 'British Airways / Qatar (Avios)',
+      type: 'Editorial Benchmark',
+      scope: 'Applicable scope: British Airways, Qatar Airways, Iberia (distance-based short-haul & Qsuite awards).',
+      sourceText: 'Avios Points Valuation Guide',
+      sourceUrl: '/en/values/avios/',
+      verified: 'November 2026',
+      defaultCpp: 1.3
+    }
+  };
+
+  function updateProgramMeta(progKey, isCustomValuation = false) {
+    const data = PROGRAM_DATA[progKey] || PROGRAM_DATA.custom;
+    const nameEl = $('metaProgramName');
+    const typeEl = $('metaValuationType');
+    const scopeEl = $('metaScope');
+    const sourceLink = $('metaSourceLink');
+    const verifiedEl = $('metaVerified');
+
+    if (nameEl) nameEl.textContent = data.name;
+    if (scopeEl) scopeEl.textContent = data.scope;
+    if (sourceLink) {
+      sourceLink.textContent = data.sourceText;
+      sourceLink.href = data.sourceUrl;
+    }
+    if (verifiedEl) verifiedEl.textContent = 'Verified: ' + data.verified;
+
+    if (typeEl) {
+      if (isCustomValuation || progKey === 'custom') {
+        typeEl.textContent = 'Custom Valuation';
+        typeEl.style.background = '#fef3c7';
+        typeEl.style.color = '#92400e';
+      } else {
+        typeEl.textContent = data.type;
+        typeEl.style.background = '#e2e8f0';
+        typeEl.style.color = '#475569';
+      }
+    }
+  }
+
   function updatePresetButtonsAria(currentPoints) {
     const targetStr = String(currentPoints);
     document.querySelectorAll('.btn-balance-preset').forEach(btn => {
@@ -328,9 +443,28 @@ breadcrumbs:
     });
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // 1. Check URL for program
+  const progParam = (urlParams.get('program') || urlParams.get('airlineProgram') || '').toLowerCase();
+  if (progParam && PROGRAM_DATA[progParam] && $('airlineProgram')) {
+    $('airlineProgram').value = progParam;
+    if (PROGRAM_DATA[progParam].defaultCpp !== null) {
+      $('cppValue').value = PROGRAM_DATA[progParam].defaultCpp;
+      if (['0.6', '1.2', '1.5', '2.0'].includes(String(PROGRAM_DATA[progParam].defaultCpp))) {
+        $('presetValuation').value = String(PROGRAM_DATA[progParam].defaultCpp);
+      } else {
+        $('presetValuation').value = 'custom';
+      }
+    }
+    updateProgramMeta(progParam, false);
+  } else {
+    updateProgramMeta('custom', false);
+  }
+
+  // 2. Parse balance params
   const parseParam = (key, elId, maxVal = 1000000000) => {
-    const params = new URLSearchParams(window.location.search);
-    let val = parseFloat(params.get(key));
+    let val = parseFloat(urlParams.get(key));
     if (!isNaN(val) && isFinite(val) && val >= 0 && val <= maxVal) {
       const el = $(elId);
       if (el) el.value = val;
@@ -338,23 +472,34 @@ breadcrumbs:
   };
   parseParam('totalPoints', 'totalPoints');
   parseParam('points', 'totalPoints');
-  parseParam('cppValue', 'cppValue');
-  parseParam('valuation', 'cppValue');
+  parseParam('miles', 'totalPoints');
 
-  const parseScenarioParam = () => {
-    const params = new URLSearchParams(window.location.search);
-    const scen = params.get('presetValuation') || params.get('scenario');
-    if (scen && $('presetValuation')) {
-      const validOptions = ['custom', '0.6', '1.2', '1.5', '2.0'];
-      if (validOptions.includes(scen)) {
-        $('presetValuation').value = scen;
-        if (scen !== 'custom') {
-          $('cppValue').value = scen;
-        }
+  // 3. Parse scenario parameter
+  const scenParam = urlParams.get('presetValuation') || urlParams.get('scenario');
+  if (scenParam && $('presetValuation')) {
+    const validOptions = ['custom', '0.6', '1.2', '1.5', '2.0'];
+    if (validOptions.includes(scenParam)) {
+      $('presetValuation').value = scenParam;
+      if (scenParam !== 'custom') {
+        $('cppValue').value = scenParam;
       }
     }
-  };
-  parseScenarioParam();
+  }
+
+  // 4. Parse explicit valuation param (Highest Priority - overrides program/scenario preset)
+  let explicitCpp = parseFloat(urlParams.get('cpp') || urlParams.get('cppValue') || urlParams.get('valuation'));
+  if (!isNaN(explicitCpp) && isFinite(explicitCpp) && explicitCpp > 0) {
+    $('cppValue').value = explicitCpp;
+    const scenStr = String(explicitCpp);
+    if (['0.6', '1.2', '1.5', '2.0'].includes(scenStr)) {
+      $('presetValuation').value = scenStr;
+    } else {
+      $('presetValuation').value = 'custom';
+    }
+    const currentProg = $('airlineProgram') ? $('airlineProgram').value : 'custom';
+    const isOverride = currentProg !== 'custom' && PROGRAM_DATA[currentProg]?.defaultCpp !== explicitCpp;
+    updateProgramMeta(currentProg, isOverride || currentProg === 'custom');
+  }
 
   function calcDollars(){
     let P = parseFloat($('totalPoints').value) || 0;
@@ -378,6 +523,26 @@ breadcrumbs:
     $('explain').textContent = `Balance: ${P.toLocaleString('en-US')} miles | Valuation: ${V}¢/mile (editable assumption) | Estimated travel value: $${total.toLocaleString('en-US', {maximumFractionDigits:0})}. This is an illustrative modeled travel value, not a guaranteed cashout amount or cash redemption rate.`;
   }
 
+  // Airline Program change
+  if ($('airlineProgram')) {
+    $('airlineProgram').addEventListener('change', e => {
+      const prog = e.target.value;
+      if (prog !== 'custom' && PROGRAM_DATA[prog]?.defaultCpp !== null) {
+        const cpp = PROGRAM_DATA[prog].defaultCpp;
+        $('cppValue').value = cpp;
+        if (['0.6', '1.2', '1.5', '2.0'].includes(String(cpp))) {
+          $('presetValuation').value = String(cpp);
+        } else {
+          $('presetValuation').value = 'custom';
+        }
+        updateProgramMeta(prog, false);
+      } else {
+        updateProgramMeta('custom', true);
+      }
+      calcDollars();
+    });
+  }
+
   // Preset balance buttons
   document.querySelectorAll('.btn-balance-preset').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -391,18 +556,25 @@ breadcrumbs:
   $('presetValuation').addEventListener('change', e => {
     if(e.target.value !== 'custom'){
       $('cppValue').value = e.target.value;
+      const curProg = $('airlineProgram') ? $('airlineProgram').value : 'custom';
+      const isCustom = curProg !== 'custom' && PROGRAM_DATA[curProg]?.defaultCpp !== parseFloat(e.target.value);
+      updateProgramMeta(curProg, isCustom || curProg === 'custom');
       calcDollars();
     }
   });
 
   $('cppValue').addEventListener('input', () => {
     const val = $('cppValue').value;
+    const numVal = parseFloat(val);
     const matched = ['0.6', '1.2', '1.5', '2.0'].includes(val);
     if (!matched) {
       $('presetValuation').value = 'custom';
     } else {
       $('presetValuation').value = val;
     }
+    const curProg = $('airlineProgram') ? $('airlineProgram').value : 'custom';
+    const isCustom = curProg !== 'custom' && PROGRAM_DATA[curProg]?.defaultCpp !== numVal;
+    updateProgramMeta(curProg, isCustom || curProg === 'custom');
     calcDollars();
   });
 
@@ -419,9 +591,12 @@ breadcrumbs:
       const p = parseFloat($('totalPoints').value) || 0;
       const v = parseFloat($('cppValue').value) || 0;
       const scen = $('presetValuation').value;
+      const prog = $('airlineProgram') ? $('airlineProgram').value : 'custom';
+
       if (p > 0) url.searchParams.set('totalPoints', p);
       if (v > 0) url.searchParams.set('cppValue', v);
       if (scen && scen !== 'custom') url.searchParams.set('scenario', scen);
+      if (prog && prog !== 'custom') url.searchParams.set('program', prog);
 
       navigator.clipboard.writeText(url.toString()).then(() => {
         const toast = $('toast');

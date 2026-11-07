@@ -6,21 +6,25 @@ description: 在线计算第一资本 Capital One Miles 转换为长荣航空 In
 schemaType: WebApplication
 eyebrow: 专属转点对 · 04
 datePublished: "2026-11-03"
-dateModified: "2026-11-03"
-lastModified: "2026-11-03"
+dateModified: "2026-11-07"
+lastModified: "2026-11-07"
 breadcrumbs:
   - name: 决策计算器
     url: /calculators/
   - name: Capital One 转长荣
 ---
 <h1>Capital One 转长荣航空里程换算器</h1>
-<p class="sub">精确计算第一资本 Capital One Miles 转长荣航空 (EVA Air Infinity MileageLands®) 里程的到账数量。内置官方 4:3 转换比例、1,000 分起转限制与北美跨太平洋商务舱兑换价值分析。</p>
+<p class="sub">精确计算第一资本 Capital One Miles 转长荣航空 (EVA Air Infinity MileageLands®) 里程的到账数量。即时换算配合官方 4:3 转换比例、1,000 分起转限制与北美跨太平洋商务舱兑换价值分析。</p>
 
 <div class="callout" style="margin-top: 1.5rem; margin-bottom: 2rem;">
   <strong>直接结论：</strong> Capital One 里程转长荣航空里程的官方比例为 <strong>4:3</strong>（即每 1,000 点 C1 里程转换为 750 点长荣里程，折合每点 0.75 里程）。Capital One <strong>不收取任何转点手续费</strong>。转点通常需 <strong>24 至 48 小时</strong>完成批处理入账，转出后<strong>单向不可逆</strong>。
 </div>
 
 <div class="panel" style="margin-top: 1.5rem;">
+  <div style="margin-bottom: 14px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; color: #475569;">
+    <strong>适用卡种与账户范围：</strong>适用于具备转点资格的美版 Capital One 信用卡（Venture, Venture X, VentureOne, Spark Miles）。不适用于非美国发行账户。
+  </div>
+
   <div class="field">
     <label for="caponePoints">持有的 Capital One 里程余额 <span class="hint">里程</span></label>
     <input type="number" id="caponePoints" value="50000" min="0" step="1000" inputmode="numeric">
@@ -30,7 +34,7 @@ breadcrumbs:
   <div class="field">
     <label for="promotionalBonus">转点加赠比例（若当前有活动） <span class="hint">%</span></label>
     <input type="number" id="promotionalBonus" value="0" min="0" max="100" step="5" inputmode="numeric">
-    <div class="unit">日常标准 4:3 转点请填 0%。</div>
+    <div class="unit">日常标准 4:3 转点请填 0%。若有促销活动请输入加赠比例。</div>
   </div>
 </div>
 
@@ -46,7 +50,12 @@ breadcrumbs:
         <div class="v" id="outMiles" style="color: var(--gold);">37,500</div>
       </div>
     </div>
-    <div class="note" id="outNote">按 4:3 比例换算（每 1000 点换 750 里程），账户剩余：0 点。</div>
+    <div class="transfer-rate-breakdown" style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 0.85rem; color: #475569;">
+      <div><strong>基础转点比例：</strong> <span id="outBaseRatio">4:3 (0.75x)</span></div>
+      <div><strong>转点加赠比例：</strong> <span id="outBonus">0%</span></div>
+      <div><strong>每银行积分最终获得里程：</strong> <span id="outMultiplier" style="color: #0f172a; font-weight: 600;">0.75</span></div>
+    </div>
+    <div class="note" id="outNote" style="margin-top: 8px;">按 4:3 比例换算（每 1000 点换 750 里程），账户剩余：0 点。</div>
   </div>
   <div class="perf"></div>
   <div class="stub">
@@ -54,12 +63,21 @@ breadcrumbs:
       <div class="verdict-label">参考估值 (1.4¢/里)</div>
       <div class="verdict" id="outValue">¥3,675</div>
     </div>
-    <div class="code">比例 4:3 (0.75)</div>
+    <div class="code" id="outCode">比例 4:3 (0.75)</div>
   </div>
 </div>
 
+<div class="next-step-box" style="margin-top: 16px; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; line-height: 1.5;">
+  <strong style="color: #0f172a; display: block; margin-bottom: 4px;">转点后决策与下一步操作：</strong>
+  <ul style="margin: 0; padding-left: 20px; color: #475569;">
+    <li><strong>检查皇玺桂冠舱保本单点价值：</strong> <a href="/calculators/cents-per-point/">计算长荣机票实际兑换价值（目标 &gt; 2.0¢） →</a></li>
+    <li><strong>对比跨太平洋现金买票 vs 长荣里程兑换：</strong> <a href="/calculators/points-vs-cash/">使用积分 vs 现金对比计算器 →</a></li>
+    <li><strong>多航司横向对比换算：</strong> <a href="/calculators/points-to-miles-converter/">使用全功能积分转里程换算器 →</a></li>
+  </ul>
+</div>
+
 <div class="callout" style="margin-top: 1.5rem;">
-  <strong>官方数据源与说明：</strong> 核验自 <a href="https://www.capitalone.com/learn-grow/money-management/venture-miles-transfer-partnerships/" target="_blank" rel="noopener">Capital One 官方合作伙伴指南</a>（最近核验：2026年10月）。长荣航空为官方合作航司，兑换比例为 4:3。
+  <strong>官方数据源与说明：</strong> 核验自 <a href="https://www.capitalone.com/learn-grow/money-management/venture-miles-transfer-partnerships/" target="_blank" rel="noopener">Capital One 官方合作伙伴指南</a>（最近核验：2026年11月）。长荣航空为官方合作航司，兑换比例为 4:3；1,000 点步长为测算基准，实际请以银行 App 显示为准。
 </div>
 
 <div class="article-content prose" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">
@@ -69,6 +87,7 @@ breadcrumbs:
   <div class="formula-box" style="margin: 1.5rem 0; padding: 1.25rem; background: var(--ink-2); border-left: 4px solid var(--gold); border-radius: 6px;">
     <div><strong>可转整点</strong> = 向下取整(里程总额 ÷ 1,000) × 1,000（最低 1,000）</div>
     <div style="margin-top: 0.5rem;"><strong>长荣到账里程</strong> = (可转整点 ÷ 1,000) × 750 × (1 + 加赠百分比)</div>
+    <div><strong>每银行积分实际获得里程</strong> = 0.75 × (1 + 加赠百分比)</div>
     <div style="margin-top: 0.5rem;"><strong>账户留存里程</strong> = 里程总额 - 可转整点</div>
   </div>
 
@@ -78,7 +97,7 @@ breadcrumbs:
     <li><strong>实际转出数量</strong>：向下取整为 100,000 里程（500 点零头留存）。</li>
     <li><strong>Capital One 留存</strong>：500 里程继续保留在账户中。</li>
     <li><strong>按 4:3 比例换算</strong>：100,000 × 0.75 = <strong>75,000 长荣航空里程</strong>。</li>
-    <li><strong>实际到账总额</strong>：<strong>75,000 Infinity MileageLands 里程</strong>。</li>
+    <li><strong>实际到账总额</strong>：<strong>75,000 Infinity MileageLands 里程</strong>（有效系数：<strong>0.75</strong>）。</li>
     <li><strong>参考出行价值</strong>：按长荣 1.4 美分/里行业基准，75,000 里程折合 1,050 美元（按 7.0 汇率约合 <strong>¥7,350</strong>）。</li>
   </ul>
 
@@ -111,6 +130,12 @@ breadcrumbs:
     function calculate() {
       const pts = parseInt(ptsInput.value, 10) || 0;
       const bonus = parseFloat(bonusInput.value) || 0;
+      const mult = (0.75 * (1 + bonus / 100));
+
+      $('outBaseRatio').textContent = '4:3 (0.75x)';
+      $('outBonus').textContent = bonus + '%';
+      $('outMultiplier').textContent = mult.toFixed(2).replace(/\.00$/, '');
+      $('outCode').textContent = bonus > 0 ? `加赠 ${bonus}% (${mult.toFixed(2)}x)` : '比例 4:3 (0.75)';
 
       if (pts < 1000) {
         $('outTransferable').textContent = '0';

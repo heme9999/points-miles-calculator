@@ -6,21 +6,25 @@ description: 在线计算美版运通 Amex Membership Rewards 积分转国泰航
 schemaType: WebApplication
 eyebrow: 专属转点对 · 03
 datePublished: "2026-11-03"
-dateModified: "2026-11-03"
-lastModified: "2026-11-03"
+dateModified: "2026-11-07"
+lastModified: "2026-11-07"
 breadcrumbs:
   - name: 决策计算器
     url: /calculators/
   - name: Amex 转国泰
 ---
 <h1>Amex 运通积分转国泰亚洲万里通换算器</h1>
-<p class="sub">精确计算美版运通 Amex Membership Rewards® 积分转换为国泰航空 (Cathay Pacific Asia Miles™) 里程的到账数量。严格内置官方 5:4 转换比例、1,000 点递增限制与寰宇一家兑换盈亏平衡分析。</p>
+<p class="sub">精确计算美版运通 Amex Membership Rewards® 积分转换为国泰航空 (Cathay Pacific Asia Miles™) 里程的到账数量。严格内置官方 5:4 基础转换比例、1,000 点递增限制与寰宇一家兑换盈亏平衡分析。</p>
 
 <div class="callout" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-  <strong>直接结论：</strong> 美版运通 Amex MR 积分转国泰亚洲万里通的官方比例为 <strong>5:4</strong>（即每 1,000 点 Amex 转换为 800 里程，折合每点 0.8 里程），以 <strong>1,000 点为起转单位与递增步长</strong>。加航/国泰等境外航司 <strong>无需支付任何 Amex 联邦消费税</strong>。转点通常在几分钟到 24 小时内到账，<strong>单向不可逆</strong>。特别提醒：<strong>Chase UR 无法直接转点给国泰航空</strong>。
+  <strong>直接结论：</strong> 美版运通 Amex MR 积分转国泰亚洲万里通的官方基础比例为 <strong>5:4</strong>（即每 1,000 点 Amex 转换为 800 里程，折合每点 0.80 里程），以 <strong>1,000 点为起转单位与递增步长</strong>。加航/国泰等境外航司 <strong>无需支付任何 Amex 联邦消费税</strong>。转点通常在几分钟到 24 小时内到账，<strong>单向不可逆</strong>。特别提醒：<strong>Chase UR 无法直接转点给国泰航空</strong>。
 </div>
 
 <div class="panel" style="margin-top: 1.5rem;">
+  <div style="margin-bottom: 14px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; color: #475569;">
+    <strong>适用卡种与账户范围：</strong> 适用于持有美版 Membership Rewards 信用卡账户。<em>注：中国发行的运通卡或联名卡受各自发卡行规则限制，无法使用该通道。Chase UR 无法转入国泰。</em>
+  </div>
+
   <div class="field">
     <label for="amexPoints">持有的 Amex MR 积分余额 <span class="hint">点数</span></label>
     <input type="number" id="amexPoints" value="50000" min="0" step="1000" inputmode="numeric">
@@ -30,7 +34,7 @@ breadcrumbs:
   <div class="field">
     <label for="promotionalBonus">转点加赠比例（若当前有活动） <span class="hint">%</span></label>
     <input type="number" id="promotionalBonus" value="0" min="0" max="100" step="5" inputmode="numeric">
-    <div class="unit">Amex 偶有 15%–20% 加赠活动；日常转点请保持 0%。</div>
+    <div class="unit">日常基础转点请保持 0%；若运通账户收到限时加赠请输入对应百分比。</div>
   </div>
 </div>
 
@@ -46,29 +50,44 @@ breadcrumbs:
         <div class="v" id="outMiles" style="color: var(--gold);">40,000</div>
       </div>
     </div>
-    <div class="note" id="outNote">按 5:4 比例换算（每 1000 点换 800 里程），账户剩余：0 点。</div>
+    <div class="transfer-rate-breakdown" style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 0.85rem; color: #475569;">
+      <div><strong>基础转点比例：</strong> <span id="outBaseRatio">5:4 (0.80x)</span></div>
+      <div><strong>加赠比例：</strong> <span id="outBonus">0%</span></div>
+      <div><strong>每银行积分最终获得里程：</strong> <span id="outMultiplier" style="color: #0f172a; font-weight: 600;">0.80</span></div>
+    </div>
+    <div class="note" id="outNote" style="margin-top: 8px;">按 5:4 比例换算（每 1000 点换 800 里程），账户剩余：0 点。</div>
   </div>
   <div class="perf"></div>
   <div class="stub">
     <div>
-      <div class="verdict-label">参考估值 (1.3¢/里)</div>
+      <div class="verdict-label">参考估值 (1.3¢/里假设)</div>
       <div class="verdict" id="outValue">¥3,640</div>
     </div>
-    <div class="code">比例 5:4 (0.8)</div>
+    <div class="code" id="outCode">比例 5:4 (0.8)</div>
   </div>
 </div>
 
+<div class="next-step-box" style="margin-top: 16px; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; line-height: 1.5;">
+  <strong style="color: #0f172a; display: block; margin-bottom: 4px;">下一步决策推荐：</strong>
+  <ul style="margin: 0; padding-left: 20px; color: #475569;">
+    <li><strong>核对目标国泰机票是否划算：</strong> <a href="/calculators/cents-per-point/">计算此机票的实际每点价值（CPP，目标 &gt; 1.9¢ 盈亏平衡）→</a></li>
+    <li><strong>在买现金票还是用里程之间犹豫？</strong> <a href="/calculators/points-vs-cash/">使用积分 vs 现金比较器核算自付税费 →</a></li>
+    <li><strong>需要计算 5:4 比例下需要转多少积分？</strong> <a href="/calculators/transfer-bonus/">使用转点加赠计算器精确反推 →</a></li>
+  </ul>
+</div>
+
 <div class="callout" style="margin-top: 1.5rem;">
-  <strong>官方数据源与规则：</strong> 核验自 <a href="https://global.americanexpress.com/rewards/transfer" target="_blank" rel="noopener">Amex US 官方转点伙伴页</a>（最近核验：2026年10月）。官方页面明确标示：“Cathay Pacific 1,000 Points = 800 Asia Miles™”。
+  <strong>官方数据源与规则：</strong> 核验自 <a href="https://global.americanexpress.com/rewards/transfer" target="_blank" rel="noopener">Amex US 官方转点伙伴页</a>（最近核验：2026年11月）。官方页面明确标示：“Cathay Pacific 1,000 Points = 800 Asia Miles™”。以本人运通后台实际显示条款为准。
 </div>
 
 <div class="article-content prose" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">
   <h2>分步计算逻辑与真实算例</h2>
-  <p>由于美版运通对国泰执行 5:4（0.8x）兑换规则，且要求以 1,000 点为单位递增，计算公式如下：</p>
+  <p>由于美版运通对国泰执行 5:4（0.80x）兑换规则，且要求以 1,000 点为单位递增，计算公式如下：</p>
   
   <div class="formula-box" style="margin: 1.5rem 0; padding: 1.25rem; background: var(--ink-2); border-left: 4px solid var(--gold); border-radius: 6px;">
     <div><strong>可转整点</strong> = 向下取整(积分总额 ÷ 1,000) × 1,000（最低 1,000）</div>
     <div style="margin-top: 0.5rem;"><strong>到账里程</strong> = (可转整点 ÷ 1,000) × 800 × (1 + 加赠百分比)</div>
+    <div><strong>每银行积分最终获得里程</strong> = 0.80 × (1 + 加赠百分比)</div>
     <div style="margin-top: 0.5rem;"><strong>账户留存积分</strong> = 积分总额 - 可转整点</div>
   </div>
 
@@ -77,9 +96,9 @@ breadcrumbs:
   <ul>
     <li><strong>实际转出数量</strong>：向下取整为 75,000 积分（扣除 600 点零头）。</li>
     <li><strong>Amex 留存数量</strong>：600 积分继续保留在账户中。</li>
-    <li><strong>按 5:4 比例换算</strong>：75,000 × 0.8 = <strong>60,000 亚洲万里通里程</strong>。</li>
-    <li><strong>实际到账总额</strong>：<strong>60,000 Asia Miles</strong>。</li>
-    <li><strong>参考出行价值</strong>：按亚万 1.3 美分/里行业基准，60,000 里程折合 780 美元（按 7.0 汇率约合 <strong>¥5,460</strong>）。</li>
+    <li><strong>按 5:4 比例换算</strong>：75,000 × 0.80 = <strong>60,000 亚洲万里通里程</strong>。</li>
+    <li><strong>实际到账总额</strong>：<strong>60,000 Asia Miles</strong>（最终有效倍率：<strong>0.80</strong>）。</li>
+    <li><strong>参考出行价值</strong>：按亚万 1.3 美分/里行业参考假设，60,000 里程折合 780 美元（按 7.0 演示汇率折合约 <strong>¥5,460</strong>）。</li>
   </ul>
 
   <h2>转点规则、手续费与关键避坑要点</h2>
@@ -88,12 +107,13 @@ breadcrumbs:
     <li><strong>辟谣：Chase 不能转国泰</strong>：常旅客新手最常见的误区是误以为大通银行也能转国泰。<strong>Chase Ultimate Rewards 与国泰航空没有任何转点合作</strong>。若需转点国泰，主要依赖美版运通 Amex、花旗 Citi、Capital One 或 Bilt。</li>
     <li><strong>手续费 (Excise Tax)</strong>：<strong>¥0 免费</strong>。加航、国泰等境外航司均无需向 Amex 支付转点消费税。</li>
     <li><strong>到账时效</strong>：通常在数分钟至 24 小时内入账。国泰账户若长期未活跃，初次绑定转点偶有审核延迟。</li>
+    <li><strong>单向不可逆</strong>：一旦转点完成，里程通常无法撤回至 Amex。</li>
   </ul>
 
   <h2>估值权衡：5:4 转点在什么时候才算划算？</h2>
-  <p>Amex 积分机会成本基准约为 <strong>1.5 美分/点</strong>，国泰里程基准约为 <strong>1.3 美分/里</strong>。考虑到 5:4 的数量缩水，实际盈亏平衡门槛为：</p>
-  <p style="text-align: center; font-weight: 500; color: var(--gold);">1.5¢ ÷ 0.8 = 1.88 美分/里 (约 ¥0.132/里)</p>
-  <p>这意味着：<strong>只有当你兑换的机票实际每里能省出 1.9 美分以上（例如中美跨洋商务舱、中欧两舱或港日短途商务舱）时，把 Amex 转给国泰才是净赚的</strong>；如果是淡季低票价经济舱，直接现金买票并保留积分往往更加明智。</p>
+  <p>Amex 积分编辑参考机会成本基准约为 <strong>1.5 美分/点</strong>，国泰里程基准约为 <strong>1.3 美分/里</strong>。考虑到 5:4 的数量折损，实际盈亏平衡门槛为：</p>
+  <p style="text-align: center; font-weight: 500; color: var(--gold);">1.5¢ ÷ 0.80 = 1.88 美分/里 (约 ¥0.132/里)</p>
+  <p>这意味着：<strong>只有当你兑换的机票实际每里能省出 1.9 美分以上（例如中美跨洋商务舱、中欧两舱或港日短途商务舱）时，把 Amex 转给国泰才是划算的</strong>；如果是淡季低票价经济舱，直接现金买票并保留积分往往更加明智。</p>
 
   <h2>相关工具与深度指南</h2>
   <ul>
@@ -119,23 +139,32 @@ breadcrumbs:
         $('outMiles').textContent = '0';
         $('outNote').textContent = '最低起转量为 1,000 点 Amex 积分。';
         $('outValue').textContent = '¥0';
+        $('outBaseRatio').textContent = '5:4 (0.80x)';
+        $('outBonus').textContent = bonus + '%';
+        $('outMultiplier').textContent = '0.80';
+        $('outCode').textContent = '比例 5:4 (0.8)';
         return;
       }
 
       const transferable = Math.floor(pts / 1000) * 1000;
       const remainder = pts - transferable;
       const baseMiles = Math.round((transferable / 1000) * 800);
+      const multiplier = (0.80 * (1 + bonus / 100));
       const totalMiles = Math.round(baseMiles * (1 + bonus / 100));
       const estCny = Math.round(totalMiles * 0.013 * 7.0);
 
       $('outTransferable').textContent = transferable.toLocaleString('zh-CN');
       $('outMiles').textContent = totalMiles.toLocaleString('zh-CN');
       $('outValue').textContent = '¥' + estCny.toLocaleString('zh-CN');
+      $('outBaseRatio').textContent = '5:4 (0.80x)';
+      $('outBonus').textContent = bonus + '%';
+      $('outMultiplier').textContent = multiplier.toFixed(2);
+      $('outCode').textContent = bonus > 0 ? `比例 5:4 (${multiplier.toFixed(2)}x)` : '比例 5:4 (0.8)';
 
       if (remainder > 0) {
-        $('outNote').textContent = `按 5:4 比例转出 ${transferable.toLocaleString('zh-CN')} 点。账户剩余 ${remainder.toLocaleString('zh-CN')} 点零头（起转与步长为 1,000 点）。`;
+        $('outNote').textContent = `按 5:4 基础比例（最终 ${multiplier.toFixed(2)} 倍）转出 ${transferable.toLocaleString('zh-CN')} 点。账户剩余 ${remainder.toLocaleString('zh-CN')} 点零头（起转与步长为 1,000 点）。`;
       } else {
-        $('outNote').textContent = `全部 ${transferable.toLocaleString('zh-CN')} 点全额按 5:4 转出。账户无零头残留。`;
+        $('outNote').textContent = `全部 ${transferable.toLocaleString('zh-CN')} 点全额按 5:4 基础比例（最终 ${multiplier.toFixed(2)} 倍）转出。账户无零头残留。`;
       }
     }
 
