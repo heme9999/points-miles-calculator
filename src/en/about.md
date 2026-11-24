@@ -25,7 +25,7 @@ The reference point valuations across our platform are not arbitrary numbers or 
 
 1. **Median Real-World Utility**: We evaluate typical redemption availability across major routes (transpacific, transatlantic, and domestic hubs) in both economy and premium cabins, avoiding cherry-picked extreme outliers.
 2. **Net Savings Calculation**: When calculating cents-per-point (CPP), we insist on deducting all unavoidable cash outlay—including government taxes, security fees, and fuel surcharges. Furthermore, our calculators factor in the cash flight miles you forfeit by choosing an award ticket instead of a paid fare.
-3. **Continuous Review**: Because loyalty program sweet spots shift and transfer partnerships evolve, we regularly audit our benchmarks. You can read our detailed mathematical models and redemption assumptions on our [Valuation Methodology page](/en/methodology/).
+3. **Continuous Review**: Because loyalty program sweet spots shift and transfer partnerships evolve, we audit our benchmarks on a monthly basis and display verification dates on our valuation pages. You can read our detailed mathematical models and redemption assumptions on our [Valuation Methodology page](/en/methodology/).
 
 ## Our Core Commitments
 

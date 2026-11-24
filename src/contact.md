@@ -10,7 +10,7 @@ eyebrow: 里程账 · 联系
 <p class="lead">欢迎与里程账 (Points & Miles Calculator) 取得联系！我们高度重视每一位常旅客与信用卡玩家的使用体验与宝贵建议。</p>
 
 <h2>联系方式与作者信息</h2>
-<p>本站由常旅客个人爱好者 <strong>peter</strong> 独立维护与更新。你可以通过以下电子邮箱直接与作者取得联系：</p>
+<p>本站由常旅客个人爱好者兼软件开发者 <strong>peter</strong> 独立设计与维护。你可以通过以下电子邮箱直接与作者取得联系：</p>
 <p style="font-size:1.15rem; margin:16px 0;"><a href="mailto:mayday0064@gmail.com"><strong>mayday0064@gmail.com</strong></a></p>
 
 <h2>预计回复时间</h2>

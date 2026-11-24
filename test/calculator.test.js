@@ -2623,6 +2623,61 @@ test('Phase 9.14.2: Program Meta Component Contrast & Canonical Unit Share State
   });
 });
 
+test('Audit Follow-up Gatekeeper: CPP Guide Rounding & Formula Alignment, Non-Sticky Nav, Bio Sync & CN Parity', async (t) => {
+  const fs = require('fs');
+  const path = require('path');
+  const { JSDOM } = require('jsdom');
+
+  await t.test('1. U1 & U2: EN/ZH CPP guides use 7.67 rounding and align formulas with calculators', () => {
+    const enGuide = fs.readFileSync(path.resolve(__dirname, '../_site/en/guides/how-to-calculate-point-value/index.html'), 'utf8');
+    const zhGuide = fs.readFileSync(path.resolve(__dirname, '../_site/guides/how-to-calculate-point-value/index.html'), 'utf8');
+
+    assert.ok(enGuide.includes('7.67¢'), 'EN guide must use 7.67¢');
+    assert.ok(!enGuide.includes('7.66¢'), 'EN guide must not contain 7.66¢');
+    assert.ok(enGuide.includes('7.83¢'), 'EN guide must show Standard Net CPP (7.83¢)');
+    assert.ok(enGuide.includes('/en/calculators/cents-per-point/'), 'EN guide must link to CPP Calculator');
+    assert.ok(enGuide.includes('/en/calculators/points-vs-cash/'), 'EN guide must link to Points vs Cash Calculator');
+
+    assert.ok(zhGuide.includes('7.67'), 'ZH guide must use 7.67');
+    assert.ok(!zhGuide.includes('7.6 Cents'), 'ZH guide must not contain truncated 7.6 Cents');
+    assert.ok(zhGuide.includes('7.83'), 'ZH guide must show Standard Net CPP (7.83)');
+    assert.ok(zhGuide.includes('/calculators/cents-per-point/'), 'ZH guide must link to CPP Calculator');
+    assert.ok(zhGuide.includes('/calculators/points-vs-cash/'), 'ZH guide must link to Points vs Cash Calculator');
+  });
+
+  await t.test('2. U3: .site-nav in style.css does not use sticky/fixed positioning', () => {
+    const css = fs.readFileSync(path.resolve(__dirname, '../src/assets/style.css'), 'utf8');
+    const match = css.match(/\.site-nav\s*\{[\s\S]*?\}/);
+    assert.ok(match, '.site-nav block must exist in style.css');
+    assert.ok(!/position\s*:\s*(sticky|fixed)/.test(match[0]), '.site-nav must not be sticky or fixed');
+  });
+
+  await t.test('3. Bio alignment, monthly cadence, and expanded CN blog/methodology/CPP/Amex parity', () => {
+    const zhAbout = fs.readFileSync(path.resolve(__dirname, '../_site/about/index.html'), 'utf8');
+    const zhContact = fs.readFileSync(path.resolve(__dirname, '../_site/contact/index.html'), 'utf8');
+    const enAbout = fs.readFileSync(path.resolve(__dirname, '../_site/en/about/index.html'), 'utf8');
+    const zhBlog = fs.readFileSync(path.resolve(__dirname, '../_site/blog/index.html'), 'utf8');
+    const zhMeth = fs.readFileSync(path.resolve(__dirname, '../_site/methodology/index.html'), 'utf8');
+    const zhCpp = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/cents-per-point/index.html'), 'utf8');
+    const zhAmex = fs.readFileSync(path.resolve(__dirname, '../_site/values/amex-membership-rewards/index.html'), 'utf8');
+
+    assert.ok(zhAbout.includes('软件工程师') && zhAbout.includes('独立软件开发者'), 'ZH About must include matching developer bio');
+    assert.ok(zhAbout.includes('按月'), 'ZH About must mention monthly update cadence');
+    assert.ok(enAbout.includes('monthly basis'), 'EN About must mention monthly update cadence');
+    assert.ok(zhContact.includes('软件开发者') && zhContact.includes('mayday0064@gmail.com'), 'ZH Contact must include matching bio and email');
+
+    const blogDom = new JSDOM(zhBlog);
+    assert.ok(blogDom.window.document.querySelector('.callout'), 'ZH Blog index must include intro callout');
+    assert.ok(blogDom.window.document.querySelectorAll('.reads .item p').length >= 3, 'ZH Blog index items must have summary paragraphs');
+
+    assert.ok(zhMeth.includes('/calculators/cents-per-point/') && zhMeth.includes('Points Boost'), 'ZH Methodology must include calculators and aligned Chase Points Boost policy');
+    assert.ok(!zhMeth.includes('1.5 美分/点保底'), 'ZH Methodology must not reintroduce legacy 1.5c Chase portal floor');
+    assert.ok(zhCpp.includes('worked-examples-grid') && zhCpp.includes('实际兑换 CPP vs. 个人预估估值'), 'ZH CPP page must include worked examples and distinction section');
+    assert.ok(zhAmex.includes('常见 Amex MR 积分余额估值对照表') && zhAmex.includes('Amex 积分兑换四步决策流程'), 'ZH Amex page must include balance table and 4-step decision flow');
+  });
+});
+
+
 
 
 

@@ -15,21 +15,23 @@ breadcrumbs:
 
 ## What is the CPP Formula?
 
-The basic formula to calculate CPP is very simple:
-**CPP = (Cash Price) ÷ Points Required × 100**
+The **Standard Net CPP Formula**—used directly by our [Cents Per Point (CPP) Calculator](/en/calculators/cents-per-point/)—subtracts mandatory out-of-pocket taxes and surcharges from the cash ticket price:
 
-For example, if a flight costs $1,000 in cash, or you can book it for 100,000 miles:
-CPP = ($1,000 ÷ 100,000) × 100 = **1.0¢ per point**.
+**Standard Net CPP = [(Cash Price − Award Taxes & Fees) ÷ Points Required] × 100**
 
-## Advanced Formula: Taxes and Forgone Earnings
+When an award booking has **$0 in out-of-pocket taxes and fees** (for example, a standard hotel points stay where taxes are waived), `Award Taxes & Fees = $0` and the formula simplifies to `(Cash Price ÷ Points Required) × 100`. For instance, a $1,000 booking with $0 taxes using 100,000 points yields:
+CPP = ($1,000 ÷ 100,000) × 100 = **1.00¢ per point**.
 
-In the real world of airline redemptions, the basic formula is often inaccurate. Award flights usually require you to pay "Taxes and Fees" out of pocket. Furthermore, by using miles instead of paying cash, you "forgo" the miles you would have earned on a paid ticket.
+## Advanced Decision Formula: Including Forgone Earnings
 
-Therefore, the correct **Advanced CPP Formula** is:
-**True CPP = [(Cash Price - Award Taxes - Forgone Earnings) ÷ Points Required] × 100**
+When deciding whether to burn miles or buy a revenue flight ticket, paying cash also earns you new frequent flyer miles and credit card rewards—value that you "forgo" when redeeming an award ticket.
 
-- **Award Taxes (Taxes & Fees)**: Some airlines (like British Airways or Emirates) pass on exorbitant fuel surcharges (YQ) on award tickets, which can destroy the value of your redemption.
-- **Forgone Earnings**: If you buy a $1,000 ticket, you might earn 5,000 miles (worth roughly $50). When you redeem miles, you miss out on earning those 5,000 miles. That $50 is a hidden cost of your redemption.
+Our [Points vs Cash Calculator](/en/calculators/points-vs-cash/) accounts for this opportunity cost using the **Advanced Decision Formula**:
+
+**True CPP = [(Cash Price − Award Taxes − Forgone Earnings) ÷ Points Required] × 100**
+
+- **Award Taxes (Taxes & Fees)**: Some airlines (like British Airways or Emirates) pass on exorbitant fuel surcharges (YQ) on award tickets, which can destroy the value of your redemption. Both our CPP Calculator and Points vs Cash Calculator deduct these cash fees.
+- **Forgone Earnings**: If you buy a $1,000 ticket, you might earn 5,000 miles (worth roughly $50). When you redeem miles, you miss out on earning those 5,000 miles. That $50 is factored into our Points vs Cash Calculator.
 
 ## A Real-World Example
 
@@ -39,8 +41,11 @@ Suppose you want to book a Business Class flight from Los Angeles to Tokyo on Ja
 - **Forgone Earnings**: Paying cash would have earned you miles worth about $100.
 
 **The Calculation:**
-True Cash Saved = $5,000 - $300 - $100 = $4,600
-True CPP = ($4,600 ÷ 60,000) × 100 = **7.66¢ per point**
+- **Standard Net CPP** ([CPP Calculator](/en/calculators/cents-per-point/) — taxes deducted):
+  `($5,000 − $300) ÷ 60,000 × 100` = $4,700 ÷ 60,000 × 100 = **7.83¢ per point**
+- **True CPP** ([Points vs Cash Calculator](/en/calculators/points-vs-cash/) — taxes & forgone earnings deducted):
+  `True Cash Saved = $5,000 − $300 − $100 = $4,600`
+  `True CPP = ($4,600 ÷ 60,000) × 100` = **7.67¢ per point**
 
 This is an incredible redemption value! Compared to cashing out your points through a bank portal at 1 cent each, you have magnified your value by more than 7 times.
 
@@ -66,8 +71,9 @@ Different points systems have different baseline values. If your calculation yie
 
 Stop using a handheld calculator. You can use our free tools to instantly run these scenarios:
 
+- 🎯 [Cents Per Point (CPP) Calculator](/en/calculators/cents-per-point/): Instantly compute Standard Net CPP after deducting award taxes and surcharges.
+- 🧮 [Advanced Points vs Cash Calculator](/en/calculators/points-vs-cash/): Automatically handles taxes, forgone earnings (True CPP), and transfer bonuses.
 - 💵 [Miles to Dollars Calculator](/en/calculators/points-to-dollars/): Estimate the dollar value of miles for your entire points balance.
 - ✈️ [United Miles Value Calculator](/en/calculators/united-miles-value-calculator/): Estimate travel value specifically for United MileagePlus balances across dynamic pricing tiers.
-- 🧮 [Advanced Points vs Cash Calculator](/en/calculators/points-vs-cash/): Automatically handles taxes, forgone earnings, and even transfer bonuses.
 - 📊 [Chase Ultimate Rewards Value Guide](/en/values/chase-ultimate-rewards/): See the best ways to get outsized value from Chase.
 - 📊 [Amex Membership Rewards Value Guide](/en/values/amex-membership-rewards/): Learn why transferring to ANA is an Amex favorite.
