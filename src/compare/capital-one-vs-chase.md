@@ -32,8 +32,8 @@ Capital One Miles（第一资本里程）和 Chase Ultimate Rewards（大通银�
 **共享伙伴：** 法荷航 (Flying Blue)、英国航空 (BA Avios)、新加坡航空 (KrisFlyer)、加拿大航空 (Aeroplan)、阿联酋航空 (Emirates Skywards)、维珍航空 (Virgin Red)。
 
 **关键差异：**
-*   **Chase 独家伙伴：** 凯悦天地 (World of Hyatt，业界最具价值的酒店积分)、美联航 (United)、西南航空 (Southwest)。
-*   **Capital One 独家伙伴：** 土耳其航空 (Miles&Smiles)、哥伦比亚航空 (LifeMiles)、精选国际酒店 (Choice Privileges)。
+*   **Chase 独家伙伴：** 凯悦天地 (World of Hyatt，业界最具价值的酒店积分)、美联航 United MileagePlus（使用我们的 [Chase 转美联航换算器](/transfer/chase-to-united/) 精确核算）、西南航空 (Southwest)。
+*   **Capital One 独家伙伴：** 土耳其航空 (Miles&Smiles)、哥伦比亚航空 (LifeMiles)、长荣航空（使用我们的 [Capital One 转长荣航空换算器](/transfer/capital-one-to-eva-air/) 按 4:3 比例换算）、精选国际酒店 (Choice Privileges)。
 
 ## 总结
 

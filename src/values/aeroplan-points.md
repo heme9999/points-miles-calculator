@@ -29,7 +29,11 @@ breadcrumbs:
 
 <h2>常见高价值兑换方式与示例</h2>
 <p>Air Canada Aeroplan 玩家公认的常见用法通常包括：</p>
-<p><em>兑换长荣航空 (EVA Air)、全日空 (ANA) 的跨洋商务舱，或在北美境内兑换美联航 (United) 的短途机票。</em></p>
+<ul>
+  <li><strong>星空联盟跨洋商务舱</strong>：兑换长荣航空 (EVA Air)、全日空 (ANA)、瑞士航空或汉莎航空，无航司燃油附加费。</li>
+  <li><strong>5,000 积分停留政策 (Stopover)</strong>：在任何航线的转机城市添加一个中途停留，只需额外支付 5,000 点。</li>
+  <li><strong>美国运通转点直达</strong>：持有美版 Amex 信用卡的玩家可以 1:1 转点至加航。使用我们的 <a href="/transfer/amex-to-aeroplan/">Amex 转加航 Aeroplan 专属换算器 →</a> 快速计算转点到账数量与加赠收益。</li>
+</ul>
 
 <h3>如何自行验证是否划算？</h3>
 <p>当你准备兑换时，请按照以下步骤自行验证：</p>

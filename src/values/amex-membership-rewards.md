@@ -27,22 +27,51 @@ breadcrumbs:
   <li><strong>超值兑换（远超基准线）</strong>：通常只有在兑换跨洋头等舱/商务舱、极度紧俏的节假日机票，或者顶级奢华度假村时才能达到。这也是“玩卡”获得超额收益的主要来源。</li>
 </ul>
 
-<h2>常见高价值兑换方式与示例</h2>
-<p>Amex Membership Rewards (MR) 玩家公认的常见用法通常包括：</p>
-<p><em>转点至全日空 (ANA) 兑换中美往返商务舱，或在转点加赠期间转入英国航空 (BA Avios) 兑换短途机票。在进行操作前，我们建议您使用<a href="/calculators/points-to-miles-converter/">计算实际可获得的航空里程数</a>，以确保结果符合预期。</em></p>
+<h2>常见高价值兑换方式与核心转点伙伴</h2>
+<p>Amex Membership Rewards (MR) 玩家公认的高收益途径主要集中在国际长途两舱与星空/寰宇一家航线。针对主流伙伴，本站提供了专属转点换算工具：</p>
+<ul>
+  <li><strong>加拿大航空 Aeroplan（星空联盟）</strong>：基础 1:1 转点，无燃油附加费，支持 5,000 点中途停留。使用我们的 <a href="/transfer/amex-to-aeroplan/">Amex 转加航 Aeroplan 专属换算器 →</a> 精确计算可得里程与加赠收益。</li>
+  <li><strong>国泰航空亚洲万里通 Asia Miles（寰宇一家）</strong>：基础 1:1 转点，锁定亚太及中美越洋商务舱。使用我们的 <a href="/transfer/amex-to-cathay-asia-miles/">Amex 转国泰亚万专属换算器 →</a> 计算转点到账数量与起转门槛。</li>
+  <li><strong>全日空 ANA Mileage Club</strong>：中美往返商务舱极具性价比，但需注意转点通常需要 2–3 个工作日且不支持单程兑换。</li>
+  <li><strong>英国航空 / 卡塔尔航空 Avios</strong>：兑换北美境内短途美航/阿拉斯加航班或卡航 Qsuite 两舱。</li>
+</ul>
 
-<h3>如何自行验证是否划算？</h3>
-<p>当你准备兑换时，请按照以下步骤自行验证：</p>
+<div class="example-box" style="margin-bottom: 24px; padding: 16px; background: rgba(2, 132, 199, 0.05); border: 1px solid rgba(2, 132, 199, 0.2); border-radius: 6px;">
+  <h4 style="margin-top: 0;">真实计算案例 1：50,000 MR 积分转点出行（典型旅行情景）</h4>
+  <p>假设你持有 50,000 Amex MR 积分，以常规 1.5 美分/点（约 0.105 元/点）基准估值测算：</p>
+  <ul>
+    <li><strong>积分总额</strong>：50,000 MR 积分</li>
+    <li><strong>参考估值假设</strong>：1.5¢ / 点（约 0.105 元）</li>
+    <li><strong>测算公式</strong>：<code>50,000 点 × (1.5¢ ÷ 100) = $750 美元（约 ¥5,250 元）</code></li>
+    <li><strong>出行参考价值</strong>：<strong>约 $750 美元 / ¥5,250 人民币</strong></li>
+  </ul>
+  <p style="font-size: 0.85em; color: var(--muted); margin-bottom: 0;"><em>注：此为基于奖励票节约现金的模拟估值，非银行官方固定返现。</em></p>
+</div>
+
+<div class="example-box" style="margin-bottom: 24px; padding: 16px; background: rgba(2, 132, 199, 0.05); border: 1px solid rgba(2, 132, 199, 0.2); border-radius: 6px;">
+  <h4 style="margin-top: 0;">真实计算案例 2：100,000 MR 积分转点出行（保守估值情景）</h4>
+  <p>若按照保守的 1.2 美分/点（约 0.084 元/点）基准估值测算：</p>
+  <ul>
+    <li><strong>积分总额</strong>：100,000 MR 积分</li>
+    <li><strong>参考估值假设</strong>：1.2¢ / 点（约 0.084 元）</li>
+    <li><strong>测算公式</strong>：<code>100,000 点 × (1.2¢ ÷ 100) = $1,200 美元（约 ¥8,400 元）</code></li>
+    <li><strong>出行参考价值</strong>：<strong>约 $1,200 美元 / ¥8,400 人民币</strong></li>
+  </ul>
+</div>
+
+<h3>如何自行验证你的兑换是否划算？</h3>
+<p>当你准备兑换特定航班或酒店时，请按照以下三步自行验证：</p>
 <ol>
-  <li>查出你想订的那个航班/酒店如果在第三方预定平台直接花钱，<strong>真实需要支付多少现金</strong>。</li>
-  <li>查出用积分预定，需要多少积分，<strong>并且还要另外支付多少税费</strong>。</li>
-  <li>将这两个数字输入我们的免费工具进行计算：</li>
+  <li>查出你想订的那个航班/酒店如果在现金购票渠道，<strong>真实需要支付多少现金</strong>。</li>
+  <li>查出用积分预定，需要多少里程/积分，<strong>并且还要另外自付多少税费与燃油费</strong>。</li>
+  <li>将这两个数字输入我们的免费工具进行精准测算：</li>
 </ol>
 <ul>
-  <li>👉 <a href="/calculators/cents-per-point/">CPP 基础计算器</a>（快速算价值）</li>
-  <li>👉 <a href="/calculators/points-vs-cash/">积分 vs 现金高级计算器</a>（综合考量隐藏成本，给出最终决策）</li>
+  <li>👉 <a href="/calculators/cents-per-point/">CPP 单点价值计算器</a>（快速算出实际每点兑现了多少美分或人民币）</li>
+  <li>👉 <a href="/calculators/points-vs-cash/">积分 vs 现金高级计算器</a>（综合考量隐藏税费与机会成本，给出用分还是付现的决策）</li>
+  <li>👉 <a href="/calculators/points-to-dollars/">积分折现与价值换算器</a>（输入任意点数与自定义估值换算总价值）</li>
 </ul>
-<p>只要你算出的 CPP 高于你在上方看到的基准线，并且你本身确实有这项消费需求，那就是一次不错的兑换。</p>
+<p>如果你还在纠结应该主刷 Chase 还是 Amex，欢迎参考我们的专题横向评测：<a href="/compare/chase-ur-vs-amex-mr/">Chase UR vs Amex MR 深度对比指南 →</a>。</p>
 
 <h2>潜在风险与避坑指南</h2>
 <ul>

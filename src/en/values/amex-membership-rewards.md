@@ -174,7 +174,12 @@ breadcrumbs:
 <h2>Airline vs. Hotel Transfer Partners</h2>
 <p>Amex Membership Rewards has both airline and hotel partners, but they are not created equal:</p>
 <ul>
-  <li><strong>Airline Partners</strong>: Transferring to programs like Air Canada Aeroplan, British Airways, or ANA Mileage Club is generally the best path to high-value redemptions. (Read our <a href="/en/guides/transfer-bonus-calculator-guide/">guide on points transfer bonuses</a> to stretch these even further).</li>
+  <li><strong>Airline Partners</strong>: Transferring to programs like Air Canada Aeroplan, Cathay Pacific Asia Miles, British Airways, or ANA Mileage Club is generally the best path to high-value redemptions. (Read our <a href="/en/guides/transfer-bonus-calculator-guide/">guide on points transfer bonuses</a> to stretch these even further). Dedicated transfer calculators:
+    <ul>
+      <li><a href="/en/transfer/amex-to-aeroplan/">Amex to Air Canada Aeroplan Transfer Calculator</a>: Model 1:1 transfers with 1,000-pt increments and promotional bonuses for Star Alliance awards.</li>
+      <li><a href="/en/transfer/amex-to-cathay-asia-miles/">Amex to Cathay Pacific Asia Miles Calculator</a>: Calculate exact Asia Miles received at a 1:1 base ratio for Oneworld and transpacific flights.</li>
+    </ul>
+  </li>
   <li><strong>Hotel Partners</strong>: While you can transfer MR points to Marriott Bonvoy or Hilton Honors, hotel points are typically valued at less than 1.0¢ each. Unless there is a massive transfer bonus or an urgent need to top off an account for a specific stay, transferring Amex points to hotels is often a poor mathematical proposition.</li>
 </ul>
 

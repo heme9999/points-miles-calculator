@@ -1388,7 +1388,7 @@ test('Blog, Contact, About, and Fact-Check Regression Suite', async (t) => {
 
   await t.test('4. Contact page provides valid email and About page <h2>品牌说明</h2> is inside .article-content', () => {
     const contactHtml = fs.readFileSync(path.resolve(__dirname, '../_site/contact/index.html'), 'utf8');
-    assert.ok(contactHtml.includes('hello@points-miles-calculator.pages.dev'), 'Contact page must include real contact email');
+    assert.ok(contactHtml.includes('mayday0064@gmail.com'), 'Contact page must include real contact email');
     assert.ok(!contactHtml.includes('通过下方表单'), 'Contact page must not mention non-existent form');
 
     const aboutHtml = fs.readFileSync(path.resolve(__dirname, '../_site/about/index.html'), 'utf8');

@@ -29,7 +29,11 @@ breadcrumbs:
 
 <h2>常见高价值兑换方式与示例</h2>
 <p>Capital One Miles 玩家公认的常见用法通常包括：</p>
-<p><em>按 1:1 比例转入哥伦比亚航空 (LifeMiles) 兑换星空联盟航班，或通过 Capital One Travel Portal 以 1 point = 1 cent 的保底比例直接报销旅行花费。</em></p>
+<ul>
+  <li><strong>长荣航空无限万哩游（4:3 转点比例）</strong>：兑换北美往返台北的皇玺桂冠舱商务舱（直飞且放票量稳定）。使用我们的专属 <a href="/transfer/capital-one-to-eva-air/">Capital One 转长荣航空换算器 →</a>，精确计算 4:3 比例（即 1,000 点转 750 哩）及所需点数。</li>
+  <li><strong>哥伦比亚航空 LifeMiles（1:1 比例）</strong>：兑换星空联盟跨洋航线，全程免收燃油附加费。</li>
+  <li><strong>旅行消费直接抵扣 (Purchase Eraser, 1.0¢/点保底)</strong>：在账户内直接按 100 哩抵扣 1 美元的方式报销 90 天内的旅行开销。</li>
+</ul>
 
 <h3>如何自行验证是否划算？</h3>
 <p>当你准备兑换时，请按照以下步骤自行验证：</p>

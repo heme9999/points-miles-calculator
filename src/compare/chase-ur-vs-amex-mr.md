@@ -19,8 +19,8 @@ breadcrumbs:
 
 灵活积分的最大价值在于其转点伙伴。
 
-*   **Chase Ultimate Rewards:** 在酒店伙伴方面表现抢眼，特别是 **凯悦天地 (World of Hyatt)**，积分价值经常能用出 2 美分/点以上。在航空方面，美联航 (United) 和西南航空 (Southwest) 是非常实用且容易操作的美国国内航线选择。
-*   **Amex Membership Rewards:** 称霸国际长途航线。比如全日空 (ANA Mileage Club) 提供极具性价比的环球票和赴日商务舱，以及加航 Aeroplan 也有巨大的兑换空间。然而，Amex 的酒店伙伴（万豪、希尔顿）转点比例通常不够划算。
+*   **Chase Ultimate Rewards:** 在酒店伙伴方面表现抢眼，特别是 **凯悦天地 (World of Hyatt)**，积分价值经常能用出 2 美分/点以上。在航空方面，美联航 (United) 是非常实用且容易操作的选择，你可以使用我们的 [Chase 转美联航换算器](/transfer/chase-to-united/) 精确核算到账数量与起转门槛。
+*   **Amex Membership Rewards:** 称霸国际长途航线。比如全日空 (ANA) 环球票、加拿大航空 Aeroplan（使用我们的 [Amex 转加航 Aeroplan 换算器](/transfer/amex-to-aeroplan/)）以及国泰航空亚洲万里通（使用我们的 [Amex 转国泰亚万换算器](/transfer/amex-to-cathay-asia-miles/)）都拥有巨大的兑换空间。然而，Amex 的酒店伙伴（万豪、希尔顿）转点比例通常不够划算。
 
 双方也有一些共同的高价值伙伴，例如法荷航 (Flying Blue)、英国航空 (BA Avios) 和新加坡航空 (KrisFlyer)。
 
@@ -31,10 +31,10 @@ breadcrumbs:
 
 ## 积分价值与兑换
 
-*   **Chase UR:** 拥有较高的“保底价值”。如果你不想费心研究转点，可以直接通过 Chase Travel 旅游门户预订，根据你持有的卡片，每点积分可固定抵扣 1.25 至 1.5 美分。
-*   **Amex MR:** 需要花心思才能用出高价值。如果直接兑换账单欠款或在 Amex portal 订票，价值通常只有惨淡的 0.6 到 1 美分。要想实现价值最大化，**必须**将积分转入航空伙伴。
+*   **Chase UR:** 拥有稳健的“保底价值”。如果不想费心研究转点，基础门户预订保底为 1.0 美分/点；持有 Sapphire Reserve 等高端卡时，还可通过 Points Boost 促销在精选酒店预订中享受 1.5¢–2.0¢/点加成（详见 [Chase UR 估值指南](/values/chase-ultimate-rewards/)）。
+*   **Amex MR:** 需要花心思才能用出高价值。如果直接兑换账单欠款或在 Amex portal 订票，价值通常只有惨淡的 0.6 到 1 美分。要想实现价值最大化，**必须**将积分转入航空伙伴（详见 [Amex MR 估值指南](/values/amex-membership-rewards/)）。
 
-你可以使用我们的[积分价值计算器](/tools/calculator)（即将推出），根据你的具体兑换目标查看实时估值。
+你可以使用我们的 [积分 vs 现金决策计算器](/calculators/points-vs-cash/) 或 [积分折现计算器](/calculators/points-to-dollars/)，根据你的具体兑换目标查看科学决策。
 
 ## 总结：你应该选谁？
 

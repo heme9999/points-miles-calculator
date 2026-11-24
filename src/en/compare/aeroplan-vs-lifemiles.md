@@ -31,7 +31,7 @@ This is a critical differentiator.
 
 ## Stopovers and Routing Rules
 
-*   **Air Canada Aeroplan:** The undisputed king of routing rules. You can add a stopover anywhere in the world (even on one-way tickets) for just 5,000 extra points. Their routing engine is incredibly flexible, allowing you to string together complex itineraries across multiple partners.
+*   **Air Canada Aeroplan:** The undisputed king of routing rules. You can add a stopover anywhere in the world (even on one-way tickets) for just 5,000 extra points. Their routing engine is incredibly flexible, allowing you to string together complex itineraries across multiple partners. You can transfer American Express points directly using our [Amex to Aeroplan Transfer Calculator](/en/transfer/amex-to-aeroplan/).
 *   **Avianca LifeMiles:** Extremely rigid. No stopovers are allowed. Furthermore, their IT is notoriously glitchy, and valid routes often fail to show up in search results. What you see on the screen is what you get; phone agents rarely can piece together complex itineraries.
 
 ## Verdict

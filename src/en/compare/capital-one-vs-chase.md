@@ -32,8 +32,8 @@ Both programs allow you to transfer points to airline and hotel partners at a 1:
 **Shared Partners:** Air France/KLM Flying Blue, British Airways Avios, Singapore KrisFlyer, Air Canada Aeroplan, Emirates Skywards, Virgin Red.
 
 **Key Differences:**
-*   **Chase Exclusives:** World of Hyatt (the most valuable hotel partner in the game), United MileagePlus, Southwest Rapid Rewards.
-*   **Capital One Exclusives:** Turkish Airlines Miles&Smiles, Avianca LifeMiles, Choice Privileges.
+*   **Chase Exclusives:** World of Hyatt (the most valuable hotel partner in the game), United MileagePlus (model with our [Chase to United Transfer Calculator](/en/transfer/chase-to-united/)), Southwest Rapid Rewards.
+*   **Capital One Exclusives:** Turkish Airlines Miles&Smiles, Avianca LifeMiles, EVA Air Infinity MileageLands (calculate 4:3 transfers with our [Capital One to EVA Air Calculator](/en/transfer/capital-one-to-eva-air/)), Choice Privileges.
 
 ## Verdict
 

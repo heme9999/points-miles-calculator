@@ -1,7 +1,7 @@
 ---
 layout: base.njk
 title: Terms of Service & Disclaimer
-description: Read the Terms of Service and Disclaimers for using Points & Miles Calculator. We do not provide financial advice and are not affiliated with airlines or banks.
+description: Read the Terms of Service, Disclaimers, and Zero-Affiliate Independence Disclosure for Points & Miles Calculator before using our tools.
 schemaType: WebPage
 breadcrumbs:
   - name: Terms & Disclaimer
@@ -9,38 +9,53 @@ breadcrumbs:
 ---
 # Terms of Service & Disclaimer
 
-By accessing and using Points & Miles Calculator (the "Site"), you accept and agree to be bound by the terms and provisions of this agreement. 
+*Last Updated: November 2026*
 
-## 1. No Financial Advice
+Welcome to Points & Miles Calculator (the "Site"). By accessing or using our calculators, baseline valuation models, and educational guides, you agree to be bound by the following Terms of Service and Disclaimers. If you do not agree to these terms, please do not use our tools.
 
-The content, calculators, and valuations provided on this Site are for informational and educational purposes only. They do not constitute financial, investment, or legal advice. 
+---
 
-- You should not make any financial or travel decisions solely based on the calculations or editorial content found on this Site.
-- Always verify award availability, transfer ratios, taxes, and program rules directly with the airline, hotel, or credit card issuer before transferring any points or making a booking.
+## 1. No Financial, Investment, or Legal Advice
 
-## 2. No Affiliation
+The content, algorithms, valuations, and calculators provided on this Site are created solely for general educational, mathematical comparison, and entertainment purposes. **They do not constitute financial, investment, tax, or legal advice.**
 
-Points & Miles Calculator is an independent, unofficial toolkit. We are not owned, operated, endorsed by, or affiliated with any airline, hotel group, credit card issuer, or travel agency. All trademarks, service marks, and company names are the property of their respective owners.
+Loyalty program rewards, transferable bank currencies, and airline frequent flyer miles are not legal tender. They do not carry a guaranteed monetary value and are not insured by any government regulatory authority. Airlines, hotels, and credit card issuers maintain absolute unilateral authority to alter award charts, introduce dynamic redemption pricing, restrict award seat inventory, increase fuel surcharges, or devalue points at will—often without prior notice. Any decision to earn, buy, transfer, or redeem points is taken entirely at your own risk.
 
-## 3. Accuracy of Information
+---
 
-While we strive to keep the information on this Site accurate and up-to-date, the loyalty program industry is highly volatile. Airlines and hotels frequently change their rules, award charts, and dynamic pricing algorithms without notice.
-- We do not warrant the accuracy, completeness, or usefulness of this information.
-- The valuations provided are editorial estimates and do not represent a guaranteed cash value. 
-- Any reliance you place on such information is strictly at your own risk.
+## 2. Accuracy of Information & Program Volatility
 
-## 4. Limitation of Liability
+While we strive to keep our formulas rigorously tested and our valuation benchmarks up-to-date:
+- **No Guaranteed Cash Value**: Valuations displayed on this platform (such as 1.2¢, 1.5¢, or 1.7¢ per point) represent estimated median benchmarks derived from common redemption scenarios. They do not represent a guaranteed cash payout or minimum redemption floor.
+- **Dynamic Fluctuation**: The actual value of any redemption will vary depending on your specific travel dates, ticket demand, routing, cabin class, and unavoidable taxes and carrier surcharges.
+- **Verify Before Transferring**: Point transfers between banks and airline programs are **strictly one-way and irreversible**. You must always verify live award seat availability and precise cash surcharge totals directly on the airline's official booking portal before executing any transfer. We accept no liability for points orphaned in a partner program due to sudden inventory changes.
 
-Under no circumstances shall Points & Miles Calculator, its creators, or contributors be liable for any direct, indirect, incidental, consequential, or punitive damages arising out of your access to, or use of, the Site. This includes, but is not limited to, the loss of points, miles, money, or missed travel opportunities resulting from relying on our calculators or guides.
+---
 
-## 5. Affiliate Disclosure
+## 3. Independent Standing & No Affiliation
 
-Currently, Points & Miles Calculator does not use affiliate links or receive compensation for credit card sign-ups or travel bookings. If this changes in the future, we will provide a clear and conspicuous disclosure.
+Points & Miles Calculator is an independent web project created and maintained by individual frequent flyer enthusiasts. We are **not owned, operated, endorsed by, or affiliated with** any airline, hotel group, financial institution, or credit card issuer mentioned on this Site—including, but not limited to, American Express, Chase, Capital One, Citi, United Airlines, Air Canada, Cathay Pacific, or EVA Air.
 
-## 6. Modifications to the Terms
+All product names, logos, trademarks, and registered trademarks displayed on this Site remain the property of their respective owners. Their mention on this platform is strictly for identification, analytical comparison, and descriptive purposes under fair use doctrine.
 
-We reserve the right to modify these Terms at any time. Your continued use of the Site following any changes indicates your acceptance of the new Terms.
+---
 
-## Contact Us
+## 4. 100% Independence & Zero-Affiliate Disclosure
 
-If you have any questions about these Terms, please [contact us](/en/contact/).
+To protect editorial integrity and deliver unbiased mathematical assessments, **Points & Miles Calculator operates with 100% independence. We do not participate in credit card affiliate networks, do not publish affiliate sign-up links, and accept zero corporate sponsorship or paid product placement.** 
+
+Unlike commercial travel blogs that inflate point valuations to encourage high-commission credit card applications, our math is never influenced by commercial kickbacks.
+
+---
+
+## 5. Limitation of Liability
+
+To the fullest extent permitted by applicable law, Points & Miles Calculator and its creator, peter, disclaim all liability for any direct, indirect, incidental, special, consequential, or punitive damages resulting from your use of, or inability to use, this Site. This includes, without limitation, losses arising from expired points, missed award flight redemptions, booking errors, or adverse changes in program rules.
+
+---
+
+## 6. Modifications and Inquiries
+
+We reserve the right to revise or update these Terms of Service at any time. Changes will take effect immediately upon publication on this page. 
+
+If you have questions regarding these terms, please consult our [Contact page](/en/contact/) or email creator peter at **mayday0064@gmail.com**.

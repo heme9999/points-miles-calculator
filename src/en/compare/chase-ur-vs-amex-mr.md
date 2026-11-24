@@ -19,8 +19,8 @@ When diving into the world of points and miles, the debate between **Chase Ultim
 
 The true value of flexible points lies in their transfer partners.
 
-*   **Chase Ultimate Rewards:** Shines with its hotel partners, notably **World of Hyatt**, where points can often be redeemed for 2+ cents each. On the airline side, United MileagePlus and Southwest Rapid Rewards are strong, easy-to-use domestic options.
-*   **Amex Membership Rewards:** Dominates international flight redemptions. Partners like ANA Mileage Club (for incredible round-the-world and Japan business class deals) and Aeroplan offer massive upside. However, Amex's hotel partners (Marriott, Hilton) generally offer poor transfer value.
+*   **Chase Ultimate Rewards:** Shines with its hotel partners, notably **World of Hyatt**, where points can often be redeemed for 2+ cents each. On the airline side, United MileagePlus and Southwest Rapid Rewards are strong, easy-to-use domestic options (model conversions with our [Chase to United Transfer Calculator](/en/transfer/chase-to-united/)).
+*   **Amex Membership Rewards:** Dominates international flight redemptions. Partners like ANA Mileage Club (for incredible round-the-world and Japan business class deals), Air Canada Aeroplan ([Amex to Aeroplan Transfer Calculator](/en/transfer/amex-to-aeroplan/)), and Cathay Pacific Asia Miles ([Amex to Cathay Asia Miles Calculator](/en/transfer/amex-to-cathay-asia-miles/)) offer massive upside. However, Amex's hotel partners (Marriott, Hilton) generally offer poor transfer value.
 
 Both share valuable partners like Air France/KLM Flying Blue, British Airways Avios, and Singapore KrisFlyer.
 

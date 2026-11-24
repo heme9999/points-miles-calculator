@@ -29,7 +29,11 @@ breadcrumbs:
 
 <h2>Sweet Spots and Redemption Examples</h2>
 <p>Some of the most popular and lucrative ways to use Capital One Miles include:</p>
-<p><em>Transferring 1:1 to Avianca LifeMiles for Star Alliance awards without fuel surcharges, or simply "erasing" travel purchases at a fixed baseline value of 1 cent per point.</em></p>
+<ul>
+  <li><strong>EVA Air Infinity MileageLands (4:3 Transfer Ratio)</strong>: Excellent availability on transpacific Royal Laurel Class (Business Class) between North America and Taipei. Use our dedicated <a href="/en/transfer/capital-one-to-eva-air/">Capital One to EVA Air Transfer Calculator</a> to calculate the 4:3 (2:1.5) conversion and required miles.</li>
+  <li><strong>Avianca LifeMiles (1:1 Ratio)</strong>: Book Star Alliance flights across North America and Europe with zero carrier fuel surcharges.</li>
+  <li><strong>Fixed Travel Purchase Eraser (1.0¢/mile)</strong>: Erase eligible travel purchases within 90 days at a guaranteed 1 cent per point floor without hunting for award availability.</li>
+</ul>
 
 <h3>How to verify your own redemption?</h3>
 <p>Never blindly trust online valuations. Before you book, verify the math yourself:</p>

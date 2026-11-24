@@ -29,7 +29,11 @@ breadcrumbs:
 
 <h2>Sweet Spots and Redemption Examples</h2>
 <p>Some of the most popular and lucrative ways to use Air Canada Aeroplan include:</p>
-<p><em>Booking transpacific Business Class on EVA Air or ANA, or flying short-haul domestic flights in North America on United Airlines.</em></p>
+<ul>
+  <li><strong>Transpacific &amp; Transatlantic Business Class</strong>: Booking partner flights on EVA Air, ANA, Swiss, or Lufthansa with no carrier-imposed fuel surcharges.</li>
+  <li><strong>5,000-Point Stopover Rule</strong>: Add a multi-day stopover on one-way or roundtrip award tickets anywhere along your journey for just 5,000 additional points.</li>
+  <li><strong>Transferring from Bank Currencies</strong>: American Express cardholders can transfer points directly to Aeroplan at a 1:1 ratio. Use our dedicated <a href="/en/transfer/amex-to-aeroplan/">Amex to Aeroplan Transfer Calculator</a> to verify increments and active bonus multipliers.</li>
+</ul>
 
 <h3>How to verify your own redemption?</h3>
 <p>Never blindly trust online valuations. Before you book, verify the math yourself:</p>
