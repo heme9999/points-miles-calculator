@@ -10,10 +10,10 @@ breadcrumbs:
   - name: Capital One Miles
 ---
 <h1>Capital One Miles Value & Transfer Partner Guide</h1>
-<p class="lead">Capital One Miles is the flexible rewards currency earned on Venture cards. By expanding its roster of 1:1 transfer partners (like Aeroplan and Avianca LifeMiles) over recent years, it has become a top-tier travel currency.</p>
+<p class="lead">Capital One Miles is the flat-rate transferable rewards currency earned on Venture and Spark cards. With 15+ airline and hotel transfer partners alongside a guaranteed 1.0¢ travel purchase eraser, it bridges simplicity and outsized award upside.</p>
 
 <h2>What is Capital One Miles?</h2>
-<p>Capital One Miles is the flexible rewards currency earned on Venture cards. By expanding its roster of 1:1 transfer partners (like Aeroplan and Avianca LifeMiles) over recent years, it has become a top-tier travel currency. In this guide, we break down its estimated market value, popular redemption sweet spots, and the pitfalls you need to avoid.</p>
+<p>Unlike category-juggling card ecosystems, flagship cards like Venture X and Venture earn an unlimited 2x miles on every purchase, then let you either wipe out recent travel charges at a fixed 1.0¢ baseline or transfer miles to partners like Air Canada Aeroplan, Avianca LifeMiles, British Airways Avios, and EVA Air Infinity MileageLands. Below we break down realistic redemption tiers, worked examples, and key transfer ratio traps.</p>
 
 <h2>Benchmark Valuation (CPP)</h2>
 <div class="callout">
@@ -30,9 +30,9 @@ breadcrumbs:
 <h2>Sweet Spots and Redemption Examples</h2>
 <p>Some of the most popular and lucrative ways to use Capital One Miles include:</p>
 <ul>
-  <li><strong>EVA Air Infinity MileageLands (4:3 Transfer Ratio)</strong>: Excellent availability on transpacific Royal Laurel Class (Business Class) between North America and Taipei. Use our dedicated <a href="/en/transfer/capital-one-to-eva-air/">Capital One to EVA Air Transfer Calculator</a> to calculate the 4:3 (2:1.5) conversion and required miles.</li>
-  <li><strong>Avianca LifeMiles (1:1 Ratio)</strong>: Book Star Alliance flights across North America and Europe with zero carrier fuel surcharges.</li>
-  <li><strong>Fixed Travel Purchase Eraser (1.0¢/mile)</strong>: Erase eligible travel purchases within 90 days at a guaranteed 1 cent per point floor without hunting for award availability.</li>
+  <li><strong>EVA Air Infinity MileageLands (4:3 Transfer Ratio)</strong>: Excellent availability on transpacific Royal Laurel Class (Business Class) between North America and Taipei. Unlike 1:1 partners, Capital One transfers to EVA Air at <strong>4:3 (1,000 Venture miles = 750 EVA miles)</strong>, meaning a 75,000-mile EVA award requires <strong>100,000 Capital One miles</strong>. Use our dedicated <a href="/en/transfer/capital-one-to-eva-air/">Capital One to EVA Air Transfer Calculator</a> to calculate exact increments before moving points.</li>
+  <li><strong>Avianca LifeMiles &amp; Air Canada Aeroplan (1:1 Ratio)</strong>: Book Star Alliance flights across North America and Europe with zero carrier fuel surcharges (Aeroplan charges a flat C$39 partner booking fee; LifeMiles charges $25).</li>
+  <li><strong>Fixed Travel Purchase Eraser (1.0¢/mile)</strong>: Erase eligible travel purchases (flights, hotels, rental cars, rail, or cruises) within 90 days at a guaranteed 1 cent per point floor (e.g., 50,000 miles = $500 statement credit) while still earning airline miles on the cash ticket.</li>
 </ul>
 
 <h3>How to verify your own redemption?</h3>

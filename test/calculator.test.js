@@ -2685,6 +2685,31 @@ test('Audit Follow-up Gatekeeper: CPP Guide Rounding & Formula Alignment, Non-St
     assert.ok(!perfAfterMatch[0].includes('radial-gradient(circle at center, transparent'), '.perf::after must not render broken center-hole bar');
     assert.ok(perfAfterMatch[0].includes('calc(100% - 8px)'), '.perf::after must render top and bottom semicircular notches');
   });
+
+  await t.test('5. Phase 1.4: Tightened Chinese calculator titles/H1s use airline/credit-card loyalty terms and no TW/HK terms', () => {
+    const p2dZh = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/points-to-dollars/index.html'), 'utf8');
+    const pvcZh = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/points-vs-cash/index.html'), 'utf8');
+    const tripZh = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/trip-cost-after-points/index.html'), 'utf8');
+    const capOneEn = fs.readFileSync(path.resolve(__dirname, '../_site/en/values/capital-one-miles/index.html'), 'utf8');
+
+    const p2dDom = new JSDOM(p2dZh);
+    assert.strictEqual(p2dDom.window.document.title, '航空里程与信用卡积分价值计算器 | 积分值多少钱 | 里程账');
+    assert.strictEqual(p2dDom.window.document.querySelector('h1').textContent.trim(), '航空里程与信用卡积分价值计算器');
+
+    const pvcDom = new JSDOM(pvcZh);
+    assert.strictEqual(pvcDom.window.document.title, '航空里程与现金决策计算器 | 该用航空里程换机票还是直接买票？ | 里程账');
+    assert.strictEqual(pvcDom.window.document.querySelector('h1').textContent.trim(), '航空里程与现金兑换决策计算器');
+
+    const tripDom = new JSDOM(tripZh);
+    assert.strictEqual(tripDom.window.document.title, '航空里程与积分旅行预算计算器｜用航空里程和酒店积分后还要花多少钱？ | 里程账');
+    assert.strictEqual(tripDom.window.document.querySelector('h1').textContent.trim(), '航空里程与积分抵扣后的旅行成本计算器');
+
+    for (const html of [p2dZh, pvcZh, tripZh]) {
+      assert.ok(!/哩程|里數/.test(html), 'Simplified Chinese pages must not contain TW/HK terms (哩程/里數)');
+    }
+    assert.ok(!capOneEn.includes('<p class="lead">Capital One Miles is the flexible rewards currency earned on Venture cards.'), 'Capital One EN page must not duplicate opening paragraph');
+    assert.ok(capOneEn.includes('75,000-mile EVA award requires <strong>100,000 Capital One miles</strong>'), 'Capital One EN page must include concrete 4:3 EVA transfer example');
+  });
 });
 
 
