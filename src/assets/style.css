@@ -244,8 +244,7 @@ input[type=number], td, .v, .verdict, .perf, #unitedResultNumber, #totalMiles, #
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  border-top-left-radius: 7px;
-  border-bottom-left-radius: 7px;
+  border-radius: 0 7px 7px 0;
 }
 .perf {
   width: 0;
@@ -254,10 +253,11 @@ input[type=number], td, .v, .verdict, .perf, #unitedResultNumber, #totalMiles, #
 .perf::before {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 10px;
+  bottom: 10px;
   left: -1px;
-  border-left: 2px dashed rgba(14, 26, 43, 0.25);
+  border-left: 2px dashed rgba(14, 26, 43, 0.22);
+  z-index: 1;
 }
 .perf::after {
   content: "";
@@ -266,8 +266,11 @@ input[type=number], td, .v, .verdict, .perf, #unitedResultNumber, #totalMiles, #
   bottom: -8px;
   left: -8px;
   width: 16px;
-  background: radial-gradient(circle at center, transparent 7px, var(--ink) 8px);
+  background:
+    radial-gradient(circle 8px at 8px 8px, var(--ink) 7.5px, transparent 8px),
+    radial-gradient(circle 8px at 8px calc(100% - 8px), var(--ink) 7.5px, transparent 8px);
   pointer-events: none;
+  z-index: 2;
 }
 .verdict-label {
   font-family: 'IBM Plex Mono', monospace;
@@ -558,8 +561,8 @@ nav.breadcrumb span.sep {
     min-width: 0;
     flex-direction: row;
     align-items: center;
-    border-radius: 7px 7px 0 0;
-    border-bottom: 2px dashed rgba(14,26,43,0.25);
+    border-radius: 0 0 7px 7px;
+    border-top: 2px dashed rgba(244, 240, 230, 0.2);
   }
   .perf { display: none; }
   .compare { flex-direction: column; gap: 14px; }

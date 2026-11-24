@@ -2675,6 +2675,16 @@ test('Audit Follow-up Gatekeeper: CPP Guide Rounding & Formula Alignment, Non-St
     assert.ok(zhCpp.includes('worked-examples-grid') && zhCpp.includes('实际兑换 CPP vs. 个人预估估值'), 'ZH CPP page must include worked examples and distinction section');
     assert.ok(zhAmex.includes('常见 Amex MR 积分余额估值对照表') && zhAmex.includes('Amex 积分兑换四步决策流程'), 'ZH Amex page must include balance table and 4-step decision flow');
   });
+
+  await t.test('4. N1: .perf::after uses top/bottom notches and .stub rounds outer edges (no center overlay bar)', () => {
+    const css = fs.readFileSync(path.resolve(__dirname, '../src/assets/style.css'), 'utf8');
+    const stubMatch = css.match(/\.stub\s*\{[\s\S]*?\}/);
+    const perfAfterMatch = css.match(/\.perf::after\s*\{[\s\S]*?\}/);
+    assert.ok(stubMatch && stubMatch[0].includes('border-radius: 0 7px 7px 0;'), '.stub must round outer right corners on desktop');
+    assert.ok(perfAfterMatch, '.perf::after rule must exist');
+    assert.ok(!perfAfterMatch[0].includes('radial-gradient(circle at center, transparent'), '.perf::after must not render broken center-hole bar');
+    assert.ok(perfAfterMatch[0].includes('calc(100% - 8px)'), '.perf::after must render top and bottom semicircular notches');
+  });
 });
 
 
