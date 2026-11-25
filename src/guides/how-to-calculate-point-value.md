@@ -76,3 +76,4 @@ breadcrumbs:
 - ✈️ [美联航里程价值计算器 (United Miles Value)](/calculators/united-miles-value-calculator/)：针对美联航动态定价和常用兑换场景，快速折算手头里程价值。
 - 📊 [大通银行 Chase UR 估值解析](/values/chase-ultimate-rewards/)：查看 Chase 体系最划算的兑换路子。
 - 📊 [美国运通 Amex MR 估值解析](/values/amex-membership-rewards/)：了解为何大家都在用 Amex 换全日空。
+- 🔄 [Chase 转美联航换算器](/transfer/chase-to-united/) &amp; [Amex 转加航 Aeroplan 换算器](/transfer/amex-to-aeroplan/)：执行单向转点前先精确核算起转步长与到账里程。

@@ -30,6 +30,7 @@ breadcrumbs:
 <h2>Sweet Spots and Redemption Examples</h2>
 <p>Some of the most popular and lucrative ways to use World of Hyatt include:</p>
 <p><em>Getting incredible value at Category 1 road-trip hotels, or booking peak-season standard rooms at ultra-luxury brands like Park Hyatt or Alila.</em></p>
+<p>Transferring from Chase Ultimate Rewards? Use our <a href="/en/transfer/chase-to-hyatt/">Chase to Hyatt Transfer Calculator</a> to model 2026 card-tier ratios (1:1 on Sapphire Reserve vs. 4:3 on Sapphire Preferred) before booking.</p>
 
 <h3>How to verify your own redemption?</h3>
 <p>Never blindly trust online valuations. Before you book, verify the math yourself:</p>

@@ -2712,6 +2712,99 @@ test('Audit Follow-up Gatekeeper: CPP Guide Rounding & Formula Alignment, Non-St
   });
 });
 
+test('Phase 2026-11-25 Gatekeeper: Rewritten EN Calculator Titles/Descriptions, Chase-to-Hyatt EN Page & Contextual Transfer Links', async (t) => {
+  const fs = require('fs');
+  const path = require('path');
+  const { JSDOM } = require('jsdom');
+
+  await t.test('1. Item 2: Transfer Bonus & Points to Miles Converter EN titles (<60 chars) & descriptions match 2026-11-25 spec', () => {
+    const tbHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/transfer-bonus/index.html'), 'utf8');
+    const convHtml = fs.readFileSync(path.resolve(__dirname, '../_site/en/calculators/points-to-miles-converter/index.html'), 'utf8');
+    const tbDoc = new JSDOM(tbHtml).window.document;
+    const convDoc = new JSDOM(convHtml).window.document;
+
+    assert.strictEqual(tbDoc.title, 'Transfer Bonus Calculator 2026 — Points for Target Miles');
+    assert.ok(tbDoc.title.length < 60, `transfer-bonus title length ${tbDoc.title.length} must be < 60`);
+    assert.strictEqual(
+      tbDoc.querySelector('meta[name="description"]').content,
+      'See exactly how many points you need to reach your target airline miles with a 15%, 20% or 30% transfer bonus. Instant, free, no sign-up.'
+    );
+
+    assert.strictEqual(convDoc.title, "Points to Miles Converter 2026 — Exact Miles You'll Get");
+    assert.ok(convDoc.title.length < 60, `converter title length ${convDoc.title.length} must be < 60`);
+    assert.strictEqual(
+      convDoc.querySelector('meta[name="description"]').content,
+      "Convert bank points to airline miles with official transfer ratios and increments. See the exact miles you'll receive before you transfer."
+    );
+  });
+
+  await t.test('2. Item 5: English-only /en/transfer/chase-to-hyatt/ tags, sitemap, 2026 card ratios & JS math verification', () => {
+    const hyattTransferPath = path.resolve(__dirname, '../_site/en/transfer/chase-to-hyatt/index.html');
+    assert.ok(fs.existsSync(hyattTransferPath), '/en/transfer/chase-to-hyatt/ must be built');
+    assert.ok(!fs.existsSync(path.resolve(__dirname, '../_site/transfer/chase-to-hyatt/index.html')), 'ZH chase-to-hyatt must NOT exist per plan');
+
+    const html = fs.readFileSync(hyattTransferPath, 'utf8');
+    const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://points-miles-calculator.pages.dev/en/transfer/chase-to-hyatt/' });
+    const doc = dom.window.document;
+
+    assert.strictEqual(doc.title, 'Chase to Hyatt Transfer: Ratio, Value & Calculator');
+    assert.strictEqual(doc.documentElement.getAttribute('lang'), 'en');
+    assert.strictEqual(doc.querySelector('link[rel="canonical"]').getAttribute('href'), 'https://points-miles-calculator.pages.dev/en/transfer/chase-to-hyatt/');
+    assert.strictEqual(doc.querySelector('link[hreflang="zh-CN"]'), null, 'englishOnly page must not emit 404 zh-CN hreflang');
+    assert.ok(doc.querySelector('link[hreflang="en"]'), 'Missing en hreflang');
+    assert.ok(doc.querySelector('link[hreflang="x-default"]'), 'Missing x-default hreflang');
+    assert.ok(html.includes('November 25, 2026'), 'Must include fact-check date');
+
+    // Default: Reserve 1:1 with 50,000 Chase pts -> 50,000 Hyatt pts ($850)
+    assert.strictEqual(doc.getElementById('outTransferable').textContent, '50,000');
+    assert.strictEqual(doc.getElementById('outHyattPoints').textContent, '50,000');
+    assert.strictEqual(doc.getElementById('outValue').textContent, '$850');
+    assert.strictEqual(doc.getElementById('outBaseRatio').textContent, '1:1');
+
+    // Switch to Sapphire Preferred 4:3 with 50,000 pts -> 37,500 Hyatt pts ($638)
+    const tier = doc.getElementById('chaseCardTier');
+    tier.value = '0.75';
+    tier.dispatchEvent(new dom.window.Event('change'));
+    assert.strictEqual(doc.getElementById('outHyattPoints').textContent, '37,500');
+    assert.strictEqual(doc.getElementById('outValue').textContent, '$638');
+    assert.strictEqual(doc.getElementById('outBaseRatio').textContent, '4:3');
+
+    // 52,400 Chase pts on Preferred 4:3 -> 52,000 transferable, 400 remainder, 39,000 Hyatt pts
+    const pts = doc.getElementById('chasePoints');
+    pts.value = '52400';
+    pts.dispatchEvent(new dom.window.Event('input'));
+    assert.strictEqual(doc.getElementById('outTransferable').textContent, '52,000');
+    assert.strictEqual(doc.getElementById('outHyattPoints').textContent, '39,000');
+    assert.ok(doc.getElementById('outNote').textContent.includes('400 points remain'));
+
+    const sitemap = fs.readFileSync(path.resolve(__dirname, '../_site/sitemap.xml'), 'utf8');
+    const urls = Array.from(sitemap.matchAll(/<loc>(.*?)<\/loc>/g)).map(m => m[1]);
+    assert.strictEqual(urls.length, 119, 'Sitemap must have 119 URLs including chase-to-hyatt EN');
+    assert.ok(urls.includes('https://points-miles-calculator.pages.dev/en/transfer/chase-to-hyatt/'));
+  });
+
+  await t.test('3. Item 3 & 5: Indexed & clicked pages include contextual links to transfer pages and chase-to-hyatt', () => {
+    const indexedEnPages = [
+      '../_site/en/index.html',
+      '../_site/en/calculators/hotel-points-vs-cash/index.html',
+      '../_site/en/calculators/cents-per-point/index.html',
+      '../_site/en/calculators/transfer-bonus/index.html',
+      '../_site/en/calculators/points-to-miles-converter/index.html',
+      '../_site/en/values/chase-ultimate-rewards/index.html',
+      '../_site/en/values/hyatt-points/index.html',
+      '../_site/en/guides/how-to-calculate-point-value/index.html'
+    ];
+    for (const rel of indexedEnPages) {
+      const content = fs.readFileSync(path.resolve(__dirname, rel), 'utf8');
+      assert.ok(content.includes('/en/transfer/chase-to-hyatt/'), `${rel} must link to /en/transfer/chase-to-hyatt/`);
+    }
+    const zhHotel = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/hotel-points-vs-cash/index.html'), 'utf8');
+    const zhCpp = fs.readFileSync(path.resolve(__dirname, '../_site/calculators/cents-per-point/index.html'), 'utf8');
+    assert.ok(zhHotel.includes('/transfer/chase-to-united/'), 'ZH hotel calculator must link to transfer page');
+    assert.ok(zhCpp.includes('/transfer/chase-to-united/') && zhCpp.includes('/transfer/amex-to-aeroplan/'), 'ZH CPP calculator must link to transfer pages');
+  });
+});
+
 
 
 

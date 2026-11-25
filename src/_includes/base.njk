@@ -22,7 +22,9 @@
 <meta name="robots" content="noindex">
 {% endif %}
 <link rel="canonical" href="{{ site.url }}{{ canonical | default(page.url) }}">
+{% if not englishOnly %}
 <link rel="alternate" hreflang="zh-CN" href="{{ zhUrl }}">
+{% endif %}
 <link rel="alternate" hreflang="en" href="{{ enUrl }}">
 <link rel="alternate" hreflang="x-default" href="{{ enUrl }}">
 <meta property="og:title" content="{{ seoTitle or (title ~ ' | ' ~ siteName) }}">
@@ -162,7 +164,7 @@
     </nav>
     <div class="lang-switcher">
       {% if isEnglish %}
-      <a href="{{ zhUrl }}" hreflang="zh-CN" lang="zh-CN" class="lang-link">中文</a>
+      <a href="{{ '/' if englishOnly else zhUrl }}" hreflang="zh-CN" lang="zh-CN" class="lang-link">中文</a>
       <a href="{{ enUrl }}" hreflang="en" lang="en" aria-current="page" class="lang-link">English</a>
       {% else %}
       <a href="{{ zhUrl }}" hreflang="zh-CN" lang="zh-CN" aria-current="page" class="lang-link">中文</a>

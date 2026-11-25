@@ -152,14 +152,14 @@ async function runTests() {
   // 4. Search Intent, Single H1 & Shortened English Titles
   console.log('\n--- 4. Search Intent, Single H1 & Titles Verification ---');
   const pagesToCheck = [
-    { path: '/en/calculators/points-to-miles-converter/', expectedH1: 'Points to Miles Converter', expectedTitle: 'Points to Miles Converter | Points & Miles Calculator' },
+    { path: '/en/calculators/points-to-miles-converter/', expectedH1: 'Points to Miles Converter', expectedTitle: "Points to Miles Converter 2026 — Exact Miles You'll Get" },
     { path: '/calculators/points-to-miles-converter/', expectedH1: '积分转航空里程换算器', expectedTitle: '积分转航空里程换算器｜计算转点比例与加赠里程 | 里程账' },
     { path: '/en/', expectedH1: 'Points and Miles Calculators', expectedTitle: 'Points to Miles & Award Calculators | Points & Miles Calculator' },
     { path: '/en/calculators/points-to-dollars/', expectedH1: 'Miles to Dollars Calculator', expectedTitle: 'Miles to Dollars Calculator – Estimate Mile Value' },
     { path: '/en/calculators/points-vs-cash/', expectedH1: 'Points vs Cash Calculator', expectedTitle: 'Points vs Cash Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/trip-cost-after-points/', expectedH1: 'Trip Cost After Points Calculator', expectedTitle: 'Trip Cost After Points Calculator | Points & Miles Calculator' },
     { path: '/en/calculators/cents-per-point/', expectedH1: 'Cents Per Point (CPP) Calculator', expectedTitle: 'Cents Per Point Calculator | Calculate CPP | Points & Miles Calculator' },
-    { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator | Points to Miles | Points & Miles Calculator' },
+    { path: '/en/calculators/transfer-bonus/', expectedH1: 'Points Transfer Bonus Calculator', expectedTitle: 'Transfer Bonus Calculator 2026 — Points for Target Miles' },
     { path: '/en/calculators/united-miles-value-calculator/', expectedH1: 'United MileagePlus Miles Value Calculator', expectedTitle: 'United Miles Value Calculator – MileagePlus Worth' },
     { path: '/', expectedH1: '积分与里程决策计算工具箱' },
     { path: '/calculators/points-to-dollars/', expectedH1: '航空里程与信用卡积分价值计算器' },
@@ -348,8 +348,14 @@ async function runTests() {
     const hreflangZh = doc.querySelector('link[rel="alternate"][hreflang="zh-CN"]')?.getAttribute('href');
     const hreflangEn = doc.querySelector('link[rel="alternate"][hreflang="en"]')?.getAttribute('href');
     const hreflangDefault = doc.querySelector('link[rel="alternate"][hreflang="x-default"]')?.getAttribute('href');
+    const isEnglishOnlyPage = path === '/en/transfer/chase-to-hyatt/';
 
-    if (!hreflangZh || !hreflangEn || !hreflangDefault) {
+    if (isEnglishOnlyPage) {
+      if (hreflangZh || !hreflangEn || !hreflangDefault) {
+        console.error(`ERROR: Invalid englishOnly hreflang tags at ${path}`);
+        failures++;
+      }
+    } else if (!hreflangZh || !hreflangEn || !hreflangDefault) {
       console.error(`ERROR: Missing hreflang tag at ${path}`);
       failures++;
     }

@@ -113,6 +113,7 @@ breadcrumbs:
 <div class="next-step-box" style="margin-top: 20px; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem; line-height: 1.5;">
   <strong style="color: #0f172a; display: block; margin-bottom: 6px;">Next Steps for Chase UR Cardholders:</strong>
   <ul style="margin: 0; padding-left: 20px; color: #475569;">
+    <li><strong>Model Chase to Hyatt transfers:</strong> <a href="/en/transfer/chase-to-hyatt/">Use Chase to Hyatt Transfer Calculator (1:1 Reserve vs. 4:3 Preferred) →</a></li>
     <li><strong>Model Chase to United transfers:</strong> <a href="/en/transfer/chase-to-united/">Use Chase to United Transfer Calculator →</a></li>
     <li><strong>Compare cash tickets vs points booking:</strong> <a href="/en/calculators/points-vs-cash/">Use Points vs Cash Calculator →</a></li>
     <li><strong>Verify award seat CPP value:</strong> <a href="/en/calculators/cents-per-point/">Use Cents Per Point (CPP) Calculator →</a></li>

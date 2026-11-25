@@ -77,3 +77,5 @@ Stop using a handheld calculator. You can use our free tools to instantly run th
 - ✈️ [United Miles Value Calculator](/en/calculators/united-miles-value-calculator/): Estimate travel value specifically for United MileagePlus balances across dynamic pricing tiers.
 - 📊 [Chase Ultimate Rewards Value Guide](/en/values/chase-ultimate-rewards/): See the best ways to get outsized value from Chase.
 - 📊 [Amex Membership Rewards Value Guide](/en/values/amex-membership-rewards/): Learn why transferring to ANA is an Amex favorite.
+- 🏨 [Chase to Hyatt Transfer Calculator](/en/transfer/chase-to-hyatt/): Compare 2026 Reserve (1:1) vs. Preferred (4:3) hotel transfer CPP.
+- 🔄 [Chase to United Transfer Calculator](/en/transfer/chase-to-united/) &amp; [Amex to Aeroplan Transfer Calculator](/en/transfer/amex-to-aeroplan/): Verify partner transfer increments before locking in one-way transfers.
